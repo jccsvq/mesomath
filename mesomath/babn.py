@@ -8,10 +8,10 @@ class BabN:
         |     sep: separator for string representation (default: ":")
         |    fill: if True writes: "01.33.07" instead of "1.33.7" (default: False)
         | rdigits: approximate number of sexagesimal digits for some results (default: 6:
-        |database: path to sqlite3 database of regular numbers providing:
-        |    regular    TEXT, regular number e.g. 01:18:43:55:12
-        |    len     INTEGER, its length e.g. 5 for 01:18:43:55:12
-        |   see hamming.py for how to generate it
+        |database: path to SQLite3 database of regular numbers providing:
+        |    | regular    TEXT, regular number e.g. 01:18:43:55:12
+        |    | len     INTEGER, its length e.g. 5 for 01:18:43:55:12
+        |           see `createDB.py` or `hamming.py` for how to generate it
 
     Instance attributes:
         |     dec: decimal versión of number (ex: 405 for sexagesimal "6:45")
@@ -27,7 +27,7 @@ class BabN:
     database = 'regular.db3'
     
     def dec2list(n):
-        '''Convert integer decimal n to list of int's (sexagesimal digits)'''
+        '''Convert decimal integer n to list of int's (its sexagesimal digits)'''
         if n < 60:
             return [n]
         else:
@@ -41,7 +41,7 @@ class BabN:
         return rlist
 
     def parse(n):
-        '''Writes instance dec and list.
+        '''Returns tuple with decimal value and list of sexagesimal digits of n.
         | n: may be an integer (sign is ignored), a correctly formated string (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23])'''
         if type(n) == list :
             lt = n
@@ -65,7 +65,7 @@ class BabN:
 
     def __init__(self, n):
         '''Class constructor
-        | n: The number n can be an integer (sign is ignored) or a properly formatted string representing a sexagesimal number, accepting the separators ":" or "." (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23]).
+        | n: The number n can be an integer (sign is ignored) or a properly formatted string representing a sexagesimal number, accepting the separators ":" and "." (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23]).
         '''
         (self.dec, self.list) = BabN.parse(n)
         if self.dec == 1:
@@ -89,7 +89,8 @@ class BabN:
             self.factors = (i, j, k, x)
                 
     def inv(self, digits = 4):
-        '''Returns an approximate inverse of the number'''
+        '''Returns BabN object with approximate inverse of the number,
+        i.e., a * a.inv() is approximately a power of 60'''
         x = self.dec
         nsd = int(log(x)/log(60))
         inv = (pow(60, nsd+digits))/x
@@ -100,30 +101,43 @@ class BabN:
 
 
     def float(self):
-        '''Returns the floating part of the number (mantissa)'''
+        '''Returns BabN object with the floating part of the number (mantissa),
+        i.e., removes any trailing sexagesimal zero, ex.: 4:42:0:0 -> 4:42'''
         x = self.dec
         while x % 60 == 0 :
             x //= 60
         return BabN(x)
 
     def len(self):
-        '''Returns the number of sexagesimal digits of the number'''
+        '''Returns the number of sexagesimal digits of the number as int'''
         return len(self.list)
 
+    def head(self, d =1):
+        '''Returns BabN object with the first d digits of self'''
+        l = min(abs(d), len(self.list))
+        return BabN(self.list[:l])
+
+    def tail(self, d =1):
+        '''Returns BabN object with the first d digits of self'''
+        l = min(abs(d), len(self.list))
+        return BabN(self.list[-l:])
+
     def __add__(self, other):
-        '''Overloads `+` operator'''
+        '''Overloads `+` operator: returns BabN object with the sum of operands'''
         return BabN(self.dec + other.dec)
 
     def __sub__(self, other):
-        '''Overloads `-` operator'''
+        '''Overloads `-` operator: returns BabN object with the absolute value
+        of the operands difference '''
         return BabN(abs(self.dec - other.dec))
 
     def __mul__(self, other):
-        '''Overloads `*` operator'''
+        '''Overloads `*` operator: returns BabN object with the operands product'''
         return BabN(self.dec * other.dec)
 
     def __truediv__(self, other):
-        '''Overloads `/` operator'''
+        '''Overloads `/` operator:  Returns BabN object with the floating
+        approximate division of operands'''
         a = self.dec
         b = other.dec
         q = a / b
@@ -135,7 +149,9 @@ class BabN:
         return BabN(inv)
 
     def __floordiv__(self, other):
-        '''Overloads `//` operator'''
+        '''Overloads `//` operator: Returns BabN object with the result of
+        "Babylonian división" of operands, i.e., if b is regular then a//b 
+        returns a times the reciprocal of b. Returns None if b is not regular.'''
         if other.isreg :
             inv = other.rec().dec
             q = self.dec * inv
@@ -146,14 +162,15 @@ class BabN:
             print('Divisor is nor a regular number!')
 
     def __pow__(self, x):
-        '''Overloads `**` operator'''
+        '''Overloads `**` operator: Returns BabN object with the number raised to the power x where x is a natural integer'''
         try:
             return BabN(self.dec ** x)
         except:
             print('x must be a positive integer')
 
     def rec(self):
-        '''Returns the reciprocal of a regular number, None for a non-regular'''
+        '''Returns BabN object with the reciprocal of a regular number, returns None for
+        non-regular numbers'''
         if self.isreg:
             x = self.dec
             while x % 60 == 0:
@@ -196,7 +213,7 @@ class BabN:
             return None
 
     def sqrt(self):
-        '''Returns approximate floating square root'''
+        '''Returns BabN object with approximate floating square root'''
         digits = BabN.rdigits - 1
         x0 = x = self.dec
         sqr = (pow(60, digits))*sqrt(x)
@@ -206,7 +223,7 @@ class BabN:
         return BabN(sqr)
 
     def cbrt(self):
-        '''Returns approximate floating cube root'''
+        '''Returns BabN object with approximate floating cube root'''
         digits = BabN.rdigits - 1
         x0 = x = self.dec
         cbr = (pow(60, digits))*x**(1./3)
@@ -217,7 +234,7 @@ class BabN:
 
     def dist(self,n):
         '''Estimates a certain "distance" between two sexagesimal numbers. The objective is, given a non-regular number, to select the regular number that is closest to it from a list.
-    | n: may be an integer, formated string (ex: "1:2:3"), a list (ex., [1, 12, 23]) or another BabN object'''
+    | n: may be an integer, formated string (ex: "1:2:3"), a list (ex., [1, 12, 23]) or another BabN object. Returns int.'''
         list1 =[] + self.list
         len1 = self.len()
         if type(n) == BabN :
@@ -237,7 +254,8 @@ class BabN:
         return (BabN(list1)-BabN(list2)).dec
 
     def searchreg(self, minn, maxn, limdigits=6, prt=False) :
-        '''Search database for regulars between sexagesimals minn y maxn
+        '''Search database for regulars between sexagesimals minn y maxn. 
+        Returns BabN object with the closest regular found.
     
         | minn and maxn: must be sexagesimal strings using ":" separator
         |     limdigits: max regular digits number (default: 6)
@@ -280,6 +298,7 @@ class BabN:
         return BabN(minr)
 
     def __repr__(self):
+        '''Returns string representation of sexagesimal number.'''
         rlist = self.list
         if self.fill:
             tt = list(map(str, rlist))

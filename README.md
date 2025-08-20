@@ -5,7 +5,7 @@ This package is intended for the arithmetic of natural sexagesimal numbers, main
 
 Inpired by the arithmetic part of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to Python programming and to the command line as a calculator.
 
-`MesoMath` contains three modules:
+`mesomath` contains three modules:
 
 *  `babn.py`
 *  `hamming.py`
@@ -25,6 +25,12 @@ and three test/demo scripts:
 *  `test-hamming.py`
 *  `test-mesolib.py`
 
+## Dependences
+
+`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse` and `sqlite3`. 
+
+Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm).
+
 ##   `babn.py`
 
 This is the main module defining the `BabN` class for representing sexagesimal natural numbers. You can perform mathematical operations on objects of the `BabN` class using the operators +, -, *, **, /, and //, and combine them using parentheses, both in a program and interactively on the Python command line. It also allows you to obtain their reciprocals in the case of regular numbers, their approximate inverses in the general case, approximate square and cube floating roots and obtain divisors and lists of "nearest" regular numbers. See the `test-babn.py` script.
@@ -36,11 +42,11 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 
 ## `hamming.py`
 
-Regular or Hamming numbers are numbers of the form  
+Regular or Hamming numbers are numbers of the form:
 
-    H = 2i × 3j × 5k
-           where 
-     i,  j,  k  ≥  0 
+    H = 2^i * 3^j × 5^k
+    
+    where  i, j, k ≥ 0 
 
 This module is used to obtain lists of such numbers and ultimately build a SQLite3 database of them up to 20 sexagesimal digits. This database is used by BabN to search for regular numbers close to a given one. See the scripts: `createDB.py` and `test-hamming.py`.
 
@@ -66,16 +72,18 @@ to inform `BabN`  of its location.
 
 ##  `example-melville.py`
 
-This script shows the application of MesoMath to the solution of two real examples given by Duncan J. Melville in: [Reciprocals and Reciprocal algorithms in Mesopotamian Mathematics (2005)](https://www.researchgate.net/publication/237309438_RECIPROCALS_AND_RECIPROCAL_ALGORITHMS_IN_MESOPOTAMIAN_MATHEMATICS)
+This script shows the application of `mesomath` to the solution of two real examples given by Duncan J. Melville in: [Reciprocals and Reciprocal algorithms in Mesopotamian Mathematics (2005)](https://www.researchgate.net/publication/237309438_RECIPROCALS_AND_RECIPROCAL_ALGORITHMS_IN_MESOPOTAMIAN_MATHEMATICS)
+
+    $ python3 example-melville.py 
+
+Output:
 
     Searching the reciprocal of 2:5  according to D. J. Melville (2005)
 
     Example 1: from Table 2. Simple Reciprocal algorithm
 
     d1 = BabN('2:5')
-    d1tail = BabN(5)
-    d1head = BabN(2)
-    r1 = d1tail
+    r1 = d1.tail()
     r2 = r1.rec()
     r3 = d1 * r2
     r4 = r3.rec()
@@ -85,11 +93,11 @@ This script shows the application of MesoMath to the solution of two real exampl
 
     Example 2: from Table 3. using "The Technique"
 
-    r1 = d1tail
+    r1 = d1.tail()
     r2 = r1.rec()
-    r3 = d1head * r2
+    r3 = d1.head() * r2
     r4 = r3+BabN(1)
     r5 = r4.rec()
     r6 = r5 * r2
 
-    Result using "The Technique" (Table 3):  28:48
+    Result r6 =  28:48

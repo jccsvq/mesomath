@@ -14,18 +14,14 @@ print ('Example 1: from Table 2. Simple Reciprocal algorithm\n')
 
 
 print('''d1 = BabN('2:5')
-d1tail = BabN(5)
-d1head = BabN(2)
-r1 = d1tail
+r1 = d1.tail()
 r2 = r1.rec()
 r3 = d1 * r2
 r4 = r3.rec()
 r5 = r4 * r2''')
 
 d1 = BabN('2:5')
-d1tail = BabN(5)
-d1head = BabN(2)
-r1 = d1tail
+r1 = d1.tail()
 r2 = r1.rec()
 r3 = d1 * r2
 r4 = r3.rec()
@@ -35,19 +31,19 @@ print('\nResult r5 = ',r5)
 
 print ('\nExample 2: from Table 3. using "The Technique"\n')
 
-print('''r1 = d1tail
+print('''r1 = d1.tail()
 r2 = r1.rec()
-r3 = d1head * r2
+r3 = d1.head() * r2
 r4 = r3+BabN(1)
 r5 = r4.rec()
 r6 = r5 * r2''')
 
 
-r1 = d1tail
+r1 = d1.tail()
 r2 = r1.rec()
-r3 = d1head * r2
+r3 = d1.head() * r2
 r4 = r3+BabN(1)
 r5 = r4.rec()
 r6 = r5 * r2
 
-print('\nResult using "The Technique" (Table 3): ',r6)
+print('\nResult r6 = ',r6)
