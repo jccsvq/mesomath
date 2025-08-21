@@ -59,16 +59,16 @@ But you can also create an executable script for your operating system that invo
 
 then, after making it executable and instaling it somewhere on the PATH: 
 
-$ babcalc
-
+    $ babcalc
+    
     Welcome to Babylonian Calculator
     ...the calculator that every scribe should have!
-Use: bn(number)
-
->>> a = bn(405)
->>> a
-6:45
->>>  (etc.)
+    Use: bn(number)
+    
+    >>> a = bn(405)
+    >>> a
+    6:45
+    >>>  (etc.)
 
 
 ## `hamming.py`
