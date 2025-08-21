@@ -53,9 +53,9 @@ The easiest way is to invoque the interactive python interpreter and import the 
     6:45
     >>>  (etc.)
 
-But you can also create an executable script for your operating system that invokes the interpreter; for example, on Linux, create a file named `babcal` containing:
+But you can also create an executable script for your operating system that invokes the interpreter; for example, on Linux, create a file named `babcal` containing (customize `PYTHONPATH` below to your needs) :
 
-    #!/usr/bin/env -S PYTHONPATH=/home/jesus/Nextcloud/MesoMath/  python3 -i -c 'from mesomath.babn import BabN as bn; print("\nWelcome to Babylonian Calculator\n    ...the calculator that every scribe should have!\nUse: bn(number)\n")'
+    #!/usr/bin/env -S PYTHONPATH={path to directory containing mesomath module}  python3 -i -c 'from mesomath.babn import BabN as bn; print("\nWelcome to Babylonian Calculator\n    ...the calculator that every scribe should have!\nUse: bn(number)\n")'
 
 then, after making it executable and instaling it somewhere on the PATH: 
 
