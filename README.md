@@ -40,6 +40,37 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 *  Operator `/` return the approximate floating division of `a/b` for any pair of numbers.
 *  Operator `//` is for the "Babylonian Division" of `a` by `b`, i.e. `a//b` returns `a` times the reciprocal of `b`, which requires `b` to be regular.
 
+###  Use as an interactive calculator
+
+The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
+
+    $ python3 -i
+    Python 3.11.2 (main, Apr 28 2025, 14:11:48) [GCC 12.2.0] on linux
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> from mesomath.babn import BabN as bn
+    >>> a = bn(405)
+    >>> a
+    6:45
+    >>>  (etc.)
+
+But you can also create an executable script for your operating system that invokes the interpreter; for example, on Linux, create a file named `babcal` containing:
+
+    #!/usr/bin/env -S PYTHONPATH=/home/jesus/Nextcloud/MesoMath/  python3 -i -c 'from mesomath.babn import BabN as bn; print("\nWelcome to Babylonian Calculator\n    ...the calculator that every scribe should have!\nUse: bn(number)\n")'
+
+then, after making it executable and instaling it somewhere on the PATH: 
+
+$ babcalc
+
+    Welcome to Babylonian Calculator
+    ...the calculator that every scribe should have!
+Use: bn(number)
+
+>>> a = bn(405)
+>>> a
+6:45
+>>>  (etc.)
+
+
 ## `hamming.py`
 
 Regular or Hamming numbers are numbers of the form:

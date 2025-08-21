@@ -1,4 +1,5 @@
 from math import log, sqrt
+from os.path import exists
 
 
 class BabN:
@@ -124,22 +125,47 @@ class BabN:
 
     def __add__(self, other):
         '''Overloads `+` operator: returns BabN object with the sum of operands'''
-        return BabN(self.dec + other.dec)
+        if type(other) == BabN :
+            return BabN(self.dec + other.dec)
+        elif type(other) == int :
+            return BabN(self.dec + other)
+
+    def __radd__(self, other):
+        '''Overloads `+` operator: returns BabN object with the sum of operands'''
+        return BabN(self.dec + other)
 
     def __sub__(self, other):
         '''Overloads `-` operator: returns BabN object with the absolute value
         of the operands difference '''
-        return BabN(abs(self.dec - other.dec))
+        if type(other) == BabN :
+            return BabN(abs(self.dec - other.dec))
+        elif type(other) == int :
+            return BabN(abs(self.dec - other))
+
+    def __rsub__(self, other):
+        '''Overloads `-` operator: returns BabN object with the absolute value
+        of the operands difference '''
+        return BabN(abs(self.dec - other))
 
     def __mul__(self, other):
         '''Overloads `*` operator: returns BabN object with the operands product'''
-        return BabN(self.dec * other.dec)
+        if type(other) == BabN :
+            return BabN(self.dec * other.dec)
+        elif type(other) == int :
+            return BabN(self.dec * other)
+
+    def __rmul__(self, other):
+        '''Overloads `-` operator: returns BabN object with the operands product '''
+        return BabN(self.dec * other)
 
     def __truediv__(self, other):
         '''Overloads `/` operator:  Returns BabN object with the floating
         approximate division of operands'''
         a = self.dec
-        b = other.dec
+        if type(other) == BabN :
+            b = other.dec
+        elif type(other) == int :
+            b = other
         q = a / b
         nsd = int(log(q)/log(60))
         inv = pow(60, BabN.rdigits - nsd) * q
@@ -148,10 +174,17 @@ class BabN:
             inv //= 60
         return BabN(inv)
 
+    def __rtruediv__(self, other):
+        '''Overloads `/` operator:  Returns BabN object with the floating
+        approximate division of operands'''
+        return BabN(other).__truediv__(self)
+
     def __floordiv__(self, other):
         '''Overloads `//` operator: Returns BabN object with the result of
         "Babylonian división" of operands, i.e., if b is regular then a//b 
         returns a times the reciprocal of b. Returns None if b is not regular.'''
+        if type(other) == int :
+            other = BabN(other)
         if other.isreg :
             inv = other.rec().dec
             q = self.dec * inv
@@ -161,12 +194,60 @@ class BabN:
         else:
             print('Divisor is nor a regular number!')
 
+    def __rfloordiv__(self, other):
+        '''Overloads `//` operator: Returns BabN object with the result of
+        "Babylonian división" of operands, i.e., if b is regular then a//b 
+        returns a times the reciprocal of b. Returns None if b is not regular.'''
+        return BabN(other).__floordiv__(self)
+
     def __pow__(self, x):
         '''Overloads `**` operator: Returns BabN object with the number raised to the power x where x is a natural integer'''
         try:
             return BabN(self.dec ** x)
         except:
             print('x must be a positive integer')
+
+    def __lt__(self, other):
+        '''Overloads < operator'''
+        if self.dec < other.dec :
+            return True
+        else:
+            return False
+
+    def __le__(self, other):
+        '''Overloads <= operator'''
+        if self.dec <= other.dec :
+            return True
+        else:
+            return False
+
+    def __eq__(self, other):
+        '''Overloads == operator'''
+        if self.dec == other.dec :
+            return True
+        else:
+            return False
+
+    def __ne__(self, other):
+        '''Overloads != operator'''
+        if self.dec != other.dec :
+            return True
+        else:
+            return False
+
+    def __gt__(self, other):
+        '''Overloads > operator'''
+        if self.dec > other.dec :
+            return True
+        else:
+            return False
+
+    def __ge__(self, other):
+        '''Overloads >= operator'''
+        if self.dec >= other.dec :
+            return True
+        else:
+            return False
 
     def rec(self):
         '''Returns BabN object with the reciprocal of a regular number, returns None for
@@ -263,39 +344,60 @@ class BabN:
         
         Returns the closest regular as a BabN object'''
         from sqlite3 import connect
-        conn = connect(BabN.database)
-        cursor = conn.cursor()
-        sql_line = """
-    SELECT regular
-      FROM regulars
-     WHERE len <= ? AND 
-           regular BETWEEN ? AND ?
-     ORDER BY regular
-    ;
-    """
-        cursor.execute(sql_line,(limdigits,minn,maxn))
-        rl = cursor.fetchall()
-        conn.commit()
-        conn.close()
+        
+        if not exists(BabN.database) :
+            print(f'Regular numbers database: {BabN.database} does not exist!')
+            print('Did you create it?')
+            return None
+        else:
+            conn = connect(BabN.database)
+            cursor = conn.cursor()
+            sql_line = """
+        SELECT regular
+          FROM regulars
+         WHERE len <= ? AND 
+               regular BETWEEN ? AND ?
+         ORDER BY regular
+        ;
+        """
+            cursor.execute(sql_line,(limdigits,minn,maxn))
+            rl = cursor.fetchall()
+            conn.commit()
+            conn.close()
 
-        tmplist = [] + self.list
-        if len(tmplist) < limdigits :
-            tmplist = tmplist + [0 for i in range(limdigits-len(tmplist))]
+            tmplist = [] + self.list
+            if len(tmplist) < limdigits :
+                tmplist = tmplist + [0 for i in range(limdigits-len(tmplist))]
 
-        a = BabN(tmplist)
-        mind = a.dist(rl[0][0])
-        minr = rl[0][0]
-        for i in rl :
-            i0 = i[0]
+            a = BabN(tmplist)
+            mind = a.dist(rl[0][0])
+            minr = rl[0][0]
+            for i in rl :
+                i0 = i[0]
+                if prt :
+                    print(f' {a.dist(i[0]):12d} {i[0]}')
+                ndis = a.dist(i[0])
+                if ndis < mind :
+                    mind = ndis
+                    minr = i[0]
             if prt :
-                print(f' {a.dist(i[0]):12d} {i[0]}')
-            ndis = a.dist(i[0])
-            if ndis < mind :
-                mind = ndis
-                minr = i[0]
-        if prt :
-            print(f'min d: {mind}, closest regular: {minr}')
-        return BabN(minr)
+                print(f'Minimal distance: {mind}, closest regular is: {minr}')
+            return BabN(minr)
+
+    def explain(self):
+        '''Explains number; print out basic information about the object.'''
+        print(f'|  Sexagesimal number: {self.list} is the decimal number: {self.dec}.')
+        (i, j, k, x) = self.factors
+        print(f'|    It may be written as 2^{i} * 3^{j} * 5^{k} * {x}),')
+        if self.isreg :
+            print(f'|    so, it is a regular number with reciprocal: {self.rec()}')
+        else:
+            print(f'|    so, it is NOT a regular number and has NO reciprocal.')
+            print(f'|    but an approximate inverse is: {self.inv()}')
+            cr = self.searchreg("01:0","59:59", 5,0)
+            if cr is not None:
+                print(f'|    and a close regular is: {cr}')
+                print(f'|    whose reciprocal is: {cr.rec()}')
 
     def __repr__(self):
         '''Returns string representation of sexagesimal number.'''
