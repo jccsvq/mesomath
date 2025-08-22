@@ -1,5 +1,6 @@
 from math import log, sqrt
 from os.path import exists
+from sqlite3 import connect
 
 
 class BabN:
@@ -43,16 +44,21 @@ class BabN:
 
     def parse(n):
         '''Returns tuple with decimal value and list of sexagesimal digits of n.
-        | n: may be an integer (sign is ignored), a correctly formated string (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23])'''
+        | n: may be 
+            | an integer (sign is ignored), 
+            | a correctly formated string (e.g., 405, "02:45" or "2.45"),
+            | a list (e.g., [1, 12, 23])
+            | a tuple (e.g., (i,j,k,l) such that  2**i * 3**j * 5**k * l is the 
+            |   decimal value of the number'''
         if type(n) == list :
             lt = n
             rs = 0
             for i in lt:
                 rs = rs*60 +i
             return (rs, lt)
-        if type(n) == int :
+        elif type(n) == int :
             return (abs(n), BabN.dec2list(abs(n)))
-        if type(n) == str :
+        elif type(n) == str :
             if n.find(':') > 0 :
                 lt = [int(j) for j in n.split(':')]
             elif n.find('.') > 0 :
@@ -63,12 +69,57 @@ class BabN:
             for i in lt:
                 rs = rs*60 +i
             return (rs, lt)
+        elif type(n) == tuple :
+            i, j, k, l = n
+            rs = 2**i * 3**j * 5**k * l
+            return (rs, BabN.dec2list(rs))
+        else:
+            print('Invalid argument!')
+            return None
+
+    def genDB(dbname):
+        '''Generates sqlite3 database of regular numbers
+        | dbname: database path and name'''
+        sqlhead = '''
+        CREATE TABLE regulars (
+        id INTEGER PRIMARY KEY,
+        regular    TEXT,
+        len     INTEGER
+        );
+        '''
+        from mesomath.hamming import hamming
+
+        sqltail = '''CREATE UNIQUE INDEX regs ON regulars (regular);
+        '''
+
+        rlist = hamming(1, 80000)
+        i = 0
+        BabN.fill = True
+        
+        con = connect(dbname)
+        cur = con.cursor()
+        cur.execute('DROP TABLE IF EXISTS regulars;')
+        cur.execute(sqlhead)
+
+        for x in rlist:
+            if x % 60 != 0:
+                i += 1
+                n = BabN(x)
+                nlen = n.len()
+                cur.execute(f"INSERT INTO regulars VALUES({i},'{n}',{nlen});") 
+        cur.execute(sqltail)
+        con.commit()
+        con.close()
+        print(f'''...(Database: {dbname} created!)...''')
 
     def __init__(self, n):
         '''Class constructor
         | n: The number n can be an integer (sign is ignored) or a properly formatted string representing a sexagesimal number, accepting the separators ":" and "." (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23]).
         '''
-        (self.dec, self.list) = BabN.parse(n)
+        tup = BabN.parse(n)
+        if tup == None:
+            return None
+        (self.dec, self.list) = tup
         if self.dec == 1:
             self.isreg = True
         else:
@@ -209,45 +260,81 @@ class BabN:
 
     def __lt__(self, other):
         '''Overloads < operator'''
-        if self.dec < other.dec :
-            return True
-        else:
-            return False
+        if type(other)  == BabN :
+            if self.dec < other.dec :
+                return True
+            else:
+                return False
+        elif type(other)  == int :
+            if self.dec < other :
+                return True
+            else:
+                return False
 
     def __le__(self, other):
         '''Overloads <= operator'''
-        if self.dec <= other.dec :
-            return True
-        else:
-            return False
+        if type(other)  == BabN :
+            if self.dec <= other.dec :
+                return True
+            else:
+                return False
+        elif type(other)  == int :
+            if self.dec <= other :
+                return True
+            else:
+                return False
 
     def __eq__(self, other):
         '''Overloads == operator'''
-        if self.dec == other.dec :
-            return True
-        else:
-            return False
+        if type(other)  == BabN :
+            if self.dec == other.dec :
+                return True
+            else:
+                return False
+        elif type(other)  == int :
+            if self.dec == other :
+                return True
+            else:
+                return False
 
     def __ne__(self, other):
         '''Overloads != operator'''
-        if self.dec != other.dec :
-            return True
-        else:
-            return False
+        if type(other)  == BabN :
+            if self.dec != other.dec :
+                return True
+            else:
+                return False
+        elif type(other)  == int :
+            if self.dec != other :
+                return True
+            else:
+                return False
 
     def __gt__(self, other):
         '''Overloads > operator'''
-        if self.dec > other.dec :
-            return True
-        else:
-            return False
+        if type(other)  == BabN :
+            if self.dec > other.dec :
+                return True
+            else:
+                return False
+        elif type(other)  == int :
+            if self.dec > other :
+                return True
+            else:
+                return False
 
     def __ge__(self, other):
         '''Overloads >= operator'''
-        if self.dec >= other.dec :
-            return True
-        else:
-            return False
+        if type(other)  == BabN :
+            if self.dec >= other.dec :
+                return True
+            else:
+                return False
+        elif type(other)  == int :
+            if self.dec >= other :
+                return True
+            else:
+                return False
 
     def rec(self):
         '''Returns BabN object with the reciprocal of a regular number, returns None for
@@ -343,46 +430,43 @@ class BabN:
         |           prt: print list of regulars found (default: False)
         
         Returns the closest regular as a BabN object'''
-        from sqlite3 import connect
         
         if not exists(BabN.database) :
-            print(f'Regular numbers database: {BabN.database} does not exist!')
-            print('Did you create it?')
-            return None
-        else:
-            conn = connect(BabN.database)
-            cursor = conn.cursor()
-            sql_line = """
-        SELECT regular
-          FROM regulars
-         WHERE len <= ? AND 
-               regular BETWEEN ? AND ?
-         ORDER BY regular
-        ;
-        """
-            cursor.execute(sql_line,(limdigits,minn,maxn))
-            rl = cursor.fetchall()
-            conn.commit()
-            conn.close()
+            BabN.genDB(BabN.database)
 
-            tmplist = [] + self.list
-            if len(tmplist) < limdigits :
-                tmplist = tmplist + [0 for i in range(limdigits-len(tmplist))]
+        conn = connect(BabN.database)
+        cursor = conn.cursor()
+        sql_line = """
+SELECT regular
+  FROM regulars
+ WHERE len <= ? AND 
+       regular BETWEEN ? AND ?
+ ORDER BY regular
+;
+"""
+        cursor.execute(sql_line,(limdigits,minn,maxn))
+        rl = cursor.fetchall()
+        conn.commit()
+        conn.close()
 
-            a = BabN(tmplist)
-            mind = a.dist(rl[0][0])
-            minr = rl[0][0]
-            for i in rl :
-                i0 = i[0]
-                if prt :
-                    print(f' {a.dist(i[0]):12d} {i[0]}')
-                ndis = a.dist(i[0])
-                if ndis < mind :
-                    mind = ndis
-                    minr = i[0]
+        tmplist = [] + self.list
+        if len(tmplist) < limdigits :
+            tmplist = tmplist + [0 for i in range(limdigits-len(tmplist))]
+
+        a = BabN(tmplist)
+        mind = a.dist(rl[0][0])
+        minr = rl[0][0]
+        for i in rl :
+            i0 = i[0]
             if prt :
-                print(f'Minimal distance: {mind}, closest regular is: {minr}')
-            return BabN(minr)
+                print(f' {a.dist(i[0]):12d} {i[0]}')
+            ndis = a.dist(i[0])
+            if ndis < mind :
+                mind = ndis
+                minr = i[0]
+        if prt :
+            print(f'Minimal distance: {mind}, closest regular is: {minr}')
+        return BabN(minr)
 
     def explain(self):
         '''Explains number; print out basic information about the object.'''

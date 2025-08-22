@@ -87,6 +87,8 @@ This is a rather obsolete module, as its functionality has been moved to the met
 
 ##  `createDB.py`
 
+This script has become more or less obsolete since its functionality was incorporated into the BabN class, which now creates the regular number database if it cannot find it when needed.
+
 Use:
 
     $ python3 createDB.py

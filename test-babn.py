@@ -15,6 +15,7 @@ print('a.explain()')
 a.explain()
 print('b.explain()')
 b.explain()
+
 print('\nBasic operations with them:')
 print('     a + b = ',a+b)
 print('     a - b = ',a-b)
@@ -22,12 +23,24 @@ print('     a * b = ',a*b)
 print('    a**2 = ',a**2)
 print('    a**4 = ',a**4)
 
+print('\nBasic operations with positive integers:')
+print('     111 + b = ',111+b)
+print('     a - b = ',a-b)
+print('     a / 43 = ',a/43)
+print('    3 * BabN(20) = ',3*BabN(20))
+
 print('\nComparisons:')
 print('     a > b = ',a>b)
 print('     a <= b = ',a<=b)
 print('     not a <= b = ',not a<=b)
 print('    a == a = ',a==a)
 print('    a != a - 1 = ',a!=a-1)
+
+print('\nComparisons with positive integers:')
+print('     a > 100 = ',a>100)
+print('     500 <= b = ',500<=b)
+print('     not a <= 47 = ',not a<=47)
+
 
 print(f'\nApproximate inverse of a is: {a.inv()}\n    Testing: a*a.inv() = {a*(a.inv())}')
 print(f'    Now using a.inv(8) we have: {a.inv(8)}\n    Testing: a*a.inv(8) = {a*(a.inv(8))}')
@@ -37,7 +50,7 @@ print('    (b/a).len() = ', (b/a).len())
 print('\nFor regular number b:',b)
 print('    Reciprocal of b: ', b.rec())
 print('    Inverse of b: ', b.inv())
-print('    a//b = ', a//b)
+print('    Babylonian division a//b = ', a//b)
 
 BabN.sep = '.'
 print('\nFrom now on,  BabN.sep is ".", as in MesoCalc \
