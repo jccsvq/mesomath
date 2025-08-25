@@ -27,7 +27,7 @@ and three test/demo scripts:
 
 ## Dependences
 
-`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse` and `sqlite3`. 
+`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path` and `sqlite3`. 
 
 Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm).
 
@@ -52,6 +52,28 @@ The easiest way is to invoque the interactive python interpreter and import the 
     >>> a
     6:45
     >>>  (etc.)
+
+or, with ipython:
+
+    $ ipython3 
+    Python 3.11.2 (main, Apr 28 2025, 14:11:48) [GCC 12.2.0]
+    Type 'copyright', 'credits' or 'license' for more information
+    IPython 8.5.0 -- An enhanced Interactive Python. Type '?' for help.
+
+    In [1]: from mesomath.babn import BabN as bn
+
+    In [2]: a = bn(405)
+
+    In [3]: a
+    Out[3]: 6:45
+
+    In [4]: a.explain()
+    |  Sexagesimal number: [6, 45] is the decimal number: 405.
+    |    It may be written as 2^0 * 3^4 * 5^1 * 1),
+    |    so, it is a regular number with reciprocal: 8:53:20
+
+    In [5]:  (etc.)
+
 
 But you can also create an executable script for your operating system that invokes the interpreter; for example, on Linux, create a file named `babcal` containing (customize `PYTHONPATH` below to your needs) :
 

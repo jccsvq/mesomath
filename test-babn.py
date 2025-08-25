@@ -23,6 +23,15 @@ print('     a * b = ',a*b)
 print('    a**2 = ',a**2)
 print('    a**4 = ',a**4)
 
+print('\nProduct result is not floating by default:')
+print(f'    BabN("12.13.0.0")*BabN("1.23.45.0.0.0") = \
+{BabN("12.13.0.0")*BabN("1.23.45.0.0.0")}')
+print('    but you can change this by issuing: BabN.floatmult = True\n    then:')
+BabN.floatmult = True
+print(f'    BabN("12.13.0.0")*BabN("1.23.45.0.0.0") = \
+{BabN("12.13.0.0")*BabN("1.23.45.0.0.0")}')
+print('    ...(restoring default to BabN.floatmult = False)')
+BabN.floatmult = False
 print('\nBasic operations with positive integers:')
 print('     111 + b = ',111+b)
 print('     a - b = ',a-b)
@@ -61,6 +70,10 @@ print('    BabN(3)*(a+b)**2 // b = ',BabN(3)*(a+b)**2 // b)
 print("    but you can mix operations with int's")
 print('    3*(a+b)**2 // b = ',3*(a+b)**2 // b)
 print(f'    BabN(2).sqrt() = {BabN(2).sqrt()}, BabN(2).sqrt()**2 = {BabN(2).sqrt()**2}')
+print(f'    Let us round it: (BabN(2).sqrt()**2).round(6) = {(BabN(2).sqrt()**2).round(6)}')
+tt = (BabN(2).sqrt()**2).round(6)
+print(f'    or: ((BabN(2).sqrt()**2).round(6)).f() = {tt.f()}')
+print(f'    .f() is a synonym for .float() !')
 print(f'    (BabN(2).sqrt()).dec/60.**5 = {(BabN(2).sqrt()).dec/60.**5}')
 print(f'             Compare to sqrt(2) = {sqrt(2)}')
 
