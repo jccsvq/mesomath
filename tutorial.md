@@ -486,7 +486,7 @@ This is a replacement for .rec() for irregular numbers. Irregular numbers can be
 
 Returns the first n sexagesimal digits of the number with rounding:
 
->>> c
+    >>> c
     8:52:1:10:56:9:27:29:15:44
     >>> c.round(4)
     8:52:1:11
