@@ -417,23 +417,152 @@ Method .cbrt() returns the floating cube root of the numbers.
 
 etc.
 
+## Other BabN class  attribute
+
+`bn.fill` is set to `False` by default. You can change it to modify the aspect of the printed sexagesimal numbers by adding a left 0 to digits from 0 to 9 i.e. to conver them to 00, 01, ..., 09:
+
+    >>> z = bn('1.2.0.14.5.4.3')
+    >>> z
+    1:2:0:14:5:4:3
+    >>> bn.fill = True
+    >>> z
+    01:02:00:14:05:04:03
+    >>> bn.fill = False
+    >>> z
+    1:2:0:14:5:4:3
+    >>> 
+
+
 ## Other BabN class methods
 
 Still to be documented. In the meantime, you can consult Appendix B for help on the `BabB` class (called **`bn`** in this tutorial because we used: `from mesomath.babn import BabN as` **`bn`**).
 
-### .inv()
-
 ### .rec()
+
+This method returns the reciprocal of regular numbers, `None` for non-regular numbers:
+
+    >>> a=bn(400)
+    >>> a
+    6:40
+    >>> a.rec()
+    9
+    >>> a * a.rec()
+    1:0:0
+    >>> b=bn(406)
+    >>> b
+    6:46
+    >>> b.rec()
+    Not regular!
+    >>> x = b.rec()
+    Not regular!
+    >>> x
+    >>> type(x)
+    <class 'NoneType'>
+
+
+### .inv(n)
+
+This is a replacement for .rec() for irregular numbers. Irregular numbers can be said to have infinite-digit reciprocals; this method calculates the first `n` of them.
+
+    >>> b=bn(406)
+    >>> b
+    6:46
+    >>> b.isreg
+    False
+    >>> c=b.inv()
+    >>> c
+    8:52:1:11
+    >>> b * c
+    1:0:0:0:0:26
+    >>> c=b.inv(10)
+    >>> c
+    8:52:1:10:56:9:27:29:15:44
+    >>> b * c
+    1:0:0:0:0:0:0:0:0:0:27:44
+    >>> 
+
 
 ### .round(n)
 
+Returns the first n sexagesimal digits of the number with rounding:
+
+>>> c
+    8:52:1:10:56:9:27:29:15:44
+    >>> c.round(4)
+    8:52:1:11
+    >>> 
+
+Useful when working with approximate floating numbers.
+
+
 ### .head(n)
+
+Returns the first n sexagesimal digits of the number without rounding:
+
+    8:52:1:10:56:9:27:29:15:44
+    >>> c.round(4)
+    8:52:1:11
+    >>> c.head()  # Without argument, returns the first digit only.
+    8
+    >>> c.head(3)
+    8:52:1
+    >>> c.head(7)
+    8:52:1:10:56:9:27
+    >>> 
 
 ### .tail(n)
 
+Returns the last n sexagesimal digits of the number:
+
+    >>> c
+    8:52:1:10:56:9:27:29:15:44
+    >>> c.tail()   # Without argument, returns the last digit only.
+    44
+    >>> c.tail(2)
+    15:44
+    >>> c.tail(6)
+    56:9:27:29:15:44
+    >>>
+
 ### .dist(n)
 
+This was not intended for interactive use.
+
 ### .searchreg(minn, maxn, limdigits=6, prt=False)
+
+Searches the `bn.database` database for the closest regular number to the object's.
+minn and maxn: must be sexagesimal strings using ":" separator. limdigits max value is 20.
+    >>> c
+    8:52:1:10:56:9:27:29:15:44
+    >>> c.searchreg('01', '59')
+    8:51:26:27:36
+    >>> c.searchreg('01', '59', 7)
+    8:51:26:27:36
+    >>> c.searchreg('01', '59', 9)
+    8:51:26:27:36
+    >>> c.searchreg('01', '59', 19)
+    8:52:2:27:52:35:29:35:23:26:15
+    >>> bn(7).searchreg('06:40', '07:40', 4, True)
+            72000 06:40
+            54000 06:45
+            37440 06:49:36
+            35775 06:50:03:45
+            19008 06:54:43:12
+            12000 06:56:40
+             6750 07:01:52:30
+            24000 07:06:40
+            43200 07:12
+            50500 07:14:01:40
+            60864 07:16:54:24
+            62640 07:17:24
+            82323 07:22:52:03
+            88000 07:24:26:40
+           108000 07:30
+           126400 07:35:06:40
+           128250 07:35:37:30
+    Minimal distance: 6750, closest regular is: 07:01:52:30
+    7:1:52:30
+    >>>
 
 # Appendices
 
