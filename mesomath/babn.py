@@ -96,7 +96,7 @@ class BabN:
         sqltail = '''CREATE UNIQUE INDEX regs ON regulars (regular);
         '''
 
-        rlist = hamming(1, 80000)
+        rlist = hamming(1, 79405)
         i = 0
         BabN.fill = True
         

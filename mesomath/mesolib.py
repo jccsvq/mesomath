@@ -323,7 +323,7 @@ def sexcube(x, prt=False):
 
 if __name__ == '__main__':
 
-#    gencsvtable(80000)
+#    gencsvtable(79405)
     b = searchreg('regular.db3','06:50','07:10',6,True)
     for i in b :
         print(i[0])

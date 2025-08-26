@@ -25,7 +25,9 @@ and three test/demo scripts:
 *  `test-hamming.py`
 *  `test-mesolib.py`
 
-## Dependences
+Also, a tutorial is included in file [tutorial.md](tutorial.md)
+
+## Dependencies
 
 `mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path` and `sqlite3`. 
 

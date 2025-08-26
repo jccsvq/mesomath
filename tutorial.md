@@ -1,5 +1,5 @@
-# MesoMath as a command line Mesopotamian/Babylonian calculator 
-
+# MesoMath as a command line Mesopotamian calculator 
+![mesomath](mesomath.png)
 # Tutorial
 Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
 
@@ -161,6 +161,21 @@ We can obtain all this information together using:
     |    It may be written as 2^0 * 3^4 * 5^1 * 1),
     |    so, it is a regular number with reciprocal: 8:53:20
     >>>
+
+while for a non-regular number:
+
+    >>> b=bn(7)
+    >>> b.isreg
+    False
+    >>> b.explain()
+    |  Sexagesimal number: [7] is the decimal number:   7.
+    |    It may be written as 2^0 * 3^0 * 5^0 * 7),
+    |    so, it is NOT a regular number and has NO  reciprocal.
+    |    but an approximate inverse is: 8:34:17:9
+    |    and a close regular is: 6:59:54:14:24
+    |    whose reciprocal is: 8:34:24:11:51:6:40
+    >>> 
+
 
 >Any natural number n can be writen as n = 2^i × 3^j × 5^k × l where  i, j, k, l  ≥ 0, i, j, k are the powers of 2, 3 and 5, and l is a "remainder" that should not be divisible by 2, 3 or 5. The tuple  (i,j,k,l) is what `a.factors` returned above.
 
@@ -328,6 +343,7 @@ now, as a check:
     >>> b*q
     14:15:16:0:0:0:2:58
     >>>
+a value that, in the world of floating numbers, is very similar to `a`.
 
 We can change the number of digits in the result (approximately, sorry):
 
@@ -337,7 +353,6 @@ We can change the number of digits in the result (approximately, sorry):
     >>> 
 
 
-a value that, in the world of floating numbers, is very similar to `a`.
 
     >>> a//b
     Divisor is not a regular number!
@@ -405,6 +420,9 @@ Compare the following result:
 
 to the one appearing in tablet [YBC 7289](https://en.wikipedia.org/wiki/YBC_7289)
 
+<a target = "_blank" title="Urcia, A., Yale Peabody Museum of Natural History,  http://peabody.yale.edu, http://hdl.handle.net/10079/8931zqj
+derivative work, user:Theodor Langhorne Franklin, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:YBC-7289-OBV-labeled.jpg"><img width="256" alt="Labeled photograph of YBC 7289 identifying inscribed numbers" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/YBC-7289-OBV-labeled.jpg/256px-YBC-7289-OBV-labeled.jpg?20190204183004"></a>
+
 ### Cube root
 
 Method .cbrt() returns the floating cube root of the numbers.
@@ -416,6 +434,41 @@ Method .cbrt() returns the floating cube root of the numbers.
     >>> 
 
 etc.
+
+## Complex expressions
+
+The Python engine is behind the scenes, which means we can combine elementary operations to build complex expressions:
+
+    >>> a = bn('16.22')
+    >>> b = bn('44.16')
+    >>> c = bn('6.45')
+    >>> d = ((a+b)*(a-b))//c**2
+    >>> d
+    37:7:42:48:53:20
+    >>> 
+
+use lists:
+
+    >>> ll=[a,b,c,d]
+    >>> ll
+    [16:22, 44:16, 6:45, 37:7:42:48:53:20]
+    >>> min(ll)
+    6:45
+    >>> max(ll)
+    37:7:42:48:53:20
+    >>> 
+
+etc.
+
+## Logical operators
+
+Logical operators are available and can be combined with integers. This can be useful in programming.
+
+    >>> a <= b and c.isreg
+    True
+    >>> a < 300
+    False
+
 
 ## Other BabN class  attribute
 
@@ -509,6 +562,8 @@ Returns the first n sexagesimal digits of the number without rounding:
     >>> c.head(7)
     8:52:1:10:56:9:27
     >>> 
+
+You will find this method and the next one used in the `example-melville.py` file in your installation directory.
 
 ### .tail(n)
 

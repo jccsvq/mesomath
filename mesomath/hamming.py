@@ -122,4 +122,4 @@ if __name__ == "__main__" :
     COMMIT;
     '''
 
-        genSQL(80000)
+        genSQL(79405)
