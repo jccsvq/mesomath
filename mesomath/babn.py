@@ -1,3 +1,7 @@
+'''This module implements class Babn for sexagesimal representation of the natural numbers 
+    and their basic arithmetic operations, especially in their "floating" version, 
+    as performed by Babylonian scribes. Hence the name.'''
+
 from math import log, sqrt
 from os.path import exists
 from sqlite3 import connect
@@ -9,6 +13,7 @@ class BabN:
     as performed by Babylonian scribes. Hence the name.
     
     Class attributes:
+        |     title: Returns type of object
         |       sep: separator for string representation (default: ":")
         |      fill: if True writes: "01.33.07" instead of "1.33.7" (default: False)
         |   rdigits: approximate number of sexagesimal digits for some results (default: 6:)
@@ -26,6 +31,7 @@ class BabN:
         
     jccsvq fecit, 2005. Public domain.'''
 
+    title = 'Sexagesimal number'
     sep = ":"
     fill = False
     rdigits = 6
@@ -290,7 +296,7 @@ class BabN:
                 q //= 60
             return BabN(q)
         else:
-            print('Divisor is not a regular number!')
+            print('Divisor is not a regular number (igi nu)!')
 
     def __rfloordiv__(self, other):
         '''Overloads `//` operator: Returns BabN object with the result of
@@ -425,7 +431,7 @@ class BabN:
                 k0 += t
             return BabN(pow(2,i0)*pow(3,j0)*pow(5,k0))
         else:
-            print('Not regular!')
+            print('Not regular, (igi nu)!')
             return None
 
     def sqrt(self):

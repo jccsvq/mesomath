@@ -1,15 +1,17 @@
 ![mesomath](mesomath.png)
 ## Intro
 
-This package is intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times.
+This package is intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. It also allows to deal with the basic aspects of metrology of the time.
 
-Inpired by the arithmetic part of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to Python programming and to the command line as a calculator.
+Inpired by the arithmetic ans metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to Python programming and to the command line as a calculator.
 
-`mesomath` contains three modules:
+`mesomath` module contains four submodules:
 
 *  `babn.py`
 *  `hamming.py`
 *  `mesolib.py`
+*  `npvs`
+
 
 one utility script:
 
@@ -19,19 +21,20 @@ one example script:
 
 *  `example-melville.py`
 
-and three test/demo scripts:
+and four test/demo scripts:
 
 *  `test-babn.py`
 *  `test-hamming.py`
 *  `test-mesolib.py`
+*  `test-npvs.py`
 
-Also, a tutorial is included in file [tutorial.md](tutorial.md)
+Also, a tutorial is included in files [tutorial.md](tutorial.md) and [tutorial.html](tutorial.html)
 
 ## Dependencies
 
 `mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path` and `sqlite3`. 
 
-Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm).
+Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm) in x86_64 and aarch64 (raspberrypi 5).
 
 ##   `babn.py`
 
@@ -43,6 +46,8 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 *  Operator `//` is for the "Babylonian Division" of `a` by `b`, i.e. `a//b` returns `a` times the reciprocal of `b`, which requires `b` to be regular.
 
 ###  Use as an interactive calculator
+
+Consult the [tutorial.html](tutorial.html)!
 
 The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
 
@@ -108,6 +113,20 @@ This module is used to obtain lists of such numbers and ultimately build a SQLit
 ## `mesolib.py`
 
 This is a rather obsolete module, as its functionality has been moved to the methods of the `BabN` class. It can be safely ignored and will likely be removed in the future. In any case, please refer to the `test-mesolib.py` script.
+
+## `npvs.py`
+
+This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the MesoM class which adapts it to Mesopotamian metrological use. The MesoM class, in turn, is inherited by:
+
+*  class `Blen`: Babylonian length system (susi kus ninda us danna)
+*  class `Bsur`: Babylonian surface system (se gin sar gan)
+*  class `Bvol`: Babylonian volume system  (se gin sar gan)
+*  class `Bcap`: Babylonian capacity system  (se gin sila ban bariga gur)
+*  class `Bwei`: Babylonian weight system (se gin mana gu)
+*  class `BsyG`: Babylonian System G (iku ese bur bur_u sar sar_u sar_gal)
+*  class `BsyS`: Babylonian System S (dis u ges gesu sar sar_u sar_gal)
+
+Please, read the [tutorial](tutorial.html) to see how to use all these classes.
 
 ##  `createDB.py`
 
