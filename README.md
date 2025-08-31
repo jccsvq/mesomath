@@ -28,7 +28,7 @@ and four test/demo scripts:
 *  `test-mesolib.py`
 *  `test-npvs.py`
 
-Also, a tutorial is included in files [tutorial.md](tutorial.md) and [tutorial.html](tutorial.html)
+Also, a tutorial is included in files [tutorial.md](tutorial.md) and [tutorial.html](https://jccsvq.github.io/mesomath/tutorial.html)
 
 ## Dependencies
 
@@ -47,7 +47,7 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 
 ###  Use as an interactive calculator
 
-Consult the [tutorial.html](tutorial.html)!
+Consult the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html)!
 
 The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
 
@@ -126,7 +126,7 @@ This module defines the generic class `Npvs` for handling measurements in variou
 *  class `BsyG`: Babylonian System G (iku ese bur bur_u sar sar_u sar_gal)
 *  class `BsyS`: Babylonian System S (dis u ges gesu sar sar_u sar_gal)
 
-Please, read the [tutorial](tutorial.html) to see how to use all these classes.
+Please, read the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html) to see how to use all these classes.
 
 ##  `createDB.py`
 
