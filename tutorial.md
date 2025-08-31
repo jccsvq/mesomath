@@ -7,9 +7,9 @@ Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
 
 # Introduction
 
-MesoMath is a Python3 package intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times.
+MesoMath is a Python3 package intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. It also allows to deal with the basic aspects of metrology of the time.
 
-Inpired by the arithmetic part of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python` programming and to the command line as an efficient and versalite calculator.
+Inpired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python` programming and to the command line as an efficient and versalite calculator.
 
 ## Getting it
 
