@@ -159,11 +159,8 @@ In fact, during the development of this package an executable script like the fo
     message='''\nWelcome to Babylonian Calculator
         ...the calculator that every scribe should have!
 
-    Use: bn(number), metrological classes: bl, bs, bv, bc, bw bG and bS loaded.
-
-   '''
-
-
+    Use: bn(number), metrological classes: bl, bs, bv, bc, bw bG and bS loaded.'''
+    
     print(message)
 
 
