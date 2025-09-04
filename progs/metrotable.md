@@ -1,6 +1,8 @@
 # `metrotable` tutorial
 
+Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
 
+>(*) At gmail.com
 
 ## Introduction
 
