@@ -21,14 +21,24 @@ one example script:
 
 *  `example-melville.py`
 
-and four test/demo scripts:
+four test/demo scripts:
 
 *  `test-babn.py`
 *  `test-hamming.py`
 *  `test-mesolib.py`
 *  `test-npvs.py`
 
-Also, a tutorial is included in files [tutorial.md](tutorial.md) and [tutorial.html](https://jccsvq.github.io/mesomath/tutorial.html)
+and an application in the `progs` subdirectory:
+
+*  `metrotable`
+
+to print segments of metrological tables.
+
+## Tutorials
+
+A tutorial to the use of this package is included in files [tutorial.md](tutorial.md) and [tutorial.html](https://jccsvq.github.io/mesomath/tutorial.html). 
+
+`metrotable` has its own tutorial in files [progs/metrotable.md](progs/metrotable.md) and [metrotable.html](https://jccsvq.github.io/mesomath/progs/metrotable.html).
 
 ## Dependencies
 

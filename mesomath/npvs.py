@@ -159,6 +159,7 @@ class MesoM(Npvs):
     siu = 'counts'  # S.I. unit name
     prtsex = False  # Printing meassurements in sexagesimal
 
+
     def sex(self, r=0):
         '''Return sexagesimal floating value of object
         |  r: index of reference unit in uname'''
@@ -175,6 +176,7 @@ class MesoM(Npvs):
         print(f"Meassurement in terms of the smallest unit: {self.dec} ({self.uname[0]})")
         print(f"Sexagesimal floating value of the above: {self.sex(False)}")
         print(f"Approximate SI value: {self.SI()}")
+
 
     def __repr__(self):
         '''Returns string representation of object.'''
@@ -268,7 +270,7 @@ class Bwei(MesoM):  # Weight
 class BsyG(MesoM):  # Babylonian System G numeration
     '''This class implement Non-Place-Value System arithmetic
         for Babylonian System-G numeration'''
-    title = 'Babylonian System G'
+    title = 'Babylonian System G to count objects'
     uname = 'iku ese bur buru sar saru sargal'.split()
     ufact = [6, 3, 10, 6, 10, 6]
     cfact = [1, 6, 18, 180, 1080, 10800, 64800]
@@ -278,7 +280,7 @@ class BsyG(MesoM):  # Babylonian System G numeration
 class BsyS(MesoM):  # Babylonian System S numeration
     '''This class implement Non-Place-Value System arithmetic
         for Babylonian System-S numeration'''
-    title = 'Babylonian System S'
+    title = 'Babylonian System S to count objects'
     uname = 'dis u ges gesu sar saru sargal'.split()
     ufact = [10, 6, 10, 6, 10, 6]
     cfact = [1, 10, 60, 600, 3600, 36000, 216000]

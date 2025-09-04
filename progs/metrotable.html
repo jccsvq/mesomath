@@ -1,0 +1,456 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style type="text/css">
+body {
+  margin-top: 2em;
+  margin: 2em;
+  background: #00cccc;
+  color: #000;
+  width: 800px;
+  font-family: arial, sans-serif;
+  font-size: 110%
+}
+  pre {
+  font-size: 16px;
+  color: Navy;
+  background: #fff8e7;
+  border: 2px solid grey;
+  width: 750px;
+  border-left: 12px solid green;
+  border-radius: 5px;
+  padding: 14px;
+  max-height: 800px;
+  overflow-x: auto;
+}
+
+</style>
+<meta name="generator" content="ReText 8.0.0">
+<title>metrotable tutorial</title>
+<style type="text/css">
+</style>
+</head>
+<body>
+<h1><code>metrolist</code> tutorial</h1>
+<h2>Introduction</h2>
+<p>Python3 command line application based on <a href="https://github.com/jccsvq/mesomath">MesoMath</a> for printing fragments of <a href="https://cdli.earth/articles/cdlj/2009-1.pdf"><strong>metrological tables</strong></a> in the style of those used by ancient Babylonian scribes and their apprentices.</p>
+<p>The metrological tables showed the correspondence between the additive values ​​of measurements of length, surface, weight, etc. and the abstract multiplicative sexagesimal numbers required by multiplicative arithmetic (calculations of areas, volumes, etc.). A modern analogy would be the following: we have a square with a side measuring one yard, two feet, and five inches (the additive measurement), and we want to calculate its area. We would need to convert the measurement to a homogeneous unit, for example, inches, with 65 inches. With this value, we can calculate the area of ​​the square as 65^2 = 4225 square inches. This value of 65 would be our abstract multiplicative number, and a modern metrological table would show us an entry for the association:</p>
+<pre><code>1 yard 2 feet 5 inches -&gt; 65
+</code></pre>
+<h2>Installation</h2>
+<p>You need to edit the <code>metrotable</code> script and change line 7 so that instead of <code>/home/jesus/Nextcloud/MesoMath</code> the <code>sys.path</code> argument points to the absolute path of <u>your installation directory</u>.</p>
+<pre><code>#!/usr/bin/env -S python3  
+'''Printing of metrological tables'''
+
+# Change the `sys.path.append` argument to the absolute path of the directory 
+# containing the `mesomath` module ( your installation directory).
+import sys, argparse
+sys.path.append("/home/jesus/Nextcloud/MesoMath")  # &lt;- change this
+</code></pre>
+<p>After this, you can invoke the script as:</p>
+<pre><code>$ python3 metrotable
+</code></pre>
+<p>If nothing happens and you're returned to the prompt, all is well. You can now try</p>
+<pre><code>$ python3 metrotable -h
+</code></pre>
+<p>or, if you prefer long options:</p>
+<pre><code>$ python3 metrotable --help
+</code></pre>
+<p>to get a long list of short and long options:</p>
+<pre><code>usage: metrotable [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
+                  [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
+                  [-v] [-r]
+
+Prints an excerpt of a metrological table
+
+options:
+  -h, --help            show this help message and exit
+  -t {L,Lh,S,V,C,W,SysG,SysS}, --type {L,Lh,S,V,C,W,SysG,SysS}
+                        Type of metrological table to print (Try: -r for a
+                        remainder) (default: None)
+  -m MIN, --min MIN     Minimun value of variable to print, ex: "10 susi"
+                        (default: 1)
+  -M MAX, --max MAX     Maximun value of variable to print, ex:"2 kus", or a
+                        comma separated list "2 kus,5 kus" (default: 10)
+  -i INCREMENT, --increment INCREMENT
+                        Increment of the variable between table lines, ex: "5
+                        susi" or a comma separated list matching MAX in length
+                        "5 susi,1 kus" (default: 1)
+  -w WIDTH, --width WIDTH
+                        Sets the reserved width for printing measurement
+                        values ​​to WIDTH (default: 20)
+  -f FORCE, --force FORCE
+                        Force base unit to number FORCE (default: -1)
+  -x {1,2,3,4}, --example {1,2,3,4}
+                        Runs an example test (default: None)
+  -n, --noheader        Suppress header printing (for chaining results)
+                        (default: False)
+  -v, --verbose         More information in the header and reciprocals if the
+                        abstract numbers are regular (default: False)
+  -r, --remainder       Lists the available measurement systems and their
+                        units, then exits (default: False)
+
+jccsvq fecit, 2025. Public domain.
+</code></pre>
+<p>On Unix-like systems, you can make the script executable:</p>
+<pre><code>$ chmod +x metrotable
+</code></pre>
+<p>and copy/move it to a directory in your system's path. Then, simply:</p>
+<pre><code>$ metrotable -h
+</code></pre>
+<p>to run it.</p>
+<h2>How to use</h2>
+<h3>First steps</h3>
+<p>Start by:</p>
+<pre><code>$ metrotable -r
+</code></pre>
+<p>to take a look at the metrological systems covered by this application:</p>
+<pre><code>Remainder of systems and units
+=======================================================
+System L:  Babylonian length meassurements
+    Units:  susi 30 kus 12 ninda 60 us 30 danna
+    Base unit:  ninda
+System Lh:  Babylonian length meassurements (Heights)
+    Units:  susi 30 kus 12 ninda 60 us 30 danna
+    Base unit:  kus
+System S:  Babylonian surface meassurements
+    Units:  se 180 gin 60 sar 100 gan
+    Base unit:  gin
+System V:  Babylonian volume meassurements
+    Units:  se 180 gin 60 sar 100 gan
+    Base unit:  gin
+System C:  Babylonian capacity meassurements
+    Units:  se 180 gin 60 sila 10 ban 6 bariga 5 gur
+    Base unit:  gin
+System W:  Babylonian weight meassurements
+    Units:  se 180 gin 60 mana 60 gu
+    Base unit:  gin
+NPVN System S:  Babylonian System S to count objects
+    Units:  dis 10 u 6 ges 10 gesu 6 sar 10 saru 6 sargal
+    Base unit:  dis
+NPVN System G:  Babylonian System G to count objects
+    Units:  iku 6 ese 3 bur 10 buru 6 sar 10 saru 6 sargal
+    Base unit:  iku
+</code></pre>
+<p>Most interestingly, here are some examples to get an idea of ​​what the program offers:</p>
+<pre><code>$ metrotable -x 1
+
+Example 1:
+        Table: Babylonian length meassurements
+        ubase: 2 (ninda)
+        From: 10 susi
+        To: 2 kus
+        Step by: 5 susi
+Output follows:
+
+Metrological list for Babylonian length meassurements
+Base unit: ninda
+
+Meassurement              Abstract
+=========================================
+10 susi               -&gt;  1:40
+15 susi               -&gt;  2:30
+20 susi               -&gt;  3:20
+25 susi               -&gt;  4:10
+1 kus                 -&gt;  5
+1 kus 5 susi          -&gt;  5:50
+1 kus 10 susi         -&gt;  6:40
+1 kus 15 susi         -&gt;  7:30
+1 kus 20 susi         -&gt;  8:20
+1 kus 25 susi         -&gt;  9:10
+2 kus                 -&gt;  10
+</code></pre>
+<p>or with the  <code>-v</code> or <code>--verbose</code> options to obtain a header with more information and a new column with the reciprocals of the abstract numbers if they are regular or "igi nu" ("not regular" in Sumerian) if thei are not:</p>
+<pre><code>$ metrotable -x 1 -v
+
+Example 1:
+        Table: Babylonian length meassurements
+        ubase: 2 (ninda)
+        From: 10 susi
+        To: 2 kus
+        Step by: 5 susi
+Output follows:
+
+Metrological list for Babylonian length meassurements
+  units:  susi 30 kus 12 ninda 60 us 30 danna
+  cfact:  1 30 360 21600 648000
+Base unit: ninda
+
+Meassurement              Abstract        Reciprocal
+====================================================
+10 susi               -&gt;  1:40            36
+15 susi               -&gt;  2:30            24
+20 susi               -&gt;  3:20            18
+25 susi               -&gt;  4:10            14:24
+1 kus                 -&gt;  5               12
+1 kus 5 susi          -&gt;  5:50            --igi nu--
+1 kus 10 susi         -&gt;  6:40            9
+1 kus 15 susi         -&gt;  7:30            8
+1 kus 20 susi         -&gt;  8:20            7:12
+1 kus 25 susi         -&gt;  9:10            --igi nu--
+2 kus                 -&gt;  10              6
+</code></pre>
+<p>and, in the same way:</p>
+<pre><code>$ metrotable -x 2 -v
+
+Example 2:
+        Table: Babylonian surface meassurements
+        ubase: 2 (sar)
+        From: 10 gin
+        To: 2 sar
+        Step by: 10 gin
+Output follows:
+
+Metrological list for Babylonian length meassurements
+  units:  susi 30 kus 12 ninda 60 us 30 danna
+  cfact:  1 30 360 21600 648000
+Base unit: ninda
+
+Meassurement              Abstract        Reciprocal
+====================================================
+10 gin                -&gt;  10              6
+20 gin                -&gt;  20              3
+30 gin                -&gt;  30              2
+40 gin                -&gt;  40              1:30
+50 gin                -&gt;  50              1:12
+1 sar                 -&gt;  1               1
+1 sar 10 gin          -&gt;  1:10            --igi nu--
+1 sar 20 gin          -&gt;  1:20            45
+1 sar 30 gin          -&gt;  1:30            40
+1 sar 40 gin          -&gt;  1:40            36
+1 sar 50 gin          -&gt;  1:50            --igi nu--
+2 sar                 -&gt;  2               30
+
+$ metrotable -x 3 -v
+
+Example 3:
+        Table: Babylonian capacity meassurements
+        ubase: 2 (sila)
+        From: 1 gur
+        To: 3 gur
+        Step by: 3 ban
+Output follows:
+
+Metrological list for Babylonian length meassurements
+  units:  susi 30 kus 12 ninda 60 us 30 danna
+  cfact:  1 30 360 21600 648000
+Base unit: ninda
+
+Meassurement              Abstract        Reciprocal
+====================================================
+1 gur                 -&gt;  5               12
+1 gur 3 ban           -&gt;  5:30            --igi nu--
+1 gur 1 bariga        -&gt;  6               10
+1 gur 1 bariga 3 ban  -&gt;  6:30            --igi nu--
+1 gur 2 bariga        -&gt;  7               --igi nu--
+1 gur 2 bariga 3 ban  -&gt;  7:30            8
+1 gur 3 bariga        -&gt;  8               7:30
+1 gur 3 bariga 3 ban  -&gt;  8:30            --igi nu--
+1 gur 4 bariga        -&gt;  9               6:40
+1 gur 4 bariga 3 ban  -&gt;  9:30            --igi nu--
+2 gur                 -&gt;  10              6
+2 gur 3 ban           -&gt;  10:30           --igi nu--
+2 gur 1 bariga        -&gt;  11              --igi nu--
+2 gur 1 bariga 3 ban  -&gt;  11:30           --igi nu--
+2 gur 2 bariga        -&gt;  12              5
+2 gur 2 bariga 3 ban  -&gt;  12:30           4:48
+2 gur 3 bariga        -&gt;  13              --igi nu--
+2 gur 3 bariga 3 ban  -&gt;  13:30           4:26:40
+2 gur 4 bariga        -&gt;  14              --igi nu--
+2 gur 4 bariga 3 ban  -&gt;  14:30           --igi nu--
+3 gur                 -&gt;  15              4
+
+$ metrotable -x 4 -v
+
+Example 4:
+        Table: Babylonian length meassurements
+        ubase: 2 (ninda)
+        From: 10 susi
+        To: 2 kus,12 kus,5 ninda
+        Step by: 5 susi,1 kus,6 kus
+Output follows:
+
+Metrological list for Babylonian length meassurements
+  units:  susi 30 kus 12 ninda 60 us 30 danna
+  cfact:  1 30 360 21600 648000
+Base unit: ninda
+
+Meassurement              Abstract        Reciprocal
+====================================================
+10 susi               -&gt;  1:40            36
+15 susi               -&gt;  2:30            24
+20 susi               -&gt;  3:20            18
+25 susi               -&gt;  4:10            14:24
+1 kus                 -&gt;  5               12
+1 kus 5 susi          -&gt;  5:50            --igi nu--
+1 kus 10 susi         -&gt;  6:40            9
+1 kus 15 susi         -&gt;  7:30            8
+1 kus 20 susi         -&gt;  8:20            7:12
+1 kus 25 susi         -&gt;  9:10            --igi nu--
+2 kus                 -&gt;  10              6
+---------------------------------------------------
+2 kus                 -&gt;  10              6
+3 kus                 -&gt;  15              4
+4 kus                 -&gt;  20              3
+5 kus                 -&gt;  25              2:24
+6 kus                 -&gt;  30              2
+7 kus                 -&gt;  35              --igi nu--
+8 kus                 -&gt;  40              1:30
+9 kus                 -&gt;  45              1:20
+10 kus                -&gt;  50              1:12
+11 kus                -&gt;  55              --igi nu--
+1 ninda               -&gt;  1               1
+---------------------------------------------------
+1 ninda               -&gt;  1               1
+1 ninda 6 kus         -&gt;  1:30            40
+2 ninda               -&gt;  2               30
+2 ninda 6 kus         -&gt;  2:30            24
+3 ninda               -&gt;  3               20
+3 ninda 6 kus         -&gt;  3:30            --igi nu--
+4 ninda               -&gt;  4               15
+4 ninda 6 kus         -&gt;  4:30            13:20
+5 ninda               -&gt;  5               12
+</code></pre>
+<h3>Defining a metrological table</h3>
+<p>The program needs four pieces of data to calculate a segment of a metrological table:</p>
+<ul>
+<li>Metrological table type (options <code>-t</code> or <code>--type</code>)<ul>
+<li>L:   length meassurements</li>
+<li>Lh:   length meassurements (Heights)</li>
+<li>S:   surface meassurements</li>
+<li>V:   volume meassurements</li>
+<li>C:   capacity meassurements</li>
+<li>W:   weight meassurements</li>
+<li>SysS:   System S to count objects</li>
+<li>SysG:   System G to count objects</li>
+</ul>
+</li>
+<li>Starting meassurement value (options <code>-t</code> or <code>--min</code>)</li>
+<li>Final meassurement value (options <code>-M</code> or <code>--max</code>)</li>
+<li>Meassurement increment between table rows (options <code>-i</code> or <code>--inc</code>)</li>
+</ul>
+<p>For example:</p>
+<pre><code>$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi'
+</code></pre>
+<p>will reproduce example 1 (add <code>-v</code> at will).</p>
+<pre><code>Metrological list for Babylonian length meassurements
+Base unit: ninda
+
+Meassurement              Abstract
+=========================================
+10 susi               -&gt;  1:40
+15 susi               -&gt;  2:30
+20 susi               -&gt;  3:20
+25 susi               -&gt;  4:10
+1 kus                 -&gt;  5
+1 kus 5 susi          -&gt;  5:50
+1 kus 10 susi         -&gt;  6:40
+1 kus 15 susi         -&gt;  7:30
+1 kus 20 susi         -&gt;  8:20
+1 kus 25 susi         -&gt;  9:10
+2 kus                 -&gt;  10
+</code></pre>
+<h3>Using successive increments</h3>
+<p>We can subdivide the table into different sections with different increments by entering MAX and INC as comma-separated lists. For instance, by using:</p>
+<pre><code>MAX = '2 kus,12 kus,5 ninda'
+INC = '5 susi,1 kus,6 kus'
+</code></pre>
+<p>in</p>
+<pre><code>$ metrotable -t L -m '10 susi' -M '2 kus,12 kus,5 ninda' -i '5 susi,1 kus,6 kus' -v
+</code></pre>
+<p>we obtain the table from 10 susi to 2 kus with increment of 5 susi, from 2 ku to  12 kus (1 ninda) with increment by 1 kus and from this point to 5 ninda by 6 kus:</p>
+<pre><code>Metrological list for Babylonian length meassurements
+  units:  susi 30 kus 12 ninda 60 us 30 danna
+  cfact:  1 30 360 21600 648000
+Base unit: ninda
+
+Meassurement              Abstract        Reciprocal
+====================================================
+10 susi               -&gt;  1:40            36
+15 susi               -&gt;  2:30            24
+20 susi               -&gt;  3:20            18
+25 susi               -&gt;  4:10            14:24
+1 kus                 -&gt;  5               12
+1 kus 5 susi          -&gt;  5:50            --igi nu--
+1 kus 10 susi         -&gt;  6:40            9
+1 kus 15 susi         -&gt;  7:30            8
+1 kus 20 susi         -&gt;  8:20            7:12
+1 kus 25 susi         -&gt;  9:10            --igi nu--
+2 kus                 -&gt;  10              6
+---------------------------------------------------
+2 kus                 -&gt;  10              6
+3 kus                 -&gt;  15              4
+4 kus                 -&gt;  20              3
+5 kus                 -&gt;  25              2:24
+6 kus                 -&gt;  30              2
+7 kus                 -&gt;  35              --igi nu--
+8 kus                 -&gt;  40              1:30
+9 kus                 -&gt;  45              1:20
+10 kus                -&gt;  50              1:12
+11 kus                -&gt;  55              --igi nu--
+1 ninda               -&gt;  1               1
+---------------------------------------------------
+1 ninda               -&gt;  1               1
+1 ninda 6 kus         -&gt;  1:30            40
+2 ninda               -&gt;  2               30
+2 ninda 6 kus         -&gt;  2:30            24
+3 ninda               -&gt;  3               20
+3 ninda 6 kus         -&gt;  3:30            --igi nu--
+4 ninda               -&gt;  4               15
+4 ninda 6 kus         -&gt;  4:30            13:20
+5 ninda               -&gt;  5               12
+</code></pre>
+<h2>Other options</h2>
+<p>Options <code>-n</code> <code>--noheader</code>  suppress the printing of the table header, which can be useful if you want to join table segments by shell scripting.</p>
+<pre><code>$ metrotable ...  &gt; table.txt
+$ metrotable ... -n &gt;&gt; table.txt
+$ metrotable ... -n &gt;&gt; table.txt
+...
+</code></pre>
+<p>Options <code>-f</code> <code>--force</code> allow the calculation of abstract numbers using any unit as a base unit. For instance:</p>
+<pre><code>$ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana'
+
+Metrological list for Babylonian weight meassurements
+Base unit: gin
+
+Meassurement              Abstract
+=========================================
+1 mana                -&gt;  1
+2 mana                -&gt;  2
+3 mana                -&gt;  3
+4 mana                -&gt;  4
+5 mana                -&gt;  5
+
+$ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -f 0
+
+Metrological list for Babylonian weight meassurements
+Base unit: se
+
+Meassurement              Abstract
+=========================================
+1 mana                -&gt;  3
+2 mana                -&gt;  6
+3 mana                -&gt;  9
+4 mana                -&gt;  12
+5 mana                -&gt;  15
+</code></pre>
+<p>Options <code>-w</code>  <code>--width</code> will change the default of 20 chars width  of the meassurement text field</p>
+<pre><code>$ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
+
+Metrological list for Babylonian weight meassurements
+Base unit: gin
+
+Meassurement                        Abstract
+=========================================
+1 mana                          -&gt;  1
+2 mana                          -&gt;  2
+3 mana                          -&gt;  3
+4 mana                          -&gt;  4
+5 mana                          -&gt;  5
+</code></pre>
+<h2>Limitations</h2>
+<p>This software does not use the <em>principal fractions</em>: 1/3, 1/2, 2/3 and 5/6.</p>
+
+</body>
+</html>
