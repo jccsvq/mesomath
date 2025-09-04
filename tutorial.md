@@ -765,6 +765,8 @@ will print this excerpt of the metrological table for length using ninda (x.sex(
 
 (See page 8 of [Floating calculation in Mesopotamia](https://hal.science/hal-01515645v2/document) by Christine Proust).
 
+> The `metrotable` tool, which specializes in printing segments of metrological tables, is located in the `progs` subdirectory of this package. It also includes its own [tutorial.html](https://jccsvq.github.io/mesomath/progs/metrotable.html).
+
 For objects of the same class, the following operations are available:
 
 * Addition
