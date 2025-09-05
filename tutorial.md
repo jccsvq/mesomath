@@ -116,7 +116,7 @@ The above is sufficient if you are going to limit yourself to sexagesimal calcul
 
     message='''Welcome to Babylonian Calculator
         ...the calculator that every scribe should have!
-        
+
     Use: bn(number), metrological classes: bl, bs, bv, bc, bw bG and bS loaded.'''
 
     print(message)
@@ -689,18 +689,16 @@ Once you have defined measurements, you can "explain" them:
 
     >>> a.explain()
     This is a Babylonian length meassurement: 30 ninda 10 kus 11 susi
-        Unit names: ['susi', 'kus', 'ninda', 'us', 'danna']
-        Factor between units: [30, 12, 60, 30]
-        Factor with the smallest unit (susi): [1, 30, 360, 21600, 648000]
+        Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
+        Factor with unit 'susi':  1 30 360 21600 648000
     Meassurement in terms of the smallest unit: 11111 (susi)
     Sexagesimal floating value of the above: 3:5:11
     Approximate SI value: 185.18333333333334 meters
     >>> 
     >>> b.explain()
     This is a Babylonian length meassurement: 5 ninda 25 susi
-        Unit names: ['susi', 'kus', 'ninda', 'us', 'danna']
-        Factor between units: [30, 12, 60, 30]
-        Factor with the smallest unit (susi): [1, 30, 360, 21600, 648000]
+        Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
+        Factor with unit 'susi':  1 30 360 21600 648000
     Meassurement in terms of the smallest unit: 1825 (susi)
     Sexagesimal floating value of the above: 30:25
     Approximate SI value: 30.416666666666668 meters
@@ -812,9 +810,8 @@ Additionally, for length measurements we can multiply them together to obtain su
     1 gan 56 sar 27 gin 138 se
     >>> s.explain()
     This is a Babylonian surface meassurement: 1 gan 56 sar 27 gin 138 se
-        Unit names: ['se', 'gin', 'sar', 'gan']
-        Factor between units: [180, 60, 100]
-        Factor with the smallest unit (se): [1, 180, 10800, 1080000]
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
     Meassurement in terms of the smallest unit: 1689798 (se)
     Sexagesimal floating value of the above: 7:49:23:18
     Approximate SI value: 5632.66 square meters
@@ -823,12 +820,12 @@ Additionally, for length measurements we can multiply them together to obtain su
     3 gan 12 sar 55 gin 96 se
     >>> v.explain()
     This is a Babylonian volume meassurement: 3 gan 12 sar 55 gin 96 se
-        Unit names: ['se', 'gin', 'sar', 'gan']
-        Factor between units: [180, 60, 100]
-        Factor with the smallest unit (se): [1, 180, 10800, 1080000]
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
     Meassurement in terms of the smallest unit: 3379596 (se)
     Sexagesimal floating value of the above: 15:38:46:36
     Approximate SI value: 5632.66 cube meters
+
     >>> v2=a*b*c
     >>> v2 == v
     True

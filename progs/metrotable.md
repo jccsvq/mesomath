@@ -16,10 +16,10 @@ The metrological tables showed the correspondence between the additive values �
 
 You need to edit the `metrotable` script and change line 7 so that instead of `/home/jesus/Nextcloud/MesoMath` the `sys.path` argument points to the absolute path of <u>your installation directory</u>.
 
-    #!/usr/bin/env -S python3  
+    #!/usr/bin/env -S python3
     '''Printing of metrological tables'''
 
-    # Change the `sys.path.append` argument to the absolute path of the directory 
+    # Change the `sys.path.append` argument to the absolute path of the directory
     # containing the `mesomath` module ( your installation directory).
     import sys, argparse
     sys.path.append("/home/jesus/Nextcloud/MesoMath")  # <- change this
@@ -69,7 +69,8 @@ to get a long list of short and long options:
       -v, --verbose         More information in the header and reciprocals if the
                             abstract numbers are regular (default: False)
       -r, --remainder       Lists the available measurement systems and their
-                            units, then exits (default: False)
+                            units, then exits (defafile:///home/jesus/Nextcloud/MesoMath/tutorial.md
+
 
     jccsvq fecit, 2025. Public domain.
 
@@ -93,36 +94,37 @@ Start by:
 
 to take a look at the metrological systems covered by this application:
 
-    Remainder of systems and units
+    Remainder of systems and units: Old Babylonian Period
     =======================================================
     System L:  Babylonian length meassurements
-        Units:  susi 30 kus 12 ninda 60 us 30 danna
+        Units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
         Base unit:  ninda
     System Lh:  Babylonian length meassurements (Heights)
-        Units:  susi 30 kus 12 ninda 60 us 30 danna
+        Units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
         Base unit:  kus
     System S:  Babylonian surface meassurements
-        Units:  se 180 gin 60 sar 100 gan
+        Units:  gan <-100- sar <-60- gin <-180- se
         Base unit:  gin
     System V:  Babylonian volume meassurements
-        Units:  se 180 gin 60 sar 100 gan
+        Units:  gan <-100- sar <-60- gin <-180- se
         Base unit:  gin
     System C:  Babylonian capacity meassurements
-        Units:  se 180 gin 60 sila 10 ban 6 bariga 5 gur
+        Units:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
         Base unit:  gin
     System W:  Babylonian weight meassurements
-        Units:  se 180 gin 60 mana 60 gu
+        Units:  gu <-60- mana <-60- gin <-180- se
         Base unit:  gin
     NPVN System S:  Babylonian System S to count objects
-        Units:  dis 10 u 6 ges 10 gesu 6 sar 10 saru 6 sargal
+        Units:  sargal <-6- saru <-10- sar <-6- gesu <-10- ges <-6- u <-10- dis
         Base unit:  dis
     NPVN System G:  Babylonian System G to count objects
-        Units:  iku 6 ese 3 bur 10 buru 6 sar 10 saru 6 sargal
+        Units:  sargal <-6- saru <-10- sar <-6- buru <-10- bur <-3- ese <-6- iku
         Base unit:  iku
+
 
 Most interestingly, here are some examples to get an idea of ​​what the program offers:
 
-    $ metrotable -x 1 
+    $ metrotable -x 1
 
     Example 1:
             Table: Babylonian length meassurements
@@ -162,7 +164,7 @@ or with the  `-v` or `--verbose` options to obtain a header with more informatio
     Output follows:
 
     Metrological list for Babylonian length meassurements
-      units:  susi 30 kus 12 ninda 60 us 30 danna
+      units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
       cfact:  1 30 360 21600 648000
     Base unit: ninda
 
@@ -193,7 +195,7 @@ and, in the same way:
     Output follows:
 
     Metrological list for Babylonian length meassurements
-      units:  susi 30 kus 12 ninda 60 us 30 danna
+      units:  units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
       cfact:  1 30 360 21600 648000
     Base unit: ninda
 
@@ -223,7 +225,7 @@ and, in the same way:
     Output follows:
 
     Metrological list for Babylonian length meassurements
-      units:  susi 30 kus 12 ninda 60 us 30 danna
+      units:  units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
       cfact:  1 30 360 21600 648000
     Base unit: ninda
 
@@ -262,7 +264,7 @@ and, in the same way:
     Output follows:
 
     Metrological list for Babylonian length meassurements
-      units:  susi 30 kus 12 ninda 60 us 30 danna
+      units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
       cfact:  1 30 360 21600 648000
     Base unit: ninda
 
@@ -357,7 +359,7 @@ we obtain the table from 10 susi to 2 kus with increment of 5 susi, from 2 ku to
 
 
     Metrological list for Babylonian length meassurements
-      units:  susi 30 kus 12 ninda 60 us 30 danna
+      units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
       cfact:  1 30 360 21600 648000
     Base unit: ninda
 

@@ -53,6 +53,18 @@ class Npvs :
     cfact = [1, 4, 12, 36, 792, 7920, 63360, 190080] # Factor with the smallest unit
     siv = 0.0254  # meters per inch
     siu = 'meters'  # S.I. unit name
+    
+    def scheme(self):
+        '''Returns list with the unit names separated by the corresponding factors
+        |  met: meassurement system class'''
+        ll=[]
+        for i in range(len(self.ufact)):
+            ll.append(self.uname[i])
+            ll.append('<-' + str(self.ufact[i])+ '-')
+        ll.append(self.uname[-1])
+        ll.reverse()
+        return ll
+
 
     def dec2un(self, x) :
         '''Convert decimal integer n to list of int's'''
@@ -170,9 +182,9 @@ class MesoM(Npvs):
     def explain(self):
         '''Print some information about the object'''
         print(f"This is a {self.title}: {self}")
-        print(f"    Unit names: {self.uname}")
-        print(f"    Factor between units: {self.ufact}")
-        print(f"    Factor with the smallest unit ({self.uname[0]}): {self.cfact}")
+        print("    Metrology: ", *self.scheme())
+#        print(f"    Factor between units: {self.ufact}")
+        print(f"    Factor with unit '{self.uname[0]}': ",*self.cfact)
         print(f"Meassurement in terms of the smallest unit: {self.dec} ({self.uname[0]})")
         print(f"Sexagesimal floating value of the above: {self.sex(False)}")
         print(f"Approximate SI value: {self.SI()}")
@@ -198,7 +210,7 @@ class MesoM(Npvs):
 
 class Blen(MesoM):  # Length
     '''This class implement Non-Place-Value System arithmetic
-        for Babylonian length units'''
+        for Old Babylonian Period length units'''
     title = 'Babylonian length meassurement'
     uname = 'susi kus ninda us danna'.split()
     ufact = [30,12,60,30]
@@ -220,7 +232,7 @@ class Blen(MesoM):  # Length
 
 class Bsur(MesoM):  # Surface
     '''This class implement Non-Place-Value System arithmetic
-        for Babylonian surface units'''
+        for Old Babylonian Period surface units'''
     title = 'Babylonian surface meassurement'
     uname = 'se gin sar gan'.split()
     ufact = [180,60,100]
@@ -239,17 +251,21 @@ class Bsur(MesoM):  # Surface
 
 class Bvol(MesoM):  # Volume
     '''This class implement Non-Place-Value System arithmetic
-        for Babylonian volume units'''
+        for Old Babylonian Period volume units'''
     title = 'Babylonian volume meassurement'
     uname = 'se gin sar gan'.split()
     ufact = [180,60,100]
     cfact = [1, 180, 10800, 1080000]
     siv = 18./60/180
     siu = 'cube meters'
+    
+    def cap(self):
+        '''Convert volume to capacity meassurement'''
+        return Bcap(18000*self.dec)
 
 class Bcap(MesoM):  #Capacity
     '''This class implement Non-Place-Value System arithmetic
-        for Babylonian capacity units'''
+        for Old Babylonian Period capacity units'''
     title = 'Babylonian capacity meassurement'
     uname = 'se gin sila ban bariga gur'.split()
     ufact = [180,60,10,6,5]
@@ -257,9 +273,17 @@ class Bcap(MesoM):  #Capacity
     siv = 1./60/180
     siu = 'litres'
 
+    def vol(self):
+        '''Convert capacity to volume meassurement'''
+        if self.dec >= 18000:
+            return Bvol(self.dec//18000)
+        else:
+            print('Volume too small!')
+            return None
+
 class Bwei(MesoM):  # Weight
     '''This class implement Non-Place-Value System arithmetic
-        for Babylonian weight units'''
+        for Old Babylonian Period weight units'''
     title = 'Babylonian weight meassurement'
     uname = 'se gin mana gu'.split()
     ufact = [180,60,60]

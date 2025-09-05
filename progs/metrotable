@@ -30,16 +30,6 @@ def examplehead(example, met, ubase, minv, maxv, inc):
         Step by: {inc}
 Output follows:''')
 
-def scheme(met):
-    '''Returns list with the unit names separated by the corresponding factors
-    |  met: meassurement system class'''
-    ll=[]
-    for i in range(len(met.ufact)):
-        ll.append(met.uname[i])
-        ll.append(met.ufact[i])
-    ll.append(met.uname[-1])
-    return ll
-
 
 def header(met, ubase, width=20):
     '''Prints header of metrological table
@@ -49,7 +39,7 @@ def header(met, ubase, width=20):
     if not args.noheader:
         print(f'\nMetrological list for {met.title}s')
         if args.verbose:
-            print('  units: ', *scheme(met))
+            print('  units: ', met.scheme(met))
             print('  cfact: ', *met.cfact)
         print(f'Base unit: {met.uname[ubase]}\n')
         if args.verbose:
@@ -145,31 +135,31 @@ if __name__ == '__main__':
 
 # Remainder section
     if args.remainder:
-        print('\nRemainder of systems and units')
+        print('\nRemainder of systems and units: Old Babylonian Period')
         print('=======================================================')
         print('System L: ', bl.title+'s')
-        print('    Units: ', *scheme(bl))
+        print('    Units: ', *bl.scheme(bl))
         print('    Base unit: ', bl.uname[2])
         print('System Lh: ', bl.title+'s (Heights)')
-        print('    Units: ', *scheme(bl))
+        print('    Units: ', *bl.scheme(bl))
         print('    Base unit: ', bl.uname[1])
         print('System S: ', bs.title+'s')
-        print('    Units: ', *scheme(bs))
+        print('    Units: ', *bs.scheme(bs))
         print('    Base unit: ', bs.uname[1])
         print('System V: ', bv.title+'s')
-        print('    Units: ', *scheme(bv))
+        print('    Units: ', *bv.scheme(bv))
         print('    Base unit: ', bv.uname[1])
         print('System C: ', bc.title+'s')
-        print('    Units: ', *scheme(bc))
+        print('    Units: ', *bc.scheme(bc))
         print('    Base unit: ', bc.uname[1])
         print('System W: ', bw.title+'s')
-        print('    Units: ', *scheme(bw))
+        print('    Units: ', *bw.scheme(bw))
         print('    Base unit: ', bw.uname[1])
         print('NPVN System S: ', bS.title)
-        print('    Units: ', *scheme(bS))
+        print('    Units: ', *bS.scheme(bS))
         print('    Base unit: ', bS.uname[0])
         print('NPVN System G: ', bG.title)
-        print('    Units: ', *scheme(bG))
+        print('    Units: ', *bG.scheme(bG))
         print('    Base unit: ', bG.uname[0])
         exit()
 
