@@ -170,7 +170,7 @@ class MesoM(Npvs):
     siv = 1  # 
     siu = 'counts'  # S.I. unit name
     prtsex = False  # Printing meassurements in sexagesimal
-
+    ubase = 0   # Base unit for metrological tables
 
     def sex(self, r=0):
         '''Return sexagesimal floating value of object
@@ -217,6 +217,7 @@ class Blen(MesoM):  # Length
     cfact = [1, 30, 360, 21600, 648000]
     siv = 0.5/30
     siu = 'meters'
+    ubase = 2 # ninda
 
     def __mul__(self, other):
         '''Overloads `-` operator: returns object with the operands product '''
@@ -239,6 +240,7 @@ class Bsur(MesoM):  # Surface
     cfact = [1, 180, 10800, 1080000]
     siv = 36./60/180
     siu = 'square meters'
+    ubase = 1 # gin
 
     def __mul__(self, other):
         '''Overloads `-` operator: returns object with the operands product '''
@@ -258,6 +260,7 @@ class Bvol(MesoM):  # Volume
     cfact = [1, 180, 10800, 1080000]
     siv = 18./60/180
     siu = 'cube meters'
+    ubase = 1 # gin
     
     def cap(self):
         '''Convert volume to capacity meassurement'''
@@ -272,6 +275,7 @@ class Bcap(MesoM):  #Capacity
     cfact = [1, 180, 10800, 108000, 648000, 3240000]
     siv = 1./60/180
     siu = 'litres'
+    ubase = 1 # gin
 
     def vol(self):
         '''Convert capacity to volume meassurement'''
@@ -290,6 +294,7 @@ class Bwei(MesoM):  # Weight
     cfact = [1, 180, 10800, 648000]
     siv = .5/60/180
     siu = 'kilograms'
+    ubase = 1 # gin
 
 class BsyG(MesoM):  # Babylonian System G numeration
     '''This class implement Non-Place-Value System arithmetic
@@ -300,6 +305,7 @@ class BsyG(MesoM):  # Babylonian System G numeration
     cfact = [1, 6, 18, 180, 1080, 10800, 64800]
     siv = 1
     siu = '#'
+    ubase = 0 # iku
 
 class BsyS(MesoM):  # Babylonian System S numeration
     '''This class implement Non-Place-Value System arithmetic
@@ -310,4 +316,5 @@ class BsyS(MesoM):  # Babylonian System S numeration
     cfact = [1, 10, 60, 600, 3600, 36000, 216000]
     siv = 1
     siu = '#'
+    ubase = 0 # dis
 

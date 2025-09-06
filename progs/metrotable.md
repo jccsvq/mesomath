@@ -194,11 +194,11 @@ and, in the same way:
             Step by: 10 gin
     Output follows:
 
-    Metrological list for Babylonian length meassurements
-      units:  units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
-      cfact:  1 30 360 21600 648000
-    Base unit: ninda
-
+    Metrological list for Babylonian surface meassurements
+      units:  gan <-100- sar <-60- gin <-180- se
+      cfact:  1 180 10800 1080000
+    Base unit: sar
+    
     Meassurement              Abstract        Reciprocal
     ====================================================
     10 gin                ->  10              6
@@ -224,10 +224,10 @@ and, in the same way:
             Step by: 3 ban
     Output follows:
 
-    Metrological list for Babylonian length meassurements
-      units:  units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
-      cfact:  1 30 360 21600 648000
-    Base unit: ninda
+    Metrological list for Babylonian capacity meassurements
+      units:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
+      cfact:  1 180 10800 108000 648000 3240000
+    Base unit: sila
 
     Meassurement              Abstract        Reciprocal
     ====================================================

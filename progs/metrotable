@@ -39,7 +39,7 @@ def header(met, ubase, width=20):
     if not args.noheader:
         print(f'\nMetrological list for {met.title}s')
         if args.verbose:
-            print('  units: ', met.scheme(met))
+            print('  units: ', *met.scheme(met))
             print('  cfact: ', *met.cfact)
         print(f'Base unit: {met.uname[ubase]}\n')
         if args.verbose:
@@ -139,28 +139,28 @@ if __name__ == '__main__':
         print('=======================================================')
         print('System L: ', bl.title+'s')
         print('    Units: ', *bl.scheme(bl))
-        print('    Base unit: ', bl.uname[2])
+        print('    Base unit: ', bl.uname[bl.ubase])
         print('System Lh: ', bl.title+'s (Heights)')
         print('    Units: ', *bl.scheme(bl))
         print('    Base unit: ', bl.uname[1])
         print('System S: ', bs.title+'s')
         print('    Units: ', *bs.scheme(bs))
-        print('    Base unit: ', bs.uname[1])
+        print('    Base unit: ', bs.uname[bs.ubase])
         print('System V: ', bv.title+'s')
         print('    Units: ', *bv.scheme(bv))
-        print('    Base unit: ', bv.uname[1])
+        print('    Base unit: ', bv.uname[bv.ubase])
         print('System C: ', bc.title+'s')
         print('    Units: ', *bc.scheme(bc))
-        print('    Base unit: ', bc.uname[1])
+        print('    Base unit: ', bc.uname[bc.ubase])
         print('System W: ', bw.title+'s')
         print('    Units: ', *bw.scheme(bw))
-        print('    Base unit: ', bw.uname[1])
+        print('    Base unit: ', bw.uname[bw.ubase])
         print('NPVN System S: ', bS.title)
         print('    Units: ', *bS.scheme(bS))
-        print('    Base unit: ', bS.uname[0])
+        print('    Base unit: ', bS.uname[bS.ubase])
         print('NPVN System G: ', bG.title)
         print('    Units: ', *bG.scheme(bG))
-        print('    Base unit: ', bG.uname[0])
+        print('    Base unit: ', bG.uname[bG.ubase])
         exit()
 
 # Examples section; initialization
@@ -200,37 +200,33 @@ if __name__ == '__main__':
     if args.example is not None:
         width = int(args.width)
         examplehead(example, met, ubase, minv, maxv, inc)
-        header(bl, ubase, width)
+        header(met, ubase, width)
         metrolist(met, ubase, minv, maxv, inc, width)
         exit()
 
 # Main section; selecting classes and defining default table ubase
     if args.type == 'L':
         met = bl
-        ubase = 2
     elif args.type == 'Lh':
         met = bl
-        ubase = 1
     elif args.type == 'S':
         met = bs
-        ubase = 1
     elif args.type == 'V':
         met = bv
-        ubase = 1
     elif args.type == 'C':
         met = bc
-        ubase = 1
     elif args.type == 'W':
         met = bw
-        ubase = 1
     elif args.type == 'SysG':
         met = bG
-        ubase = 0
     elif args.type == 'SysS':
         met = bS
-        ubase = 0
     else:
         exit()
+    if args.type == 'Lh':
+        ubase = 1
+    else:
+        ubase = met.ubase
 
     minv = args.min
     maxv = args.max
