@@ -43,7 +43,7 @@ body {
 <pre><code>1 yard 2 feet 5 inches -&gt; 65
 </code></pre>
 <h2>Installation</h2>
-<p>You need to edit the <code>metrotable</code> script and change line 7 so that instead of <code>/home/jesus/Nextcloud/MesoMath</code> the <code>sys.path</code> argument points to the absolute path of <u>your installation directory</u>.</p>
+<p>You need to edit the <code>metrotable.py</code> script and change line 7 so that instead of <code>/home/jesus/Nextcloud/MesoMath</code> the <code>sys.path</code> argument points to the absolute path of <u>your installation directory</u>.</p>
 <pre><code>#!/usr/bin/env -S python3
 '''Printing of metrological tables'''
 
@@ -53,16 +53,16 @@ import sys, argparse
 sys.path.append("/home/jesus/Nextcloud/MesoMath")  # &lt;- change this
 </code></pre>
 <p>After this, you can invoke the script as:</p>
-<pre><code>$ python3 metrotable
+<pre><code>$ python3 metrotable.py
 </code></pre>
 <p>If nothing happens and you're returned to the prompt, all is well. You can now try</p>
-<pre><code>$ python3 metrotable -h
+<pre><code>$ python3 metrotable.py -h
 </code></pre>
 <p>or, if you prefer long options:</p>
-<pre><code>$ python3 metrotable --help
+<pre><code>$ python3 metrotable.py --help
 </code></pre>
 <p>to get a long list of short and long options:</p>
-<pre><code>usage: metrotable [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
+<pre><code>usage: metrotable.py [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
                   [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
                   [-v] [-r]
 
@@ -99,12 +99,14 @@ options:
 jccsvq fecit, 2025. Public domain.
 </code></pre>
 <p>On Unix-like systems, you can make the script executable:</p>
-<pre><code>$ chmod +x metrotable
+<pre><code>$ chmod +x metrotable.py
 </code></pre>
-<p>and copy/move it to a directory in your system's path. Then, simply:</p>
+<p>and copy/move/link it to a directory in your system's path. Then, simply:</p>
+<pre><code>$ metrotable.py -h
+</code></pre>
+<p>to run it, or, if you rename the file to <code>metrotable</code>, then simply:</p>
 <pre><code>$ metrotable -h
 </code></pre>
-<p>to run it.</p>
 <h2>How to use</h2>
 <h3>First steps</h3>
 <p>Start by:</p>

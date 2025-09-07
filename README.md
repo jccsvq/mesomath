@@ -28,17 +28,18 @@ four test/demo scripts:
 *  `test-mesolib.py`
 *  `test-npvs.py`
 
-and an application in the `progs` subdirectory:
+and two applications in the `progs` subdirectory:
 
-*  `metrotable`
-
-to print segments of metrological tables.
+*  `metrotable.py` to print segments of metrological tables.
+*  `mtlookup.py` to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number.
 
 ## Tutorials
 
 A tutorial to the use of this package is included in files [tutorial.md](tutorial.md) and [tutorial.html](https://jccsvq.github.io/mesomath/tutorial.html). 
 
 `metrotable` has its own tutorial in files [progs/metrotable.md](progs/metrotable.md) and [metrotable.html](https://jccsvq.github.io/mesomath/progs/metrotable.html).
+
+`mtlookup` has its own tutorial in files [progs/mtlookup.md](progs/metrotable.md) and [mtlookup.html](https://jccsvq.github.io/mesomath/progs/mtlookup.html).
 
 ## Dependencies
 

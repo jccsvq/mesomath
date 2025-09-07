@@ -14,7 +14,7 @@ The metrological tables showed the correspondence between the additive values â€
 
 ## Installation
 
-You need to edit the `metrotable` script and change line 7 so that instead of `/home/jesus/Nextcloud/MesoMath` the `sys.path` argument points to the absolute path of <u>your installation directory</u>.
+You need to edit the `metrotable.py` script and change line 7 so that instead of `/home/jesus/Nextcloud/MesoMath` the `sys.path` argument points to the absolute path of <u>your installation directory</u>.
 
     #!/usr/bin/env -S python3
     '''Printing of metrological tables'''
@@ -26,19 +26,19 @@ You need to edit the `metrotable` script and change line 7 so that instead of `/
 
 After this, you can invoke the script as:
 
-    $ python3 metrotable
+    $ python3 metrotable.py
 
 If nothing happens and you're returned to the prompt, all is well. You can now try
 
-    $ python3 metrotable -h
+    $ python3 metrotable.py -h
 
 or, if you prefer long options:
 
-    $ python3 metrotable --help
+    $ python3 metrotable.py --help
 
 to get a long list of short and long options:
 
-    usage: metrotable [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
+    usage: metrotable.py [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
                       [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
                       [-v] [-r]
 
@@ -76,13 +76,15 @@ to get a long list of short and long options:
 
 On Unix-like systems, you can make the script executable:
 
-    $ chmod +x metrotable
+    $ chmod +x metrotable.py
 
-and copy/move it to a directory in your system's path. Then, simply:
+and copy/move/link it to a directory in your system's path. Then, simply:
+
+    $ metrotable.py -h
+
+to run it, or, if you rename the file to `metrotable`, then simply:
 
     $ metrotable -h
-
-to run it.
 
 ## How to use
 
