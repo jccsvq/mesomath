@@ -833,19 +833,27 @@ Additionally, for length measurements we can multiply them together to obtain su
 
 Finally, in cases like this:
 
-    >>> s2=bs('72 gan 4 gin 172 se')
-    >>> s2
-    72 gan 4 gin 172 se
+    >>> a = bv('128 gan')
+    >>> a
+    128 gan
     >>>
 
-We might prefer to view the coefficients as sexagesimal numbers; to do this:
+we might prefer to see the coefficients of the units expressed in the S system (G system for surfaces and volumes), to do this:
 
-    >>> bs.prtsex=True
-    >>> s2
-    1:12 gan 4 gin 2:52 se
+    >>> bv.prtsex=True
+    >>> bv.prtsex=True
+    >>> a
+    7 bur 2 iku gan
+    >>>
+
+This changes the default for objects of the `bv` class and makes the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
+
+    >>> a = bv('128 gan 133 se')
+    >>> a
+    7 bur 2 iku gan 7 bur 1 ese 1 iku se
     >>> 
 
-This changes the default for objects of the `bs` class. If you want this to be the default for all classes, add:
+If you want this to be the default for all classes, add:
 
     from mesomath.npvs import MesoM
     MesoM.prtsex = True

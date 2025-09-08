@@ -127,15 +127,17 @@ This is a rather obsolete module, as its functionality has been moved to the met
 
 ## `npvs.py`
 
-This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the MesoM class which adapts it to Mesopotamian metrological use. The MesoM class, in turn, is inherited by:
+This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the `_MesoM` class which adapts it to Mesopotamian metrological use. The `_MesoM` class, in turn, is inherited by:
 
-*  class `Blen`: Babylonian length system (susi kus ninda us danna)
-*  class `Bsur`: Babylonian surface system (se gin sar gan)
-*  class `Bvol`: Babylonian volume system  (se gin sar gan)
-*  class `Bcap`: Babylonian capacity system  (se gin sila ban bariga gur)
-*  class `Bwei`: Babylonian weight system (se gin mana gu)
-*  class `BsyG`: Babylonian System G (iku ese bur bur_u sar sar_u sar_gal)
-*  class `BsyS`: Babylonian System S (dis u ges gesu sar sar_u sar_gal)
+*  class `BsyG`: Babylonian counting System G (iku ese bur bur_u sar sar_u sar_gal)
+*  class `BsyS`: Babylonian counting  System S (dis u ges gesu sar sar_u sar_gal)
+*  class `MesoM`: To represent physical quantities, inherited by:
+    *  class `Blen`: Babylonian length system (susi kus ninda us danna)
+    *  class `Bsur`: Babylonian surface system (se gin sar gan)
+    *  class `Bvol`: Babylonian volume system  (se gin sar gan)
+    *  class `Bcap`: Babylonian capacity system  (se gin sila ban bariga gur)
+    *  class `Bwei`: Babylonian weight system (se gin mana gu)
+
 
 Please, read the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html) to see how to use all these classes.
 

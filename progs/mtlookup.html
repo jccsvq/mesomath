@@ -49,7 +49,8 @@ body {
 <pre><code>$ mtlookup --help
 </code></pre>
 <p>list the program options:</p>
-<pre><code>usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-r] [-f FORCE] [-v] VALUE
+<pre><code>usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-r] [-f FORCE] [-v] [-p]
+                VALUE
 
 Prints abstract number corresponding to a meassure or lists measures having an
 abstract number.
@@ -66,6 +67,9 @@ options:
   -f FORCE, --force FORCE
                         Force base unit to number FORCE (default: -1)
   -v, --verbose         Prints more information (default: False)
+  -p, --pedantic        Write the coefficients of the units in the
+                        measurements using the S and G Systems (default:
+                        False)
 
 jccsvq fecit, 2025. Public domain.
 </code></pre>
@@ -147,6 +151,25 @@ Looking for  Babylonian length meassurements with abstract =  6.40.38
 6 us 40 ninda 7 kus 18 susi  &lt;-  6:40:38
 6 ninda 8 kus 3 susi  &lt;-  6:40:30
 1 kus 10 susi  &lt;-  6:40
+</code></pre>
+<h3>Pedantic mode</h3>
+<p>Options <code>-p</code> <code>--pedantic</code> will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
+<pre><code>$ mtlookup -t V '128 gan 133 se' -p
+7 bur 2 iku gan 7 bur 1 ese 1 iku se  -&gt;  3:33:20:0:44:20
+
+$ mtlookup -t V 3:33:20:0:44:20 -pr
+
+Looking for  Babylonian volume meassurements with abstract =  3:33:20:0:44:20
+    Base unit:  gin
+========================================================
+1536001 sargal 2 saru 8 sar 4 buru gan  &lt;-  3:33:20:0:44:20
+25600 sargal 1 sar 2 buru 8 bur 2 ese gan  &lt;-  3:33:20:0:44:20
+426 sargal 4 saru 1 bur 1 ese 2 iku gan 3 bur 1 ese sar  &lt;-  3:33:20:0:44:20
+7 sargal 6 sar 4 buru gan 2 bur 1 ese 2 iku sar 1 bur 2 iku gin  &lt;-  3:33:20:0:44:20
+7 sar 6 bur 2 ese gan 2 bur 1 ese 2 iku gin 3 bur 1 ese se  &lt;-  3:33:20:0:44:20
+7 bur 2 iku gan 7 bur 1 ese 1 iku se  &lt;-  3:33:20:0:44:20
+2 iku gan 2 ese 1 iku sar 1 bur 2 iku gin 2 iku se  &lt;-  3:33:20:0:40
+3 iku sar 1 bur 2 ese 3 iku gin 3 bur 1 ese se  &lt;-  3:33:20
 </code></pre>
 
 </body>

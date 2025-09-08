@@ -158,7 +158,7 @@ class Npvs :
                 ss.append(self.uname[i])
         return ' '.join(ss)
 
-class MesoM(Npvs):
+class _MesoM(Npvs):
     '''Specializes the Npvs class to handle Mesopotamian measurements. 
     Introduces the .sex() and .explain() methods and the .prtsex attribute.
     Modifies __repr__()'''
@@ -208,6 +208,48 @@ class MesoM(Npvs):
         return ' '.join(ss)
 
 
+class BsyG(_MesoM):  # Babylonian System G numeration
+    '''This class implement Non-Place-Value System arithmetic
+        for Babylonian System-G numeration'''
+    title = 'Babylonian System G to count objects'
+    uname = 'iku ese bur buru sar saru sargal'.split()
+    ufact = [6, 3, 10, 6, 10, 6]
+    cfact = [1, 6, 18, 180, 1080, 10800, 64800]
+    siv = 1
+    siu = '#'
+    ubase = 0 # iku
+
+class BsyS(_MesoM):  # Babylonian System S numeration
+    '''This class implement Non-Place-Value System arithmetic
+        for Babylonian System-S numeration'''
+    title = 'Babylonian System S to count objects'
+    uname = 'dis u ges gesu sar saru sargal'.split()
+    ufact = [10, 6, 10, 6, 10, 6]
+    cfact = [1, 10, 60, 600, 3600, 36000, 216000]
+    siv = 1
+    siu = '#'
+    ubase = 0 # dis
+
+class MesoM(_MesoM):
+    '''This class complements the _MesoN class by allowing you to express unit 
+    coefficients in measurements using the S and G systems as appropriate. It 
+    introduces the sexsys attribute and enhances the __repr__ method.'''
+    
+    sexsys = BsyS
+    
+    def __repr__(self):
+        '''Returns string representation of object.'''
+        ss = []
+        for i in reversed(range(len(self.uname))):
+            if self.list[i] != 0:
+                if not self.prtsex:
+                    ss.append(str(self.list[i]))
+                else:
+                    ss.append(str(self.sexsys(self.list[i])))
+                ss.append(self.uname[i])
+        return ' '.join(ss)
+
+
 class Blen(MesoM):  # Length
     '''This class implement Non-Place-Value System arithmetic
         for Old Babylonian Period length units'''
@@ -241,6 +283,7 @@ class Bsur(MesoM):  # Surface
     siv = 36./60/180
     siu = 'square meters'
     ubase = 1 # gin
+    sexsys = BsyG
 
     def __mul__(self, other):
         '''Overloads `-` operator: returns object with the operands product '''
@@ -261,6 +304,7 @@ class Bvol(MesoM):  # Volume
     siv = 18./60/180
     siu = 'cube meters'
     ubase = 1 # gin
+    sexsys = BsyG
     
     def cap(self):
         '''Convert volume to capacity meassurement'''
@@ -296,25 +340,4 @@ class Bwei(MesoM):  # Weight
     siu = 'kilograms'
     ubase = 1 # gin
 
-class BsyG(MesoM):  # Babylonian System G numeration
-    '''This class implement Non-Place-Value System arithmetic
-        for Babylonian System-G numeration'''
-    title = 'Babylonian System G to count objects'
-    uname = 'iku ese bur buru sar saru sargal'.split()
-    ufact = [6, 3, 10, 6, 10, 6]
-    cfact = [1, 6, 18, 180, 1080, 10800, 64800]
-    siv = 1
-    siu = '#'
-    ubase = 0 # iku
-
-class BsyS(MesoM):  # Babylonian System S numeration
-    '''This class implement Non-Place-Value System arithmetic
-        for Babylonian System-S numeration'''
-    title = 'Babylonian System S to count objects'
-    uname = 'dis u ges gesu sar saru sargal'.split()
-    ufact = [10, 6, 10, 6, 10, 6]
-    cfact = [1, 10, 60, 600, 3600, 36000, 216000]
-    siv = 1
-    siu = '#'
-    ubase = 0 # dis
 

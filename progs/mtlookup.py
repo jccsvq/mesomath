@@ -46,7 +46,11 @@ if __name__ == '__main__':
         help='Prints more information',
         action='store_true',
         default=False)
-
+    parser.add_argument('-p', '--pedantic',
+        help='Write the coefficients of the units in the measurements using the\
+         S and G Systems',
+        action='store_true',
+        default=False)
 
 # Options parsing
     args = parser.parse_args()
@@ -78,6 +82,8 @@ if __name__ == '__main__':
         ubase = 1
     if int(args.force) >= 0:
         ubase = int(args.force)
+#    if args.pedantic and not any([met==bG, met==bS]):
+    met.prtsex = True
 
 # executing    
 
@@ -111,9 +117,9 @@ if __name__ == '__main__':
         print('    Base unit: ', met.uname[ubase])
         print('========================================================')
         if pp.isreg:
-            print(m,' -> ', pp, 'Reciprocal: ',pp.rec())
+            print(aa,' -> ', pp, 'Reciprocal: ',pp.rec())
         else:
-            print(m,' -> ', pp, 'Reciprocal: ','--igi nu--')
+            print(aa,' -> ', pp, 'Reciprocal: ','--igi nu--')
     else:
-        print(m,' -> ', pp)
+        print(aa,' -> ', pp)
     

@@ -24,7 +24,8 @@ or
 
 list the program options:
 
-    usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-r] [-f FORCE] [-v] VALUE
+    usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-r] [-f FORCE] [-v] [-p]
+                    VALUE
 
     Prints abstract number corresponding to a meassure or lists measures having an
     abstract number.
@@ -41,8 +42,13 @@ list the program options:
       -f FORCE, --force FORCE
                             Force base unit to number FORCE (default: -1)
       -v, --verbose         Prints more information (default: False)
+      -p, --pedantic        Write the coefficients of the units in the
+                            measurements using the S and G Systems (default:
+                            False)
 
     jccsvq fecit, 2025. Public domain.
+
+
 
 ### Metrologies
 
@@ -131,3 +137,24 @@ In some cases, due to the discrete nature of the measurements and rounding, the 
     6 us 40 ninda 7 kus 18 susi  <-  6:40:38
     6 ninda 8 kus 3 susi  <-  6:40:30
     1 kus 10 susi  <-  6:40
+
+###  Pedantic mode
+
+Options `-p` `--pedantic` will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
+
+    $ mtlookup -t V '128 gan 133 se' -p
+    7 bur 2 iku gan 7 bur 1 ese 1 iku se  ->  3:33:20:0:44:20
+
+    $ mtlookup -t V 3:33:20:0:44:20 -pr
+
+    Looking for  Babylonian volume meassurements with abstract =  3:33:20:0:44:20
+        Base unit:  gin
+    ========================================================
+    1536001 sargal 2 saru 8 sar 4 buru gan  <-  3:33:20:0:44:20
+    25600 sargal 1 sar 2 buru 8 bur 2 ese gan  <-  3:33:20:0:44:20
+    426 sargal 4 saru 1 bur 1 ese 2 iku gan 3 bur 1 ese sar  <-  3:33:20:0:44:20
+    7 sargal 6 sar 4 buru gan 2 bur 1 ese 2 iku sar 1 bur 2 iku gin  <-  3:33:20:0:44:20
+    7 sar 6 bur 2 ese gan 2 bur 1 ese 2 iku gin 3 bur 1 ese se  <-  3:33:20:0:44:20
+    7 bur 2 iku gan 7 bur 1 ese 1 iku se  <-  3:33:20:0:44:20
+    2 iku gan 2 ese 1 iku sar 1 bur 2 iku gin 2 iku se  <-  3:33:20:0:40
+    3 iku sar 1 bur 2 ese 3 iku gin 3 bur 1 ese se  <-  3:33:20

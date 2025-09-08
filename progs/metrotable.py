@@ -129,6 +129,11 @@ if __name__ == '__main__':
         help='Lists the available measurement systems and their units, then exits',
         action='store_true',
         default=False)
+    parser.add_argument('-p', '--pedantic',
+        help='Write the coefficients of the units in the measurements using the\
+         S and G Systems',
+        action='store_true',
+        default=False)
 
 # Options parsing
     args = parser.parse_args()
@@ -227,6 +232,10 @@ if __name__ == '__main__':
         ubase = 1
     else:
         ubase = met.ubase
+    if args.pedantic and not any([met==bS, met==bG]):
+        met.prtsex = True
+#        print('Pedantic!')
+
 
     minv = args.min
     maxv = args.max

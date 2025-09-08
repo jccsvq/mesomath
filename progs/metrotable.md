@@ -38,9 +38,9 @@ or, if you prefer long options:
 
 to get a long list of short and long options:
 
-    usage: metrotable.py [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
+    usage: metrotable [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
                       [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
-                      [-v] [-r]
+                      [-v] [-r] [-p]
 
     Prints an excerpt of a metrological table
 
@@ -69,8 +69,10 @@ to get a long list of short and long options:
       -v, --verbose         More information in the header and reciprocals if the
                             abstract numbers are regular (default: False)
       -r, --remainder       Lists the available measurement systems and their
-                            units, then exits (defafile:///home/jesus/Nextcloud/MesoMath/tutorial.md
-
+                            units, then exits (default: False)
+      -p, --pedantic        Write the coefficients of the units in the
+                            measurements using the S and G Systems (default:
+                            False)
 
     jccsvq fecit, 2025. Public domain.
 
@@ -453,6 +455,53 @@ Options `-w`  `--width` will change the default of 20 chars width  of the meassu
     3 mana                          ->  3
     4 mana                          ->  4
     5 mana                          ->  5
+
+Options `-p` `--pedantic`  will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
+
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pv
+
+    Metrological list for Babylonian length meassurements
+      units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
+      cfact:  1 30 360 21600 648000
+    Base unit: ninda
+
+    Meassurement              Abstract        Reciprocal
+    ====================================================
+    1 u susi              ->  1:40            36
+    1 u 5 dis susi        ->  2:30            24
+    2 u susi              ->  3:20            18
+    2 u 5 dis susi        ->  4:10            14:24
+    1 dis kus             ->  5               12
+    1 dis kus 5 dis susi  ->  5:50            --igi nu--
+    1 dis kus 1 u susi    ->  6:40            9
+    1 dis kus 1 u 5 dis susi  ->  7:30            8
+    1 dis kus 2 u susi    ->  8:20            7:12
+    1 dis kus 2 u 5 dis susi  ->  9:10            --igi nu--
+    2 dis kus             ->  10              6
+
+This may distort the output; combine it with `-w`:
+
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pvw 30
+
+    Metrological list for Babylonian length meassurements
+      units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
+      cfact:  1 30 360 21600 648000
+    Base unit: ninda
+
+    Meassurement                        Abstract        Reciprocal
+    ====================================================
+    1 u susi                        ->  1:40            36
+    1 u 5 dis susi                  ->  2:30            24
+    2 u susi                        ->  3:20            18
+    2 u 5 dis susi                  ->  4:10            14:24
+    1 dis kus                       ->  5               12
+    1 dis kus 5 dis susi            ->  5:50            --igi nu--
+    1 dis kus 1 u susi              ->  6:40            9
+    1 dis kus 1 u 5 dis susi        ->  7:30            8
+    1 dis kus 2 u susi              ->  8:20            7:12
+    1 dis kus 2 u 5 dis susi        ->  9:10            --igi nu--
+    2 dis kus                       ->  10              6
+
 
 ## Limitations
 

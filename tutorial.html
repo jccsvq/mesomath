@@ -748,18 +748,25 @@ True
 &gt;&gt;&gt;
 </code></pre>
 <p>Finally, in cases like this:</p>
-<pre><code>&gt;&gt;&gt; s2=bs('72 gan 4 gin 172 se')
-&gt;&gt;&gt; s2
-72 gan 4 gin 172 se
+<pre><code>&gt;&gt;&gt; a = bv('128 gan')
+&gt;&gt;&gt; a
+128 gan
 &gt;&gt;&gt;
 </code></pre>
-<p>We might prefer to view the coefficients as sexagesimal numbers; to do this:</p>
-<pre><code>&gt;&gt;&gt; bs.prtsex=True
-&gt;&gt;&gt; s2
-1:12 gan 4 gin 2:52 se
+<p>we might prefer to see the coefficients of the units expressed in the S system (G system for surfaces and volumes), to do this:</p>
+<pre><code>&gt;&gt;&gt; bv.prtsex=True
+&gt;&gt;&gt; bv.prtsex=True
+&gt;&gt;&gt; a
+7 bur 2 iku gan
 &gt;&gt;&gt;
 </code></pre>
-<p>This changes the default for objects of the <code>bs</code> class. If you want this to be the default for all classes, add:</p>
+<p>This changes the default for objects of the <code>bv</code> class and makes the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
+<pre><code>&gt;&gt;&gt; a = bv('128 gan 133 se')
+&gt;&gt;&gt; a
+7 bur 2 iku gan 7 bur 1 ese 1 iku se
+&gt;&gt;&gt;
+</code></pre>
+<p>If you want this to be the default for all classes, add:</p>
 <pre><code>from mesomath.npvs import MesoM
 MesoM.prtsex = True
 </code></pre>
