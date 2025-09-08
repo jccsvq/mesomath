@@ -82,8 +82,8 @@ if __name__ == '__main__':
         ubase = 1
     if int(args.force) >= 0:
         ubase = int(args.force)
-#    if args.pedantic and not any([met==bG, met==bS]):
-    met.prtsex = True
+    if args.pedantic and not any([met==bG, met==bS]):
+        met.prtsex = True
 
 # executing    
 
