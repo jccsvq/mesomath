@@ -25,6 +25,11 @@ body {
   overflow-x: auto;
 }
 
+blockquote {
+  color:Navy;
+  border-left: 12px solid #ffcc00;
+  padding-left: 14px;
+}
 </style>
 <meta name="generator" content="ReText 8.0.0">
 <title>metrotable tutorial</title>
@@ -43,7 +48,9 @@ body {
 <pre><code>1 yard 2 feet 5 inches -&gt; 65
 </code></pre>
 <h2>Installation</h2>
-<p>You need to edit the <code>metrotable.py</code> script and change line 7 so that instead of <code>/home/jesus/Nextcloud/MesoMath</code> the <code>sys.path</code> argument points to the absolute path of <u>your installation directory</u>.</p>
+<blockquote>
+<p>You need to edit the <code>metrotable.py</code> script and change line 7 so that instead of <code>/home/jesus/Nextcloud/MesoMath</code> the <code>sys.path</code> argument points to the absolute path of <u>your <code>MesoMath</code> installation directory</u>.</p>
+</blockquote>
 <pre><code>#!/usr/bin/env -S python3
 '''Printing of metrological tables'''
 
@@ -410,14 +417,16 @@ Meassurement              Abstract        Reciprocal
 4 ninda 6 kus         -&gt;  4:30            13:20
 5 ninda               -&gt;  5               12
 </code></pre>
-<h2>Other options</h2>
-<p>Options <code>-n</code> <code>--noheader</code>  suppress the printing of the table header, which can be useful if you want to join table segments by shell scripting.</p>
+<h3>Other options</h3>
+<h4>Options <code>-n</code> <code>--noheader</code></h4>
+<p>Suppress the printing of the table header, which can be useful if you want to join table segments by shell scripting.</p>
 <pre><code>$ metrotable ...  &gt; table.txt
 $ metrotable ... -n &gt;&gt; table.txt
 $ metrotable ... -n &gt;&gt; table.txt
 ...
 </code></pre>
-<p>Options <code>-f</code> <code>--force</code> allow the calculation of abstract numbers using any unit as a base unit. For instance:</p>
+<h4>Options <code>-f</code> <code>--force</code></h4>
+<p>Allow the calculation of abstract numbers using any unit as a base unit. For instance:</p>
 <pre><code>$ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana'
 
 Metrological list for Babylonian weight meassurements
@@ -444,7 +453,8 @@ Meassurement              Abstract
 4 mana                -&gt;  12
 5 mana                -&gt;  15
 </code></pre>
-<p>Options <code>-w</code>  <code>--width</code> will change the default of 20 chars width  of the meassurement text field</p>
+<h4>Options <code>-w</code>  <code>--width</code></h4>
+<p>Will change the default of 20 chars width  of the meassurement text field</p>
 <pre><code>$ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
 
 Metrological list for Babylonian weight meassurements
@@ -458,7 +468,8 @@ Meassurement                        Abstract
 4 mana                          -&gt;  4
 5 mana                          -&gt;  5
 </code></pre>
-<p>Options <code>-p</code> <code>--pedantic</code>  will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
+<h4>Options <code>-p</code> <code>--pedantic</code></h4>
+<p>Will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
 <pre><code>$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pv
 
 Metrological list for Babylonian length meassurements
@@ -468,17 +479,17 @@ Base unit: ninda
 
 Meassurement              Abstract        Reciprocal
 ====================================================
-1 u susi              -&gt;  1:40            36
-1 u 5 dis susi        -&gt;  2:30            24
-2 u susi              -&gt;  3:20            18
-2 u 5 dis susi        -&gt;  4:10            14:24
-1 dis kus             -&gt;  5               12
-1 dis kus 5 dis susi  -&gt;  5:50            --igi nu--
-1 dis kus 1 u susi    -&gt;  6:40            9
-1 dis kus 1 u 5 dis susi  -&gt;  7:30            8
-1 dis kus 2 u susi    -&gt;  8:20            7:12
-1 dis kus 2 u 5 dis susi  -&gt;  9:10            --igi nu--
-2 dis kus             -&gt;  10              6
+(1 u) susi            -&gt;  1:40            36
+(1 u 5 dis) susi      -&gt;  2:30            24
+(2 u) susi            -&gt;  3:20            18
+(2 u 5 dis) susi      -&gt;  4:10            14:24
+(1 dis) kus           -&gt;  5               12
+(1 dis) kus (5 dis) susi  -&gt;  5:50            --igi nu--
+(1 dis) kus (1 u) susi  -&gt;  6:40            9
+(1 dis) kus (1 u 5 dis) susi  -&gt;  7:30            8
+(1 dis) kus (2 u) susi  -&gt;  8:20            7:12
+(1 dis) kus (2 u 5 dis) susi  -&gt;  9:10            --igi nu--
+(2 dis) kus           -&gt;  10              6
 </code></pre>
 <p>This may distort the output; combine it with <code>-w</code>:</p>
 <pre><code>$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pvw 30
@@ -490,17 +501,17 @@ Base unit: ninda
 
 Meassurement                        Abstract        Reciprocal
 ====================================================
-1 u susi                        -&gt;  1:40            36
-1 u 5 dis susi                  -&gt;  2:30            24
-2 u susi                        -&gt;  3:20            18
-2 u 5 dis susi                  -&gt;  4:10            14:24
-1 dis kus                       -&gt;  5               12
-1 dis kus 5 dis susi            -&gt;  5:50            --igi nu--
-1 dis kus 1 u susi              -&gt;  6:40            9
-1 dis kus 1 u 5 dis susi        -&gt;  7:30            8
-1 dis kus 2 u susi              -&gt;  8:20            7:12
-1 dis kus 2 u 5 dis susi        -&gt;  9:10            --igi nu--
-2 dis kus                       -&gt;  10              6
+(1 u) susi                      -&gt;  1:40            36
+(1 u 5 dis) susi                -&gt;  2:30            24
+(2 u) susi                      -&gt;  3:20            18
+(2 u 5 dis) susi                -&gt;  4:10            14:24
+(1 dis) kus                     -&gt;  5               12
+(1 dis) kus (5 dis) susi        -&gt;  5:50            --igi nu--
+(1 dis) kus (1 u) susi          -&gt;  6:40            9
+(1 dis) kus (1 u 5 dis) susi    -&gt;  7:30            8
+(1 dis) kus (2 u) susi          -&gt;  8:20            7:12
+(1 dis) kus (2 u 5 dis) susi    -&gt;  9:10            --igi nu--
+(2 dis) kus                     -&gt;  10              6
 </code></pre>
 <h2>Limitations</h2>
 <p>This software does not use the <em>principal fractions</em>: 1/3, 1/2, 2/3 and 5/6.</p>

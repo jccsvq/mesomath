@@ -84,6 +84,16 @@ class Npvs :
             self.dec = x
             self.list = self.dec2un(x)
         elif type(x) == str:
+            if x.find('(') >= 0:
+                xx = x.split('(')[1:]
+                xnew = ''
+                for i in xx:
+                    xy = i.split(')')
+                    coef = self.sexsys(xy[0])
+                    xnew += str(coef.dec)+' '
+                    xnew += xy[1]+' '
+#                print(xnew)
+                x = xnew
             ll = x.split()
             l1 = ll[::2]
             l2 = ll[1::2]
@@ -245,7 +255,7 @@ class MesoM(_MesoM):
                 if not self.prtsex:
                     ss.append(str(self.list[i]))
                 else:
-                    ss.append(str(self.sexsys(self.list[i])))
+                    ss.append('('+str(self.sexsys(self.list[i]))+')')
                 ss.append(self.uname[i])
         return ' '.join(ss)
 

@@ -27,7 +27,7 @@ body {
 
 </style>
 <meta name="generator" content="ReText 8.0.0">
-<title>MesoMath tutorial</title>
+<title>Mesomath tutorial</title>
 <style type="text/css">
 </style>
 </head>
@@ -609,6 +609,9 @@ class  bS: Babylonian System S (dis, u, ges, gesu, sar, sar_u, sar_gal)
 5 ninda 25 susi
 </code></pre>
 <p>In the first case, <code>a</code> is defined as a certain (integer) number of times the smallest unit ("susi" in the case of lengths). In the second case, we define the value for <code>b</code> textually. Note that we can only use integer values ​​in both cases. Both input methods are available for all classes.</p>
+<blockquote>
+<p>In fact, there is a <strong>third</strong> entry method that will be seen at the end of this section.</p>
+</blockquote>
 <p>Once you have defined measurements, you can "explain" them:</p>
 <pre><code>&gt;&gt;&gt; a.explain()
 This is a Babylonian length meassurement: 30 ninda 10 kus 11 susi
@@ -757,13 +760,13 @@ True
 <pre><code>&gt;&gt;&gt; bv.prtsex=True
 &gt;&gt;&gt; bv.prtsex=True
 &gt;&gt;&gt; a
-7 bur 2 iku gan
+(7 bur 2 iku) gan
 &gt;&gt;&gt;
 </code></pre>
 <p>This changes the default for objects of the <code>bv</code> class and makes the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
 <pre><code>&gt;&gt;&gt; a = bv('128 gan 133 se')
 &gt;&gt;&gt; a
-7 bur 2 iku gan 7 bur 1 ese 1 iku se
+(7 bur 2 iku) gan (7 bur 1 ese 1 iku) se
 &gt;&gt;&gt;
 </code></pre>
 <p>If you want this to be the default for all classes, add:</p>
@@ -771,6 +774,22 @@ True
 MesoM.prtsex = True
 </code></pre>
 <p>to your <code>initmm.py</code> file or initiation script.</p>
+<p>The third input method cited above makes use of these types of strings; in fact, the parentheses have been introduced to make them easier to parse as input:</p>
+<pre><code>&gt;&gt;&gt; bv.prtsex=False
+&gt;&gt;&gt; a=bv('(3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se ')
+&gt;&gt;&gt; a
+3  sar  33  gin  60  se  
+&gt;&gt;&gt; bv.prtsex=True
+&gt;&gt;&gt; a
+(3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se
+&gt;&gt;&gt; b=bv('(7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin ')
+&gt;&gt;&gt; b
+(7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin
+&gt;&gt;&gt; bv.prtsex=False
+&gt;&gt;&gt; b
+460800 gan 44 sar 20 gin
+&gt;&gt;&gt;
+</code></pre>
 <h1>Appendices</h1>
 <h2>Appendix A: Output from <code>test-babn.py</code></h2>
 <p>Open a terminal on the installation directory and issue:</p>

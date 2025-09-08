@@ -150,11 +150,12 @@ Options `-p` `--pedantic` will print the coefficients of the units expressed in 
     Looking for  Babylonian volume meassurements with abstract =  3:33:20:0:44:20
         Base unit:  gin
     ========================================================
-    1536001 sargal 2 saru 8 sar 4 buru gan  <-  3:33:20:0:44:20
-    25600 sargal 1 sar 2 buru 8 bur 2 ese gan  <-  3:33:20:0:44:20
-    426 sargal 4 saru 1 bur 1 ese 2 iku gan 3 bur 1 ese sar  <-  3:33:20:0:44:20
-    7 sargal 6 sar 4 buru gan 2 bur 1 ese 2 iku sar 1 bur 2 iku gin  <-  3:33:20:0:44:20
-    7 sar 6 bur 2 ese gan 2 bur 1 ese 2 iku gin 3 bur 1 ese se  <-  3:33:20:0:44:20
-    7 bur 2 iku gan 7 bur 1 ese 1 iku se  <-  3:33:20:0:44:20
-    2 iku gan 2 ese 1 iku sar 1 bur 2 iku gin 2 iku se  <-  3:33:20:0:40
-    3 iku sar 1 bur 2 ese 3 iku gin 3 bur 1 ese se  <-  3:33:20
+    (1536001 sargal 2 saru 8 sar 4 buru) gan  <-  3:33:20:0:44:20
+    (25600 sargal 1 sar 2 buru 8 bur 2 ese) gan  <-  3:33:20:0:44:20
+    (426 sargal 4 saru 1 bur 1 ese 2 iku) gan (3 bur 1 ese) sar  <-  3:33:20:0:44:20
+    (7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin  <-  3:33:20:0:44:20
+    (7 sar 6 bur 2 ese) gan (2 bur 1 ese 2 iku) gin (3 bur 1 ese) se  <-  3:33:20:0:44:20
+    (7 bur 2 iku) gan (7 bur 1 ese 1 iku) se  <-  3:33:20:0:44:20
+    (2 iku) gan (2 ese 1 iku) sar (1 bur 2 iku) gin (2 iku) se  <-  3:33:20:0:40
+    (3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se  <-  3:33:20
+

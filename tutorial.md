@@ -219,7 +219,7 @@ while for a non-regular number:
     >>> 
 
 
->Any natural number n can be writen as n = 2^i × 3^j × 5^k × l where  i, j, k, l  ≥ 0, i, j, k are the powers of 2, 3 and 5, and l is a "remainder" that should not be divisible by 2, 3 or 5. The tuple  (i,j,k,l) is what `a.factors` returned above.
+>Any natural number n can be writen as `n = 2^i × 3^j × 5^k × l` where  `i, j, k, l  ≥ 0`, `i, j, k` are the powers of `2, 3` and `5`, and `l` is a "remainder" that should not be divisible by `2, 3` and `5`. The tuple  `(i,j,k,l)` is what `a.factors` returned above.
 
 We can introduce bab numbers in  four ways:
 
@@ -685,6 +685,8 @@ in a similar way to what we saw for sexagesimal numbers with the `bn` class. We 
 
 In the first case, `a` is defined as a certain (integer) number of times the smallest unit ("susi" in the case of lengths). In the second case, we define the value for `b` textually. Note that we can only use integer values ​​in both cases. Both input methods are available for all classes.
 
+>In fact, there is a **third** entry method that will be seen at the end of this section.
+
 Once you have defined measurements, you can "explain" them:
 
     >>> a.explain()
@@ -843,14 +845,14 @@ we might prefer to see the coefficients of the units expressed in the S system (
     >>> bv.prtsex=True
     >>> bv.prtsex=True
     >>> a
-    7 bur 2 iku gan
+    (7 bur 2 iku) gan
     >>>
 
 This changes the default for objects of the `bv` class and makes the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
 
     >>> a = bv('128 gan 133 se')
     >>> a
-    7 bur 2 iku gan 7 bur 1 ese 1 iku se
+    (7 bur 2 iku) gan (7 bur 1 ese 1 iku) se
     >>> 
 
 If you want this to be the default for all classes, add:
@@ -859,6 +861,23 @@ If you want this to be the default for all classes, add:
     MesoM.prtsex = True
 
 to your `initmm.py` file or initiation script.
+
+The third input method cited above makes use of these types of strings; in fact, the parentheses have been introduced to make them easier to parse as input:
+
+    >>> bv.prtsex=False
+    >>> a=bv('(3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se ')
+    >>> a
+    3  sar  33  gin  60  se  
+    >>> bv.prtsex=True
+    >>> a
+    (3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se
+    >>> b=bv('(7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin ')
+    >>> b
+    (7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin
+    >>> bv.prtsex=False
+    >>> b
+    460800 gan 44 sar 20 gin
+    >>> 
 
 # Appendices
 

@@ -14,7 +14,7 @@ The metrological tables showed the correspondence between the additive values â€
 
 ## Installation
 
-You need to edit the `metrotable.py` script and change line 7 so that instead of `/home/jesus/Nextcloud/MesoMath` the `sys.path` argument points to the absolute path of <u>your installation directory</u>.
+>You need to edit the `metrotable.py` script and change line 7 so that instead of `/home/jesus/Nextcloud/MesoMath` the `sys.path` argument points to the absolute path of <u>your `MesoMath` installation directory</u>.
 
     #!/usr/bin/env -S python3
     '''Printing of metrological tables'''
@@ -403,16 +403,19 @@ we obtain the table from 10 susi to 2 kus with increment of 5 susi, from 2 ku to
     4 ninda 6 kus         ->  4:30            13:20
     5 ninda               ->  5               12
 
-## Other options
+### Other options
 
-Options `-n` `--noheader`  suppress the printing of the table header, which can be useful if you want to join table segments by shell scripting.
+#### Options `-n` `--noheader`  
+
+Suppress the printing of the table header, which can be useful if you want to join table segments by shell scripting.
 
     $ metrotable ...  > table.txt
     $ metrotable ... -n >> table.txt
     $ metrotable ... -n >> table.txt
     ...
 
-Options `-f` `--force` allow the calculation of abstract numbers using any unit as a base unit. For instance:
+####Options `-f` `--force` 
+Allow the calculation of abstract numbers using any unit as a base unit. For instance:
 
 
     $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' 
@@ -441,7 +444,8 @@ Options `-f` `--force` allow the calculation of abstract numbers using any unit 
     4 mana                ->  12
     5 mana                ->  15
 
-Options `-w`  `--width` will change the default of 20 chars width  of the meassurement text field
+####Options `-w`  `--width`
+Will change the default of 20 chars width  of the meassurement text field
 
     $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
 
@@ -456,7 +460,8 @@ Options `-w`  `--width` will change the default of 20 chars width  of the meassu
     4 mana                          ->  4
     5 mana                          ->  5
 
-Options `-p` `--pedantic`  will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
+####Options `-p` `--pedantic`  
+Will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
 
     $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pv
 
@@ -467,17 +472,18 @@ Options `-p` `--pedantic`  will print the coefficients of the units expressed in
 
     Meassurement              Abstract        Reciprocal
     ====================================================
-    1 u susi              ->  1:40            36
-    1 u 5 dis susi        ->  2:30            24
-    2 u susi              ->  3:20            18
-    2 u 5 dis susi        ->  4:10            14:24
-    1 dis kus             ->  5               12
-    1 dis kus 5 dis susi  ->  5:50            --igi nu--
-    1 dis kus 1 u susi    ->  6:40            9
-    1 dis kus 1 u 5 dis susi  ->  7:30            8
-    1 dis kus 2 u susi    ->  8:20            7:12
-    1 dis kus 2 u 5 dis susi  ->  9:10            --igi nu--
-    2 dis kus             ->  10              6
+    (1 u) susi            ->  1:40            36
+    (1 u 5 dis) susi      ->  2:30            24
+    (2 u) susi            ->  3:20            18
+    (2 u 5 dis) susi      ->  4:10            14:24
+    (1 dis) kus           ->  5               12
+    (1 dis) kus (5 dis) susi  ->  5:50            --igi nu--
+    (1 dis) kus (1 u) susi  ->  6:40            9
+    (1 dis) kus (1 u 5 dis) susi  ->  7:30            8
+    (1 dis) kus (2 u) susi  ->  8:20            7:12
+    (1 dis) kus (2 u 5 dis) susi  ->  9:10            --igi nu--
+    (2 dis) kus           ->  10              6
+
 
 This may distort the output; combine it with `-w`:
 
@@ -490,17 +496,18 @@ This may distort the output; combine it with `-w`:
 
     Meassurement                        Abstract        Reciprocal
     ====================================================
-    1 u susi                        ->  1:40            36
-    1 u 5 dis susi                  ->  2:30            24
-    2 u susi                        ->  3:20            18
-    2 u 5 dis susi                  ->  4:10            14:24
-    1 dis kus                       ->  5               12
-    1 dis kus 5 dis susi            ->  5:50            --igi nu--
-    1 dis kus 1 u susi              ->  6:40            9
-    1 dis kus 1 u 5 dis susi        ->  7:30            8
-    1 dis kus 2 u susi              ->  8:20            7:12
-    1 dis kus 2 u 5 dis susi        ->  9:10            --igi nu--
-    2 dis kus                       ->  10              6
+    (1 u) susi                      ->  1:40            36
+    (1 u 5 dis) susi                ->  2:30            24
+    (2 u) susi                      ->  3:20            18
+    (2 u 5 dis) susi                ->  4:10            14:24
+    (1 dis) kus                     ->  5               12
+    (1 dis) kus (5 dis) susi        ->  5:50            --igi nu--
+    (1 dis) kus (1 u) susi          ->  6:40            9
+    (1 dis) kus (1 u 5 dis) susi    ->  7:30            8
+    (1 dis) kus (2 u) susi          ->  8:20            7:12
+    (1 dis) kus (2 u 5 dis) susi    ->  9:10            --igi nu--
+    (2 dis) kus                     ->  10              6
+
 
 
 ## Limitations
