@@ -51,6 +51,10 @@ if __name__ == '__main__':
          S and G Systems',
         action='store_true',
         default=False)
+    parser.add_argument('-s', '--strict',
+        help='Suppress partial matches in reverse lookup.',
+        action='store_true',
+        default=False)
 
 # Options parsing
     args = parser.parse_args()
@@ -100,10 +104,18 @@ if __name__ == '__main__':
             if x1 >= 1:
                 y = met(x1)
                 pp = met(x1).sex(ubase)
-                if args.verbose:
-                    print(y, '\n    Equiv.: ', y.SI(), '\n    Abstract: ', pp)
+                if args.strict :
+                    if str(aa) == str(pp) :
+                        if args.verbose:
+                            print(y, '\n    Equiv.: ', y.SI(), '\n    Abstract: ', pp)
+                        else:
+                            print(y, ' <- ', pp)
                 else:
-                    print(y, ' <- ', pp)
+                    if args.verbose:
+                        print(y, '\n    Equiv.: ', y.SI(), '\n    Abstract: ', pp)
+                    else:
+                        print(y, ' <- ', pp)
+    
             else:
                 break
         exit()

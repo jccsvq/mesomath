@@ -138,6 +138,20 @@ In some cases, due to the discrete nature of the measurements and rounding, the 
     6 ninda 8 kus 3 susi  <-  6:40:30
     1 kus 10 susi  <-  6:40
 
+you can use options `-s --strict` to suppress them:
+
+    $ mtlookup -r -t L 6.40.38 -s
+
+    Looking for  Babylonian length meassurements with abstract =  6.40.38
+        Base unit:  ninda
+    ========================================================
+    2884560 danna  <-  6:40:38
+    48076 danna  <-  6:40:38
+    801 danna 8 us  <-  6:40:38
+    13 danna 10 us 38 ninda  <-  6:40:38
+    6 us 40 ninda 7 kus 18 susi  <-  6:40:38
+
+
 ###  Pedantic mode
 
 Options `-p` `--pedantic` will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:

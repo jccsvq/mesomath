@@ -320,6 +320,27 @@ class Bvol(MesoM):  # Volume
         '''Convert volume to capacity meassurement'''
         return Bcap(18000*self.dec)
 
+    def bricks(self, nalb = 1.0, sarb = False, sex = False):
+        '''Returns the equivalent volume in number of bricks based on their 
+        "nalbanum." 720 for 1 sar if nalb is 1.
+          | nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks (defaul: 1.0)
+          | sarb: returns result in sar-brick units of 720 bricks if True
+          |       (default: False)
+          |  sex: returns result in sexagesimal instead of decimal if true
+          |       (default: False)'''
+        tt = nalb * self.dec / 10800
+        if sex:
+            from mesomath.babn import BabN
+            if sarb:
+                return BabN(int(tt*3600)).float()
+            else:
+                return BabN(int(720 * tt*3600)).float()
+        else:
+            if sarb:
+                return tt
+            else:
+                return 720 * tt
+
 class Bcap(MesoM):  #Capacity
     '''This class implement Non-Place-Value System arithmetic
         for Old Babylonian Period capacity units'''

@@ -157,6 +157,18 @@ Looking for  Babylonian length meassurements with abstract =  6.40.38
 6 ninda 8 kus 3 susi  &lt;-  6:40:30
 1 kus 10 susi  &lt;-  6:40
 </code></pre>
+<p>you can use options <code>-s --strict</code> to suppress them:</p>
+<pre><code>$ mtlookup -r -t L 6.40.38 -s
+
+Looking for  Babylonian length meassurements with abstract =  6.40.38
+    Base unit:  ninda
+========================================================
+2884560 danna  &lt;-  6:40:38
+48076 danna  &lt;-  6:40:38
+801 danna 8 us  &lt;-  6:40:38
+13 danna 10 us 38 ninda  &lt;-  6:40:38
+6 us 40 ninda 7 kus 18 susi  &lt;-  6:40:38
+</code></pre>
 <h3>Pedantic mode</h3>
 <p>Options <code>-p</code> <code>--pedantic</code> will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
 <pre><code>$ mtlookup -t V '128 gan 133 se' -p

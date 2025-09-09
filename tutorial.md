@@ -879,6 +879,72 @@ The third input method cited above makes use of these types of strings; in fact,
     460800 gan 44 sar 20 gin
     >>> 
 
+There were two systems for measuring volume: capacities, used to measure grain, beer, and other types of food and goods, and volume itself, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
+
+    >>> a = bv('1 gin')
+    >>> a.explain()
+    This is a Babylonian volume meassurement: 1 gin
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
+    Meassurement in terms of the smallest unit: 180 (se)
+    Sexagesimal floating value of the above: 3
+    Approximate SI value: 0.3 cube meters
+    >>> b = a.cap()
+    >>> b.explain()
+    This is a Babylonian capacity meassurement: 1 gur
+        Metrology:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 108000 648000 3240000
+    Meassurement in terms of the smallest unit: 3240000 (se)
+    Sexagesimal floating value of the above: 15
+    Approximate SI value: 300.0 litres
+    >>> (b.vol()).explain()
+    This is a Babylonian volume meassurement: 1 gin
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
+    Meassurement in terms of the smallest unit: 180 (se)
+    Sexagesimal floating value of the above: 3
+    Approximate SI value: 0.3 cube meters
+    >>> 
+
+Volume measurements were frequently transformed into their "brick" equivalents. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "*Nalbanum*," or the number of *sar-b* of that type that could be accommodated in 1 *sar* of volume. The `.bricks()` method allows us to perform this transformation:
+
+    >>> a = bv('1 sar')
+    >>> a.bricks()
+    720.0
+
+This is for  *nalbanum* =1.0 , for type-2 bricks with decimal *nalbanum* = 7.20:
+
+    >>> a.bricks(nalb=7.20)
+    5184.0
+
+but we can also have the answer in *sar-b* units:
+
+    >>> a.bricks(nalb=7.20, sarb=True)
+    7.2
+
+and get the results as floating sexagesimal onject of class `BabN`:
+
+    >>> a.bricks(nalb=7.20, sarb=True, sex=True)
+    7:12
+    >>> a.bricks(nalb=7.20, sarb=False, sex=True)
+    1:26:24
+    >>> 
+
+|Brick type|Nalb. (dec.) |Nalb. (sex.)|
+|------|---------|-----|
+|  1   |    9.00 |9|
+|  1a  |     8.33| 8:20|
+|  2   |     7.20 |7:12|
+|3 |  5.40 | 5:24|
+|4 |   5.00 |5|
+|5 |  4.80 |4:48|
+|7 |   3.33 |3:20|
+|8 |  2.70 |2:42|
+|9 |  2.25 |2:15|
+|10|  1.875 |1:52:30|
+|11|  1.20| 1:12|
+|12|1.00 |1  |
+
 # Appendices
 
 
@@ -996,230 +1062,4 @@ Output:
           1645200 01:20
     Minimal distance: 9800, closest regular is: 01:12:20:16:40
         its reciprocal is: 49.45.59.2.24, compare to a.inv(): 49.44.6.45
-
-## Appendix  B: Help on module babn:
-
-    
-
-    NAME
-        babn
-
-    CLASSES
-        builtins.object
-            BabN
-        
-        class BabN(builtins.object)
-         |  BabN(n)
-         |  
-         |  This class implements a sexagesimal representation of the natural numbers 
-         |  and their basic arithmetic operations, especially in their "floating" version, 
-         |  as performed by Babylonian scribes. Hence the name.
-         |  
-         |  Class attributes:
-         |      |       sep: separator for string representation (default: ":")
-         |      |      fill: if True writes: "01.33.07" instead of "1.33.7" (default: False)
-         |      |   rdigits: approximate number of sexagesimal digits for some results (default: 6:)
-         |      | floatmult: If True, multiplication result is floating
-         |      |  database: path to SQLite3 database of regular numbers providing:
-         |      |    | regular    TEXT, regular number e.g. 01:18:43:55:12
-         |      |    | len     INTEGER, its length e.g. 5 for 01:18:43:55:12
-         |      |           see `createDB.py` or `hamming.py` for how to generate it
-         |  
-         |  Instance attributes:
-         |      |     dec: decimal versión of number (ex: 405 for sexagesimal "6:45")
-         |      |    list: list of sexagesimal digits of number (ex: [6, 45] for 405 or "6:45")
-         |      |   isreg: True if number is regular (only contains 2, 3, 5 as divisors)
-         |      | factors: tuple with the powers of 2, 3, 5 and the remainder
-         |      
-         |  jccsvq fecit, 2005. Public domain.
-         |  
-         |  Methods defined here:
-         |  
-         |  __add__(self, other)
-         |      Overloads `+` operator: returns BabN object with the sum of operands
-         |  
-         |  __eq__(self, other)
-         |      Overloads == operator
-         |  
-         |  __floordiv__(self, other)
-         |      Overloads `//` operator: Returns BabN object with the result of
-         |      "Babylonian división" of operands, i.e., if b is regular then a//b 
-         |      returns a times the reciprocal of b. Result is floating. Returns None 
-         |      if b is not regular.
-         |  
-         |  __ge__(self, other)
-         |      Overloads >= operator
-         |  
-         |  __gt__(self, other)
-         |      Overloads > operator
-         |  
-         |  __init__(self, n)
-         |      Class constructor
-         |      | n: The parameter n can be an integer (sign is ignored) or a properly 
-         |           formatted string representing a sexagesimal number, accepting the 
-         |           separators ":" and "." (e.g., 405, "02:45" or "2.45") or a list 
-         |           (e.g., [1, 12, 23]) or a tuple (e.g., (i,j,k,l) such that  
-         |           2**i * 3**j * 5**k * l is the decimal value of the number.
-         |  
-         |  __le__(self, other)
-         |      Overloads <= operator
-         |  
-         |  __lt__(self, other)
-         |      Overloads < operator
-         |  
-         |  __mul__(self, other)
-         |      Overloads `*` operator: returns BabN object with the operands product
-         |  
-         |  __ne__(self, other)
-         |      Overloads != operator
-         |  
-         |  __pow__(self, x)
-         |      Overloads `**` operator: Returns BabN object with the number raised 
-         |      to the power x where x is a natural integer
-         |  
-         |  __radd__(self, other)
-         |      Overloads `+` operator: returns BabN object with the sum of operands
-         |  
-         |  __repr__(self)
-         |      Returns string representation of sexagesimal number.
-         |  
-         |  __rfloordiv__(self, other)
-         |      Overloads `//` operator: Returns BabN object with the result of
-         |      "Babylonian división" of operands, i.e., if b is regular then a//b 
-         |      returns a times the reciprocal of b. Returns None if b is not regular.
-         |  
-         |  __rmul__(self, other)
-         |      Overloads `-` operator: returns BabN object with the operands product
-         |  
-         |  __rsub__(self, other)
-         |      Overloads `-` operator: returns BabN object with the absolute value
-         |      of the operands difference
-         |  
-         |  __rtruediv__(self, other)
-         |      Overloads `/` operator:  Returns BabN object with the floating
-         |      approximate division of operands
-         |  
-         |  __sub__(self, other)
-         |      Overloads `-` operator: returns BabN object with the absolute value
-         |      of the operands difference
-         |  
-         |  __truediv__(self, other)
-         |      Overloads `/` operator:  Returns BabN object with the floating
-         |      approximate division of operands
-         |  
-         |  cbrt(self)
-         |      Returns BabN object with approximate floating cube root
-         |  
-         |  dec2list(n)
-         |      Convert decimal integer n to list of int's (its sexagesimal digits)
-         |  
-         |  dist(self, n)
-         |      Estimates a certain "distance" between two sexagesimal numbers. 
-         |          
-         |          The objective is, given a non-regular number, to select the regular 
-         |          number that is closest to it from a list.
-         |      | n: may be an integer, formated string (ex: "1:2:3"), a list 
-         |      (ex., [1, 12, 23]) or another BabN object. Returns int.
-         |  
-         |  explain(self)
-         |      Explains number; print out basic information about the object.
-         |  
-         |  f(self)
-         |      Returns BabN object with the floating part of the number (mantissa),
-         |      i.e., removes any trailing sexagesimal zero, ex.: 4:42:0:0 -> 4:42
-         |  
-         |  float = f(self)
-         |  
-         |  genDB(dbname)
-         |      Generates sqlite3 database of regular numbers
-         |      | dbname: database path and name
-         |  
-         |  head(self, d=1)
-         |      Returns BabN object with the first d digits of self
-         |  
-         |  inv(self, digits=4)
-         |      Returns BabN object with approximate inverse of the number,
-         |      i.e., a * a.inv() is approximately a power of 60
-         |  
-         |  len(self)
-         |      Returns the number of sexagesimal digits of the number as int
-         |  
-         |  parse(n)
-         |      Returns tuple with decimal value and list of sexagesimal digits of n.
-         |      | n: may be 
-         |          | an integer (sign is ignored), 
-         |          | a correctly formated string (e.g., 405, "02:45" or "2.45"),
-         |          | a list (e.g., [1, 12, 23])
-         |          | a tuple (e.g., (i,j,k,l) such that  2**i * 3**j * 5**k * l is the 
-         |          |   decimal value of the number
-         |  
-         |  rec(self)
-         |      Returns BabN object with the reciprocal of a regular number, returns 
-         |      None for non-regular numbers
-         |  
-         |  round(self, d)
-         |      Returns d BabN object rounded to d sexagesimal digits
-         |  
-         |  searchreg(self, minn, maxn, limdigits=6, prt=False)
-         |      Search database for regulars between sexagesimals minn y maxn. 
-         |      Returns BabN object with the closest regular found.
-         |      
-         |      | minn and maxn: must be sexagesimal strings using ":" separator
-         |      |     limdigits: max regular digits number (default: 6)
-         |      |           prt: print list of regulars found (default: False)
-         |      
-         |      Returns the closest regular as a BabN object
-         |  
-         |  sqrt(self)
-         |      Returns BabN object with approximate floating square root
-         |  
-         |  tail(self, d=1)
-         |      Returns BabN object with the last d digits of self
-         |  
-         |  trim(self, d)
-         |      Returns d BabN object corresponding to the first d sexagesimal digits
-         |  
-         |  ----------------------------------------------------------------------
-         |  Data descriptors defined here:
-         |  
-         |  __dict__
-         |      dictionary for instance variables (if defined)
-         |  
-         |  __weakref__
-         |      list of weak references to the object (if defined)
-         |  
-         |  ----------------------------------------------------------------------
-         |  Data and other attributes defined here:
-         |  
-         |  __hash__ = None
-         |  
-         |  database = 'regular.db3'
-         |  
-         |  fill = False
-         |  
-         |  floatmult = False
-         |  
-         |  rdigits = 6
-         |  
-         |  sep = ':'
-
-    FUNCTIONS
-        connect(...)
-            Opens a connection to the SQLite database file database.
-            
-            You can use ":memory:" to open a database connection to a database that resides
-            in RAM instead of on disk.
-        
-        log(...)
-            log(x, [base=math.e])
-            Return the logarithm of x to the given base.
-            
-            If the base not specified, returns the natural logarithm (base e) of x.
-        
-        sqrt(x, /)
-            Return the square root of x.
-
-    FILE
-        /home/jesus/Nextcloud/MesoMath/mesomath/babn.py
-
 
