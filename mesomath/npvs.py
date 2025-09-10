@@ -320,26 +320,12 @@ class Bvol(MesoM):  # Volume
         '''Convert volume to capacity meassurement'''
         return Bcap(18000*self.dec)
 
-    def bricks(self, nalb = 1.0, sarb = False, sex = False):
-        '''Returns the equivalent volume in number of bricks based on their 
-        "nalbanum." 720 for 1 sar if nalb is 1.
-          | nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks (defaul: 1.0)
-          | sarb: returns result in sar-brick units of 720 bricks if True
-          |       (default: False)
-          |  sex: returns result in sexagesimal instead of decimal if true
-          |       (default: False)'''
-        tt = nalb * self.dec / 10800
-        if sex:
-            from mesomath.babn import BabN
-            if sarb:
-                return BabN(int(tt*3600)).float()
-            else:
-                return BabN(int(720 * tt*3600)).float()
-        else:
-            if sarb:
-                return tt
-            else:
-                return 720 * tt
+    def bricks(self, nalb = 1.0):
+        '''Returns the volume in number of bricks equivalent based on their 
+        "Nalbanum." 720 for 1 sar volume if nalb is 1. Output is a Bbri object.
+          | nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks (defaul: 1.0)'''
+        tt = int(nalb * self.dec)
+        return Bbri(tt)
 
 class Bcap(MesoM):  #Capacity
     '''This class implement Non-Place-Value System arithmetic
@@ -371,4 +357,23 @@ class Bwei(MesoM):  # Weight
     siu = 'kilograms'
     ubase = 1 # gin
 
+class Bbri(MesoM):  # Counting bricks 
+    '''This class implement Non-Place-Value System arithmetic
+        for Old Babylonian Period counting bricks in sar-b's'''
+    title = 'Babylonian brick count'
+    uname = 'se gin sar gan'.split()
+    ufact = [180,60,100]
+    cfact = [1, 180, 10800, 1080000]
+    siv = 720/10800
+    siu = 'bricks'
+    ubase = 1 # gin
+    sexsys = BsyG
+
+    def vol(self, nalb = 1.0):
+        '''Returns the volume corresponding to a number of bricks  based on their 
+        "Nalbanum."  1 sar volume for 720 bricks if nalb is 1. 
+        Output is a Bvol object.
+          | nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks (defaul: 1.0)'''
+        tt = int(self.dec/nalb)
+        return Bvol(tt)
 

@@ -137,7 +137,7 @@ This module defines the generic class `Npvs` for handling measurements in variou
     *  class `Bvol`: Babylonian volume system  (se gin sar gan)
     *  class `Bcap`: Babylonian capacity system  (se gin sila ban bariga gur)
     *  class `Bwei`: Babylonian weight system (se gin mana gu)
-
+    *  class `Bbri`: Babylonian brick counting system (se gin sar gan)
 
 Please, read the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html) to see how to use all these classes.
 

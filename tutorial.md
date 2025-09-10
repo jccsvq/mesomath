@@ -113,6 +113,7 @@ The above is sufficient if you are going to limit yourself to sexagesimal calcul
     from mesomath.npvs import Bwei as bw
     from mesomath.npvs import BsyG as bG
     from mesomath.npvs import BsyS as bS
+    from mesomath.npvs import Bbri as bb
 
     message='''Welcome to Babylonian Calculator
         ...the calculator that every scribe should have!
@@ -906,29 +907,64 @@ There were two systems for measuring volume: capacities, used to measure grain, 
     Approximate SI value: 0.3 cube meters
     >>> 
 
-Volume measurements were frequently transformed into their "brick" equivalents. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "*Nalbanum*," or the number of *sar-b* of that type that could be accommodated in 1 *sar* of volume. The `.bricks()` method allows us to perform this transformation:
+Volume measurements were frequently transformed into their "brick" equivalents. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "*Nalbanum*," or the number of *sar-b* of that type that fits in 1 *sar* of volume. The `.sarb()` method allows us to perform this transformation:
 
     >>> a = bv('1 sar')
-    >>> a.bricks()
-    720.0
+    >>> a
+    1 sar
+    >>> b = a.bricks()
+    >>> b
+    1 sar
+    >>> b.explain()
+    This is a Babylonian brick counting: 1 sar
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
+    Meassurement in terms of the smallest unit: 10800 (se)
+    Sexagesimal floating value of the above: 3
+    Approximate SI value: 720.0 bricks
 
-This is for  *nalbanum* =1.0 , for type-2 bricks with decimal *nalbanum* = 7.20:
+This is for  *nalbanum* =1.0  type-12 bricks, for type-2 bricks with decimal *nalbanum* = 7.20:
 
-    >>> a.bricks(nalb=7.20)
-    5184.0
-
-but we can also have the answer in *sar-b* units:
-
-    >>> a.bricks(nalb=7.20, sarb=True)
-    7.2
-
-and get the results as floating sexagesimal onject of class `BabN`:
-
-    >>> a.bricks(nalb=7.20, sarb=True, sex=True)
-    7:12
-    >>> a.bricks(nalb=7.20, sarb=False, sex=True)
-    1:26:24
+    >>> b = a.bricks(7.20)
+    >>> b
+    7 sar 12 gin
+    >>> b.SI()
+    '5184.0 bricks'
     >>> 
+
+If you have 10000 type-2 bricks, you can do:
+
+    >>> c = bb(15 * 10000)
+    >>> c
+    13 sar 53 gin 60 se
+    >>> c.SI()
+    '10000.0 bricks'
+
+`c` is a Bbri object:
+
+    >>> c.explain()
+    This is a Babylonian brick counting: 13 sar 53 gin 60 se
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
+    Meassurement in terms of the smallest unit: 150000 (se)
+    Sexagesimal floating value of the above: 41:40
+    Approximate SI value: 10000.0 bricks
+    >>> 
+
+that you can convert into a volume:
+
+    >>> d = c.vol(7.20)
+    >>> d.explain()
+    This is a Babylonian volume meassurement: 1 sar 55 gin 133 se
+        Metrology:  gan <-100- sar <-60- gin <-180- se
+        Factor with unit 'se':  1 180 10800 1080000
+    Meassurement in terms of the smallest unit: 20833 (se)
+    Sexagesimal floating value of the above: 5:47:13
+    Approximate SI value: 34.721666666666664 cube meters
+    >>>
+
+Here is an excerpt from a table found
+[here](https://personal.us.es/cmaza/mesopotamia/edificios.htm#Tipos%20de%20ladrillos) (Spanish only, sorry):
 
 |Brick type|Nalb. (dec.) |Nalb. (sex.)|
 |------|---------|-----|
