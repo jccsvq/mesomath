@@ -187,11 +187,14 @@ from mesomath.npvs import Bcap as bc
 from mesomath.npvs import Bwei as bw
 from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
+from mesomath.npvs import Bbri as bb
+
 
 message='''\nWelcome to Babylonian Calculator
     ...the calculator that every scribe should have!
 
-Use: bn(number), metrological classes: bl, bs, bv, bc, bw bG and bS loaded.'''
+Use: bn(number) for sexagesimal calculations
+Metrological classes: bl, bs, bv, bc, bw, bG, bS and bb loaded.'''
 
 print(message)
 </code></pre>
@@ -782,7 +785,6 @@ True
 </code></pre>
 <p>we might prefer to see the coefficients of the units expressed in the S system (G system for surfaces and volumes), to do this:</p>
 <pre><code>&gt;&gt;&gt; bv.prtsex=True
-&gt;&gt;&gt; bv.prtsex=True
 &gt;&gt;&gt; a
 (7 bur 2 iku) gan
 &gt;&gt;&gt;
@@ -790,7 +792,7 @@ True
 <p>This changes the default for objects of the <code>bv</code> class and makes the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:</p>
 <pre><code>&gt;&gt;&gt; a = bv('128 gan 133 se')
 &gt;&gt;&gt; a
-(7 bur 2 iku) gan (7 bur 1 ese 1 iku) se
+(7 bur 2 iku) gan (2 ges 1 u 3 dis) se
 &gt;&gt;&gt;
 </code></pre>
 <p>If you want this to be the default for all classes, add:</p>
@@ -799,22 +801,18 @@ MesoM.prtsex = True
 </code></pre>
 <p>to your <code>initmm.py</code> file or initiation script.</p>
 <p>The third input method cited above makes use of these types of strings; in fact, the parentheses have been introduced to make them easier to parse as input:</p>
-<pre><code>&gt;&gt;&gt; bv.prtsex=False
-&gt;&gt;&gt; a=bv('(3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se ')
-&gt;&gt;&gt; a
-3  sar  33  gin  60  se  
-&gt;&gt;&gt; bv.prtsex=True
-&gt;&gt;&gt; a
-(3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se
-&gt;&gt;&gt; b=bv('(7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin ')
+<pre><code>&gt;&gt;&gt; b = bv('460800 gan 44 sar 20 gin')
 &gt;&gt;&gt; b
-(7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin
-&gt;&gt;&gt; bv.prtsex=False
-&gt;&gt;&gt; b
+(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin
+&gt;&gt;&gt; c = bv('(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin')
+&gt;&gt;&gt; c
+(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin
+&gt;&gt;&gt; bv.prtsex = False
+&gt;&gt;&gt; c
 460800 gan 44 sar 20 gin
 &gt;&gt;&gt;
 </code></pre>
-<p>There were two systems for measuring volume: capacities, used to measure grain, beer, and other types of food and goods, and volume itself, used to measure everything else. Here, they are represented by the metrological classes <code>Bcap</code> (imported here as <code>bc</code>) and <code>Bvol</code> (<code>bv</code>), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods <code>.cap()</code> and <code>.vol()</code>:</p>
+<p>There were two systems for measuring volume: <strong>capacities</strong>, used to measure grain, beer, and other types of food and goods, and <strong>volume</strong> proper, used to measure everything else. Here, they are represented by the metrological classes <code>Bcap</code> (imported here as <code>bc</code>) and <code>Bvol</code> (<code>bv</code>), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods <code>.cap()</code> and <code>.vol()</code>:</p>
 <pre><code>&gt;&gt;&gt; a = bv('1 gin')
 &gt;&gt;&gt; a.explain()
 This is a Babylonian volume meassurement: 1 gin

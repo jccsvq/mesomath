@@ -89,7 +89,10 @@ class Npvs :
                 xnew = ''
                 for i in xx:
                     xy = i.split(')')
-                    coef = self.sexsys(xy[0])
+                    if xy[-1].find(self.uname[-1]) >= 0 :
+                        coef = self.sexsys(xy[0])
+                    else:
+                        coef = BsyS(xy[0])
                     xnew += str(coef.dec)+' '
                     xnew += xy[1]+' '
 #                print(xnew)
@@ -255,7 +258,10 @@ class MesoM(_MesoM):
                 if not self.prtsex:
                     ss.append(str(self.list[i]))
                 else:
-                    ss.append('('+str(self.sexsys(self.list[i]))+')')
+                    if i == len(self.uname) - 1:
+                        ss.append('('+str(self.sexsys(self.list[i]))+')')
+                    else:
+                        ss.append('('+str(BsyS(self.list[i]))+')')
                 ss.append(self.uname[i])
         return ' '.join(ss)
 

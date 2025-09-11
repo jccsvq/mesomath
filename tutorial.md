@@ -156,12 +156,15 @@ In fact, during the development of this package an executable script like the fo
     from mesomath.npvs import Bwei as bw
     from mesomath.npvs import BsyG as bG
     from mesomath.npvs import BsyS as bS
+    from mesomath.npvs import Bbri as bb
+
 
     message='''\nWelcome to Babylonian Calculator
         ...the calculator that every scribe should have!
 
-    Use: bn(number), metrological classes: bl, bs, bv, bc, bw bG and bS loaded.'''
-    
+    Use: bn(number) for sexagesimal calculations
+    Metrological classes: bl, bs, bv, bc, bw, bG, bS and bb loaded.'''
+
     print(message)
 
 
@@ -844,7 +847,6 @@ Finally, in cases like this:
 we might prefer to see the coefficients of the units expressed in the S system (G system for surfaces and volumes), to do this:
 
     >>> bv.prtsex=True
-    >>> bv.prtsex=True
     >>> a
     (7 bur 2 iku) gan
     >>>
@@ -853,8 +855,8 @@ This changes the default for objects of the `bv` class and makes the output more
 
     >>> a = bv('128 gan 133 se')
     >>> a
-    (7 bur 2 iku) gan (7 bur 1 ese 1 iku) se
-    >>> 
+    (7 bur 2 iku) gan (2 ges 1 u 3 dis) se
+    >>>
 
 If you want this to be the default for all classes, add:
 
@@ -865,22 +867,18 @@ to your `initmm.py` file or initiation script.
 
 The third input method cited above makes use of these types of strings; in fact, the parentheses have been introduced to make them easier to parse as input:
 
-    >>> bv.prtsex=False
-    >>> a=bv('(3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se ')
-    >>> a
-    3  sar  33  gin  60  se  
-    >>> bv.prtsex=True
-    >>> a
-    (3 iku) sar (1 bur 2 ese 3 iku) gin (3 bur 1 ese) se
-    >>> b=bv('(7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin ')
+    >>> b = bv('460800 gan 44 sar 20 gin')
     >>> b
-    (7 sargal 6 sar 4 buru) gan (2 bur 1 ese 2 iku) sar (1 bur 2 iku) gin
-    >>> bv.prtsex=False
-    >>> b
+    (7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin
+    >>> c = bv('(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin')
+    >>> c
+    (7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin
+    >>> bv.prtsex = False
+    >>> c
     460800 gan 44 sar 20 gin
-    >>> 
+    >>>
 
-There were two systems for measuring volume: capacities, used to measure grain, beer, and other types of food and goods, and volume itself, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
+There were two systems for measuring volume: **capacities**, used to measure grain, beer, and other types of food and goods, and **volume** proper, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
 
     >>> a = bv('1 gin')
     >>> a.explain()
