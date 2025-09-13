@@ -71,13 +71,24 @@ def metrolist(met, ubase, minv, maxv, inc = 1, width = 20):
 #        m += mc
         while m <= mb :
             pp = m.sex(ubase)
-            if args.verbose:
-                if pp.isreg:
-                    print(str(m).ljust(width),' -> ', str(pp).ljust(15),pp.rec())
+#            print('fractions: ',args.fractions)
+            if args.fractions < 0:
+                if args.verbose:
+                    if pp.isreg:
+                        print(str(m).ljust(width),' -> ', str(pp).ljust(15),pp.rec())
+                    else:
+                        print(str(m).ljust(width),' -> ', str(pp).ljust(15),'--igi nu--')
                 else:
-                    print(str(m).ljust(width),' -> ', str(pp).ljust(15),'--igi nu--')
+                    print(str(m).ljust(width),' -> ', str(pp).ljust(15))
             else:
-                print(str(m).ljust(width),' -> ', str(pp).ljust(15))
+                if args.verbose:
+                    if pp.isreg:
+                        print((m.prtf(args.fractions)).ljust(width),' -> ', str(pp).ljust(15),pp.rec())
+                    else:
+                        print((m.prtf(args.fractions)).ljust(width),' -> ', str(pp).ljust(15),'--igi nu--')
+                else:
+                    print((m.prtf(args.fractions)).ljust(width),' -> ', str(pp).ljust(15))
+            
             m += mc
         
 
@@ -129,6 +140,10 @@ if __name__ == '__main__':
         help='Lists the available measurement systems and their units, then exits',
         action='store_true',
         default=False)
+    parser.add_argument('-F', '--fractions',
+        help='Use fractions, -F 1 to include 1/6', type=int,
+        choices=[0,1],
+        default=-1)
     parser.add_argument('-p', '--pedantic',
         help='Write the coefficients of the units in the measurements using the\
          S and G Systems',

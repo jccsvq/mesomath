@@ -668,6 +668,8 @@ minn and maxn: must be sexagesimal strings using ":" separator. limdigits max va
 
 ## Metrology
 
+### Basics
+
 You can use the metrological classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, and `bS`
 
     class  bl: Babylonian length system (susi, kus, ninda, us, danna)
@@ -677,6 +679,7 @@ You can use the metrological classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, and `bS
     class  bw: Babylonian weight system (se, gin, mana, gu)
     class  bG: Babylonian System G (iku, ese, bur, bur_u, sar, sar_u, sar_gal)
     class  bS: Babylonian System S (dis, u, ges, gesu, sar, sar_u, sar_gal)
+    Class  bb: Babylonian brick counting system (se gin sar gan)
 
 in a similar way to what we saw for sexagesimal numbers with the `bn` class. We can introduce measurements in two different ways:
 
@@ -728,7 +731,7 @@ Note that the value given as "Sexagesimal floating value of the above:" is gener
     1:1:43:40
     >>> 
 
-This will be useful if you intend to recreate **Metrological lists** (Although, at the moment, the application does not contemplate the entry or display of data using principal fractions 1/3, 1/2, 2/3 and 5/6 used by scribes). For example, code:
+This will be useful if you intend to recreate **Metrological lists**. For example, code:
 
     from mesomath.npvs import Blen as bl
 
@@ -771,6 +774,8 @@ will print this excerpt of the metrological table for length using ninda (x.sex(
 
 > The `metrotable` tool, which specializes in printing segments of metrological tables, is located in the `progs` subdirectory of this package. It also includes its own [tutorial.html](https://jccsvq.github.io/mesomath/progs/metrotable.html).
 
+### Operations
+
 For objects of the same class, the following operations are available:
 
 * Addition
@@ -779,7 +784,7 @@ For objects of the same class, the following operations are available:
 * Division by a number
 * Logical operations
 
-Let us see a few example:
+Let's look at some examples:
 
 
     >>> a >= b
@@ -837,6 +842,8 @@ Additionally, for length measurements we can multiply them together to obtain su
     True
     >>> 
 
+### Systems S and G
+
 Finally, in cases like this:
 
     >>> a = bv('128 gan')
@@ -878,6 +885,80 @@ The third input method cited above makes use of these types of strings; in fact,
     460800 gan 44 sar 20 gin
     >>>
 
+### Fractions
+
+There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), but strict syntax must be followed.
+
+    >>> a=bl('0+1/3 ninda')
+    >>> a
+    4 kus
+    >>> a=bl('2+1/3 ninda')
+    >>> a
+    2 ninda 4 kus
+    >>> c = bv('(7+1/2 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2+1/2 u) gin')
+    >>> c
+    493200 gan 44 sar 25 gin
+
+Spaces are not allowed before or after the `+` sign; for example, the following entries will fail
+
+    >>> a=bl('2 +1/3 ninda')   # space in fron of + !
+    >>> a=bl('2 + 1/3 ninda')  # spaces around + !
+
+the following will also crash:
+
+    >>> a=bl('+1/3 ninda')    # needs a 0  a=bl('0+1/3 ninda')
+
+For output using `1/3, 1/2, 2/3, 5/6` fractions, you can use the `.prtf()` method:
+
+    >>> a=bl(11223344)
+    >>> a
+    17 danna 9 us 35 ninda 11 kus 14 susi
+    >>> a.prtf()
+    '17 danna 9+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    >>>
+
+and if you wish also include  `1/6`:
+
+    >>> a.prtf(1)
+    '17+1/6 danna 4+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    >>>
+
+If you activate `prtsex` you get:
+
+    >>> bl.prtsex=True
+    >>> a.prtf()
+    '(1+1/2 u 2 dis) danna (0+1/2 u 4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi'
+    >>> a.prtf(1)
+    '(0+1/6 ges 0+1/2 u 2 dis)+1/6 danna (4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi'
+    >>>
+
+These results can be used for input:
+
+    >>> bl.prtsex=False
+    >>> b=bl('(0+1/6 ges 0+1/2 u 2 dis)+1/6 danna (4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi')
+    >>> b
+    17 danna 9 us 35 ninda 11 kus 14 susi
+    >>> b.prtf()
+    '17 danna 9+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    >>> b.prtf(1)
+    '17+1/6 danna 4+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    >>> bl.prtsex=True
+    >>> b.prtf(1)
+    '(0+1/6 ges 0+1/2 u 2 dis)+1/6 danna (4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi'
+    >>> b.dec
+    11223344
+    >>>
+
+>The author himself is pleasantly surprised to see that his own code is capable of interpreting such a furry beast; especially since he can read:
+
+>    '17+1/6 danna 4+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+>
+>without any particular difficulty, but not so much the expression above :)
+
+These features have not (yet) been thoroughly tested, use with caution.
+
+### Volume vs. Capacity
+
 There were two systems for measuring volume: **capacities**, used to measure grain, beer, and other types of food and goods, and **volume** proper, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
 
     >>> a = bv('1 gin')
@@ -904,6 +985,8 @@ There were two systems for measuring volume: **capacities**, used to measure gra
     Sexagesimal floating value of the above: 3
     Approximate SI value: 0.3 cube meters
     >>> 
+
+### Bricks
 
 Volume measurements were frequently transformed into their "brick" equivalents. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "*Nalbanum*," or the number of *sar-b* of that type that fits in 1 *sar* of volume. The `.sarb()` method allows us to perform this transformation:
 

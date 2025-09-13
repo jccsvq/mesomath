@@ -70,6 +70,8 @@ to get a long list of short and long options:
                             abstract numbers are regular (default: False)
       -r, --remainder       Lists the available measurement systems and their
                             units, then exits (default: False)
+      -F {0,1}, --fractions {0,1}
+                            Use fractions, -F 1 to include 1/6 (default: -1)
       -p, --pedantic        Write the coefficients of the units in the
                             measurements using the S and G Systems (default:
                             False)
@@ -508,8 +510,107 @@ This may distort the output; combine it with `-w`:
     (1 dis) kus (2 u 5 dis) susi    ->  9:10            --igi nu--
     (2 dis) kus                     ->  10              6
 
+#### Option `-F --fractions
 
+Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`, `-F1` to also include the fraction `1/6`:
 
-## Limitations
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi'
 
-This software does not use the *principal fractions*: 1/3, 1/2, 2/3 and 5/6.
+    Metrological list for Babylonian length meassurements
+    Base unit: ninda
+
+    Meassurement              Abstract       
+    =========================================
+    10 susi               ->  1:40           
+    15 susi               ->  2:30           
+    20 susi               ->  3:20           
+    25 susi               ->  4:10           
+    1 kus                 ->  5              
+    1 kus 5 susi          ->  5:50           
+    1 kus 10 susi         ->  6:40           
+    1 kus 15 susi         ->  7:30           
+    1 kus 20 susi         ->  8:20           
+    1 kus 25 susi         ->  9:10           
+    2 kus                 ->  10      
+    $       
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -F0
+
+    Metrological list for Babylonian length meassurements
+    Base unit: ninda
+
+    Meassurement              Abstract       
+    =========================================
+    0+1/3 kus             ->  1:40           
+    0+1/2 kus             ->  2:30           
+    0+2/3 kus             ->  3:20           
+    0+5/6 kus             ->  4:10           
+    1 kus                 ->  5              
+    1 kus 5 susi          ->  5:50           
+    1+1/3 kus             ->  6:40           
+    1+1/2 kus             ->  7:30           
+    1+2/3 kus             ->  8:20           
+    1+5/6 kus             ->  9:10           
+    2 kus                 ->  10   
+    $          
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -F1
+
+    Metrological list for Babylonian length meassurements
+    Base unit: ninda
+
+    Meassurement              Abstract       
+    =========================================
+    0+1/3 kus             ->  1:40           
+    0+1/2 kus             ->  2:30           
+    0+2/3 kus             ->  3:20           
+    0+5/6 kus             ->  4:10           
+    1 kus                 ->  5              
+    1+1/6 kus             ->  5:50           
+    1+1/3 kus             ->  6:40           
+    1+1/2 kus             ->  7:30           
+    1+2/3 kus             ->  8:20           
+    1+5/6 kus             ->  9:10           
+    0+1/6 ninda           ->  10   
+    $
+
+You may combine it with `-p` (pedantic mode):
+
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF0
+
+    Metrological list for Babylonian length meassurements
+    Base unit: ninda
+
+    Meassurement              Abstract       
+    =========================================
+    ()+1/3 kus            ->  1:40           
+    ()+1/2 kus            ->  2:30           
+    ()+2/3 kus            ->  3:20           
+    ()+5/6 kus            ->  4:10           
+    (1 dis) kus           ->  5              
+    (1 dis) kus (0+1/2 u) susi  ->  5:50           
+    (1 dis)+1/3 kus       ->  6:40           
+    (1 dis)+1/2 kus       ->  7:30           
+    (1 dis)+2/3 kus       ->  8:20           
+    (1 dis)+5/6 kus       ->  9:10           
+    (2 dis) kus           ->  10             
+    $
+    $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF1
+
+    Metrological list for Babylonian length meassurements
+    Base unit: ninda
+
+    Meassurement              Abstract       
+    =========================================
+    ()+1/3 kus            ->  1:40           
+    ()+1/2 kus            ->  2:30           
+    ()+2/3 kus            ->  3:20           
+    ()+5/6 kus            ->  4:10           
+    (1 dis) kus           ->  5              
+    (1 dis)+1/6 kus       ->  5:50           
+    (1 dis)+1/3 kus       ->  6:40           
+    (1 dis)+1/2 kus       ->  7:30           
+    (1 dis)+2/3 kus       ->  8:20           
+    (1 dis)+5/6 kus       ->  9:10           
+    ()+1/6 ninda          ->  10 
+    $
+
+These features have not (yet) been thoroughly tested, use with caution.

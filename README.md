@@ -43,7 +43,7 @@ A tutorial to the use of this package is included in files [tutorial.md](tutoria
 
 ## Dependencies
 
-`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path` and `sqlite3`. 
+`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path`, `re` and `sqlite3`. 
 
 Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm) in x86_64 and aarch64 (raspberrypi 5).
 

@@ -46,6 +46,10 @@ if __name__ == '__main__':
         help='Prints more information',
         action='store_true',
         default=False)
+    parser.add_argument('-F', '--fractions',
+        help='Use fractions, -F 1 to include 1/6', type=int,
+        choices=[0,1],
+        default=-1)
     parser.add_argument('-p', '--pedantic',
         help='Write the coefficients of the units in the measurements using the\
          S and G Systems',
@@ -102,7 +106,10 @@ if __name__ == '__main__':
         for i in range(-3,5):
             x1 = int(x//60**i) 
             if x1 >= 1:
-                y = met(x1)
+                if args.fractions < 0:
+                    y = met(x1)
+                else:
+                    y = met(x1).prtf(args.fractions)
                 pp = met(x1).sex(ubase)
                 if args.strict :
                     if str(aa) == str(pp) :
@@ -123,15 +130,20 @@ if __name__ == '__main__':
 
     m = args.VALUE
     aa = met(m)
+    if args.fractions < 0:
+        y = aa
+    else:
+        y = aa.prtf(args.fractions)
+
     pp = aa.sex(ubase)
     if args.verbose:
         print('\nAbstract number for ', met.title)
         print('    Base unit: ', met.uname[ubase])
         print('========================================================')
         if pp.isreg:
-            print(aa,' -> ', pp, 'Reciprocal: ',pp.rec())
+            print(y,' -> ', pp, 'Reciprocal: ',pp.rec())
         else:
-            print(aa,' -> ', pp, 'Reciprocal: ','--igi nu--')
+            print(y,' -> ', pp, 'Reciprocal: ','--igi nu--')
     else:
-        print(aa,' -> ', pp)
+        print(y,' -> ', pp)
     

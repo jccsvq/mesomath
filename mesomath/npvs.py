@@ -13,6 +13,30 @@ but class Npvs is of general use.
     |  class  BsyS: Babylonian System S
     '''
 
+from re import sub
+
+# Dictionary of principal fractions withouth 1/6
+fdic0 = {3: (['2/3', '1/3'], [2,1]),
+5: ([''], []),
+10: (['1/2'], [5]),
+6: (['5/6', '2/3', '1/2', '1/3'], [5,4,3,2]),
+12: (['5/6', '2/3', '1/2', '1/3'], [10,8,6,4]),
+30: (['5/6', '2/3', '1/2', '1/3'], [25,20,15,10]),
+60: (['5/6', '2/3', '1/2', '1/3'], [50,40,30,20]),
+100: (['1/2'], [50]),
+180: (['5/6', '2/3', '1/2', '1/3'], [150,120,90,60])}
+
+# Dictionary of principal fractions including 1/6
+fdic1 = {3: (['2/3', '1/3'], [2,1]),
+5: ([''], []),
+10: (['1/2'], [5]),
+6: (['5/6', '2/3', '1/2', '1/3', '1/6'], [5,4,3,2,1]),
+12: (['5/6', '2/3', '1/2', '1/3', '1/6'], [10,8,6,4,2]),
+30: (['5/6', '2/3', '1/2', '1/3', '1/6'], [25,20,15,10,5]),
+60: (['5/6', '2/3', '1/2', '1/3', '1/6'], [50,40,30,20,10]),
+100: (['1/2'], [50]),
+180: (['5/6', '2/3', '1/2', '1/3', '1/6'], [150,120,90,60,30])}
+
 def cmul(x):
     '''Utility function. Returns list of cumulative products of the factor list x
     
@@ -95,6 +119,7 @@ class Npvs :
                         coef = BsyS(xy[0])
                     xnew += str(coef.dec)+' '
                     xnew += xy[1]+' '
+                xnew = sub(' *\+','+',xnew)
 #                print(xnew)
                 x = xnew
             ll = x.split()
@@ -103,7 +128,21 @@ class Npvs :
             t = 0
             for i in range(len(l2)):
                 j = self.uname.index(l2[i])
-                t += int(l1[i]) * self.cfact[j]
+                if l1[i].find('+') >= 0:
+                    l3 = l1[i].split('+')
+                    t += int(l3[0]) * self.cfact[j]
+                    if l3[1] == '1/6':
+                        t += self.cfact[j]//6
+                    elif l3[1] == '1/3':
+                        t += self.cfact[j]//3
+                    elif l3[1] == '1/2':
+                        t += self.cfact[j]//2
+                    elif l3[1] == '2/3':
+                        t += 2*self.cfact[j]//3
+                    elif l3[1] == '5/6':
+                        t += 5*self.cfact[j]//6
+                else:
+                    t += int(l1[i]) * self.cfact[j]
             self.dec = t
             self.list = self.dec2un(t)
             
@@ -196,12 +235,44 @@ class _MesoM(Npvs):
         '''Print some information about the object'''
         print(f"This is a {self.title}: {self}")
         print("    Metrology: ", *self.scheme())
-#        print(f"    Factor between units: {self.ufact}")
         print(f"    Factor with unit '{self.uname[0]}': ",*self.cfact)
         print(f"Meassurement in terms of the smallest unit: {self.dec} ({self.uname[0]})")
         print(f"Sexagesimal floating value of the above: {self.sex(False)}")
         print(f"Approximate SI value: {self.SI()}")
 
+    def prtf(self, onesixth = False):
+        '''Using fractions in output'''
+        if onesixth:
+            fdic = fdic1
+        else:
+            fdic = fdic0
+        length = len(self.list)
+        ll = self.list.copy()
+        ff = []
+        for i in range(length):
+            ff.append('')
+        for i in range(length - 1):
+            k = self.ufact[i]
+            (zfrac, z) = fdic[k]
+            for j in range(len(z)):
+                if ll[i] >= z[j]:
+                    ll[i] -= z[j]
+                    ff[i+1] = zfrac[j]
+                    break
+        for i in range(length):
+            if ll[i] == 0 and ff[i] == '':
+                pass
+            else:
+                if ff[i] == '':
+                    ff[i] = str(ll[i])
+                else:
+                    ff[i] = str(ll[i])+'+'+ff[i]
+        ss = ''
+        for i in reversed(range(length)):
+            if ff[i] != '':
+                ss += ff[i] + ' ' + self.uname[i] + ' '
+        return ss[:-1]                
+            
 
     def __repr__(self):
         '''Returns string representation of object.'''
@@ -250,6 +321,50 @@ class MesoM(_MesoM):
     
     sexsys = BsyS
     
+    def prtf(self, onesixth = False):
+        '''Using fractions in output'''
+        if onesixth:
+            fdic = fdic1
+        else:
+            fdic = fdic0
+        length = len(self.list)
+        if self.sexsys == BsyS:
+            unit = ' dis'
+        else:
+            unit = ' iku'
+        ll = self.list.copy()
+        ff = []
+        for i in range(length):
+            ff.append('')
+        for i in range(length - 1):
+            k = self.ufact[i]
+            (zfrac, z) = fdic[k]
+            for j in range(len(z)):
+                if ll[i] >= z[j]:
+                    ll[i] -= z[j]
+                    ff[i+1] = zfrac[j]
+                    break
+        for i in range(length):
+            if ll[i] == 0 and ff[i] == '':
+                pass
+            else:
+                if self.prtsex:
+                    if ff[i] == '':
+                        ff[i] = '('+(self.sexsys(ll[i])).prtf(onesixth)+')'
+                    else:
+                        ff[i] =  '('+(self.sexsys(ll[i])).prtf(onesixth)+')'+'+'+ff[i]
+                else:
+                    if ff[i] == '':
+                        ff[i] = str(ll[i])
+                    else:
+                        ff[i] = str(ll[i])+'+'+ff[i]
+        ss = ''
+        for i in reversed(range(length)):
+            if ff[i] != '':
+                ss += ff[i] + ' ' + self.uname[i] + ' '
+
+        return ss[:-1]                
+            
     def __repr__(self):
         '''Returns string representation of object.'''
         ss = []

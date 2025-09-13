@@ -90,6 +90,8 @@ options:
   -f FORCE, --force FORCE
                         Force base unit to number FORCE (default: -1)
   -v, --verbose         Prints more information (default: False)
+  -F {0,1}, --fractions {0,1}
+                        Use fractions, -F 1 to include 1/6 (default: -1)
   -p, --pedantic        Write the coefficients of the units in the
                         measurements using the S and G Systems (default:
                         False)
@@ -206,6 +208,35 @@ Looking for  Babylonian volume meassurements with abstract =  3:33:20:0:44:20
 (2 iku) gan (1 u 3 dis) sar (2 u) gin (2 dis) se  &lt;-  3:33:20:0:40
 (3 dis) sar (3 u 3 dis) gin (1 ges) se  &lt;-  3:33:20
 </code></pre>
+<h3>Fractions</h3>
+<p>Use the <code>-F0</code> option to have the output use the fractions <code>1/3, 1/2, 2/3, 5/6'</code>, <code>-F1</code> to also include the fraction <code>1/6</code>:</p>
+<pre><code>$ mtlookup -t L 1.30 -r -F0
+
+Looking for  Babylonian length meassurements with abstract =  1.30
+    Base unit:  ninda
+========================================================
+10800 danna  &lt;-  1:30
+180 danna  &lt;-  1:30
+3 danna  &lt;-  1:30
+1+1/2 us  &lt;-  1:30
+1+1/2 ninda  &lt;-  1:30
+9 susi  &lt;-  1:30
+$
+</code></pre>
+<p>You may combine it with <code>-p</code> (pedantic mode):</p>
+<pre><code>$ mtlookup -t L 1.30 -r -pF1
+
+Looking for  Babylonian length meassurements with abstract =  1.30
+    Base unit:  ninda
+========================================================
+(3 sar) danna  &lt;-  1:30
+(3 ges) danna  &lt;-  1:30
+(3 dis) danna  &lt;-  1:30
+(1 dis)+1/2 us  &lt;-  1:30
+(1 dis)+1/2 ninda  &lt;-  1:30
+()+1/6 kus (4 dis) susi  &lt;-  1:30
+</code></pre>
+<p>These features have not (yet) been thoroughly tested, use with caution.</p>
 
 </body>
 </html>
