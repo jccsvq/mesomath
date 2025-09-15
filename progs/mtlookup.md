@@ -54,7 +54,7 @@ list the program options:
 
 ### Metrologies
 
-Metrologis selected with the options `-t` or `--type`:
+Metrology is selected with the options `-t` or `--type`:
 
 * L:   length meassurements
 * Lh:   length meassurements (Heights)
@@ -187,8 +187,8 @@ Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`,
     10800 danna  <-  1:30
     180 danna  <-  1:30
     3 danna  <-  1:30
-    1+1/2 us  <-  1:30
-    1+1/2 ninda  <-  1:30
+    1 1/2 us  <-  1:30
+    1 1/2 ninda  <-  1:30
     9 susi  <-  1:30
     $
 
@@ -202,8 +202,8 @@ You may combine it with `-p` (pedantic mode):
     (3 sar) danna  <-  1:30
     (3 ges) danna  <-  1:30
     (3 dis) danna  <-  1:30
-    (1 dis)+1/2 us  <-  1:30
-    (1 dis)+1/2 ninda  <-  1:30
-    ()+1/6 kus (4 dis) susi  <-  1:30
+    (1 dis) 1/2 us  <-  1:30
+    (1 dis) 1/2 ninda  <-  1:30
+    1/6 kus (4 dis) susi  <-  1:30
+    $ 
 
-These features have not (yet) been thoroughly tested, use with caution.

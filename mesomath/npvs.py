@@ -50,6 +50,18 @@ def cmul(x):
             prodl.append(prod)
         return prodl
 
+def normalize(st):
+    b = sub('1\/6|1\/3|1\/2|2\/3|5\/6','+\g<0>',st)
+    b = sub(' *\+ *','+',b)
+    b = sub('[a-z]\+','\g<0>+',b)
+    b = sub(' *\++','+',b)
+    b = sub('([a-z])(\+)','\g<1> 0+',b)
+    b = sub('  +',' ',b)
+    b = sub('^ ','',b)
+    b = sub('^\+','0+',b)
+    b = sub(' $','',b)
+    return b
+
 
 class Npvs :
     '''This class implement Non-Place-Value System arithmetic
@@ -113,13 +125,9 @@ class Npvs :
                 xnew = ''
                 for i in xx:
                     xy = i.split(')')
-                    if xy[-1].find(self.uname[-1]) >= 0 :
-                        coef = self.sexsys(xy[0])
-                    else:
-                        coef = BsyS(xy[0])
+                    coef = self.sexsys(xy[0])
                     xnew += str(coef.dec)+' '
                     xnew += xy[1]+' '
-                xnew = sub(' *\+','+',xnew)
 #                print(xnew)
                 x = xnew
             ll = x.split()
@@ -128,21 +136,7 @@ class Npvs :
             t = 0
             for i in range(len(l2)):
                 j = self.uname.index(l2[i])
-                if l1[i].find('+') >= 0:
-                    l3 = l1[i].split('+')
-                    t += int(l3[0]) * self.cfact[j]
-                    if l3[1] == '1/6':
-                        t += self.cfact[j]//6
-                    elif l3[1] == '1/3':
-                        t += self.cfact[j]//3
-                    elif l3[1] == '1/2':
-                        t += self.cfact[j]//2
-                    elif l3[1] == '2/3':
-                        t += 2*self.cfact[j]//3
-                    elif l3[1] == '5/6':
-                        t += 5*self.cfact[j]//6
-                else:
-                    t += int(l1[i]) * self.cfact[j]
+                t += int(l1[i]) * self.cfact[j]
             self.dec = t
             self.list = self.dec2un(t)
             
@@ -224,6 +218,54 @@ class _MesoM(Npvs):
     prtsex = False  # Printing meassurements in sexagesimal
     ubase = 0   # Base unit for metrological tables
 
+    def __init__(self,x):
+        '''Class constructor
+            | n: The parameter n can be an integer (sign is ignored) or a properly 
+                 formatted string representing the value. See the tutorial'''
+        if type(x) == int:
+            x = abs(x)
+            self.dec = x
+            self.list = self.dec2un(x)
+        elif type(x) == str:
+            x = normalize(x)
+            if x.find('(') >= 0:
+                xx = x.split('(')[1:]
+                xnew = ''
+                for i in xx:
+                    xy = i.split(')')
+                    if xy[-1].find(self.uname[-1]) >= 0 :
+                        coef = self.sexsys(xy[0])
+                    else:
+                        coef = BsyS(xy[0])
+                    xnew += str(coef.dec)+' '
+                    xnew += xy[1]+' '
+                xnew = sub(' *\+','+',xnew)
+#                print(xnew)
+                x = xnew
+            ll = x.split()
+            l1 = ll[::2]
+            l2 = ll[1::2]
+            t = 0
+            for i in range(len(l2)):
+                j = self.uname.index(l2[i])
+                if l1[i].find('+') >= 0:
+                    l3 = l1[i].split('+')
+                    t += int(l3[0]) * self.cfact[j]
+                    if l3[1] == '1/6':
+                        t += self.cfact[j]//6
+                    elif l3[1] == '1/3':
+                        t += self.cfact[j]//3
+                    elif l3[1] == '1/2':
+                        t += self.cfact[j]//2
+                    elif l3[1] == '2/3':
+                        t += 2*self.cfact[j]//3
+                    elif l3[1] == '5/6':
+                        t += 5*self.cfact[j]//6
+                else:
+                    t += int(l1[i]) * self.cfact[j]
+            self.dec = t
+            self.list = self.dec2un(t)
+            
     def sex(self, r=0):
         '''Return sexagesimal floating value of object
         |  r: index of reference unit in uname'''
@@ -241,7 +283,10 @@ class _MesoM(Npvs):
         print(f"Approximate SI value: {self.SI()}")
 
     def prtf(self, onesixth = False):
-        '''Using fractions in output'''
+        '''Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of 
+        the units in the output
+            | onesixth: Adds 1/6 to the previous set of fractions if True
+                       (default = False)'''
         if onesixth:
             fdic = fdic1
         else:
@@ -266,7 +311,8 @@ class _MesoM(Npvs):
                 if ff[i] == '':
                     ff[i] = str(ll[i])
                 else:
-                    ff[i] = str(ll[i])+'+'+ff[i]
+                    if ll[i] != 0:
+                        ff[i] = str(ll[i])+' '+ff[i]
         ss = ''
         for i in reversed(range(length)):
             if ff[i] != '':
@@ -350,14 +396,18 @@ class MesoM(_MesoM):
             else:
                 if self.prtsex:
                     if ff[i] == '':
-                        ff[i] = '('+(self.sexsys(ll[i])).prtf(onesixth)+')'
+                        ff[i] = '('+str(self.sexsys(ll[i]))+')'
+#                        ff[i] = '('+(self.sexsys(ll[i])).prtf(onesixth)+')'
                     else:
-                        ff[i] =  '('+(self.sexsys(ll[i])).prtf(onesixth)+')'+'+'+ff[i]
+                        if ll[i] != 0:
+                            ff[i] =  '('+str(self.sexsys(ll[i]))+')'+' '+ff[i]
+#                            ff[i] =  '('+(self.sexsys(ll[i])).prtf(onesixth)+')'+' '+ff[i]
                 else:
                     if ff[i] == '':
                         ff[i] = str(ll[i])
                     else:
-                        ff[i] = str(ll[i])+'+'+ff[i]
+                        if ll[i] != 0:
+                            ff[i] = str(ll[i])+' '+ff[i]
         ss = ''
         for i in reversed(range(length)):
             if ff[i] != '':

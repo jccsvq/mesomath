@@ -1,3 +1,4 @@
+<link rel="icon" type="image/svg" href="../favicon.svg">
 # `metrotable` tutorial
 
 Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
@@ -531,8 +532,8 @@ Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`,
     1 kus 15 susi         ->  7:30           
     1 kus 20 susi         ->  8:20           
     1 kus 25 susi         ->  9:10           
-    2 kus                 ->  10      
-    $       
+    2 kus                 ->  10  
+    $           
     $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -F0
 
     Metrological list for Babylonian length meassurements
@@ -540,18 +541,18 @@ Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`,
 
     Meassurement              Abstract       
     =========================================
-    0+1/3 kus             ->  1:40           
-    0+1/2 kus             ->  2:30           
-    0+2/3 kus             ->  3:20           
-    0+5/6 kus             ->  4:10           
+    1/3 kus               ->  1:40           
+    1/2 kus               ->  2:30           
+    2/3 kus               ->  3:20           
+    5/6 kus               ->  4:10           
     1 kus                 ->  5              
     1 kus 5 susi          ->  5:50           
-    1+1/3 kus             ->  6:40           
-    1+1/2 kus             ->  7:30           
-    1+2/3 kus             ->  8:20           
-    1+5/6 kus             ->  9:10           
-    2 kus                 ->  10   
-    $          
+    1 1/3 kus             ->  6:40           
+    1 1/2 kus             ->  7:30           
+    1 2/3 kus             ->  8:20           
+    1 5/6 kus             ->  9:10           
+    2 kus                 ->  10     
+    $        
     $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -F1
 
     Metrological list for Babylonian length meassurements
@@ -559,17 +560,17 @@ Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`,
 
     Meassurement              Abstract       
     =========================================
-    0+1/3 kus             ->  1:40           
-    0+1/2 kus             ->  2:30           
-    0+2/3 kus             ->  3:20           
-    0+5/6 kus             ->  4:10           
+    1/3 kus               ->  1:40           
+    1/2 kus               ->  2:30           
+    2/3 kus               ->  3:20           
+    5/6 kus               ->  4:10           
     1 kus                 ->  5              
-    1+1/6 kus             ->  5:50           
-    1+1/3 kus             ->  6:40           
-    1+1/2 kus             ->  7:30           
-    1+2/3 kus             ->  8:20           
-    1+5/6 kus             ->  9:10           
-    0+1/6 ninda           ->  10   
+    1 1/6 kus             ->  5:50           
+    1 1/3 kus             ->  6:40           
+    1 1/2 kus             ->  7:30           
+    1 2/3 kus             ->  8:20           
+    1 5/6 kus             ->  9:10           
+    1/6 ninda             ->  10  
     $
 
 You may combine it with `-p` (pedantic mode):
@@ -581,16 +582,16 @@ You may combine it with `-p` (pedantic mode):
 
     Meassurement              Abstract       
     =========================================
-    ()+1/3 kus            ->  1:40           
-    ()+1/2 kus            ->  2:30           
-    ()+2/3 kus            ->  3:20           
-    ()+5/6 kus            ->  4:10           
+    1/3 kus               ->  1:40           
+    1/2 kus               ->  2:30           
+    2/3 kus               ->  3:20           
+    5/6 kus               ->  4:10           
     (1 dis) kus           ->  5              
-    (1 dis) kus (0+1/2 u) susi  ->  5:50           
-    (1 dis)+1/3 kus       ->  6:40           
-    (1 dis)+1/2 kus       ->  7:30           
-    (1 dis)+2/3 kus       ->  8:20           
-    (1 dis)+5/6 kus       ->  9:10           
+    (1 dis) kus (5 dis) susi  ->  5:50           
+    (1 dis) 1/3 kus       ->  6:40           
+    (1 dis) 1/2 kus       ->  7:30           
+    (1 dis) 2/3 kus       ->  8:20           
+    (1 dis) 5/6 kus       ->  9:10           
     (2 dis) kus           ->  10             
     $
     $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF1
@@ -600,17 +601,17 @@ You may combine it with `-p` (pedantic mode):
 
     Meassurement              Abstract       
     =========================================
-    ()+1/3 kus            ->  1:40           
-    ()+1/2 kus            ->  2:30           
-    ()+2/3 kus            ->  3:20           
-    ()+5/6 kus            ->  4:10           
+    1/3 kus               ->  1:40           
+    1/2 kus               ->  2:30           
+    2/3 kus               ->  3:20           
+    5/6 kus               ->  4:10           
     (1 dis) kus           ->  5              
-    (1 dis)+1/6 kus       ->  5:50           
-    (1 dis)+1/3 kus       ->  6:40           
-    (1 dis)+1/2 kus       ->  7:30           
-    (1 dis)+2/3 kus       ->  8:20           
-    (1 dis)+5/6 kus       ->  9:10           
-    ()+1/6 ninda          ->  10 
+    (1 dis) 1/6 kus       ->  5:50           
+    (1 dis) 1/3 kus       ->  6:40           
+    (1 dis) 1/2 kus       ->  7:30           
+    (1 dis) 2/3 kus       ->  8:20           
+    (1 dis) 5/6 kus       ->  9:10           
+    1/6 ninda             ->  10  
     $
 
 These features have not (yet) been thoroughly tested, use with caution.

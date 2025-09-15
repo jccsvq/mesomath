@@ -1,3 +1,4 @@
+<link rel="icon" type="image/svg" href="favicon.svg">
 # MesoMath as a command line Mesopotamian calculator 
 ![mesomath](mesomath.png)
 # Tutorial
@@ -887,26 +888,28 @@ The third input method cited above makes use of these types of strings; in fact,
 
 ### Fractions
 
-There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), but strict syntax must be followed.
+There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), thei can be entered in several ways:
 
     >>> a=bl('0+1/3 ninda')
     >>> a
     4 kus
-    >>> a=bl('2+1/3 ninda')
+    >>> a=bl('+1/3 ninda')
+    >>> a
+    4 kus
+    >>> a=bl('1/3 ninda')
+    >>> a
+    4 kus
+    >>> a=bl('2 + 1/3 ninda')
     >>> a
     2 ninda 4 kus
-    >>> c = bv('(7+1/2 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2+1/2 u) gin')
-    >>> c
-    493200 gan 44 sar 25 gin
+    >>> a=bl('2 1/3 ninda')
+    >>> a
+    2 ninda 4 kus
+    >>> a=bl('21/3 ninda')
+    >>> a
+    2 ninda 4 kus
 
-Spaces are not allowed before or after the `+` sign; for example, the following entries will fail
 
-    >>> a=bl('2 +1/3 ninda')   # space in fron of + !
-    >>> a=bl('2 + 1/3 ninda')  # spaces around + !
-
-the following will also crash:
-
-    >>> a=bl('+1/3 ninda')    # needs a 0  a=bl('0+1/3 ninda')
 
 For output using `1/3, 1/2, 2/3, 5/6` fractions, you can use the `.prtf()` method:
 
@@ -914,48 +917,41 @@ For output using `1/3, 1/2, 2/3, 5/6` fractions, you can use the `.prtf()` metho
     >>> a
     17 danna 9 us 35 ninda 11 kus 14 susi
     >>> a.prtf()
-    '17 danna 9+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    '17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
     >>>
 
 and if you wish also include  `1/6`:
 
     >>> a.prtf(1)
-    '17+1/6 danna 4+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    '17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
     >>>
 
 If you activate `prtsex` you get:
 
     >>> bl.prtsex=True
     >>> a.prtf()
-    '(1+1/2 u 2 dis) danna (0+1/2 u 4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi'
+    '(1 u 7 dis) danna (9 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi'
     >>> a.prtf(1)
-    '(0+1/6 ges 0+1/2 u 2 dis)+1/6 danna (4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi'
+    '(1 u 7 dis) 1/6 danna (4 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi'
     >>>
 
 These results can be used for input:
 
-    >>> bl.prtsex=False
-    >>> b=bl('(0+1/6 ges 0+1/2 u 2 dis)+1/6 danna (4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi')
+    >>> bl.prtsex=0
+    >>> b=bl('(1 u 7 dis) 1/6 danna (4 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi')
     >>> b
     17 danna 9 us 35 ninda 11 kus 14 susi
     >>> b.prtf()
-    '17 danna 9+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
+    '17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
     >>> b.prtf(1)
-    '17+1/6 danna 4+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
-    >>> bl.prtsex=True
-    >>> b.prtf(1)
-    '(0+1/6 ges 0+1/2 u 2 dis)+1/6 danna (4 dis)+1/2 us (0+1/2 u)+5/6 ninda (1 dis)+1/3 kus (4 dis) susi'
+    '17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
     >>> b.dec
+    11223344
+    >>> c=bl(a.prtf(1))
+    >>> c.dec
     11223344
     >>>
 
->The author himself is pleasantly surprised to see that his own code is capable of interpreting such a furry beast; especially since he can read:
-
->    '17+1/6 danna 4+1/2 us 5+5/6 ninda 1+1/3 kus 4 susi'
->
->without any particular difficulty, but not so much the expression above :)
-
-These features have not (yet) been thoroughly tested, use with caution.
 
 ### Volume vs. Capacity
 
