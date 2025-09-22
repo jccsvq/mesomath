@@ -56,7 +56,7 @@ tr:nth-child(odd) {
 <link rel="icon" type="image/svg" href="../favicon.svg">
 </head>
 <body>
-<h1><code>metrotable</code> tutorial</h1>
+<h1><code>metrotable tutorial</code> tutorial</h1>
 <p>Jesús Cabrera (<a href="https://jccsvq.github.io/">jccsvq</a>)(*), 2025.</p>
 <blockquote>
 <p>(*) At gmail.com</p>
@@ -125,6 +125,8 @@ options:
   -p, --pedantic        Write the coefficients of the units in the
                         measurements using the S and G Systems (default:
                         False)
+  -a, --academic        With [-F|--fractions] or [-r|--remainder] uses the academic names of
+                        units. (default: False)
 
 jccsvq fecit, 2025. Public domain.
 </code></pre>
@@ -168,6 +170,36 @@ NPVN System S:  Babylonian System S to count objects
     Base unit:  dis
 NPVN System G:  Babylonian System G to count objects
     Units:  sargal &lt;-6- saru &lt;-10- sar &lt;-6- buru &lt;-10- bur &lt;-3- ese &lt;-6- iku
+    Base unit:  iku
+</code></pre>
+<p>or</p>
+<pre><code>$ metrotable -ra
+
+Remainder of systems and units: Old Babylonian Period
+=======================================================
+System L:  Babylonian length meassurements
+    Units:  danna &lt;-30- UŠ &lt;-60- ninda &lt;-12- kuš3 &lt;-30- šu-si
+    Base unit:  ninda
+System Lh:  Babylonian length meassurements (Heights)
+    Units:  danna &lt;-30- UŠ &lt;-60- ninda &lt;-12- kuš3 &lt;-30- šu-si
+    Base unit:  kus
+System S:  Babylonian surface meassurements
+    Units:  GAN2 &lt;-100- sar &lt;-60- gin2 &lt;-180- še
+    Base unit:  gin
+System V:  Babylonian volume meassurements
+    Units:  GAN2 &lt;-100- sar &lt;-60- gin2 &lt;-180- še
+    Base unit:  gin
+System C:  Babylonian capacity meassurements
+    Units:  gur &lt;-5- bariga &lt;-6- ban2 &lt;-10- sila3 &lt;-60- gin2 &lt;-180- še
+    Base unit:  gin
+System W:  Babylonian weight meassurements
+    Units:  gu2 &lt;-60- ma-na &lt;-60- gin2 &lt;-180- še
+    Base unit:  gin
+NPVN System S:  Babylonian System S to count objects
+    Units:  šar2-gal &lt;-6- šar'u &lt;-10- šar2 &lt;-6- geš'u &lt;-10- geš &lt;-6- u &lt;-10- diš
+    Base unit:  dis
+NPVN System G:  Babylonian System G to count objects
+    Units:  šar2-gal &lt;-6- šar'u &lt;-10- šar2 &lt;-6- bur'u &lt;-10- bur3 &lt;-3- eše3 &lt;-6- iku
     Base unit:  iku
 </code></pre>
 <p>Most interestingly, here are some examples to get an idea of ​​what the program offers:</p>
@@ -534,7 +566,7 @@ Meassurement                        Abstract        Reciprocal
 (1 dis) kus (2 u 5 dis) susi    -&gt;  9:10            --igi nu--
 (2 dis) kus                     -&gt;  10              6
 </code></pre>
-<h4>Option `-F --fractions</h4>
+<h4>Option <code>-F --fractions</code></h4>
 <p>Use the <code>-F0</code> option to have the output use the fractions <code>1/3, 1/2, 2/3, 5/6'</code>, <code>-F1</code> to also include the fraction <code>1/6</code>:</p>
 <pre><code>$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi'
 
@@ -634,7 +666,37 @@ Meassurement              Abstract
 1/6 ninda             -&gt;  10  
 $
 </code></pre>
-<p>These features have not (yet) been thoroughly tested, use with caution.</p>
+<h4>Options <code>-a --academic</code></h4>
+<p>You can combine the <code>-F --fractions</code> options with <code>-a --academic</code> to obtain listings using the academic names of the units:</p>
+<pre><code>$ metrotable -x 1 -aF1 -f0 -v
+
+Example 1:
+        Table: Babylonian length meassurements
+        ubase: 0 (šu-si)
+        From: 10 susi
+        To: 2 kus
+        Step by: 5 susi
+Output follows:
+
+Metrological list for Babylonian length meassurements
+  units:  danna &lt;-30- UŠ &lt;-60- ninda &lt;-12- kuš3 &lt;-30- šu-si
+  cfact:  1 30 360 21600 648000
+Base unit: šu-si
+
+Meassurement              Abstract        Reciprocal
+====================================================
+1/3 kuš3              -&gt;  10              6
+1/2 kuš3              -&gt;  15              4
+2/3 kuš3              -&gt;  20              3
+5/6 kuš3              -&gt;  25              2:24
+1 kuš3                -&gt;  30              2
+1 1/6 kuš3            -&gt;  35              --igi nu--
+1 1/3 kuš3            -&gt;  40              1:30
+1 1/2 kuš3            -&gt;  45              1:20
+1 2/3 kuš3            -&gt;  50              1:12
+1 5/6 kuš3            -&gt;  55              --igi nu--
+1/6 ninda             -&gt;  1               1
+</code></pre>
 
 </body>
 </html>

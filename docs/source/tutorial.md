@@ -1,26 +1,29 @@
 <link rel="icon" type="image/svg" href="favicon.svg">
-# MesoMath as a command line Mesopotamian calculator 
+
+# MesoMath ``v1.1.0`` Tutorial
+
 ![mesomath](mesomath.png)
-# Tutorial
+
+
 Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
 
 >(*) At gmail.com
 
-# Introduction
+## Introduction
 
-MesoMath is a Python3 package intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. It also allows to deal with the basic aspects of metrology of the time.
+MesoMath is a `Python3` package intended for the arithmetic of natural sexagesimal numbers, mainly in their "**floating**" aspect (i.e. eliminating all possible trailing sexagesimal zeros on the right, thus abstracting from the order of magnitude of the quantity expressed), as performed by the Babylonian scribes and their apprentices in ancient times. It also allows to deal with the basic aspects of metrology of the time.
 
 Inpired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python` programming and to the command line as an efficient and versalite calculator.
 
-## Getting it
+### Getting it
 
 You can obtain the software from its [GitHub repository](https://github.com/jccsvq/mesomath).  Click on the `<>Code` button and choose  `Download ZIP`.  Unzip the downloaded archive to any directory of your choice (hereinafter referred to as the *installation directory*) and   `cd` to it, that's all.
 
-## Requirements
+### Requirements
 
-Obviously, a more or less modern version of `Python 3` must be installed on your system; other than that, nothing else, since MesoMath only uses Python standard modules: `math`, `itertools`, `argparse`, `os.path`, and `sqlite3`.
+Obviously, a more or less modern version of `Python 3` must be installed on your system; other than that, nothing else, since MesoMath only uses Python standard modules: `math`, `itertools`, `argparse`, `os.path`, `re` and `sqlite3`.
 
-## Installation
+### Installation
 
 None is required for casual use, simply work from the installation directory. So, if you decide to do without the application, you just have to delete that directory to get rid of all this stuff. To test the installation, open a terminal on the installation directory and run:
 
@@ -28,9 +31,9 @@ None is required for casual use, simply work from the installation directory. So
 
 If all goes well and you don't encounter any error messages, you should get output similar to that shown in Appendix A (That output can be useful later as a cheat sheet for the calculator.).
 
-# Running MesoMath as a Mesopotamian/Babylonian calculator
+## Running MesoMath as a Mesopotamian/Babylonian calculator
 
-## The simplest
+### The simplest
 
 Now that everything is hopefully up and working, is time to launch MesoMath as a calculator. To do this, we will open an interactive Python or iPython session (if you have it installed):
 
@@ -61,7 +64,7 @@ let us enter:
     
     In [2]:
 
-## To work in directories other than the installation directory
+### To work in directories other than the installation directory
 
 The above is sufficient to work from the installation directory. To work from other directories, we must ensure that Python finds the `mesomath` module. This issue can be somewhat complicated, but one solution is the following:
 
@@ -123,7 +126,7 @@ The above is sufficient if you are going to limit yourself to sexagesimal calcul
 
     print(message)
 
-## Create scripts
+### Create scripts
 
 For a more permanent installation, you could create scripts for your operating system. For example, on Linux, a file called `babcalc` with the following contents:
 
@@ -169,13 +172,13 @@ In fact, during the development of this package an executable script like the fo
     print(message)
 
 
-# Hands on
+## Hands on
 
 In what follows, the reader is assumed to be familiar with the key topics of Mesopotamian mathematics, in particular with the concepts of **decimal** and **sexagesimal** notations, **absolute** and **floating** numbers and with the concepts of **regular** and **reciprocal** numbers.
 
-## First steps
+### First steps
 
-### Introducing or creating Babylonian numbers
+#### Introducing or creating Babylonian numbers
 
 Let us create our first Babylonian number 
 
@@ -271,9 +274,9 @@ but you can only use  `:` and `.` for input:
     >>> 
 
 
-##  Basic arithmetic
+###  Basic arithmetic
 
-### Addition
+#### Addition
 
 We use the addition operator `+` to perform addition:
 
@@ -319,7 +322,7 @@ Of course, we are not limited to two addends:
     40:17:10:14:56
     >>>
 
-### Subtraction
+#### Subtraction
 
 Subtraction, like addition, always gives absolute (not floating) results. It also returns the absolute difference of numbers. This is by design, because Mesopotamian mathematics lacked negative numbers and to save us from mistakes. Thus, subtraction in this application is a commutative operation.
 
@@ -329,7 +332,7 @@ Subtraction, like addition, always gives absolute (not floating) results. It als
     1:17:49:45
     >>> 
 
-### Multiplication
+#### Multiplication
 
 Multiplication is absolute by default:
 
@@ -358,7 +361,7 @@ and restore it again:
     >>> 
 
 
-### Powers
+#### Powers
 
 Use the `**` operator:
 
@@ -370,7 +373,7 @@ Use the `**` operator:
     11:54:5:36:24:11:24:33:52:7:40:48
     >>> 
 
-### Division
+#### Division
 
 This application offers two types of division, both are floating:
 
@@ -417,9 +420,9 @@ We can change the number of digits in the result (approximately, sorry):
     8:53:20
     >>>
 
-## Roots
+### Roots
 
-### Square root
+#### Square root
 
 Method .sqrt() returns the floating square root of the numbers.
 
@@ -470,7 +473,7 @@ to the one appearing in tablet [YBC 7289](https://en.wikipedia.org/wiki/YBC_7289
 <a target = "_blank" title="Urcia, A., Yale Peabody Museum of Natural History,  http://peabody.yale.edu, http://hdl.handle.net/10079/8931zqj
 derivative work, user:Theodor Langhorne Franklin, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:YBC-7289-OBV-labeled.jpg"><img width="256" alt="Labeled photograph of YBC 7289 identifying inscribed numbers" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/YBC-7289-OBV-labeled.jpg/256px-YBC-7289-OBV-labeled.jpg?20190204183004"></a>
 
-### Cube root
+#### Cube root
 
 Method .cbrt() returns the floating cube root of the numbers.
 
@@ -482,7 +485,7 @@ Method .cbrt() returns the floating cube root of the numbers.
 
 etc.
 
-## Complex expressions
+### Complex expressions
 
 The Python engine is behind the scenes, which means we can combine elementary operations to build complex expressions:
 
@@ -507,7 +510,7 @@ use lists:
 
 etc.
 
-## Logical operators
+### Logical operators
 
 Logical operators are available and can be combined with integers. This can be useful in programming.
 
@@ -517,7 +520,7 @@ Logical operators are available and can be combined with integers. This can be u
     False
 
 
-## Other BabN class  attribute
+### Other BabN class  attribute
 
 `bn.fill` is set to `False` by default. You can change it to modify the aspect of the printed sexagesimal numbers by adding a left 0 to digits from 0 to 9 i.e. to conver them to 00, 01, ..., 09:
 
@@ -533,11 +536,11 @@ Logical operators are available and can be combined with integers. This can be u
     >>> 
 
 
-## Other BabN class methods
+### Other BabN class methods
 
 Still to be documented. In the meantime, you can consult Appendix B for help on the `BabB` class (called **`bn`** in this tutorial because we used: `from mesomath.babn import BabN as` **`bn`**).
 
-### .rec()
+#### .rec()
 
 This method returns the reciprocal of regular numbers, `None` for non-regular numbers:
 
@@ -560,7 +563,7 @@ This method returns the reciprocal of regular numbers, `None` for non-regular nu
     <class 'NoneType'>
 
 
-### .inv(n)
+#### .inv(n)
 
 This is a replacement for .rec() for irregular numbers. Irregular numbers can be said to have infinite-digit reciprocals; this method calculates the first `n` of them.
 
@@ -582,7 +585,7 @@ This is a replacement for .rec() for irregular numbers. Irregular numbers can be
     >>> 
 
 
-### .round(n)
+#### .round(n)
 
 Returns the first n sexagesimal digits of the number with rounding:
 
@@ -595,7 +598,7 @@ Returns the first n sexagesimal digits of the number with rounding:
 Useful when working with approximate floating numbers.
 
 
-### .head(n)
+#### .head(n)
 
 Returns the first n sexagesimal digits of the number without rounding:
 
@@ -612,7 +615,7 @@ Returns the first n sexagesimal digits of the number without rounding:
 
 You will find this method and the next one used in the `example-melville.py` file in your installation directory.
 
-### .tail(n)
+#### .tail(n)
 
 Returns the last n sexagesimal digits of the number:
 
@@ -626,11 +629,11 @@ Returns the last n sexagesimal digits of the number:
     56:9:27:29:15:44
     >>>
 
-### .dist(n)
+#### .dist(n)
 
 This was not intended for interactive use.
 
-### .searchreg(minn, maxn, limdigits=6, prt=False)
+#### .searchreg(minn, maxn, limdigits=6, prt=False)
 
 Searches the `bn.database` database for the closest regular number to the object's.
 minn and maxn: must be sexagesimal strings using ":" separator. limdigits max value is 20.
@@ -667,22 +670,87 @@ minn and maxn: must be sexagesimal strings using ":" separator. limdigits max va
     7:1:52:30
     >>>
 
-## Metrology
+### Metrology
 
-### Basics
+#### Basics
 
-You can use the metrological classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, and `bS`
+In the following, it is assumed that your startup script contains the lines:
 
-    class  bl: Babylonian length system (susi, kus, ninda, us, danna)
-    class  bs: Babylonian surface system (se, gin, sar, gan)
-    class  bv: Babylonian volume system (se, gin, sar, gan)
-    class  bc: Babylonian capacity system (se, gin, sila, ban, bariga, gur)
-    class  bw: Babylonian weight system (se, gin, mana, gu)
-    class  bG: Babylonian System G (iku, ese, bur, bur_u, sar, sar_u, sar_gal)
-    class  bS: Babylonian System S (dis, u, ges, gesu, sar, sar_u, sar_gal)
-    Class  bb: Babylonian brick counting system (se gin sar gan)
+    from mesomath.babn import BabN as bn
+    from mesomath.npvs import Blen as bl
+    from mesomath.npvs import Bsur as bs
+    from mesomath.npvs import Bvol as bv
+    from mesomath.npvs import Bcap as bc
+    from mesomath.npvs import Bwei as bw
+    from mesomath.npvs import BsyG as bG
+    from mesomath.npvs import BsyS as bS
+    from mesomath.npvs import Bbri as bb
 
-in a similar way to what we saw for sexagesimal numbers with the `bn` class. We can introduce measurements in two different ways:
+so that we can access the classes `BabN, Blen, Bsur,`... using the shorter aliases `bn, bl, bs,` etc.
+
+This is what the classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, `bS` and `ba` represent:
+
+    class  bl: Babylonian length system:
+               danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+
+    class  bs: Babylonian surface system:
+               GAN2 <-100- sar <-60- gin2 <-180- še
+
+    class  bv: Babylonian volume system:
+               GAN2 <-100- sar <-60- gin2 <-180- še
+
+    class  bc: Babylonian capacity system:
+               gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
+
+    class  bw: Babylonian weight system:
+               gu2 <-60- ma-na <-60- gin2 <-180- še
+
+    class  bG: Babylonian counting System G:
+               šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku
+
+    class  bS: Babylonian counting System S:
+               šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
+
+    Class  bb: Babylonian brick counting system:
+               GAN2 <-100- sar <-60- gin2 <-180- še
+
+However, for ease of writing, the real or academic names of the units in these metrological systems have been simplified by removing capital letters, numbers, hyphens, and diacritics. Therefore, for inputting measurements, we will use the following unit names:
+
+Class|Metrology|Units
+-----|---------|-----
+bl| Babylonian length system|  susi, kus, ninda, us, danna
+bs| Babylonian surface system|  se, gin, sar, gan
+bv| Babylonian volume system|  se, gin, sar, gan
+bc| Babylonian capacity system|  se, gin, sila, ban, bariga, gur
+bw| Babylonian weight system|  se, gin, mana, gu
+bG| Babylonian System G|  iku, ese, bur, buru, sar, saru, sargal
+bS| Babylonian System S|  dis, u, ges, gesu, sar, saru, sargal
+bb| Babylonian brick counting system|  se gin sar gan
+
+>Note that scribes wrote volumes as an equivalent surface area multiplied by a standard height of 1 kus; thus, they used the same metrology for surfaces and volumes. Here, however, two different classes will be used, so that one can multiply a surface area by a length to obtain a volume, but one cannot multiply a volume by a length to obtain a four-dimensional volume, which was probably beyond the scribes' understanding.
+
+At any time, you can review the names of the units in each system and their factors through the following, e.g., for capacities:
+
+    >>> bc.uname
+    ['se', 'gin', 'sila', 'ban', 'bariga', 'gur']
+    >>> bc.ufact
+    [180, 60, 10, 6, 5]
+    >>> 
+
+and the academic names:
+
+    >>> bc.aname
+    ['še', 'gin2', 'sila3', 'ban2', 'bariga', 'gur']
+
+or
+
+    >>> print(*bc.scheme(bc))
+    gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
+    >>> print(*bc.scheme(bc,1))
+    gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
+    >>>
+
+In a similar way to what we saw for sexagesimal numbers with the `bn` class. We can introduce measurements in two different ways:
 
     >>> a = bl(11111)
     >>> a
@@ -749,6 +817,8 @@ This will be useful if you intend to recreate **Metrological lists**. For exampl
         x=bl(i)
         print(f'{str(x).ljust(15)} -> {str(x.sex(2)).rjust(6)}')
 
+
+
 will print this excerpt of the metrological table for length using ninda (x.sex(2)) as base unit:
 
     1 susi          ->     10
@@ -773,9 +843,19 @@ will print this excerpt of the metrological table for length using ninda (x.sex(
 
 (See page 8 of [Floating calculation in Mesopotamia](https://hal.science/hal-01515645v2/document) by Christine Proust).
 
-> The `metrotable` tool, which specializes in printing segments of metrological tables, is located in the `progs` subdirectory of this package. It also includes its own [tutorial.html](https://jccsvq.github.io/mesomath/progs/metrotable.html).
+> The `metrotable.py` tool, which specializes in printing segments of metrological tables, is located in the `progs` subdirectory of this package. It also includes its own [tutorial](https://jccsvq.github.io/mesomath/progs/metrotable.html).
+>
+>The `mtlookup.py` tool in the `progs` subdirectory simulates direct and inverse searches in metrological tables. It also includes its own [tutorial](https://jccsvq.github.io/mesomath/progs/mtlookup.html).
+>
 
-### Operations
+Since version v1.1.0 you can get the metrological value of an object directly using the `.metval()` method:
+
+    >>> bl('1 kus 15 susi').metval()
+    7:30
+    >>>
+
+
+#### Operations
 
 For objects of the same class, the following operations are available:
 
@@ -843,7 +923,7 @@ Additionally, for length measurements we can multiply them together to obtain su
     True
     >>> 
 
-### Systems S and G
+#### Systems S and G
 
 Finally, in cases like this:
 
@@ -886,7 +966,7 @@ The third input method cited above makes use of these types of strings; in fact,
     460800 gan 44 sar 20 gin
     >>>
 
-### Fractions
+#### Fractions
 
 There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), thei can be entered in several ways:
 
@@ -952,8 +1032,39 @@ These results can be used for input:
     11223344
     >>>
 
+#### Academic names
 
-### Volume vs. Capacity
+Since v1.1.0, the .prtf() method has a second switch that allows the academic unit names to be used in the output:
+
+    >>> a=bl(11223344)
+    >>> a.prtf()
+    '17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
+    >>> a.prtf(1)
+    '17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
+    >>> a.prtf(1,1)
+    '17 1/6 danna 4 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si'
+    >>> bl.prtsex=True
+    >>> a.prtf(0,1)
+    '(1 u 7 dis) danna (9 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
+    >>> a.prtf(1,1)
+    '(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
+    >>>
+
+This kind of string can also be used as input:
+
+    >>> b=bl('(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si')
+    >>> b.dec
+    11223344
+    >>>
+
+equivalent to:
+
+    >>> b=bl(a.prtf(1,1))
+    >>> b.dec
+    11223344
+    >>>
+
+#### Volume vs. Capacity
 
 There were two systems for measuring volume: **capacities**, used to measure grain, beer, and other types of food and goods, and **volume** proper, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
 
@@ -982,7 +1093,7 @@ There were two systems for measuring volume: **capacities**, used to measure gra
     Approximate SI value: 0.3 cube meters
     >>> 
 
-### Bricks
+#### Bricks
 
 Volume measurements were frequently transformed into their "brick" equivalents. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "*Nalbanum*," or the number of *sar-b* of that type that fits in 1 *sar* of volume. The `.sarb()` method allows us to perform this transformation:
 
@@ -1058,10 +1169,8 @@ Here is an excerpt from a table found
 |11|  1.20| 1:12|
 |12|1.00 |1  |
 
-# Appendices
 
-
-## Appendix A: Output from `test-babn.py`
+## Appendix: Output from `test-babn.py`
 
 Open a terminal on the installation directory and issue:
 

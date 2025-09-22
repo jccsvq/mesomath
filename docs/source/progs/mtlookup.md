@@ -1,3 +1,5 @@
+<link rel="icon" type="image/svg" href="../favicon.svg">
+
 # `mtlookup` tutorial
 
 Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
@@ -206,4 +208,23 @@ You may combine it with `-p` (pedantic mode):
     (1 dis) 1/2 ninda  <-  1:30
     1/6 kus (4 dis) susi  <-  1:30
     $ 
+
+### Academic unit names
+
+You can combine the `-F --fractions` options with `-a --academic` to obtain listings using the academic names of the units:
+
+    $ mtlookup -t L '1 us 30 ninda' -aF1
+    1 1/2 UŠ  ->  1:30
+
+    $ mtlookup -t L 1.30 -r -pF1 -a
+
+    Looking for  Babylonian length meassurements with abstract =  1.30
+        Base unit:  ninda
+    ========================================================
+    (3 sar) danna  <-  1:30
+    (3 ges) danna  <-  1:30
+    (3 dis) danna  <-  1:30
+    (1 dis) 1/2 UŠ  <-  1:30
+    (1 dis) 1/2 ninda  <-  1:30
+    1/6 kuš3 (4 dis) šu-si  <-  1:30
 

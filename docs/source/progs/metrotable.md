@@ -1,4 +1,5 @@
 <link rel="icon" type="image/svg" href="../favicon.svg">
+
 # `metrotable` tutorial
 
 Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
@@ -76,6 +77,8 @@ to get a long list of short and long options:
       -p, --pedantic        Write the coefficients of the units in the
                             measurements using the S and G Systems (default:
                             False)
+      -a, --academic        With [-F|--fractions] or [-r|--remainder] uses the academic names of
+                            units. (default: False)
 
     jccsvq fecit, 2025. Public domain.
 
@@ -126,6 +129,37 @@ to take a look at the metrological systems covered by this application:
         Base unit:  dis
     NPVN System G:  Babylonian System G to count objects
         Units:  sargal <-6- saru <-10- sar <-6- buru <-10- bur <-3- ese <-6- iku
+        Base unit:  iku
+
+or
+
+    $ metrotable -ra
+
+    Remainder of systems and units: Old Babylonian Period
+    =======================================================
+    System L:  Babylonian length meassurements
+        Units:  danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+        Base unit:  ninda
+    System Lh:  Babylonian length meassurements (Heights)
+        Units:  danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+        Base unit:  kus
+    System S:  Babylonian surface meassurements
+        Units:  GAN2 <-100- sar <-60- gin2 <-180- še
+        Base unit:  gin
+    System V:  Babylonian volume meassurements
+        Units:  GAN2 <-100- sar <-60- gin2 <-180- še
+        Base unit:  gin
+    System C:  Babylonian capacity meassurements
+        Units:  gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
+        Base unit:  gin
+    System W:  Babylonian weight meassurements
+        Units:  gu2 <-60- ma-na <-60- gin2 <-180- še
+        Base unit:  gin
+    NPVN System S:  Babylonian System S to count objects
+        Units:  šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
+        Base unit:  dis
+    NPVN System G:  Babylonian System G to count objects
+        Units:  šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku
         Base unit:  iku
 
 
@@ -511,7 +545,7 @@ This may distort the output; combine it with `-w`:
     (1 dis) kus (2 u 5 dis) susi    ->  9:10            --igi nu--
     (2 dis) kus                     ->  10              6
 
-#### Option `-F --fractions
+#### Option `-F --fractions`
 
 Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`, `-F1` to also include the fraction `1/6`:
 
@@ -614,4 +648,35 @@ You may combine it with `-p` (pedantic mode):
     1/6 ninda             ->  10  
     $
 
-These features have not (yet) been thoroughly tested, use with caution.
+#### Options `-a --academic`
+
+You can combine the `-F --fractions` options with `-a --academic` to obtain listings using the academic names of the units:
+
+    $ metrotable -x 1 -aF1 -f0 -v
+
+    Example 1:
+            Table: Babylonian length meassurements
+            ubase: 0 (šu-si)
+            From: 10 susi
+            To: 2 kus
+            Step by: 5 susi
+    Output follows:
+
+    Metrological list for Babylonian length meassurements
+      units:  danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+      cfact:  1 30 360 21600 648000
+    Base unit: šu-si
+
+    Meassurement              Abstract        Reciprocal
+    ====================================================
+    1/3 kuš3              ->  10              6
+    1/2 kuš3              ->  15              4
+    2/3 kuš3              ->  20              3
+    5/6 kuš3              ->  25              2:24
+    1 kuš3                ->  30              2
+    1 1/6 kuš3            ->  35              --igi nu--
+    1 1/3 kuš3            ->  40              1:30
+    1 1/2 kuš3            ->  45              1:20
+    1 2/3 kuš3            ->  50              1:12
+    1 5/6 kuš3            ->  55              --igi nu--
+    1/6 ninda             ->  1               1

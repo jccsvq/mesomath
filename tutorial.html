@@ -69,7 +69,7 @@ tr:nth-child(odd) {
 <h2>Getting it</h2>
 <p>You can obtain the software from its <a href="https://github.com/jccsvq/mesomath">GitHub repository</a>.  Click on the <code>&lt;&gt;Code</code> button and choose  <code>Download ZIP</code>.  Unzip the downloaded archive to any directory of your choice (hereinafter referred to as the <em>installation directory</em>) and   <code>cd</code> to it, that's all.</p>
 <h2>Requirements</h2>
-<p>Obviously, a more or less modern version of <code>Python 3</code> must be installed on your system; other than that, nothing else, since MesoMath only uses Python standard modules: <code>math</code>, <code>itertools</code>, <code>argparse</code>, <code>os.path</code>, and <code>sqlite3</code>.</p>
+<p>Obviously, a more or less modern version of <code>Python 3</code> must be installed on your system; other than that, nothing else, since MesoMath only uses Python standard modules: <code>math</code>, <code>itertools</code>, <code>argparse</code>, <code>os.path</code>, <code>re</code> and <code>sqlite3</code>.</p>
 <h2>Installation</h2>
 <p>None is required for casual use, simply work from the installation directory. So, if you decide to do without the application, you just have to delete that directory to get rid of all this stuff. To test the installation, open a terminal on the installation directory and run:</p>
 <pre><code>$ python3 test-babn.py
@@ -620,17 +620,117 @@ Minimal distance: 6750, closest regular is: 07:01:52:30
 </code></pre>
 <h2>Metrology</h2>
 <h3>Basics</h3>
-<p>You can use the metrological classes <code>bl</code>, <code>bs</code>, <code>bv</code>, <code>bc</code>, <code>bw</code>, <code>bG</code>, and <code>bS</code></p>
-<pre><code>class  bl: Babylonian length system (susi, kus, ninda, us, danna)
-class  bs: Babylonian surface system (se, gin, sar, gan)
-class  bv: Babylonian volume system (se, gin, sar, gan)
-class  bc: Babylonian capacity system (se, gin, sila, ban, bariga, gur)
-class  bw: Babylonian weight system (se, gin, mana, gu)
-class  bG: Babylonian System G (iku, ese, bur, bur_u, sar, sar_u, sar_gal)
-class  bS: Babylonian System S (dis, u, ges, gesu, sar, sar_u, sar_gal)
-Class  bb: Babylonian brick counting system (se gin sar gan)
+<p>In the following, it is assumed that your startup script contains the lines:</p>
+<pre><code>from mesomath.babn import BabN as bn
+from mesomath.npvs import Blen as bl
+from mesomath.npvs import Bsur as bs
+from mesomath.npvs import Bvol as bv
+from mesomath.npvs import Bcap as bc
+from mesomath.npvs import Bwei as bw
+from mesomath.npvs import BsyG as bG
+from mesomath.npvs import BsyS as bS
+from mesomath.npvs import Bbri as bb
 </code></pre>
-<p>in a similar way to what we saw for sexagesimal numbers with the <code>bn</code> class. We can introduce measurements in two different ways:</p>
+<p>so that we can access the classes <code>BabN, Blen, Bsur,</code>... using the shorter aliases <code>bn, bl, bs,</code> etc.</p>
+<p>This is what the classes <code>bl</code>, <code>bs</code>, <code>bv</code>, <code>bc</code>, <code>bw</code>, <code>bG</code>, <code>bS</code> and <code>ba</code> represent:</p>
+<pre><code>class  bl: Babylonian length system:
+           danna &lt;-30- UŠ &lt;-60- ninda &lt;-12- kuš3 &lt;-30- šu-si
+
+class  bs: Babylonian surface system:
+           GAN2 &lt;-100- sar &lt;-60- gin2 &lt;-180- še
+
+class  bv: Babylonian volume system:
+           GAN2 &lt;-100- sar &lt;-60- gin2 &lt;-180- še
+
+class  bc: Babylonian capacity system:
+           gur &lt;-5- bariga &lt;-6- ban2 &lt;-10- sila3 &lt;-60- gin2 &lt;-180- še
+
+class  bw: Babylonian weight system:
+           gu2 &lt;-60- ma-na &lt;-60- gin2 &lt;-180- še
+
+class  bG: Babylonian counting System G:
+           šar2-gal &lt;-6- šar'u &lt;-10- šar2 &lt;-6- bur'u &lt;-10- bur3 &lt;-3- eše3 &lt;-6- iku
+
+class  bS: Babylonian counting System S:
+           šar2-gal &lt;-6- šar'u &lt;-10- šar2 &lt;-6- geš'u &lt;-10- geš &lt;-6- u &lt;-10- diš
+
+Class  bb: Babylonian brick counting system:
+           GAN2 &lt;-100- sar &lt;-60- gin2 &lt;-180- še
+</code></pre>
+<p>However, for ease of writing, the real or academic names of the units in these metrological systems have been simplified by removing capital letters, numbers, hyphens, and diacritics. Therefore, for inputting measurements, we will use the following unit names:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Metrology</th>
+<th>Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bl</td>
+<td>Babylonian length system</td>
+<td>susi, kus, ninda, us, danna</td>
+</tr>
+<tr>
+<td>bs</td>
+<td>Babylonian surface system</td>
+<td>se, gin, sar, gan</td>
+</tr>
+<tr>
+<td>bv</td>
+<td>Babylonian volume system</td>
+<td>se, gin, sar, gan</td>
+</tr>
+<tr>
+<td>bc</td>
+<td>Babylonian capacity system</td>
+<td>se, gin, sila, ban, bariga, gur</td>
+</tr>
+<tr>
+<td>bw</td>
+<td>Babylonian weight system</td>
+<td>se, gin, mana, gu</td>
+</tr>
+<tr>
+<td>bG</td>
+<td>Babylonian System G</td>
+<td>iku, ese, bur, buru, sar, saru, sargal</td>
+</tr>
+<tr>
+<td>bS</td>
+<td>Babylonian System S</td>
+<td>dis, u, ges, gesu, sar, saru, sargal</td>
+</tr>
+<tr>
+<td>bb</td>
+<td>Babylonian brick counting system</td>
+<td>se gin sar gan</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Note that scribes wrote volumes as an equivalent surface area multiplied by a standard height of 1 kus; thus, they used the same metrology for surfaces and volumes. Here, however, two different classes will be used, so that one can multiply a surface area by a length to obtain a volume, but one cannot multiply a volume by a length to obtain a four-dimensional volume, which was probably beyond the scribes' understanding.</p>
+</blockquote>
+<p>At any time, you can review the names of the units in each system and their factors through the following, e.g., for capacities:</p>
+<pre><code>&gt;&gt;&gt; bc.uname
+['se', 'gin', 'sila', 'ban', 'bariga', 'gur']
+&gt;&gt;&gt; bc.ufact
+[180, 60, 10, 6, 5]
+&gt;&gt;&gt;
+</code></pre>
+<p>and the academic names:</p>
+<pre><code>&gt;&gt;&gt; bc.aname
+['še', 'gin2', 'sila3', 'ban2', 'bariga', 'gur']
+</code></pre>
+<p>or</p>
+<pre><code>&gt;&gt;&gt; print(*bc.scheme(bc))
+gur &lt;-5- bariga &lt;-6- ban &lt;-10- sila &lt;-60- gin &lt;-180- se
+&gt;&gt;&gt; print(*bc.scheme(bc,1))
+gur &lt;-5- bariga &lt;-6- ban2 &lt;-10- sila3 &lt;-60- gin2 &lt;-180- še
+&gt;&gt;&gt;
+</code></pre>
+<p>In a similar way to what we saw for sexagesimal numbers with the <code>bn</code> class. We can introduce measurements in two different ways:</p>
 <pre><code>&gt;&gt;&gt; a = bl(11111)
 &gt;&gt;&gt; a
 30 ninda 10 kus 11 susi
@@ -872,6 +972,34 @@ MesoM.prtsex = True
 11223344
 &gt;&gt;&gt; c=bl(a.prtf(1))
 &gt;&gt;&gt; c.dec
+11223344
+&gt;&gt;&gt;
+</code></pre>
+<h3>Academic names</h3>
+<p>Since v1.1.0, the .prtf() method has a second switch that allows the academic unit names to be used in the output:</p>
+<pre><code>&gt;&gt;&gt; a=bl(11223344)
+&gt;&gt;&gt; a.prtf()
+'17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
+&gt;&gt;&gt; a.prtf(1)
+'17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
+&gt;&gt;&gt; a.prtf(1,1)
+'17 1/6 danna 4 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si'
+&gt;&gt;&gt; bl.prtsex=True
+&gt;&gt;&gt; a.prtf(0,1)
+'(1 u 7 dis) danna (9 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
+&gt;&gt;&gt; a.prtf(1,1)
+'(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
+&gt;&gt;&gt;
+</code></pre>
+<p>This kind of string can also be used as input:</p>
+<pre><code>&gt;&gt;&gt; b=bl('(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si')
+&gt;&gt;&gt; b.dec
+11223344
+&gt;&gt;&gt;
+</code></pre>
+<p>equivalent to:</p>
+<pre><code>&gt;&gt;&gt; b=bl(a.prtf(1,1))
+&gt;&gt;&gt; b.dec
 11223344
 &gt;&gt;&gt;
 </code></pre>

@@ -1,10 +1,10 @@
 from mesomath.npvs import *
 
-print('\nSome basic tests of npvs classes follow:\n')
+print("\nSome basic tests of npvs classes follow:\n")
 
-print('Length: Blen class, Let us introduce two lengths:')
-a = Blen('1 ninda 3 kus 7 susi')
-b = Blen('1 us 8 kus 16 susi')
+print("Length: Blen class, Let us introduce two lengths:")
+a = Blen("1 ninda 3 kus 7 susi")
+b = Blen("1 us 8 kus 16 susi")
 print("    a = Blen('1 ninda 3 kus 7 susi')")
 print("    b = Blen('1 us 8 kus 16 susi')")
 print(f"    a: {a},  b: {b}")
@@ -20,12 +20,13 @@ print(f"    a.cfact: {a.cfact}")
 print(f"    a.sex(): {a.sex()}, b.sex(): {b.sex()}")
 print(f"    a.sex(0): {a.sex(0)}, b.sex(0): {b.sex(0)}\n")
 print(f"    2 * a = {2*a}, b * 2 = {b*2}\n")
-c = a*b
+c = a * b
 print(f"    a * b = {c}, (a * b).title = {c.title}")
 print(f"    (a * b).SI() = {c.SI()}\n")
-v = c * Blen('1 kus')
+v = c * Blen("1 kus")
 print(f"    v = (a*b) * Blen('1 kus'), v = {v}")
-Npvs.prtsex=True
+Npvs.prtsex = True
 print(f"    v = (a*b) * Blen('1 kus'), v = {v}")
 print(f"    v.title: {v.title}")
 print(f"    v.SI(): {v.SI()}")
+
