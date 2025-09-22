@@ -1,8 +1,6 @@
-<link rel="icon" type="image/svg" href="favicon.svg">
-
 # MesoMath ``v1.1.0`` Tutorial
 
-![mesomath](mesomath.png)
+![mesomath](_static/mesomath.png)
 
 
 Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.

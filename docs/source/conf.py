@@ -44,6 +44,6 @@ autodoc_default_options = {
 
 html_theme = 'classic'
 html_static_path = ['_static']
-html_logo = 'mesomath.png'
+html_logo = '_static/mesomath.png'
 html_favicon = '_static/favicon.svg'
 

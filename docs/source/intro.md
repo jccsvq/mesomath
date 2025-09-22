@@ -1,4 +1,4 @@
-![mesomath](mesomath.png) 
+![mesomath](_static/mesomath.png) 
 # MesoMath v1.1.0
 ## Intro
 
@@ -45,7 +45,6 @@ Includes:
 * * [`metrotable`](https://mesomath.readthedocs.io/progs/metrotable.html)
 * * [`mtlookup`](https://mesomath.readthedocs.io/progs/mtlookup.html)
 
-
 ## Dependencies
 
 `mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path`, `re` and `sqlite3`. 
@@ -63,7 +62,7 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 
 ###  Use as an interactive calculator
 
-Consult the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html)!
+Consult the [tutorial](https://mesomath.readthedocs.io/tutorial.html)!
 
 The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
 

@@ -6,7 +6,7 @@ Welcome to MesoMath's documentation!
    :maxdepth: 4
    :caption: Contents:
 
-   README.md
+   intro.md
    release-notes.md
    tutorial.md
    progs/metrotable.md
