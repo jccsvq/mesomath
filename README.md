@@ -1,5 +1,5 @@
-![mesomath](mesomath.png) 
-# MesoMath v1.1.0
+![mesomath](docs/source/_static/mesomath.png) 
+
 ## Intro
 
 This package is intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. It also allows to deal with the basic aspects of metrology of the time.
@@ -63,7 +63,7 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 
 ###  Use as an interactive calculator
 
-Consult the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html)!
+Consult the [tutorial](https://mesomath.readthedocs.io/tutorial.html)!
 
 The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
 
@@ -144,7 +144,7 @@ This module defines the generic class `Npvs` for handling measurements in variou
     *  class `Bwei`: Babylonian weight system (se gin mana gu)
     *  class `Bbri`: Babylonian brick counting system (se gin sar gan)
 
-Please, read the [tutorial](https://jccsvq.github.io/mesomath/tutorial.html) to see how to use all these classes.
+Please, read the [tutorial](https://mesomath.readthedocs.io/tutorial.html) to see how to use all these classes.
 
 ##  `createDB.py`
 
