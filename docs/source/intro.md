@@ -34,6 +34,10 @@ and two applications in the `progs` subdirectory:
 *  `metrotable.py` to print segments of metrological tables.
 *  `mtlookup.py` to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number.
 
+## Download
+
+From the [GitHub repository](https://github.com/jccsvq/mesomath).
+
 ## Documentation
 
 Documentation for this package is in [Read the Docs](https://mesomath.readthedocs.io/index.html),
@@ -47,7 +51,7 @@ Includes:
 
 ## Dependencies
 
-`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os.path`, `re` and `sqlite3`. 
+`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `sys`, `re` and `sqlite3`. 
 
 Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm) in x86_64 and aarch64 (raspberrypi 5).
 
