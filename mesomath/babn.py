@@ -45,7 +45,16 @@ class BabN:
     :factors: tuple with the powers of 2, 3, 5 and the remainder
     :type factors: tuple
 
-    jccsvq fecit, 2005. Public domain."""
+    jccsvq fecit, 2005. Public domain.
+    
+    Operators
+    ---------
+    
+    This class overloads arithmetic and logical operators allowing arithmetic 
+    operations and comparisons to be performed between members of the class and 
+    externally with integers.
+    
+    """
 
     title = "Sexagesimal number"
     sep = ":"
@@ -190,7 +199,12 @@ class BabN:
 
     def inv(self, digits=4):
         """Returns BabN object with approximate inverse of the number,
-        i.e., a * a.inv() is approximately a power of 60"""
+        i.e., a * a.inv() is approximately a power of 60
+        
+        :digits: the intended number of digits to return. 
+        :type digits: int, default 4.
+        
+        """
         x = self.dec
         if x == 0:
             print("This number has no inverse!")
@@ -219,24 +233,40 @@ class BabN:
         return len(self.list)
 
     def head(self, d=1):
-        """Returns BabN object with the first d digits of self"""
+        """Returns BabN object with the first d digits of self
+        
+        :d: Number of digits to return
+        
+        """
         l = min(abs(d), len(self.list))
         return BabN(self.list[:l])
 
     def tail(self, d=1):
-        """Returns BabN object with the last d digits of self"""
+        """Returns BabN object with the last d digits of self
+        
+        :d: Number of digits to return
+        
+        """
         l = min(abs(d), len(self.list))
         return BabN(self.list[-l:])
 
     def trim(self, d):
-        """Returns BabN object corresponding to the first d sexagesimal digits"""
+        """Returns BabN object corresponding to the first d sexagesimal digits
+        
+        :d: Number of digits to retain
+        
+        """
         if d <= self.len():
             return BabN(self.list[:d])
         else:
             return self
 
     def round(self, d):
-        """Returns BabN object rounded to d sexagesimal digits"""
+        """Returns BabN object rounded to d sexagesimal digits
+        
+        :d: Number of digits to return
+        
+        """
         if d < self.len():
             ll = self.list
             if ll[d] >= 30:
@@ -247,19 +277,31 @@ class BabN:
             return self
 
     def __add__(self, other):
-        """Overloads `+` operator: returns BabN object with the sum of operands"""
+        """Overloads `+` operator: returns BabN object with the sum of operands
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             return BabN(self.dec + other.dec)
         elif type(other) == int:
             return BabN(self.dec + other)
 
     def __radd__(self, other):
-        """Overloads `+` operator: returns BabN object with the sum of operands"""
+        """Overloads `+` operator: returns BabN object with the sum of operands
+
+        :other: May be another BabN object or a positive int.
+
+        """
         return BabN(self.dec + other)
 
     def __sub__(self, other):
         """Overloads `-` operator: returns BabN object with the absolute value
-        of the operands difference"""
+        of the operands difference
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             return BabN(abs(self.dec - other.dec))
         elif type(other) == int:
@@ -267,11 +309,19 @@ class BabN:
 
     def __rsub__(self, other):
         """Overloads `-` operator: returns BabN object with the absolute value
-        of the operands difference"""
+        of the operands difference
+
+        :other: May be another BabN object or a positive int.
+
+        """
         return BabN(abs(self.dec - other))
 
     def __mul__(self, other):
-        """Overloads `*` operator: returns BabN object with the operands product"""
+        """Overloads `*` operator: returns BabN object with the operands product
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if BabN.floatmult:
                 return BabN(self.dec * other.dec).float()
@@ -284,7 +334,11 @@ class BabN:
                 return BabN(self.dec * other)
 
     def __rmul__(self, other):
-        """Overloads `-` operator: returns BabN object with the operands product"""
+        """Overloads `-` operator: returns BabN object with the operands product
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if BabN.floatmult:
             return BabN(self.dec * other).float()
         else:
@@ -292,7 +346,11 @@ class BabN:
 
     def __truediv__(self, other):
         """Overloads `/` operator:  Returns BabN object with the floating
-        approximate division of operands"""
+        approximate division of operands
+
+        :other: May be another BabN object or a positive int.
+
+        """
         a = self.dec
         if type(other) == BabN:
             b = other.dec
@@ -308,14 +366,22 @@ class BabN:
 
     def __rtruediv__(self, other):
         """Overloads `/` operator:  Returns BabN object with the floating
-        approximate division of operands"""
+        approximate division of operands
+
+        :other: May be another BabN object or a positive int.
+
+        """
         return BabN(other).__truediv__(self)
 
     def __floordiv__(self, other):
         """Overloads `//` operator: Returns BabN object with the result of
         "Babylonian división" of operands, i.e., if b is regular then a//b
         returns a times the reciprocal of b. Result is floating. Returns None
-        if b is not regular."""
+        if b is not regular.
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == int:
             other = BabN(other)
         if other.isreg:
@@ -330,19 +396,31 @@ class BabN:
     def __rfloordiv__(self, other):
         """Overloads `//` operator: Returns BabN object with the result of
         "Babylonian división" of operands, i.e., if b is regular then a//b
-        returns a times the reciprocal of b. Returns None if b is not regular."""
+        returns a times the reciprocal of b. Returns None if b is not regular.
+
+        :other: May be another BabN object or a positive int.
+
+        """
         return BabN(other).__floordiv__(self)
 
     def __pow__(self, x):
         """Overloads `**` operator: Returns BabN object with the number raised
-        to the power x where x is a natural integer"""
+        to the power x where x is a natural integer
+
+        :x: power, positive int.
+
+        """
         try:
             return BabN(self.dec**x)
         except:
             print("x must be a positive integer")
 
     def __lt__(self, other):
-        """Overloads < operator"""
+        """Overloads < operator
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if self.dec < other.dec:
                 return True
@@ -355,7 +433,11 @@ class BabN:
                 return False
 
     def __le__(self, other):
-        """Overloads <= operator"""
+        """Overloads <= operator
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if self.dec <= other.dec:
                 return True
@@ -368,7 +450,11 @@ class BabN:
                 return False
 
     def __eq__(self, other):
-        """Overloads == operator"""
+        """Overloads == operator
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if self.dec == other.dec:
                 return True
@@ -381,7 +467,11 @@ class BabN:
                 return False
 
     def __ne__(self, other):
-        """Overloads != operator"""
+        """Overloads != operator
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if self.dec != other.dec:
                 return True
@@ -394,7 +484,11 @@ class BabN:
                 return False
 
     def __gt__(self, other):
-        """Overloads > operator"""
+        """Overloads > operator
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if self.dec > other.dec:
                 return True
@@ -407,7 +501,11 @@ class BabN:
                 return False
 
     def __ge__(self, other):
-        """Overloads >= operator"""
+        """Overloads >= operator
+
+        :other: May be another BabN object or a positive int.
+
+        """
         if type(other) == BabN:
             if self.dec >= other.dec:
                 return True
@@ -490,6 +588,7 @@ class BabN:
         number that is closest to it from a list.
 
         :n: may be an integer, formated string (ex: "1:2:3"), a list (ex., [1, 12, 23]) or another BabN object. Returns int.
+
         """
         list1 = [] + self.list
         len1 = self.len()

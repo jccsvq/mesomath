@@ -1,10 +1,14 @@
 ![mesomath](_static/mesomath.png) 
 # MesoMath v1.1.0
-## Intro
+## Overview
 
-This package is intended for the arithmetic of natural sexagesimal numbers, mainly in their "floating" aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. It also allows to deal with the basic aspects of metrology of the time.
+This package is intended for:
 
-Inspired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to Python programming and to the command line as a calculator.
+*  the arithmetic of natural sexagesimal numbers, mainly in their “floating” aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. 
+
+* the arithmetic of physical quantities, length, surface, etc. described using the metrology of the Old Babylonian Period.
+
+Inspired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python3` programming and to the `Python3` command line as an interactive calculator.
 
 `mesomath` module contains four submodules:
 
@@ -198,5 +202,5 @@ Output:
     r6 = r5 * r2
 
     Result r6 =  28:48
-<hr>
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+

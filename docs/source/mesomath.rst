@@ -1,6 +1,14 @@
 mesomath package
 ================
 
+Module contents
+---------------
+
+.. automodule:: mesomath
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -9,7 +17,7 @@ mesomath.babn module
 
 .. automodule:: mesomath.babn
    :members:
-   :undoc-members:
+   :special-members:
    :show-inheritance:
 
 mesomath.hamming module
@@ -34,13 +42,6 @@ mesomath.npvs module
 
 .. automodule:: mesomath.npvs
    :members:
-   :undoc-members:
+   :special-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: mesomath
-   :members:
-   :undoc-members:
-   :show-inheritance:

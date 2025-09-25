@@ -6,11 +6,9 @@ Hamming numbers are numbers of the form
 |       where
 |    i,  j,  k  ≥  0
 
-Here we use:
-
-       https://rosettacode.org/wiki/Hamming_numbers#Cyclic_generator_method_#2.
-
-adapted to Python3
+Here we use the cyclic generator, method #2, from 
+https://rosettacode.org/wiki/Hamming_numbers#Python 
+adapted to ``Python3``.
 
 Formats:
 --------
@@ -32,7 +30,10 @@ from itertools import islice, chain, tee
 
 
 def merge(r, s):
-    """Internal function"""
+    """Internal function
+
+    :meta private:
+    """
     # This is faster than heapq.merge.
     rr = r.__next__()
     ss = s.__next__()
@@ -46,7 +47,10 @@ def merge(r, s):
 
 
 def p(n):
-    """Internal function"""
+    """Internal function
+
+    :meta private:
+    """
 
     def gen():
         x = n
@@ -58,7 +62,10 @@ def p(n):
 
 
 def pp(n, s):
-    """Internal function"""
+    """Internal function
+
+    :meta private:
+    """
 
     def gen():
         for x in merge(s, chain([n], (n * y for y in fb))):
