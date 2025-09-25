@@ -451,7 +451,8 @@ Suppress the printing of the table header, which can be useful if you want to jo
     $ metrotable ... -n >> table.txt
     ...
 
-####Options `-f` `--force` 
+#### Options `-f` `--force`
+
 Allow the calculation of abstract numbers using any unit as a base unit. For instance:
 
 
@@ -481,7 +482,8 @@ Allow the calculation of abstract numbers using any unit as a base unit. For ins
     4 mana                ->  12
     5 mana                ->  15
 
-####Options `-w`  `--width`
+#### Options `-w`  `--width`
+
 Will change the default of 20 chars width  of the meassurement text field
 
     $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
@@ -497,7 +499,8 @@ Will change the default of 20 chars width  of the meassurement text field
     4 mana                          ->  4
     5 mana                          ->  5
 
-####Options `-p` `--pedantic`  
+#### Options `-p` `--pedantic`
+
 Will print the coefficients of the units expressed in the system S  (system G for surfaces and volumes) making the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
 
     $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pv
