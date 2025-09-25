@@ -104,8 +104,8 @@ def normalize(st: str) -> str:
 class Npvs:
     """This class implement Non-Place-Value System arithmetic
            Example is taken from Imperial length units:
-           
-           **league <-3- mile <-8- furlong <-10- chain <-22- yard <-3- foot 
+
+           **league <-3- mile <-8- furlong <-10- chain <-22- yard <-3- foot
            <-3- hand <-4- inch**
 
     Class Atributes:
@@ -130,8 +130,8 @@ class Npvs:
     Operators
     ---------
 
-    This class overloads arithmetic and logical operators allowing arithmetic 
-    operations and comparisons to be performed between members of the class and 
+    This class overloads arithmetic and logical operators allowing arithmetic
+    operations and comparisons to be performed between members of the class and
     externally with integers or floats.
 
     jccsvq fecit, 2005. Public domain.
@@ -148,17 +148,17 @@ class Npvs:
 
     def scheme(self, actual=False):
         """Returns list with the unit names separated by the corresponding factors
-        
+
         :actual: Uses actual or academic unit names if True (default: False)
-        
+
         Example:
-        
+
             >>> print(*Npvs.scheme(Npvs))
             lea <-3- mi <-8- fur <-10- ch <-22- yd <-3- ft <-3- hh <-4- in
 
             >>> print(*Npvs.scheme(Npvs,actual=1))
             league <-3- mile <-8- furlong <-10- chain <-22- yard <-3- foot <-3- hand <-4- inch
-        
+
         """
         ll = []
         if actual:
@@ -222,9 +222,9 @@ class Npvs:
 
     def __add__(self, other):
         """Overloads ``+`` operator: returns object with the sum of operands
-        
+
         :other: another Npvs object or instance
-        
+
         """
         if type(other) == type(self):
             return self.__class__(self.dec + other.dec)
@@ -232,35 +232,35 @@ class Npvs:
     def __sub__(self, other):
         """Overloads ``+`` operator: returns object with the absolute difference
         of operands
-        
+
         :other: another Npvs object or instance
-        
+
         """
         if type(other) == type(self):
             return self.__class__(abs(self.dec - other.dec))
 
     def __mul__(self, other):
         """Overloads ``*`` operator: returns object with the operands product
-        
+
         :other: a positive int or float
-        
+
         """
         t = self.dec * other
         return self.__class__(int(round(t, 0)))
 
     def __rmul__(self, other):
         """Overloads ``*`` operator: returns object with the operands product
-        
+
         :other: a positive int or float
-        
+
         """
         return self.__mul__(other)
 
     def __truediv__(self, other):
         """Overloads ``/`` operator: returns object with the operands product
-        
+
         :other: a positive int or float
-        
+
         """
         return self.__class__(int(round(self.dec / other, 0)))
 
@@ -274,54 +274,54 @@ class Npvs:
 
     def __lt__(self, other):
         """Overloads ``<`` operator
-        
+
         :other: another Npvs object
-        
+
         """
         return self.dec < other.dec
 
     def __le__(self, other):
         """Overloads ``<=`` operator
-        
+
         :other: another Npvs object
-        
+
         """
         return self.dec <= other.dec
 
     def __eq__(self, other):
         """Overloads ``==`` operator
-        
+
         :other: another Npvs object
-        
+
         """
         return self.dec == other.dec
 
     def __ne__(self, other):
         """Overloads ``!=`` operator
-        
+
         :other: another Npvs object
-        
+
         """
         return self.dec != other.dec
 
     def __gt__(self, other):
         """Overloads ``>`` operator
-        
+
         :other: another Npvs object
-        
+
         """
         return self.dec > other.dec
 
     def __ge__(self, other):
         """Overloads ``>=`` operator
-        
+
         :other: another Npvs object
-        
+
         """
         return self.dec >= other.dec
 
     def __repr__(self):
-        '''Returns string representation of object'''
+        """Returns string representation of object"""
         ss = []
         for i in reversed(range(len(self.uname))):
             if self.list[i] != 0:
@@ -489,9 +489,9 @@ class _MesoM(Npvs):
 class BsyG(_MesoM):  # Babylonian System G numeration
     """This class implement Non-Place-Value System arithmetic
     for Babylonian System-G numeration
-    
+
         **šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku**
-    
+
     """
 
     title = "Babylonian System G to count objects"
@@ -507,9 +507,9 @@ class BsyG(_MesoM):  # Babylonian System G numeration
 class BsyS(_MesoM):  # Babylonian System S numeration
     """This class implement Non-Place-Value System arithmetic
     for Babylonian System-S numeration
-    
+
         **šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš**
-    
+
     """
 
     title = "Babylonian System S to count objects"
@@ -604,9 +604,9 @@ class MesoM(_MesoM):
 class Blen(MesoM):  # Length
     """This class implement Non-Place-Value System arithmetic
     for Old Babylonian Period length units
-    
+
         **danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si**
-    
+
     """
 
     title = "Babylonian length meassurement"
@@ -620,9 +620,9 @@ class Blen(MesoM):  # Length
 
     def __mul__(self, other):
         """Overloads ``*`` operator: returns object with the operands product
-        
+
         :other: It can be a ``Blen`` or ``Bsur`` or float object and the returned product will, accordingly, be a ``Bsur`` or ``Bvol`` or ``Blen`` object.
-        
+
         """
         if type(other) == Blen:
             t = int(round((self.dec * other.dec) / 12.0, 0))
@@ -638,9 +638,9 @@ class Blen(MesoM):  # Length
 class Bsur(MesoM):  # Surface
     """This class implement Non-Place-Value System arithmetic
     for Old Babylonian Period surface units:
-    
+
         **GAN2 <-100- sar <-60- gin2 <-180- še**
-    
+
     """
 
     title = "Babylonian surface meassurement"
@@ -655,9 +655,9 @@ class Bsur(MesoM):  # Surface
 
     def __mul__(self, other):
         """Overloads ``*`` operator: returns object with the operands product
-        
+
         :other: It can be a ``Blen`` or float object and the returned product will, accordingly, be a ``Bvol`` or ``Bsur`` object.
-        
+
         """
         if type(other) == Blen:
             t = int(round((self.dec * other.dec) / 30.0, 0))
@@ -670,9 +670,9 @@ class Bsur(MesoM):  # Surface
 class Bvol(MesoM):  # Volume
     """This class implement Non-Place-Value System arithmetic
     for Old Babylonian Period volume units:
-    
+
         **GAN2 <-100- sar <-60- gin2 <-180- še**
-        
+
     """
 
     title = "Babylonian volume meassurement"
@@ -720,9 +720,9 @@ class Bvol(MesoM):  # Volume
 class Bcap(MesoM):  # Capacity
     """This class implement Non-Place-Value System arithmetic
     for Old Babylonian Period capacity units:
-    
+
         **gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še**
-    
+
     """
 
     title = "Babylonian capacity meassurement"
@@ -746,9 +746,9 @@ class Bcap(MesoM):  # Capacity
 class Bwei(MesoM):  # Weight
     """This class implement Non-Place-Value System arithmetic
     for Old Babylonian Period weight units:
-    
+
         **gu2 <-60- ma-na <-60- gin2 <-180- še**
-    
+
     """
 
     title = "Babylonian weight meassurement"
@@ -764,9 +764,9 @@ class Bwei(MesoM):  # Weight
 class Bbri(MesoM):  # Counting bricks
     """This class implement Non-Place-Value System arithmetic
     for Old Babylonian Period counting bricks in "sar-b" units (720 bricks):
-    
+
         **GAN2 <-100- sar <-60- gin2 <-180- še**
-    
+
     """
 
     title = "Babylonian brick count"

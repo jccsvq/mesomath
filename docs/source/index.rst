@@ -1,6 +1,6 @@
 
-Welcome to MesoMath's documentation!
-====================================
+MesoMath v1.1.0 Documentation
+=============================
 
 .. toctree::
    :maxdepth: 4

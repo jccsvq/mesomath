@@ -46,14 +46,14 @@ class BabN:
     :type factors: tuple
 
     jccsvq fecit, 2005. Public domain.
-    
+
     Operators
     ---------
-    
-    This class overloads arithmetic and logical operators allowing arithmetic 
-    operations and comparisons to be performed between members of the class and 
+
+    This class overloads arithmetic and logical operators allowing arithmetic
+    operations and comparisons to be performed between members of the class and
     externally with integers.
-    
+
     """
 
     title = "Sexagesimal number"
@@ -200,10 +200,10 @@ class BabN:
     def inv(self, digits=4):
         """Returns BabN object with approximate inverse of the number,
         i.e., a * a.inv() is approximately a power of 60
-        
-        :digits: the intended number of digits to return. 
+
+        :digits: the intended number of digits to return.
         :type digits: int, default 4.
-        
+
         """
         x = self.dec
         if x == 0:
@@ -234,27 +234,27 @@ class BabN:
 
     def head(self, d=1):
         """Returns BabN object with the first d digits of self
-        
+
         :d: Number of digits to return
-        
+
         """
         l = min(abs(d), len(self.list))
         return BabN(self.list[:l])
 
     def tail(self, d=1):
         """Returns BabN object with the last d digits of self
-        
+
         :d: Number of digits to return
-        
+
         """
         l = min(abs(d), len(self.list))
         return BabN(self.list[-l:])
 
     def trim(self, d):
         """Returns BabN object corresponding to the first d sexagesimal digits
-        
+
         :d: Number of digits to retain
-        
+
         """
         if d <= self.len():
             return BabN(self.list[:d])
@@ -263,9 +263,9 @@ class BabN:
 
     def round(self, d):
         """Returns BabN object rounded to d sexagesimal digits
-        
+
         :d: Number of digits to return
-        
+
         """
         if d < self.len():
             ll = self.list
