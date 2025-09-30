@@ -52,4 +52,3 @@ r5 = r4.rec()
 r6 = r5 * r2
 
 print("\nResult r6 = ", r6)
-

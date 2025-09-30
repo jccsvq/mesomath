@@ -13,23 +13,9 @@ MesoMath is a `Python3` package intended for the arithmetic of natural sexagesim
 
 Inpired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python` programming and to the command line as an efficient and versalite calculator.
 
-### Getting it
-
-You can obtain the software from its [GitHub repository](https://github.com/jccsvq/mesomath).  Click on the `<>Code` button and choose  `Download ZIP`.  Unzip the downloaded archive to any directory of your choice (hereinafter referred to as the *installation directory*) and   `cd` to it, that's all.
-
-### Requirements
-
-Obviously, a more or less modern version of `Python 3` must be installed on your system; other than that, nothing else, since MesoMath only uses Python standard modules: `math`, `itertools`, `argparse`, `os.path`, `re` and `sqlite3`.
-
-### Installation
-
-None is required for casual use, simply work from the installation directory. So, if you decide to do without the application, you just have to delete that directory to get rid of all this stuff. To test the installation, open a terminal on the installation directory and run:
-
-    $ python3 test-babn.py
-
-If all goes well and you don't encounter any error messages, you should get output similar to that shown in Appendix A (That output can be useful later as a cheat sheet for the calculator.).
-
 ## Running MesoMath as a Mesopotamian/Babylonian calculator
+
+If you installed `MesoMath` using `pip` or `pipx`, you can skip the rest of this section and go directly to the next one, since you already have the `babcalc` command at your disposal. The rest of this section is for installing from source.
 
 ### The simplest
 

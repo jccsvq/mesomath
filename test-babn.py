@@ -103,4 +103,3 @@ print("a.searchreg('01:10','01:20',5,1)")
 z = a.searchreg("01:10", "01:20", 5, 1)
 if z is not None:
     print(f"    its reciprocal is: {z.rec()}, compare to a.inv(): {a.inv()}")
-

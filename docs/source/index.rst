@@ -8,6 +8,7 @@ MesoMath v1.1.0 Documentation
 
    intro.md
    release-notes.md
+   install.md
    tutorial.md
    progs/metrotable.md
    progs/mtlookup.md

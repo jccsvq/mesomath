@@ -18,7 +18,8 @@ from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
 
 
-if __name__ == "__main__":
+def main():
+    """Entry point to mtlookup"""
 
     # Option definitions
 
@@ -154,7 +155,7 @@ if __name__ == "__main__":
 
     m = args.VALUE
     try:
-        m=int(m)
+        m = int(m)
     except:
         pass
     finally:
@@ -176,3 +177,6 @@ if __name__ == "__main__":
     else:
         print(y, " -> ", pp)
 
+
+if __name__ == "__main__":
+    main()

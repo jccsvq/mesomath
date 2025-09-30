@@ -17,4 +17,3 @@ a = sexcube("5:05", 1)
 print(a, "\n")
 a = sexcube("5", 1)
 print(a, "\n")
-

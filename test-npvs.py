@@ -29,4 +29,3 @@ Npvs.prtsex = True
 print(f"    v = (a*b) * Blen('1 kus'), v = {v}")
 print(f"    v.title: {v.title}")
 print(f"    v.SI(): {v.SI()}")
-

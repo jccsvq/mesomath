@@ -35,7 +35,7 @@ Output follows:"""
     )
 
 
-def header(met, names, ubase, width=20):
+def header(args, met, names, ubase, width=20):
     """Prints header of metrological table
     |   met: class of magnitude to be plotted
     | ubase: base unit"""
@@ -54,7 +54,7 @@ def header(met, names, ubase, width=20):
             print("=========================================")
 
 
-def metrolist(met, names, ubase, minv, maxv, inc=1, width=20):
+def metrolist(args, met, names, ubase, minv, maxv, inc=1, width=20):
     """Prints a section of the metrological list for the met class.
     |   met: class or quantity
     | ubase: base unit for the metrological list
@@ -90,28 +90,30 @@ def metrolist(met, names, ubase, minv, maxv, inc=1, width=20):
                 if args.verbose:
                     if pp.isreg:
                         print(
-                            (m.prtf(args.fractions,args.academic)).ljust(width),
+                            (m.prtf(args.fractions, args.academic)).ljust(width),
                             " -> ",
                             str(pp).ljust(15),
                             pp.rec(),
                         )
                     else:
                         print(
-                            (m.prtf(args.fractions,args.academic)).ljust(width),
+                            (m.prtf(args.fractions, args.academic)).ljust(width),
                             " -> ",
                             str(pp).ljust(15),
                             "--igi nu--",
                         )
                 else:
                     print(
-                        (m.prtf(args.fractions,args.academic)).ljust(width), " -> ", 
-                        str(pp).ljust(15)
+                        (m.prtf(args.fractions, args.academic)).ljust(width),
+                        " -> ",
+                        str(pp).ljust(15),
                     )
 
             m += mc
 
 
-if __name__ == "__main__":
+def main():
+    """Entry point to metrotable"""
 
     # Option definitions
 
@@ -215,33 +217,37 @@ if __name__ == "__main__":
     # Options parsing
     args = parser.parse_args()
 
+    if args.type == args.example == None:
+        print("Nothing to do, exiting!")
+        exit()
+
     # Remainder section
     if args.remainder:
         print("\nRemainder of systems and units: Old Babylonian Period")
         print("=======================================================")
         print("System L: ", bl.title + "s")
-        print("    Units: ", *bl.scheme(bl,args.academic))
+        print("    Units: ", *bl.scheme(bl, args.academic))
         print("    Base unit: ", bl.uname[bl.ubase])
         print("System Lh: ", bl.title + "s (Heights)")
-        print("    Units: ", *bl.scheme(bl,args.academic))
+        print("    Units: ", *bl.scheme(bl, args.academic))
         print("    Base unit: ", bl.uname[1])
         print("System S: ", bs.title + "s")
-        print("    Units: ", *bs.scheme(bs,args.academic))
+        print("    Units: ", *bs.scheme(bs, args.academic))
         print("    Base unit: ", bs.uname[bs.ubase])
         print("System V: ", bv.title + "s")
-        print("    Units: ", *bv.scheme(bv,args.academic))
+        print("    Units: ", *bv.scheme(bv, args.academic))
         print("    Base unit: ", bv.uname[bv.ubase])
         print("System C: ", bc.title + "s")
-        print("    Units: ", *bc.scheme(bc,args.academic))
+        print("    Units: ", *bc.scheme(bc, args.academic))
         print("    Base unit: ", bc.uname[bc.ubase])
         print("System W: ", bw.title + "s")
-        print("    Units: ", *bw.scheme(bw,args.academic))
+        print("    Units: ", *bw.scheme(bw, args.academic))
         print("    Base unit: ", bw.uname[bw.ubase])
         print("NPVN System S: ", bS.title)
-        print("    Units: ", *bS.scheme(bS,args.academic))
+        print("    Units: ", *bS.scheme(bS, args.academic))
         print("    Base unit: ", bS.uname[bS.ubase])
         print("NPVN System G: ", bG.title)
-        print("    Units: ", *bG.scheme(bG,args.academic))
+        print("    Units: ", *bG.scheme(bG, args.academic))
         print("    Base unit: ", bG.uname[bG.ubase])
         exit()
 
@@ -286,8 +292,8 @@ if __name__ == "__main__":
     if args.example is not None:
         width = int(args.width)
         examplehead(example, met, names, ubase, minv, maxv, inc)
-        header(met, names, ubase, width)
-        metrolist(met, names, ubase, minv, maxv, inc, width)
+        header(args, met, names, ubase, width)
+        metrolist(args, met, names, ubase, minv, maxv, inc, width)
         exit()
 
     # Main section; selecting classes and defining default table ubase
@@ -329,7 +335,10 @@ if __name__ == "__main__":
         ubase = args.force
 
     # Executing
-    header(met, names, ubase, width)
-    metrolist(met, names, ubase, minv, maxv, inc, width)
+    header(args, met, names, ubase, width)
+    metrolist(args, met, names, ubase, minv, maxv, inc, width)
     exit()
 
+
+if __name__ == "__main__":
+    main()

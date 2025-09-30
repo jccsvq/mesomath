@@ -1,16 +1,22 @@
 ![mesomath](_static/mesomath.png) 
+
 # MesoMath v1.1.0
+
 ## Overview
 
-This package is intended for:
+This project aims to bring:
 
 *  the arithmetic of natural sexagesimal numbers, mainly in their “floating” aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. 
 
 * the arithmetic of physical quantities, length, surface, etc. described using the metrology of the Old Babylonian Period.
 
-Inspired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python3` programming and to the `Python3` command line as an interactive calculator.
+to `Python3` programming and to the `Python3` command line as an interactive calculator.
 
-`mesomath` module contains four submodules:
+It has been inspired by the arithmetic and metrological parts of [MesoCalc](https://github.com/BapMel/mesocalc) by Baptiste Mélès. 
+
+The package includes:
+
+the `mesomath` module containing four submodules:
 
 *  `babn.py`
 *  `hamming.py`
@@ -40,18 +46,13 @@ and two applications in the `progs` subdirectory:
 
 ## Download
 
-From the [GitHub repository](https://github.com/jccsvq/mesomath).
+From the [GitHub repository](https://github.com/jccsvq/mesomath). Read below about the [installation](https://mesomath.readthedocs.io/install.html).
 
 ## Documentation
 
 Documentation for this package is in [Read the Docs](https://mesomath.readthedocs.io/index.html),
 
-Includes:
 
-* A [tutorial on using this package as a command-line calculator](https://mesomath.readthedocs.io/tutorial.html).
-* Tutorials for the two included applications:
-* * [`metrotable`](https://mesomath.readthedocs.io/progs/metrotable.html)
-* * [`mtlookup`](https://mesomath.readthedocs.io/progs/mtlookup.html)
 
 ## Dependencies
 
@@ -71,57 +72,6 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 ###  Use as an interactive calculator
 
 Consult the [tutorial](https://mesomath.readthedocs.io/tutorial.html)!
-
-The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
-
-    $ python3 -i
-    Python 3.11.2 (main, Apr 28 2025, 14:11:48) [GCC 12.2.0] on linux
-    Type "help", "copyright", "credits" or "license" for more information.
-    >>> from mesomath.babn import BabN as bn
-    >>> a = bn(405)
-    >>> a
-    6:45
-    >>>  (etc.)
-
-or, with ipython:
-
-    $ ipython3 
-    Python 3.11.2 (main, Apr 28 2025, 14:11:48) [GCC 12.2.0]
-    Type 'copyright', 'credits' or 'license' for more information
-    IPython 8.5.0 -- An enhanced Interactive Python. Type '?' for help.
-
-    In [1]: from mesomath.babn import BabN as bn
-
-    In [2]: a = bn(405)
-
-    In [3]: a
-    Out[3]: 6:45
-
-    In [4]: a.explain()
-    |  Sexagesimal number: [6, 45] is the decimal number: 405.
-    |    It may be written as 2^0 * 3^4 * 5^1 * 1),
-    |    so, it is a regular number with reciprocal: 8:53:20
-
-    In [5]:  (etc.)
-
-
-But you can also create an executable script for your operating system that invokes the interpreter; for example, on Linux, create a file named `babcal` containing (customize `PYTHONPATH` below to your needs) :
-
-    #!/usr/bin/env -S PYTHONPATH={path to directory containing mesomath module}  python3 -i -c 'from mesomath.babn import BabN as bn; print("\nWelcome to Babylonian Calculator\n    ...the calculator that every scribe should have!\nUse: bn(number)\n")'
-
-then, after making it executable and instaling it somewhere on the PATH: 
-
-    $ babcalc
-    
-    Welcome to Babylonian Calculator
-    ...the calculator that every scribe should have!
-    Use: bn(number)
-    
-    >>> a = bn(405)
-    >>> a
-    6:45
-    >>>  (etc.)
-
 
 ## `hamming.py`
 

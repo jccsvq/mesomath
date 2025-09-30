@@ -2,15 +2,19 @@
 
 ## Overview
 
-This package is intended for:
+This project and its sister project [mesomath-pkg](https://github.com/jccsvq/mesomath-pkg) aim to bring:
 
 *  the arithmetic of natural sexagesimal numbers, mainly in their “floating” aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. 
 
 * the arithmetic of physical quantities, length, surface, etc. described using the metrology of the Old Babylonian Period.
 
-Inspired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python3` programming and to the `Python3` command line as an interactive calculator.
+to `Python3` programming and to the `Python3` command line as an interactive calculator.
 
-`mesomath` module contains four submodules:
+It has been inspired by the arithmetic and metrological parts of [MesoCalc](https://github.com/BapMel/mesocalc) by Baptiste Mélès. 
+
+The package includes:
+
+the `mesomath` module containing four submodules:
 
 *  `babn.py`
 *  `hamming.py`
@@ -44,6 +48,7 @@ Documentation for this package is in [Read the Docs](https://mesomath.readthedoc
 
 Includes:
 
+* A brief guide to [installing MesoMath](https://mesomath.readthedocs.io/install.html)
 * A [tutorial on using this package as a command-line calculator](https://mesomath.readthedocs.io/tutorial.html).
 * Tutorials for the two included applications:
 * * [`metrotable`](https://mesomath.readthedocs.io/progs/metrotable.html)
@@ -67,7 +72,7 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 
 ###  Use as an interactive calculator
 
-Consult the [tutorial](https://mesomath.readthedocs.io/tutorial.html)!
+The easiest way is to install the package from [pypi.org](https://pypi.org) using `pip` or `pipx`, then just run the `babcalc` command (consult the documentation about [installing MesoMath](https://mesomath.readthedocs.io/install.html)). If you prefer to install from source, there are several ways.  Here's an excerpt from the [tutorial](https://mesomath.readthedocs.io/tutorial.html):
 
 The easiest way is to invoque the interactive python interpreter and import the class BabN; for instance
 
@@ -199,5 +204,3 @@ Output:
     r6 = r5 * r2
 
     Result r6 =  28:48
-<hr>
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
