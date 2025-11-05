@@ -63,7 +63,8 @@ class BabN:
     floatmult = False
     database = "regular.db3"
 
-    def dec2list(n: int):
+    @classmethod
+    def dec2list(cls, n: int):
         """
         Convert decimal integer n to list of int's (its sexagesimal digits)
 
@@ -83,7 +84,8 @@ class BabN:
             rlist.reverse()
         return rlist
 
-    def parse(n):
+    @classmethod
+    def parse(cls, n):
         """Returns tuple with decimal value and list of sexagesimal digits of n.
 
         :n: may be
@@ -95,15 +97,15 @@ class BabN:
             |   decimal value of the number
 
         """
-        if type(n) == list:
+        if type(n) is list:
             lt = n
             rs = 0
             for i in lt:
                 rs = rs * 60 + i
-            return (rs, BabN.dec2list(rs))
-        elif type(n) == int:
-            return (abs(n), BabN.dec2list(abs(n)))
-        elif type(n) == str:
+            return (rs, __class__.dec2list(rs))
+        elif type(n) is int:
+            return (abs(n), __class__.dec2list(abs(n)))
+        elif type(n) is str:
             if n.find(":") > 0:
                 lt = [int(j) for j in n.split(":")]
             elif n.find(".") > 0:
@@ -114,15 +116,16 @@ class BabN:
             for i in lt:
                 rs = rs * 60 + i
             return (rs, BabN.dec2list(rs))
-        elif type(n) == tuple:
-            i, j, k, l = n
-            rs = 2**i * 3**j * 5**k * l
+        elif type(n) is tuple:
+            i, j, k, ll = n
+            rs = 2**i * 3**j * 5**k * ll
             return (rs, BabN.dec2list(rs))
         else:
             print("Invalid argument!")
             return None
 
-    def genDB(dbname):
+    @classmethod
+    def genDB(cls, dbname):
         """Generates sqlite3 database of regular numbers
 
         :dbname: database path and name
@@ -168,8 +171,8 @@ class BabN:
         :n: The parameter n can be an integer (sign is ignored) or a properly formatted string representing a sexagesimal number, accepting the separators ":" and "." (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23]) or a tuple (e.g., (i,j,k,l) such that 2**i * 3**j * 5**k * l is the decimal value of the number.
 
         """
-        tup = BabN.parse(n)
-        if tup == None:
+        tup = __class__.parse(n)
+        if tup is None:
             return None
         (self.dec, self.list) = tup
         if self.dec == 1:
@@ -238,8 +241,8 @@ class BabN:
         :d: Number of digits to return
 
         """
-        l = min(abs(d), len(self.list))
-        return BabN(self.list[:l])
+        lm = min(abs(d), len(self.list))
+        return BabN(self.list[:lm])
 
     def tail(self, d=1):
         """Returns BabN object with the last d digits of self
@@ -247,8 +250,8 @@ class BabN:
         :d: Number of digits to return
 
         """
-        l = min(abs(d), len(self.list))
-        return BabN(self.list[-l:])
+        ll = min(abs(d), len(self.list))
+        return BabN(self.list[-ll:])
 
     def trim(self, d):
         """Returns BabN object corresponding to the first d sexagesimal digits
@@ -282,9 +285,9 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             return BabN(self.dec + other.dec)
-        elif type(other) == int:
+        elif type(other) is int:
             return BabN(self.dec + other)
 
     def __radd__(self, other):
@@ -302,9 +305,9 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             return BabN(abs(self.dec - other.dec))
-        elif type(other) == int:
+        elif type(other) is int:
             return BabN(abs(self.dec - other))
 
     def __rsub__(self, other):
@@ -322,12 +325,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if BabN.floatmult:
                 return BabN(self.dec * other.dec).float()
             else:
                 return BabN(self.dec * other.dec)
-        elif type(other) == int:
+        elif type(other) is int:
             if BabN.floatmult:
                 return BabN(self.dec * other).float()
             else:
@@ -352,9 +355,9 @@ class BabN:
 
         """
         a = self.dec
-        if type(other) == BabN:
+        if type(other) is BabN:
             b = other.dec
-        elif type(other) == int:
+        elif type(other) is int:
             b = other
         q = a / b
         nsd = int(log(q) / log(60))
@@ -382,7 +385,7 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == int:
+        if type(other) is int:
             other = BabN(other)
         if other.isreg:
             inv = other.rec().dec
@@ -412,7 +415,7 @@ class BabN:
         """
         try:
             return BabN(self.dec**x)
-        except:
+        except Exception:
             print("x must be a positive integer")
 
     def __lt__(self, other):
@@ -421,12 +424,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if self.dec < other.dec:
                 return True
             else:
                 return False
-        elif type(other) == int:
+        elif type(other) is int:
             if self.dec < other:
                 return True
             else:
@@ -438,12 +441,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if self.dec <= other.dec:
                 return True
             else:
                 return False
-        elif type(other) == int:
+        elif type(other) is int:
             if self.dec <= other:
                 return True
             else:
@@ -455,12 +458,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if self.dec == other.dec:
                 return True
             else:
                 return False
-        elif type(other) == int:
+        elif type(other) is int:
             if self.dec == other:
                 return True
             else:
@@ -472,12 +475,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if self.dec != other.dec:
                 return True
             else:
                 return False
-        elif type(other) == int:
+        elif type(other) is int:
             if self.dec != other:
                 return True
             else:
@@ -489,12 +492,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if self.dec > other.dec:
                 return True
             else:
                 return False
-        elif type(other) == int:
+        elif type(other) is int:
             if self.dec > other:
                 return True
             else:
@@ -506,12 +509,12 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) == BabN:
+        if type(other) is BabN:
             if self.dec >= other.dec:
                 return True
             else:
                 return False
-        elif type(other) == int:
+        elif type(other) is int:
             if self.dec >= other:
                 return True
             else:
@@ -564,7 +567,7 @@ class BabN:
     def sqrt(self):
         """Returns BabN object with approximate floating square root"""
         digits = BabN.rdigits - 1
-        x0 = x = self.dec
+        x = self.dec
         sqr = (pow(60, digits)) * sqrt(x)
         sqr = int(round(sqr, 0))
         while sqr % 60 == 0:
@@ -574,7 +577,7 @@ class BabN:
     def cbrt(self):
         """Returns BabN object with approximate floating cube root"""
         digits = BabN.rdigits - 1
-        x0 = x = self.dec
+        x = self.dec
         cbr = (pow(60, digits)) * x ** (1.0 / 3)
         cbr = int(round(cbr, 0))
         while cbr % 60 == 0:
@@ -592,12 +595,12 @@ class BabN:
         """
         list1 = [] + self.list
         len1 = self.len()
-        if type(n) == BabN:
+        if type(n) is BabN:
             list2 = [] + n.list
             len2 = n.len()
             print(self.dec, n.dec)
         else:
-            (ndec, list2) = BabN.parse(n)
+            (ndec, list2) = __class__.parse(n)
             len2 = len(list2)
         if len1 > len2:
             list2 += [0 for i in range(len1 - len2)]
@@ -620,7 +623,7 @@ class BabN:
         """
 
         if not exists(BabN.database):
-            BabN.genDB(BabN.database)
+            __class__.genDB(BabN.database)
 
         conn = connect(BabN.database)
         cursor = conn.cursor()
@@ -645,7 +648,6 @@ SELECT regular
         mind = a.dist(rl[0][0])
         minr = rl[0][0]
         for i in rl:
-            i0 = i[0]
             if prt:
                 print(f" {a.dist(i[0]):12d} {i[0]}")
             ndis = a.dist(i[0])
@@ -664,7 +666,7 @@ SELECT regular
         if self.isreg:
             print(f"|    so, it is a regular number with reciprocal: {self.rec()}")
         else:
-            print(f"|    so, it is NOT a regular number and has NO reciprocal.")
+            print("|    so, it is NOT a regular number and has NO reciprocal.")
             print(f"|    but an approximate inverse is: {self.inv()}")
             cr = self.searchreg("01:0", "59:59", 5, 0)
             if cr is not None:

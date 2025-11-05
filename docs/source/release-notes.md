@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.1.1 (2025-11-05).
+
+* Some bug fixes and other minor improvements.
+
 ## v1.1.0 (2025-09-23).
 
 * Documentation prepared using [Sphinx](https://www.sphinx-doc.org/en/master/index.html) now resides in  [https://mesomath.readthedocs.io/index.html](https://mesomath.readthedocs.io/index.html). It includes the tutorials.

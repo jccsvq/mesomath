@@ -1,6 +1,6 @@
 ![mesomath](_static/mesomath.png) 
 
-# MesoMath v1.1.0
+# MesoMath v1.1.1
 
 ## Overview
 

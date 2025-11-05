@@ -16,7 +16,7 @@ def is_regular(x, divisors=False):
     :divisors: prints the divisors of x to stdout (default: False)
 
     """
-    if type(x) == str:
+    if type(x) is str:
         x = sex2dec(x)
     if x == 1:
         return True
@@ -41,9 +41,8 @@ def is_regular(x, divisors=False):
 def reciprocal(x):
     """Returns the reciprocal of regular number x or 0 if not regular
     x may be decimal or sexagesimal"""
-    if type(x) == str:
+    if type(x) is str:
         x = sex2dec(x)
-    x0 = x
     while x % 60 == 0:
         x //= 60
     #    print(x, dec2sex(x))
@@ -150,9 +149,9 @@ def sex2dec(st):
 def sexmult(a, b, fill=False, sfloat=False):
     '''Sexagesimal multiplication
     Sexagesimal separator may be ":" or "."'''
-    if type(a) == str:
+    if type(a) is str:
         a = sex2dec(a)
-    if type(b) == str:
+    if type(b) is str:
         b = sex2dec(b)
     p = a * b
     if sfloat:
@@ -163,9 +162,9 @@ def sexmult(a, b, fill=False, sfloat=False):
 def sexadd(a, b, fill=False):
     '''Sexagesimal addition
     Sexagesimal separator may be ":" or "."'''
-    if type(a) == str:
+    if type(a) is str:
         a = sex2dec(a)
-    if type(b) == str:
+    if type(b) is str:
         b = sex2dec(b)
     p = a + b
     return dec2sex(p, fill)
@@ -178,9 +177,9 @@ def sexsub(a, b, fill=False):
     :fill: add left zero to sexagesimal digits <= 9 (default: False)
 
     """
-    if type(a) == str:
+    if type(a) is str:
         a = sex2dec(a)
-    if type(b) == str:
+    if type(b) is str:
         b = sex2dec(b)
     p = abs(a - b)
     return dec2sex(p, fill)
@@ -198,7 +197,7 @@ def sexinv(x, digits=3):
     :digits: Number of digits to return (default: 3)
 
     """
-    if type(x) == str:
+    if type(x) is str:
         x = sex2dec(x)
     nsd = int(log(x) / log(60))
     inv = (pow(60, nsd + digits)) / x
@@ -214,9 +213,9 @@ def sexdiv(a, b, digits=3):
     :digits: desired number of digits in the sexagesimal quotient (the actual result may differ by 1)
 
     """
-    if type(a) == str:
+    if type(a) is str:
         a = sex2dec(a)
-    if type(b) == str:
+    if type(b) is str:
         b = sex2dec(b)
     q = a / b
     nsd = int(log(q) / log(60))
@@ -233,7 +232,7 @@ def sexfloat(x):
     :x: may be decimal or sexagesimal
 
     """
-    if type(x) == str:
+    if type(x) is str:
         x = sex2dec(x)
     while x % 60 == 0:
         x //= 60
@@ -306,7 +305,7 @@ SELECT regular
 def sexsqrt(x, digits=3, prt=False):
     """Returns approximate square root of x"""
     digits -= 1
-    if type(x) == str:
+    if type(x) is str:
         x0 = x
         x = sex2dec(x)
     else:
@@ -323,7 +322,7 @@ def sexsqrt(x, digits=3, prt=False):
 def sexcbrt(x, digits=3, prt=False):
     """Returns approximate cube root of x"""
     digits -= 1
-    if type(x) == str:
+    if type(x) is str:
         x0 = x
         x = sex2dec(x)
     else:
@@ -339,7 +338,7 @@ def sexcbrt(x, digits=3, prt=False):
 
 def sexsquare(x, prt=False):
     """Returns square of x"""
-    if type(x) == str:
+    if type(x) is str:
         x0 = x
         x = sex2dec(x)
     else:
@@ -353,7 +352,7 @@ def sexsquare(x, prt=False):
 
 def sexcube(x, prt=False):
     """Returns square of x"""
-    if type(x) == str:
+    if type(x) is str:
         x0 = x
         x = sex2dec(x)
     else:

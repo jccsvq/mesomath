@@ -136,16 +136,17 @@ def main():
                     y = met(x1)
                 else:
                     y = met(x1).prtf(args.fractions, args.academic)
+                    y0 = met(x1)
                 pp = met(x1).sex(ubase)
                 if args.strict:
                     if str(aa) == str(pp):
                         if args.verbose:
-                            print(y, "\n    Equiv.: ", y.SI(), "\n    Abstract: ", pp)
+                            print(y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp)
                         else:
                             print(y, " <- ", pp)
                 else:
                     if args.verbose:
-                        print(y, "\n    Equiv.: ", y.SI(), "\n    Abstract: ", pp)
+                        print(y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp)
                     else:
                         print(y, " <- ", pp)
 
@@ -156,7 +157,7 @@ def main():
     m = args.VALUE
     try:
         m = int(m)
-    except:
+    except Exception:
         pass
     finally:
         aa = met(m)

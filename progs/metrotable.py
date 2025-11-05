@@ -8,7 +8,7 @@ import sys, argparse
 sys.path.append("/home/jesus/Nextcloud/MesoMath")  # <- change this
 
 # import's section
-from mesomath.babn import BabN as bn
+from mesomath.babn import BabN as bn  # noqa: F401
 from mesomath.npvs import Blen as bl
 from mesomath.npvs import Bsur as bs
 from mesomath.npvs import Bvol as bv
@@ -63,7 +63,7 @@ def metrolist(args, met, names, ubase, minv, maxv, inc=1, width=20):
     |   inc: variable increment or step
     | width: width reserved for printing the variable (default: 20)"""
 
-    ma = m = met(minv)
+    mc = m = met(minv)
     maxv = maxv.split(",")
     inc = inc.split(",")
     for i in range(len(maxv)):
@@ -217,10 +217,6 @@ def main():
     # Options parsing
     args = parser.parse_args()
 
-    if args.type == args.example == None:
-        print("Nothing to do, exiting!")
-        exit()
-
     # Remainder section
     if args.remainder:
         print("\nRemainder of systems and units: Old Babylonian Period")
@@ -249,6 +245,10 @@ def main():
         print("NPVN System G: ", bG.title)
         print("    Units: ", *bG.scheme(bG, args.academic))
         print("    Base unit: ", bG.uname[bG.ubase])
+        exit()
+
+    if (args.type is None) and (args.example is None):
+        print("Nothing to do, exiting!")
         exit()
 
     # Examples section; initialization
@@ -283,10 +283,11 @@ def main():
         minv = "10 susi"
         maxv = "2 kus,12 kus,5 ninda"
         inc = "5 susi,1 kus,6 kus"
-    if args.academic:
-        names = met.aname
-    else:
-        names = met.uname
+    if args.example:
+        if args.academic:
+            names = met.aname
+        else:
+            names = met.uname
 
     # Examples section; execution
     if args.example is not None:

@@ -19,7 +19,7 @@ but class Npvs is of general use.
 
 """
 
-from re import sub, compile
+from re import sub
 
 # Data
 #: Dictionary of principal fractions withouth 1/6
@@ -55,7 +55,7 @@ def cmul(x):
 
     Example: cmul([4,3,3,22,10,8,3]) returns:
          [1, 4, 12, 36, 792, 7920, 63360, 190080]"""
-    if type(x) == list:
+    if type(x) is list:
         prod = 1
         prodl = [1]
         for i in x:
@@ -73,10 +73,10 @@ def normalize(st: str) -> str:
 
     # Consolidate character and word replacements
     replacements = {
-        "[šŠ]": "s",
-        "([a-zA-Z])(['23\-]+)": r"\g<1>",
-        "GAN": "gan",
-        "U": "u",
+        r"[šŠ]": "s",
+        r"([a-zA-Z])(['23\-]+)": r"\g<1>",
+        r"GAN": "gan",
+        r"U": "u",
     }
 
     # Pre-compile patterns for efficiency
@@ -138,13 +138,13 @@ class Npvs:
 
     """
 
-    title = "Imperial length meassurement"
-    uname = "in hh ft yd ch fur mi lea".split()  # Unit names
-    aname = "inch hand foot yard chain furlong mile league".split()  # Actual unit names
-    ufact = [4, 3, 3, 22, 10, 8, 3]  # Factor between units
-    cfact = [1, 4, 12, 36, 792, 7920, 63360, 190080]  # Factor with the smallest unit
-    siv = 0.0254  # meters per inch
-    siu = "meters"  # S.I. unit name
+    title: str = "Imperial length meassurement"
+    uname: list[str] = "in hh ft yd ch fur mi lea".split()  # Unit names
+    aname: list[str] = "inch hand foot yard chain furlong mile league".split()  # Actual unit names
+    ufact: list[int] = [4, 3, 3, 22, 10, 8, 3]  # Factor between units
+    cfact: list[int] = [1, 4, 12, 36, 792, 7920, 63360, 190080]  # Factor with the smallest unit
+    siv: float = 0.0254  # meters per inch
+    siu: str = "meters"  # S.I. unit name
 
     def scheme(self, actual=False):
         """Returns list with the unit names separated by the corresponding factors
@@ -195,11 +195,11 @@ class Npvs:
          formatted string representing the value. See the tutorial
 
         """
-        if type(x) == int:
+        if type(x) is int:
             x = abs(x)
             self.dec = x
             self.list = self.dec2un(x)
-        elif type(x) == str:
+        elif type(x) is str:
             if x.find("(") >= 0:
                 xx = x.split("(")[1:]
                 xnew = ""
@@ -226,7 +226,7 @@ class Npvs:
         :other: another Npvs object or instance
 
         """
-        if type(other) == type(self):
+        if type(other) is type(self):
             return self.__class__(self.dec + other.dec)
 
     def __sub__(self, other):
@@ -236,7 +236,7 @@ class Npvs:
         :other: another Npvs object or instance
 
         """
-        if type(other) == type(self):
+        if type(other) is type(self):
             return self.__class__(abs(self.dec - other.dec))
 
     def __mul__(self, other):
@@ -345,7 +345,7 @@ class _MesoM(Npvs):
     aname = "Ša Šb Šc Šd".split()  # Unit names
     ufact = [60, 60, 60]  # Factor between units
     cfact = [1, 60, 3600, 216000]  # Factor with the smallest unit
-    siv = 1  #
+    siv = 1.0  #
     siu = "counts"  # S.I. unit name
     prtsex = False  # Printing meassurements in sexagesimal
     ubase = 0  # Base unit for metrological tables
@@ -355,11 +355,11 @@ class _MesoM(Npvs):
 
         | n: The parameter n can be an integer (sign is ignored) or a properly
              formatted string representing the value. See the tutorial"""
-        if type(x) == int:
+        if type(x) is int:
             x = abs(x)
             self.dec = x
             self.list = self.dec2un(x)
-        elif type(x) == str:
+        elif type(x) is str:
             x = normalize(x)
             if x.find("(") >= 0:
                 xx = x.split("(")[1:]
@@ -372,7 +372,7 @@ class _MesoM(Npvs):
                         coef = self.sexsys(xy[0])
                     xnew += str(coef.dec) + " "
                     xnew += xy[1] + " "
-                xnew = sub(" *\+", "+", xnew)
+                xnew = sub(r" *\+", "+", xnew)
                 #                print(xnew)
                 x = xnew
             ll = x.split()
@@ -527,7 +527,7 @@ class MesoM(_MesoM):
     coefficients in measurements using the S and G systems as appropriate. It
     introduces the sexsys attribute and enhances the __repr__ method."""
 
-    sexsys = BsyS
+    sexsys: type[BsyS] | type[BsyG] = BsyS
 
     def prtf(self, onesixth=False, actual=False):
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
@@ -543,10 +543,6 @@ class MesoM(_MesoM):
         else:
             fdic = fdic0
         length = len(self.list)
-        if self.sexsys == BsyS:
-            unit = " dis"
-        else:
-            unit = " iku"
         ll = self.list.copy()
         ff = ["" for i in range(length)]
         for i in range(length - 1):
@@ -624,10 +620,10 @@ class Blen(MesoM):  # Length
         :other: It can be a ``Blen`` or ``Bsur`` or float object and the returned product will, accordingly, be a ``Bsur`` or ``Bvol`` or ``Blen`` object.
 
         """
-        if type(other) == Blen:
+        if type(other) is Blen:
             t = int(round((self.dec * other.dec) / 12.0, 0))
             return Bsur(t)
-        elif type(other) == Bsur:
+        elif type(other) is Bsur:
             t = int(round((self.dec * other.dec) / 30.0, 0))
             return Bvol(t)
         else:
@@ -659,7 +655,7 @@ class Bsur(MesoM):  # Surface
         :other: It can be a ``Blen`` or float object and the returned product will, accordingly, be a ``Bvol`` or ``Bsur`` object.
 
         """
-        if type(other) == Blen:
+        if type(other) is Blen:
             t = int(round((self.dec * other.dec) / 30.0, 0))
             return Bvol(t)
         else:
