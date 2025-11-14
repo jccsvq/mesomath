@@ -1,14 +1,9 @@
-#!/usr/bin/env -S python3
 """Printing of metrological tables"""
 
-# Change the `sys.path.append` argument to the absolute path of the directory
-# containing the `mesomath` module ( your installation directory).
-import sys, argparse
-
-sys.path.append("/home/jesus/Nextcloud/MesoMath")  # <- change this
 
 # import's section
-from mesomath.babn import BabN as bn  # noqa: F401
+
+import argparse
 from mesomath.npvs import Blen as bl
 from mesomath.npvs import Bsur as bs
 from mesomath.npvs import Bvol as bv
@@ -21,7 +16,15 @@ from mesomath.npvs import BsyS as bS
 # Functions
 
 
-def examplehead(example, met, names, ubase, minv, maxv, inc):
+def examplehead(
+    example: int,
+    met: type,
+    names: list[str],
+    ubase: int,
+    minv: str | int,
+    maxv: str | int,
+    inc: str | int,
+):
     """Prints a preamble for the examples"""
 
     print(
@@ -35,10 +38,21 @@ Output follows:"""
     )
 
 
-def header(args, met, names, ubase, width=20):
+def header(
+    args: argparse.Namespace,
+    met: type,
+    names: list[str],
+    ubase: int,
+    width: int = 20,
+):
     """Prints header of metrological table
-    |   met: class of magnitude to be plotted
-    | ubase: base unit"""
+    
+    :args: argument namespace
+    :met: class of magnitude to be plotted
+    :ubase: base unit
+    :width: line width
+    
+    """
     width = int(width)
     if not args.noheader:
         print(f"\nMetrological list for {met.title}s")
@@ -54,14 +68,27 @@ def header(args, met, names, ubase, width=20):
             print("=========================================")
 
 
-def metrolist(args, met, names, ubase, minv, maxv, inc=1, width=20):
+def metrolist(
+    args: argparse.Namespace,
+    met: type,
+    names: list[str],
+    ubase: int,
+    minv: str | int,
+    maxv: str | int,
+    inc: str | int = 1,
+    width: int = 20,
+):
     """Prints a section of the metrological list for the met class.
-    |   met: class or quantity
-    | ubase: base unit for the metrological list
-    |  minv: minimum value of the variable to print
-    |  maxv: maximum value of the variable to print
-    |   inc: variable increment or step
-    | width: width reserved for printing the variable (default: 20)"""
+
+    :args: argument namespace
+    :met: class or quantity
+    :ubase: base unit for the metrological list
+    :minv: minimum value of the variable to print
+    :maxv: maximum value of the variable to print
+    :inc: variable increment or step
+    :width: width reserved for printing the variable (default: 20)
+    
+    """
 
     mc = m = met(minv)
     maxv = maxv.split(",")
@@ -112,9 +139,8 @@ def metrolist(args, met, names, ubase, minv, maxv, inc=1, width=20):
             m += mc
 
 
-def main():
-    """Entry point to metrotable"""
-
+def gen_parser() -> argparse.ArgumentParser:
+    """User interface parser"""
     # Option definitions
 
     DESC = """Prints an excerpt of a metrological table"""
@@ -164,7 +190,7 @@ def main():
     parser.add_argument(
         "-x",
         "--example",
-        help="Runs an example test" "",
+        help="Runs an example test",
         choices=["1", "2", "3", "4"],
         default=None,
     )
@@ -214,7 +240,13 @@ def main():
         default=False,
     )
 
+    return parser
+
+
+def main():
+    """Entry point to metrotable"""
     # Options parsing
+    parser = gen_parser()
     args = parser.parse_args()
 
     # Remainder section

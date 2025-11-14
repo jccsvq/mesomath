@@ -1,5 +1,16 @@
 # Release Notes
 
+## v1.2.0 (2025-11-14)
+
+* Important review of the code and package structure.
+    - Comparing objects of the included classes with other objects that are not of their own class (or integers, in the case of `BabN` class) now raises `NotImplementedError`.
+    - Classes are now hashable.
+    - Method `__int__` added to all clases. Methods `__len__` and `__round__` added to `BabN` class.
+    - New simple utility to print sexagesimal multiplication tables.
+    - The package and repository now have a more standard structure.
+    - Some test files for `pytest` added.
+    - Obsolete `mesolib.py` and old test files removed.
+
 ## v1.1.1 (2025-11-05).
 
 * Some bug fixes and other minor improvements.

@@ -6,13 +6,13 @@ Hamming numbers are numbers of the form
 |       where
 |    i,  j,  k  ≥  0
 
-Here we use the cyclic generator, method #2, from 
-https://rosettacode.org/wiki/Hamming_numbers#Python 
+Here we use the cyclic generator, method #2, from
+https://rosettacode.org/wiki/Hamming_numbers#Python
 adapted to ``Python3``.
 
 Formats:
 --------
-   
+
 | Python list, function: ``hamming(a,b=none)``
 | CSV, function: ``genCSV(maxn, sep = ",")``
 | SQL, function: ``genSQL(maxn)``
@@ -27,6 +27,8 @@ jccsvq fecit 2025
 """
 
 from itertools import islice, chain, tee
+from mesomath.babn import BabN
+
 
 
 def merge(r, s):
@@ -75,7 +77,7 @@ def pp(n, s):
     return r
 
 
-def hamming(a, b=None):
+def hamming(a: int, b: int | None = None) -> list[int]:
     """Generates a list of Hamming's numbers
 
     :a and b: generates the list from a to b if b is not None, otherwise return a list containig the a-th hamming number only
@@ -87,15 +89,14 @@ def hamming(a, b=None):
     return list(islice(seq, a - 1, b - 1))
 
 
-def genCSV(maxn, sep=","):
+def genCSV(maxn: int, sep: str = ",") -> None:
     """Generates csv table of regular numbers and reciprocals
 
     genCSV(80000) takes a few seconds!
     writes to stdin
     | maxn: decimal int, write the table up to this value
     |  sep: csv field separator (default: ",")"""
-    from mesomath.babn import BabN
-
+ 
     rlist = hamming(1, maxn)
     i = 0
     BabN.fill = True
@@ -108,9 +109,8 @@ def genCSV(maxn, sep=","):
 
 
 if __name__ == "__main__":
-    from babn import BabN
 
-    def genSQL(maxn):
+    def genSQL(maxn: int) -> None:
         """Generates list or regular numbers in sqlite3 SQL format
         | maxn: decimal int, write the table up to this value"""
         rlist = hamming(1, maxn)

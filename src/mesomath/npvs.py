@@ -20,10 +20,12 @@ but class Npvs is of general use.
 """
 
 from re import sub
+from typing import Final, Self
+from mesomath.babn import BabN
 
 # Data
 #: Dictionary of principal fractions withouth 1/6
-fdic0 = {
+fdic0: Final[dict] = {
     3: (["2/3", "1/3"], [2, 1]),
     5: ([""], []),
     10: (["1/2"], [5]),
@@ -36,7 +38,7 @@ fdic0 = {
 }
 
 #: Dictionary of principal fractions including 1/6
-fdic1 = {
+fdic1: Final[dict] = {
     3: (["2/3", "1/3"], [2, 1]),
     5: ([""], []),
     10: (["1/2"], [5]),
@@ -50,18 +52,23 @@ fdic1 = {
 
 
 # Functions
-def cmul(x):
+def cmul(x: list[int]) -> list[int]:
     """Utility function. Returns list of cumulative products of the factor list x
+
+    :x: list of ints
+    :raises: TypeError
 
     Example: cmul([4,3,3,22,10,8,3]) returns:
          [1, 4, 12, 36, 792, 7920, 63360, 190080]"""
-    if type(x) is list:
+    if isinstance(x, list):
         prod = 1
         prodl = [1]
         for i in x:
             prod *= i
             prodl.append(prod)
         return prodl
+    else:
+        raise TypeError
 
 
 def normalize(st: str) -> str:
@@ -131,8 +138,8 @@ class Npvs:
     ---------
 
     This class overloads arithmetic and logical operators allowing arithmetic
-    operations and comparisons to be performed between members of the class and
-    externally with integers or floats.
+    operations and comparisons to be performed between members of the class.
+    Comparison with other objects raises ``NotImplementedError``.
 
     jccsvq fecit, 2005. Public domain.
 
@@ -140,13 +147,24 @@ class Npvs:
 
     title: str = "Imperial length meassurement"
     uname: list[str] = "in hh ft yd ch fur mi lea".split()  # Unit names
-    aname: list[str] = "inch hand foot yard chain furlong mile league".split()  # Actual unit names
+    aname: list[str] = (
+        "inch hand foot yard chain furlong mile league".split()
+    )  # Actual unit names
     ufact: list[int] = [4, 3, 3, 22, 10, 8, 3]  # Factor between units
-    cfact: list[int] = [1, 4, 12, 36, 792, 7920, 63360, 190080]  # Factor with the smallest unit
+    cfact: list[int] = [
+        1,
+        4,
+        12,
+        36,
+        792,
+        7920,
+        63360,
+        190080,
+    ]  # Factor with the smallest unit
     siv: float = 0.0254  # meters per inch
     siu: str = "meters"  # S.I. unit name
 
-    def scheme(self, actual=False):
+    def scheme(self, actual: bool = False) -> list:
         """Returns list with the unit names separated by the corresponding factors
 
         :actual: Uses actual or academic unit names if True (default: False)
@@ -174,7 +192,7 @@ class Npvs:
         ll.reverse()
         return ll
 
-    def dec2un(self, x):
+    def dec2un(self, x: int) -> list:
         """
         Converts the decimal integer n to a list of integers, such that, for
         example, 1001 (inches) becomes ``[1, 1, 2, 5, 1, 0, 0, 0]``, which means
@@ -188,7 +206,10 @@ class Npvs:
         result.append(x)
         return result
 
-    def __init__(self, x):
+    def sexsys(self, x):
+        return NotImplemented
+
+    def __init__(self, x: int | str) -> None:
         """Class constructor
 
         :n: The parameter n can be an integer (sign is ignored) or a properly
@@ -197,8 +218,8 @@ class Npvs:
         """
         if type(x) is int:
             x = abs(x)
-            self.dec = x
-            self.list = self.dec2un(x)
+            dec = x
+            lista = self.dec2un(x)
         elif type(x) is str:
             if x.find("(") >= 0:
                 xx = x.split("(")[1:]
@@ -214,13 +235,25 @@ class Npvs:
             l1 = ll[::2]
             l2 = ll[1::2]
             t = 0
-            for i in range(len(l2)):
-                j = self.uname.index(l2[i])
-                t += int(l1[i]) * self.cfact[j]
-            self.dec = t
-            self.list = self.dec2un(t)
+            for _ in range(len(l2)):
+                j = self.uname.index(l2[_])
+                t += int(l1[_]) * self.cfact[j]
+            dec = t
+            lista = self.dec2un(t)
+        self.__dec: Final[int] = dec
+        self.__list: Final[list[int]] = lista
 
-    def __add__(self, other):
+    @property
+    def dec(self):
+        """Getter"""
+        return self.__dec
+
+    @property
+    def list(self):
+        """Getter"""
+        return self.__list
+
+    def __add__(self, other: Self) -> Self | None:
         """Overloads ``+`` operator: returns object with the sum of operands
 
         :other: another Npvs object or instance
@@ -228,8 +261,10 @@ class Npvs:
         """
         if type(other) is type(self):
             return self.__class__(self.dec + other.dec)
+        else:
+            return None
 
-    def __sub__(self, other):
+    def __sub__(self, other: Self) -> Self | None:
         """Overloads ``+`` operator: returns object with the absolute difference
         of operands
 
@@ -238,8 +273,10 @@ class Npvs:
         """
         if type(other) is type(self):
             return self.__class__(abs(self.dec - other.dec))
+        else:
+            return None
 
-    def __mul__(self, other):
+    def __mul__(self, other: int | float) -> Self:
         """Overloads ``*`` operator: returns object with the operands product
 
         :other: a positive int or float
@@ -248,7 +285,7 @@ class Npvs:
         t = self.dec * other
         return self.__class__(int(round(t, 0)))
 
-    def __rmul__(self, other):
+    def __rmul__(self, other) -> Self:
         """Overloads ``*`` operator: returns object with the operands product
 
         :other: a positive int or float
@@ -256,7 +293,7 @@ class Npvs:
         """
         return self.__mul__(other)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other: int | float) -> Self:
         """Overloads ``/`` operator: returns object with the operands product
 
         :other: a positive int or float
@@ -264,63 +301,81 @@ class Npvs:
         """
         return self.__class__(int(round(self.dec / other, 0)))
 
-    def si(self):
+    def si(self) -> float:
         """Returns the numeric equivalent in SI units"""
         return self.dec * self.siv
 
-    def SI(self):
+    def SI(self) -> str:
         """Returns formated string with the equivalent in SI units"""
         return f"{self.dec * self.siv} {self.siu}"
 
-    def __lt__(self, other):
+    def __lt__(self, other: Self) -> bool:
         """Overloads ``<`` operator
 
         :other: another Npvs object
 
         """
-        return self.dec < other.dec
+        if isinstance(other, type(self)):
+            return self.dec <= other.dec
+        else:
+            raise NotImplementedError
 
-    def __le__(self, other):
+    def __le__(self, other: Self) -> bool:
         """Overloads ``<=`` operator
 
         :other: another Npvs object
 
         """
-        return self.dec <= other.dec
+        if isinstance(other, type(self)):
+            return self.dec <= other.dec
+        else:
+            raise NotImplementedError
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Overloads ``==`` operator
 
         :other: another Npvs object
 
         """
-        return self.dec == other.dec
+        if isinstance(other, type(self)):
+            return self.dec == other.dec
+        else:
+            raise NotImplementedError
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         """Overloads ``!=`` operator
 
         :other: another Npvs object
 
         """
-        return self.dec != other.dec
+        if isinstance(other, type(self)):
+            return self.dec != other.dec
+        else:
+            raise NotImplementedError
 
-    def __gt__(self, other):
+    def __gt__(self, other: Self) -> bool:
         """Overloads ``>`` operator
 
         :other: another Npvs object
 
         """
-        return self.dec > other.dec
+        if isinstance(other, type(self)):
+            return self.dec > other.dec
+        else:
+            raise NotImplementedError
 
-    def __ge__(self, other):
+    def __ge__(self, other: Self) -> bool:
         """Overloads ``>=`` operator
 
         :other: another Npvs object
 
         """
-        return self.dec >= other.dec
+        if isinstance(other, type(self)):
+            return self.dec >= other.dec
+        else:
+            raise NotImplementedError
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns string representation of object"""
         ss = []
         for i in reversed(range(len(self.uname))):
@@ -328,6 +383,14 @@ class Npvs:
                 ss.append(str(self.list[i]))
                 ss.append(self.uname[i])
         return " ".join(ss)
+
+    def __hash__(self):
+        """Returns hash value of the instance"""
+        return hash((type(self), self.dec))
+
+    def __int__(self):
+        """Converts instance to int"""
+        return self.dec
 
 
 class _MesoM(Npvs):
@@ -340,25 +403,25 @@ class _MesoM(Npvs):
     :meta public:
     """
 
-    title = "Sexagesimal sistem"
-    uname = "sa sb sc sd".split()  # Unit names
-    aname = "Ša Šb Šc Šd".split()  # Unit names
-    ufact = [60, 60, 60]  # Factor between units
-    cfact = [1, 60, 3600, 216000]  # Factor with the smallest unit
-    siv = 1.0  #
-    siu = "counts"  # S.I. unit name
-    prtsex = False  # Printing meassurements in sexagesimal
-    ubase = 0  # Base unit for metrological tables
+    title: str = "Sexagesimal sistem"
+    uname: list[str] = "sa sb sc sd".split()  # Unit names
+    aname: list[str] = "Ša Šb Šc Šd".split()  # Unit names
+    ufact: list[int] = [60, 60, 60]  # Factor between units
+    cfact: list[int] = [1, 60, 3600, 216000]  # Factor with the smallest unit
+    siv: float = 1.0  #
+    siu: str = "counts"  # S.I. unit name
+    prtsex: bool = False  # Printing meassurements in sexagesimal
+    ubase: int = 0  # Base unit for metrological tables
 
-    def __init__(self, x):
+    def __init__(self, x: int | str) -> None:
         """Class constructor
 
         | n: The parameter n can be an integer (sign is ignored) or a properly
              formatted string representing the value. See the tutorial"""
         if type(x) is int:
             x = abs(x)
-            self.dec = x
-            self.list = self.dec2un(x)
+            dec = x
+            lista = self.dec2un(x)
         elif type(x) is str:
             x = normalize(x)
             if x.find("(") >= 0:
@@ -379,10 +442,10 @@ class _MesoM(Npvs):
             l1 = ll[::2]
             l2 = ll[1::2]
             t = 0
-            for i in range(len(l2)):
-                j = self.uname.index(l2[i])
-                if l1[i].find("+") >= 0:
-                    l3 = l1[i].split("+")
+            for _ in range(len(l2)):
+                j = self.uname.index(l2[_])
+                if l1[_].find("+") >= 0:
+                    l3 = l1[_].split("+")
                     t += int(l3[0]) * self.cfact[j]
                     if l3[1] == "1/6":
                         t += self.cfact[j] // 6
@@ -395,25 +458,36 @@ class _MesoM(Npvs):
                     elif l3[1] == "5/6":
                         t += 5 * self.cfact[j] // 6
                 else:
-                    t += int(l1[i]) * self.cfact[j]
-            self.dec = t
-            self.list = self.dec2un(t)
+                    t += int(l1[_]) * self.cfact[j]
+            dec = t
+            lista = self.dec2un(t)
+        self.__dec: Final[int] = dec
+        self.__list: Final[list[int]] = lista
 
-    def sex(self, r=0):
+    @property
+    def dec(self):
+        """Getter"""
+        return self.__dec
+
+    @property
+    def list(self):
+        """Getter"""
+        return self.__list
+
+    def sex(self, r: int = 0) -> BabN | None:
         """Return sexagesimal floating value of object
 
         :r: index of reference unit in uname
 
         """
-        from .babn import BabN
 
         return BabN(self.dec) // self.cfact[r]
 
-    def metval(self):
+    def metval(self) -> BabN | None:
         """Returns metrological value of object"""
         return self.sex(r=self.ubase)
 
-    def explain(self):
+    def explain(self) -> None:
         """Print some information about the object"""
         print(f"This is a {self.title}: {self}")
         print("    Metrology: ", *self.scheme())
@@ -424,7 +498,7 @@ class _MesoM(Npvs):
         print(f"Sexagesimal floating value of the above: {self.sex(False)}")
         print(f"Approximate SI value: {self.SI()}")
 
-    def prtf(self, onesixth=False, actual=False):
+    def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
         the units in the output
 
@@ -467,7 +541,7 @@ class _MesoM(Npvs):
                     ss += ff[i] + " " + self.uname[i] + " "
         return ss[:-1]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns string representation of object."""
         ss = []
         for i in reversed(range(len(self.uname))):
@@ -494,14 +568,14 @@ class BsyG(_MesoM):  # Babylonian System G numeration
 
     """
 
-    title = "Babylonian System G to count objects"
-    uname = "iku ese bur buru sar saru sargal".split()
-    aname = "iku eše3 bur3 bur'u šar2 šar'u šar2-gal".split()
-    ufact = [6, 3, 10, 6, 10, 6]
-    cfact = [1, 6, 18, 180, 1080, 10800, 64800]
-    siv = 1
-    siu = "#"
-    ubase = 0  # iku
+    title: str = "Babylonian System G to count objects"
+    uname: list[str] = "iku ese bur buru sar saru sargal".split()
+    aname: list[str] = "iku eše3 bur3 bur'u šar2 šar'u šar2-gal".split()
+    ufact: list[int] = [6, 3, 10, 6, 10, 6]
+    cfact: list[int] = [1, 6, 18, 180, 1080, 10800, 64800]
+    siv: float = 1
+    siu: str = "#"
+    ubase: int = 0  # iku
 
 
 class BsyS(_MesoM):  # Babylonian System S numeration
@@ -512,14 +586,14 @@ class BsyS(_MesoM):  # Babylonian System S numeration
 
     """
 
-    title = "Babylonian System S to count objects"
-    uname = "dis u ges gesu sar saru sargal".split()
-    aname = "diš u geš geš'u šar2 šar'u šar2-gal".split()
-    ufact = [10, 6, 10, 6, 10, 6]
-    cfact = [1, 10, 60, 600, 3600, 36000, 216000]
-    siv = 1
-    siu = "#"
-    ubase = 0  # dis
+    title: str = "Babylonian System S to count objects"
+    uname: list[str] = "dis u ges gesu sar saru sargal".split()
+    aname: list[str] = "diš u geš geš'u šar2 šar'u šar2-gal".split()
+    ufact: list[int] = [10, 6, 10, 6, 10, 6]
+    cfact: list[int] = [1, 10, 60, 600, 3600, 36000, 216000]
+    siv: float = 1
+    siu: str = "#"
+    ubase: int = 0  # dis
 
 
 class MesoM(_MesoM):
@@ -529,7 +603,7 @@ class MesoM(_MesoM):
 
     sexsys: type[BsyS] | type[BsyG] = BsyS
 
-    def prtf(self, onesixth=False, actual=False):
+    def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
         the units in the output
 
@@ -581,7 +655,7 @@ class MesoM(_MesoM):
 
         return ss[:-1]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns string representation of object."""
         ss = []
         for i in reversed(range(len(self.uname))):
@@ -605,14 +679,14 @@ class Blen(MesoM):  # Length
 
     """
 
-    title = "Babylonian length meassurement"
-    uname = "susi kus ninda us danna".split()
-    aname = "šu-si kuš3 ninda UŠ danna".split()
-    ufact = [30, 12, 60, 30]
-    cfact = [1, 30, 360, 21600, 648000]
-    siv = 0.5 / 30
-    siu = "meters"
-    ubase = 2  # ninda
+    title: str = "Babylonian length meassurement"
+    uname: list[str] = "susi kus ninda us danna".split()
+    aname: list[str] = "šu-si kuš3 ninda UŠ danna".split()
+    ufact: list[int] = [30, 12, 60, 30]
+    cfact: list[int] = [1, 30, 360, 21600, 648000]
+    siv: float = 0.5 / 30
+    siu: str = "meters"
+    ubase: int = 2  # ninda
 
     def __mul__(self, other):
         """Overloads ``*`` operator: returns object with the operands product
@@ -639,15 +713,15 @@ class Bsur(MesoM):  # Surface
 
     """
 
-    title = "Babylonian surface meassurement"
-    uname = "se gin sar gan".split()
-    aname = "še gin2 sar GAN2".split()
-    ufact = [180, 60, 100]
-    cfact = [1, 180, 10800, 1080000]
-    siv = 36.0 / 60 / 180
-    siu = "square meters"
-    ubase = 1  # gin
-    sexsys = BsyG
+    title: str = "Babylonian surface meassurement"
+    uname: list[str] = "se gin sar gan".split()
+    aname: list[str] = "še gin2 sar GAN2".split()
+    ufact: list[int] = [180, 60, 100]
+    cfact: list[int] = [1, 180, 10800, 1080000]
+    siv: float = 36.0 / 60 / 180
+    siu: str = "square meters"
+    ubase: int = 1  # gin
+    sexsys: type[BsyS] | type[BsyG] = BsyG
 
     def __mul__(self, other):
         """Overloads ``*`` operator: returns object with the operands product
@@ -671,21 +745,21 @@ class Bvol(MesoM):  # Volume
 
     """
 
-    title = "Babylonian volume meassurement"
-    uname = "se gin sar gan".split()
-    aname = "še gin2 sar GAN2".split()
-    ufact = [180, 60, 100]
-    cfact = [1, 180, 10800, 1080000]
-    siv = 18.0 / 60 / 180
-    siu = "cube meters"
-    ubase = 1  # gin
-    sexsys = BsyG
+    title: str = "Babylonian volume meassurement"
+    uname: list[str] = "se gin sar gan".split()
+    aname: list[str] = "še gin2 sar GAN2".split()
+    ufact: list[int] = [180, 60, 100]
+    cfact: list[int] = [1, 180, 10800, 1080000]
+    siv: float = 18.0 / 60 / 180
+    siu: str = "cube meters"
+    ubase: int = 1  # gin
+    sexsys: type[BsyS] | type[BsyG] = BsyG
 
-    def cap(self):
+    def cap(self):  # noqa: F821
         """Convert volume to capacity meassurement"""
         return Bcap(18000 * self.dec)
 
-    def bricks(self, nalb=1.0):
+    def bricks(self, nalb: float = 1.0):
         """Returns the volume in number of bricks equivalent based on their
         "Nalbanum." 720 for 1 sar volume if nalb is 1. Output is a ``Bbri`` object.
 
@@ -721,16 +795,16 @@ class Bcap(MesoM):  # Capacity
 
     """
 
-    title = "Babylonian capacity meassurement"
-    uname = "se gin sila ban bariga gur".split()
-    aname = "še gin2 sila3 ban2 bariga gur".split()
-    ufact = [180, 60, 10, 6, 5]
-    cfact = [1, 180, 10800, 108000, 648000, 3240000]
-    siv = 1.0 / 60 / 180
-    siu = "litres"
-    ubase = 1  # gin
+    title: str = "Babylonian capacity meassurement"
+    uname: list[str] = "se gin sila ban bariga gur".split()
+    aname: list[str] = "še gin2 sila3 ban2 bariga gur".split()
+    ufact: list[int] = [180, 60, 10, 6, 5]
+    cfact: list[int] = [1, 180, 10800, 108000, 648000, 3240000]
+    siv: float = 1.0 / 60 / 180
+    siu: str = "litres"
+    ubase: int = 1  # gin
 
-    def vol(self):
+    def vol(self) -> Bvol | None:
         """Convert capacity to volume meassurement"""
         if self.dec >= 18000:
             return Bvol(self.dec // 18000)
@@ -747,14 +821,14 @@ class Bwei(MesoM):  # Weight
 
     """
 
-    title = "Babylonian weight meassurement"
-    uname = "se gin mana gu".split()
-    aname = "še gin2 ma-na gu2".split()
-    ufact = [180, 60, 60]
-    cfact = [1, 180, 10800, 648000]
-    siv = 0.5 / 60 / 180
-    siu = "kilograms"
-    ubase = 1  # gin
+    title: str = "Babylonian weight meassurement"
+    uname: list[str] = "se gin mana gu".split()
+    aname: list[str] = "še gin2 ma-na gu2".split()
+    ufact: list[int] = [180, 60, 60]
+    cfact: list[int] = [1, 180, 10800, 648000]
+    siv: float = 0.5 / 60 / 180
+    siu: str = "kilograms"
+    ubase: int = 1  # gin
 
 
 class Bbri(MesoM):  # Counting bricks
@@ -765,17 +839,17 @@ class Bbri(MesoM):  # Counting bricks
 
     """
 
-    title = "Babylonian brick count"
-    uname = "se gin sar gan".split()
-    aname = "še gin2 sar GAN2".split()
-    ufact = [180, 60, 100]
-    cfact = [1, 180, 10800, 1080000]
-    siv = 720 / 10800
-    siu = "bricks"
-    ubase = 1  # gin
-    sexsys = BsyG
+    title: str = "Babylonian brick count"
+    uname: list[str] = "se gin sar gan".split()
+    aname: list[str] = "še gin2 sar GAN2".split()
+    ufact: list[int] = [180, 60, 100]
+    cfact: list[int] = [1, 180, 10800, 1080000]
+    siv: float = 720.0 / 10800
+    siu: str = "bricks"
+    ubase: int = 1  # gin
+    sexsys: type[BsyS] | type[BsyG] = BsyG
 
-    def vol(self, nalb=1.0):
+    def vol(self, nalb: float = 1.0):
         """Returns the volume corresponding to a number of bricks  based on their
         *Nalbanum*.  1 sar volume for 720 bricks if nalb is 1.
         Output is a ``Bvol`` object.

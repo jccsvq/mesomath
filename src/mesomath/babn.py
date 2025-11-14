@@ -5,6 +5,8 @@ as performed by Babylonian scribes. Hence the name."""
 from math import log, sqrt
 from os.path import exists
 from sqlite3 import connect
+from types import NotImplementedType
+from typing import Final, Self
 
 
 class BabN:
@@ -52,19 +54,20 @@ class BabN:
 
     This class overloads arithmetic and logical operators allowing arithmetic
     operations and comparisons to be performed between members of the class and
-    externally with integers.
+    externally with integers. Comparing with any other object type will raise
+    ``NotImplementedError``.
 
     """
 
-    title = "Sexagesimal number"
-    sep = ":"
-    fill = False
-    rdigits = 6
-    floatmult = False
-    database = "regular.db3"
+    title: str = "Sexagesimal number"
+    sep: str = ":"
+    fill: bool = False
+    rdigits: int = 6
+    floatmult: bool = False
+    database: str = "regular.db3"
 
-    @classmethod
-    def dec2list(cls, n: int):
+    @staticmethod
+    def dec2list(n: int) -> list:
         """
         Convert decimal integer n to list of int's (its sexagesimal digits)
 
@@ -84,8 +87,8 @@ class BabN:
             rlist.reverse()
         return rlist
 
-    @classmethod
-    def parse(cls, n):
+    @staticmethod
+    def parse(n: int | str | list | tuple) -> tuple | None:
         """Returns tuple with decimal value and list of sexagesimal digits of n.
 
         :n: may be
@@ -102,9 +105,9 @@ class BabN:
             rs = 0
             for i in lt:
                 rs = rs * 60 + i
-            return (rs, __class__.dec2list(rs))
+            return (rs, BabN.dec2list(rs))
         elif type(n) is int:
-            return (abs(n), __class__.dec2list(abs(n)))
+            return (abs(n), BabN.dec2list(abs(n)))
         elif type(n) is str:
             if n.find(":") > 0:
                 lt = [int(j) for j in n.split(":")]
@@ -124,8 +127,8 @@ class BabN:
             print("Invalid argument!")
             return None
 
-    @classmethod
-    def genDB(cls, dbname):
+    @staticmethod
+    def genDB(dbname: str) -> None:
         """Generates sqlite3 database of regular numbers
 
         :dbname: database path and name
@@ -164,26 +167,38 @@ class BabN:
         con.close()
         print(f"""...(Database: {dbname} created!)...""")
 
-    def __init__(self, n):
+    @classmethod
+    def create_new(cls, data) -> Self:
+        """
+        Class method that returns a new instance.
+        """
+        return cls(data)
+
+    def __init__(self, n: int | str | list | tuple) -> None:
         """
         Class constructor
 
-        :n: The parameter n can be an integer (sign is ignored) or a properly formatted string representing a sexagesimal number, accepting the separators ":" and "." (e.g., 405, "02:45" or "2.45") or a list (e.g., [1, 12, 23]) or a tuple (e.g., (i,j,k,l) such that 2**i * 3**j * 5**k * l is the decimal value of the number.
+        :n: The parameter n can be an integer (sign is ignored) or a properly
+            formatted string representing a sexagesimal number, accepting the
+            separators ":" and "." (e.g., 405, "02:45" or "2.45") or a list
+            (e.g., [1, 12, 23]) or a tuple (e.g., (i,j,k,l) such that
+            2**i * 3**j * 5**k * l is the decimal value of the number.
 
         """
-        tup = __class__.parse(n)
+        tup = BabN.parse(n)
         if tup is None:
             return None
-        (self.dec, self.list) = tup
-        if self.dec == 1:
-            self.isreg = True
-            self.factors = (0, 0, 0, 1)
-        elif self.dec == 0:
-            self.isreg = False
-            self.list = [0]
-            self.factors = (0, 0, 0, 0)
+        (dec, ll) = tup
+        if dec == 1:
+            isreg = True
+            ll = [1]
+            factors = (0, 0, 0, 1)
+        elif dec == 0:
+            isreg = False
+            ll = [0]
+            factors = (0, 0, 0, 0)
         else:
-            x = self.dec
+            x = dec
             i = j = k = 0
             while x % 2 == 0:
                 i += 1
@@ -195,12 +210,37 @@ class BabN:
                 k += 1
                 x //= 5
             if x > 1:
-                self.isreg = False
+                isreg = False
             else:
-                self.isreg = True
-            self.factors = (i, j, k, x)
+                isreg = True
+            factors = (i, j, k, x)
 
-    def inv(self, digits=4):
+        self.__dec: Final[int] = dec
+        self.__list: Final[list[int]] = ll
+        self.__factors: Final[tuple[int, int, int, int]] = factors
+        self.__isreg: Final[bool] = isreg
+
+    @property
+    def dec(self):
+        """Getter"""
+        return self.__dec
+
+    @property
+    def list(self):
+        """Getter"""
+        return self.__list
+
+    @property
+    def factors(self):
+        """Getter"""
+        return self.__factors
+
+    @property
+    def isreg(self):
+        """Getter"""
+        return self.__isreg
+
+    def inv(self, digits: int = 4) -> Self | None:
         """Returns BabN object with approximate inverse of the number,
         i.e., a * a.inv() is approximately a power of 60
 
@@ -217,9 +257,9 @@ class BabN:
         inv = int(round(inv, 0))
         while inv % 60 == 0:
             inv //= 60
-        return BabN(inv)
+        return self.create_new(inv)
 
-    def f(self):
+    def f(self) -> Self:
         """Returns BabN object with the floating part of the number (mantissa),
         i.e., removes any trailing sexagesimal zero, ex.: 4:42:0:0 -> 4:42"""
         ll = self.list
@@ -227,44 +267,44 @@ class BabN:
             return self
         while ll[-1] == 0:
             ll = ll[:-1]
-        return BabN(ll)
+        return self.create_new(ll)
 
     float = f
 
-    def len(self):
+    def len(self) -> int:
         """Returns the number of sexagesimal digits of the number as int"""
         return len(self.list)
 
-    def head(self, d=1):
+    def head(self, d: int = 1) -> Self:
         """Returns BabN object with the first d digits of self
 
         :d: Number of digits to return
 
         """
         lm = min(abs(d), len(self.list))
-        return BabN(self.list[:lm])
+        return self.create_new(self.list[:lm])
 
-    def tail(self, d=1):
+    def tail(self, d: int = 1) -> Self:
         """Returns BabN object with the last d digits of self
 
         :d: Number of digits to return
 
         """
         ll = min(abs(d), len(self.list))
-        return BabN(self.list[-ll:])
+        return self.create_new(self.list[-ll:])
 
-    def trim(self, d):
+    def trim(self, d: int) -> Self:
         """Returns BabN object corresponding to the first d sexagesimal digits
 
         :d: Number of digits to retain
 
         """
         if d <= self.len():
-            return BabN(self.list[:d])
+            return self.create_new(self.list[:d])
         else:
             return self
 
-    def round(self, d):
+    def round(self, d: int) -> Self:
         """Returns BabN object rounded to d sexagesimal digits
 
         :d: Number of digits to return
@@ -273,81 +313,93 @@ class BabN:
         if d < self.len():
             ll = self.list
             if ll[d] >= 30:
-                return BabN(ll[:d]) + BabN(1)
+                return self.create_new(ll[:d]) + self.create_new(1)
             else:
-                return BabN(ll[:d])
+                return self.create_new(ll[:d])
         else:
             return self
 
-    def __add__(self, other):
+    def __add__(self, other) -> Self | NotImplementedType:
         """Overloads `+` operator: returns BabN object with the sum of operands
 
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) is BabN:
-            return BabN(self.dec + other.dec)
-        elif type(other) is int:
-            return BabN(self.dec + other)
+        if isinstance(other, BabN):
+            return self.create_new(self.dec + other.dec)
+        elif isinstance(other, int):
+            return self.create_new(self.dec + abs(other))
+        else:
+            return NotImplemented
 
-    def __radd__(self, other):
+    def __radd__(self, other: int) -> Self | NotImplementedType:
         """Overloads `+` operator: returns BabN object with the sum of operands
 
-        :other: May be another BabN object or a positive int.
+        :other: a positive int.
 
         """
-        return BabN(self.dec + other)
+        if isinstance(other, int):
+            return self.create_new(self.dec + abs(other))
+        else:
+            return NotImplemented
 
-    def __sub__(self, other):
+    def __sub__(self, other) -> Self | NotImplementedType:
         """Overloads `-` operator: returns BabN object with the absolute value
         of the operands difference
 
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) is BabN:
-            return BabN(abs(self.dec - other.dec))
-        elif type(other) is int:
-            return BabN(abs(self.dec - other))
+        if isinstance(other, BabN):
+            return self.create_new(abs(self.dec - other.dec))
+        elif isinstance(other, int):
+            return self.create_new(abs(self.dec - abs(other)))
+        else:
+            return NotImplemented
 
-    def __rsub__(self, other):
+    def __rsub__(self, other) -> Self | NotImplementedType:
         """Overloads `-` operator: returns BabN object with the absolute value
         of the operands difference
 
         :other: May be another BabN object or a positive int.
 
         """
-        return BabN(abs(self.dec - other))
+        if isinstance(other, int):
+            return self.create_new(abs(self.dec - abs(other)))
+        else:
+            return NotImplemented
 
-    def __mul__(self, other):
+    def __mul__(self, other) -> Self | NotImplementedType:
         """Overloads `*` operator: returns BabN object with the operands product
 
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) is BabN:
+        if isinstance(other, BabN):
             if BabN.floatmult:
-                return BabN(self.dec * other.dec).float()
+                return self.create_new(self.dec * other.dec).float()
             else:
-                return BabN(self.dec * other.dec)
-        elif type(other) is int:
+                return self.create_new(self.dec * other.dec)
+        elif isinstance(other, int):
             if BabN.floatmult:
-                return BabN(self.dec * other).float()
+                return self.create_new(self.dec * other).float()
             else:
-                return BabN(self.dec * other)
+                return self.create_new(self.dec * other)
+        else:
+            return NotImplemented
 
-    def __rmul__(self, other):
+    def __rmul__(self, other) -> Self:
         """Overloads `-` operator: returns BabN object with the operands product
 
         :other: May be another BabN object or a positive int.
 
         """
         if BabN.floatmult:
-            return BabN(self.dec * other).float()
+            return self.create_new(self.dec * other).float()
         else:
-            return BabN(self.dec * other)
+            return self.create_new(self.dec * other)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other) -> Self | None:
         """Overloads `/` operator:  Returns BabN object with the floating
         approximate division of operands
 
@@ -355,28 +407,34 @@ class BabN:
 
         """
         a = self.dec
-        if type(other) is BabN:
+        if isinstance(other, BabN):
             b = other.dec
-        elif type(other) is int:
+        elif isinstance(other, int):
             b = other
-        q = a / b
+        try:
+            q = a / b
+        except ZeroDivisionError:
+            print("Oops!  Cannot divide by zero")
+            return None
         nsd = int(log(q) / log(60))
         inv = pow(60, BabN.rdigits - nsd) * q
         inv = int(round(inv, 0))
         while inv % 60 == 0:
             inv //= 60
-        return BabN(inv)
+        return self.create_new(inv)
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other) -> Self | None:
         """Overloads `/` operator:  Returns BabN object with the floating
         approximate division of operands
 
         :other: May be another BabN object or a positive int.
 
         """
-        return BabN(other).__truediv__(self)
+        # return (self.create_new(other)).__truediv__(self)
+        return (self.create_new(other)) / (self)
+        # return other.__truediv__(self)
 
-    def __floordiv__(self, other):
+    def __floordiv__(self, other) -> Self | None:
         """Overloads `//` operator: Returns BabN object with the result of
         "Babylonian división" of operands, i.e., if b is regular then a//b
         returns a times the reciprocal of b. Result is floating. Returns None
@@ -385,18 +443,19 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) is int:
+        if isinstance(other, int):
             other = BabN(other)
         if other.isreg:
             inv = other.rec().dec
             q = self.dec * inv
             while q % 60 == 0:
                 q //= 60
-            return BabN(q)
+            return self.create_new(q)
         else:
             print("Divisor is not a regular number (igi nu)!")
+            return None
 
-    def __rfloordiv__(self, other):
+    def __rfloordiv__(self, other) -> Self | None:
         """Overloads `//` operator: Returns BabN object with the result of
         "Babylonian división" of operands, i.e., if b is regular then a//b
         returns a times the reciprocal of b. Returns None if b is not regular.
@@ -404,9 +463,10 @@ class BabN:
         :other: May be another BabN object or a positive int.
 
         """
-        return BabN(other).__floordiv__(self)
+        # return self.create_new(other).__floordiv__(self)
+        return (self.create_new(other)) // (self)
 
-    def __pow__(self, x):
+    def __pow__(self, x: int) -> Self | None:
         """Overloads `**` operator: Returns BabN object with the number raised
         to the power x where x is a natural integer
 
@@ -414,113 +474,95 @@ class BabN:
 
         """
         try:
-            return BabN(self.dec**x)
+            return self.create_new(self.dec**x)
         except Exception:
             print("x must be a positive integer")
+            return None
 
-    def __lt__(self, other):
+    def __lt__(self, other)-> bool:
         """Overloads < operator
 
         :other: May be another BabN object or a positive int.
 
         """
-        if type(other) is BabN:
-            if self.dec < other.dec:
-                return True
-            else:
-                return False
-        elif type(other) is int:
-            if self.dec < other:
-                return True
-            else:
-                return False
+        if isinstance(other, BabN):
+            return self.dec < other.dec
+        elif isinstance(other, int):
+            return self.dec < other
+        else:
+            raise NotImplementedError
 
-    def __le__(self, other):
+    def __le__(self, other)-> bool:
         """Overloads <= operator
 
         :other: May be another BabN object or a positive int.
+        :raises: ``NotImplementedError`` if ``other`` is any other object.
 
         """
-        if type(other) is BabN:
-            if self.dec <= other.dec:
-                return True
-            else:
-                return False
-        elif type(other) is int:
-            if self.dec <= other:
-                return True
-            else:
-                return False
+        if isinstance(other, BabN):
+            return self.dec <= other.dec
+        elif isinstance(other, int):
+            return self.dec <= other
+        else:
+            raise NotImplementedError
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """Overloads == operator
 
         :other: May be another BabN object or a positive int.
+        :raises: ``NotImplementedError`` if ``other`` is any other object.
 
         """
-        if type(other) is BabN:
-            if self.dec == other.dec:
-                return True
-            else:
-                return False
-        elif type(other) is int:
-            if self.dec == other:
-                return True
-            else:
-                return False
+        if isinstance(other, BabN):
+            return self.dec == other.dec
+        elif isinstance(other, int):
+            return self.dec == other
+        else:
+            raise NotImplementedError
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """Overloads != operator
 
         :other: May be another BabN object or a positive int.
+        :raises: ``NotImplementedError`` if ``other`` is any other object.
 
         """
-        if type(other) is BabN:
-            if self.dec != other.dec:
-                return True
-            else:
-                return False
-        elif type(other) is int:
-            if self.dec != other:
-                return True
-            else:
-                return False
+        if isinstance(other, BabN):
+            return self.dec != other.dec
+        elif isinstance(other, int):
+            return self.dec != other
+        else:
+            raise NotImplementedError
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """Overloads > operator
 
         :other: May be another BabN object or a positive int.
+        :raises: ``NotImplementedError`` if ``other`` is any other object.
 
         """
-        if type(other) is BabN:
-            if self.dec > other.dec:
-                return True
-            else:
-                return False
-        elif type(other) is int:
-            if self.dec > other:
-                return True
-            else:
-                return False
+        if isinstance(other, BabN):
+            return self.dec > other.dec
+        elif isinstance(other, int):
+            return self.dec > other
+        else:
+            raise NotImplementedError
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """Overloads >= operator
 
         :other: May be another BabN object or a positive int.
+        :raises: ``NotImplementedError`` if ``other`` is any other object.
 
         """
-        if type(other) is BabN:
-            if self.dec >= other.dec:
-                return True
-            else:
-                return False
-        elif type(other) is int:
-            if self.dec >= other:
-                return True
-            else:
-                return False
+        if isinstance(other, BabN):
+            return self.dec >= other.dec
+        elif isinstance(other, int):
+            return self.dec >= other
+        else:
+            raise NotImplementedError
 
-    def rec(self):
+    def rec(self) -> Self:
         """Returns BabN object with the reciprocal of a regular number, returns
         None for non-regular numbers"""
         if self.isreg:
@@ -528,7 +570,7 @@ class BabN:
             while x % 60 == 0:
                 x //= 60
             if x == 1:
-                return BabN(1)
+                return self.create_new(1)
             i = j = k = 0
             while x % 2 == 0:
                 i += 1
@@ -559,12 +601,12 @@ class BabN:
                 k += t
                 j0 += t
                 k0 += t
-            return BabN(pow(2, i0) * pow(3, j0) * pow(5, k0))
+            return self.create_new(pow(2, i0) * pow(3, j0) * pow(5, k0))
         else:
             print("Not regular, (igi nu)!")
             return None
 
-    def sqrt(self):
+    def sqrt(self) -> Self:
         """Returns BabN object with approximate floating square root"""
         digits = BabN.rdigits - 1
         x = self.dec
@@ -572,9 +614,9 @@ class BabN:
         sqr = int(round(sqr, 0))
         while sqr % 60 == 0:
             sqr //= 60
-        return BabN(sqr)
+        return self.create_new(sqr)
 
-    def cbrt(self):
+    def cbrt(self) -> Self:
         """Returns BabN object with approximate floating cube root"""
         digits = BabN.rdigits - 1
         x = self.dec
@@ -582,9 +624,9 @@ class BabN:
         cbr = int(round(cbr, 0))
         while cbr % 60 == 0:
             cbr //= 60
-        return BabN(cbr)
+        return self.create_new(cbr)
 
-    def dist(self, n):
+    def dist(self, n: str | int | type(Self)) -> int:
         """Estimates a certain "distance" between two sexagesimal numbers.
 
         The objective is, given a non-regular number, to select the regular
@@ -611,7 +653,13 @@ class BabN:
                 list2[-1] += 1
         return (BabN(list1) - BabN(list2)).dec
 
-    def searchreg(self, minn, maxn, limdigits=6, prt=False):
+    def searchreg(
+        self,
+        minn: str | int,
+        maxn: str | int,
+        limdigits: int = 6,
+        prt: bool = False,
+    ) -> Self:
         """Search database for regulars between sexagesimals minn y maxn.
         Returns BabN object with the closest regular found.
 
@@ -656,13 +704,13 @@ SELECT regular
                 minr = i[0]
         if prt:
             print(f"Minimal distance: {mind}, closest regular is: {minr}")
-        return BabN(minr)
+        return self.create_new(minr)
 
-    def explain(self):
+    def explain(self) -> None:
         """Explains number; print out basic information about the object."""
         print(f"|  Sexagesimal number: {self.list} is the decimal number: {self.dec}.")
         (i, j, k, x) = self.factors
-        print(f"|    It may be written as 2^{i} * 3^{j} * 5^{k} * {x}),")
+        print(f"|    It may be written as (2^{i} * 3^{j} * 5^{k} * {x}),")
         if self.isreg:
             print(f"|    so, it is a regular number with reciprocal: {self.rec()}")
         else:
@@ -673,7 +721,7 @@ SELECT regular
                 print(f"|    and a close regular is: {cr}")
                 print(f"|    whose reciprocal is: {cr.rec()}")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns string representation of sexagesimal number."""
         rlist = self.list
         if self.fill:
@@ -684,3 +732,14 @@ SELECT regular
             return BabN.sep.join(tt)
         else:
             return BabN.sep.join(map(str, rlist))
+
+    def __hash__(self) -> int:
+        """Returns hash value of the instance"""
+        return hash((type(self), self.__dec))
+
+    def __int__(self) -> int:
+        """Converts instance to int"""
+        return self.__dec
+
+    __len__ = len
+    __round__ = round

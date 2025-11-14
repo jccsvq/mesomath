@@ -1,6 +1,6 @@
 ![mesomath](_static/mesomath.png) 
 
-# MesoMath v1.1.1
+# MesoMath v1.2.0
 
 ## Overview
 
@@ -16,37 +16,27 @@ It has been inspired by the arithmetic and metrological parts of [MesoCalc](http
 
 The package includes:
 
-the `mesomath` module containing four submodules:
+* the `mesomath` module containing three main submodules:
 
-*  `babn.py`
-*  `hamming.py`
-*  `mesolib.py`
-*  `npvs`
+    *  `babn.py`: Containing the class `BabN` for *Babylonian* (sexagesimal) *numbers*.
+    *  `npvs.py`: Containing *metrological* classes for measurements of distance, area, volume, capacity, weight,...
+    *  `hamming.py`: For generating lists of *regular numbers*, as well as the [`SQLite3`](https://www.sqlite.org/) database of these used by the `BabN` class.
 
 
-one utility script:
+* four application submodules:
 
-*  `createDB.py`
+    * `babcalc.py` implementing the interactive *Babylonian calculator* `babcalc`.
+    * `metrotable.py`: implementation of the metrological table printing application `metrotable`.
+    * `mtlookup.py`: implementation of the metrological table search application `mtlookup`.
+    * `multable.py`: implementation of the sexagesimal multiplication table printing utility `bmultab`.
 
-one example script:
+* Test files for `pytest` in the `test` subdirectory.
+* [`Sphinx`](https://www.sphinx-doc.org/en/master/) source files for the documentation in the `docs` subdirectory, including tutorials for the four applications: `babcalc`, `metrotable`, `mtlookup` and `bmultab`.
 
-*  `example-melville.py`
-
-four test/demo scripts:
-
-*  `test-babn.py`
-*  `test-hamming.py`
-*  `test-mesolib.py`
-*  `test-npvs.py`
-
-and two applications in the `progs` subdirectory:
-
-*  `metrotable.py` to print segments of metrological tables.
-*  `mtlookup.py` to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number.
 
 ## Download
 
-From the [GitHub repository](https://github.com/jccsvq/mesomath). Read below about the [installation](https://mesomath.readthedocs.io/install.html).
+From the [GitHub repository](https://github.com/jccsvq/mesomath). Read below about the [installation](installation).
 
 ## Documentation
 
@@ -56,7 +46,9 @@ Documentation for this package is in [Read the Docs](https://mesomath.readthedoc
 
 ## Dependencies
 
-`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `sys`, `re` and `sqlite3`. 
+`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
+
+The dependencies expressed in `requirements.txt` are for testing and documentation building.
 
 Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm) in x86_64 and aarch64 (raspberrypi 5).
 
@@ -83,10 +75,6 @@ Regular or Hamming numbers are numbers of the form:
 
 This module is used to obtain lists of such numbers and ultimately build a SQLite3 database of them up to 20 sexagesimal digits. This database is used by BabN to search for regular numbers close to a given one. See the scripts: `createDB.py` and `test-hamming.py`.
 
-## `mesolib.py`
-
-This is a rather obsolete module, as its functionality has been moved to the methods of the `BabN` class. It can be safely ignored and will likely be removed in the future. In any case, please refer to the `test-mesolib.py` script.
-
 ## `npvs.py`
 
 This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the `_MesoM` class which adapts it to Mesopotamian metrological use. The `_MesoM` class, in turn, is inherited by:
@@ -102,55 +90,5 @@ This module defines the generic class `Npvs` for handling measurements in variou
     *  class `Bbri`: Babylonian brick counting system (se gin sar gan)
 
 Please, read the [tutorial](https://mesomath.readthedocs.io/tutorial.html) to see how to use all these classes.
-
-##  `createDB.py`
-
-This script has become more or less obsolete since its functionality was incorporated into the BabN class, which now creates the regular number database if it cannot find it when needed.
-
-Use:
-
-    $ python3 createDB.py
-
-to create the default regular number database `regular.db3` in your directory.  You can also use:
-
-    $ python3 createDB.py -o 'path/name'
-
-to create it in a non-standar location. In this case, think of using:
-
-    BabN.database = 'path/name'
-
-to inform `BabN`  of its location.
-
-##  `example-melville.py`
-
-This script shows the application of `mesomath` to the solution of two real examples given by Duncan J. Melville in: [Reciprocals and Reciprocal algorithms in Mesopotamian Mathematics (2005)](https://www.researchgate.net/publication/237309438_RECIPROCALS_AND_RECIPROCAL_ALGORITHMS_IN_MESOPOTAMIAN_MATHEMATICS)
-
-    $ python3 example-melville.py 
-
-Output:
-
-    Searching the reciprocal of 2:5  according to D. J. Melville (2005)
-
-    Example 1: from Table 2. Simple Reciprocal algorithm
-
-    d1 = BabN('2:5')
-    r1 = d1.tail()
-    r2 = r1.rec()
-    r3 = d1 * r2
-    r4 = r3.rec()
-    r5 = r4 * r2
-
-    Result r5 =  28:48
-
-    Example 2: from Table 3. using "The Technique"
-
-    r1 = d1.tail()
-    r2 = r1.rec()
-    r3 = d1.head() * r2
-    r4 = r3+BabN(1)
-    r5 = r4.rec()
-    r6 = r5 * r2
-
-    Result r6 =  28:48
 
 

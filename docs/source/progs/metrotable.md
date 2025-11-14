@@ -14,31 +14,27 @@ The metrological tables showed the correspondence between the additive values â€
 
     1 yard 2 feet 5 inches -> 65
 
-## Installation
+## Running `metrotable`
 
->You need to edit the `metrotable.py` script and change line 7 so that instead of `/home/jesus/Nextcloud/MesoMath` the `sys.path` argument points to the absolute path of <u>your `MesoMath` installation directory</u>.
+If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you only have to issue:
 
-    #!/usr/bin/env -S python3
-    '''Printing of metrological tables'''
+    $ metrotable
+    Nothing to do, exiting!
+    $ 
 
-    # Change the `sys.path.append` argument to the absolute path of the directory
-    # containing the `mesomath` module ( your installation directory).
-    import sys, argparse
-    sys.path.append("/home/jesus/Nextcloud/MesoMath")  # <- change this
+The output: "Nothing to do, exiting!" indicates that `metrotable` is there, but you haven't told it what to do. You can try also:
 
-After this, you can invoke the script as:
+    $ python -m mesomath.metrotable
 
-    $ python3 metrotable.py
+to run `metrotable`. Let us now try:
 
-If nothing happens and you're returned to the prompt, all is well. You can now try
-
-    $ python3 metrotable.py -h
+    $ metrotable -h
 
 or, if you prefer long options:
 
-    $ python3 metrotable.py --help
+    $ metrotable --help
 
-to get a long list of short and long options:
+to get a listing of short and long options:
 
     usage: metrotable [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
                       [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
@@ -82,17 +78,6 @@ to get a long list of short and long options:
 
     jccsvq fecit, 2025. Public domain.
 
-On Unix-like systems, you can make the script executable:
-
-    $ chmod +x metrotable.py
-
-and copy/move/link it to a directory in your system's path. Then, simply:
-
-    $ metrotable.py -h
-
-to run it, or, if you rename the file to `metrotable`, then simply:
-
-    $ metrotable -h
 
 ## How to use
 
@@ -444,7 +429,7 @@ we obtain the table from 10 susi to 2 kus with increment of 5 susi, from 2 ku to
 
 #### Options `-n` `--noheader`  
 
-Suppress the printing of the table header, which can be useful if you want to join table segments by shell scripting.
+Suppresses the printing of the table header, which can be useful if you want to join table segments by shell scripting.
 
     $ metrotable ...  > table.txt
     $ metrotable ... -n >> table.txt
@@ -453,7 +438,7 @@ Suppress the printing of the table header, which can be useful if you want to jo
 
 #### Options `-f` `--force`
 
-Allow the calculation of abstract numbers using any unit as a base unit. For instance:
+It allows the calculation of abstract numbers by forcing any unit as the base unit. For instance:
 
 
     $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' 
@@ -484,7 +469,7 @@ Allow the calculation of abstract numbers using any unit as a base unit. For ins
 
 #### Options `-w`  `--width`
 
-Will change the default of 20 chars width  of the meassurement text field
+Changes the default of 20 chars width  of the meassurement text field
 
     $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
 

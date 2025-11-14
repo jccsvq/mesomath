@@ -1,3 +1,4 @@
+(installation)=
 # Installing MesoMath
 
 ## Using `pip` or `pipx`
@@ -71,9 +72,19 @@ Consult: [Getting started with `pipx`](https://pipx.pypa.io/stable/getting-start
 
 ## From sources
 
-If you don't have `pip` or `pipx` on your system or don't want to bother with virtual environments, you can install `MesoMath` directly from the source and get everything working without disturbing the rest of your system. 
+1. Download a source package from the [GitHub repository](https://github.com/jccsvq/mesomath/) and extract it to a directory of your choice. Alternatively, clone the repository to a local directory.
+2. cd to that directory
 
- 1. Start by downloading the source package from its [GitHub repository](https://github.com/jccsvq/mesomath/releases/tag/v1.1.0)
- 2. Unzip/Untar it to a directory of your choice
- 3. cd to that directory
- 4. Start reading the [tutorial](https://mesomath.readthedocs.io/tutorial.html#installation)
+
+    $cd mesomath
+
+3. If you have [`hatch`](https://hatch.pypa.io/latest/) in your system,
+
+    $ hatch shell
+
+This will install the package in edit mode in a virtual environment and activate it, so you can directly start using/modifying it:
+
+    (mesomath) $ babcalc
+    ...
+
+etc.

@@ -10,11 +10,20 @@ Jesús Cabrera ([jccsvq](https://jccsvq.github.io/))(*), 2025.
 
 Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number (option: `-r`).
 
-## Installation
+## Running `mtlookup`
 
-Please refer to the installation of [`metrotable`](https://jccsvq.github.io/mesomath/progs/metrotable.html) and follow the same steps.
+If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you only have to issue:
 
-## How to use
+    $ mtlookup
+    usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-r] [-f FORCE] [-v] [-F {0,1}] [-p] [-s] [-a] VALUE
+    mtlookup: error: the following arguments are required: VALUE
+    $ 
+
+The above output indicates that `mtlookup` is there, but you haven't told it what to do. You can try also:
+
+    $ python -m mesomath.mtlookup
+
+to run `mtlookup`.
 
 ### Options:
 

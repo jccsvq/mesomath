@@ -1,5 +1,5 @@
 
-MesoMath v1.1.0 Documentation
+MesoMath v1.2.0 Documentation
 =============================
 
 .. toctree::
@@ -12,8 +12,9 @@ MesoMath v1.1.0 Documentation
    tutorial.md
    progs/metrotable.md
    progs/mtlookup.md
+   progs/multable.md
    mesomath
-
+   progs/apps
 
 
 Indices and tables

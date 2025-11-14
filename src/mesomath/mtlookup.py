@@ -1,13 +1,7 @@
-#!/usr/bin/env -S python3
-"""Looks back in metrological table"""
-
-# Change the `sys.path.append` argument to the absolute path of the directory
-# containing the `mesomath` module ( your installation directory).
-import sys, argparse
-
-sys.path.append("/home/jesus/Nextcloud/MesoMath")  # <- change this
+"""Lookups in metrological tables"""
 
 # import's section
+import argparse
 from mesomath.babn import BabN as bn
 from mesomath.npvs import Blen as bl
 from mesomath.npvs import Bsur as bs
@@ -18,9 +12,8 @@ from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
 
 
-def main():
-    """Entry point to mtlookup"""
-
+def gen_parser() -> argparse.ArgumentParser:
+    """User interface parser"""
     # Option definitions
 
     DESC = """Prints abstract number corresponding to a meassure or lists 
@@ -88,7 +81,13 @@ def main():
         default=False,
     )
 
+    return parser
+
+
+def main():
+    """Entry point to mtlookup"""
     # Options parsing
+    parser = gen_parser()
     args = parser.parse_args()
 
     # Main section; selecting classes and defining default table ubase
