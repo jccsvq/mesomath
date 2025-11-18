@@ -1,5 +1,15 @@
 # Release Notes
 
+## v1.2.2 (2025-11-18)
+
+* Fixed a bug in the `mesomath.babn` module
+
+## v1.2.1 (2025-11-18)
+
+* Fixed a major bug in the `mesomath.npvs` module that caused errors in parsing string input for the `Bsur` and `Bvol` classes.
+* Added Jupyter notebooks.
+* Required Python version  downgraded to 3.10.
+
 ## v1.2.0 (2025-11-14)
 
 * Important review of the code and package structure.

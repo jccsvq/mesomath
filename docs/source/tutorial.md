@@ -1,5 +1,5 @@
 (tutorialmesomath)=
-# MesoMath ``v1.2.0`` Tutorial
+# MesoMath ``v1.2.2`` Tutorial
 
 ![mesomath](_static/mesomath.png)
 
@@ -14,13 +14,18 @@ MesoMath is a `Python3` package intended for the arithmetic of natural sexagesim
 
 Inpired by the arithmetic and metrological parts of Baptiste Mélès' [MesoCalc](https://github.com/BapMel/mesocalc), it aims to bring this type of calculation to `Python` programming (see the [API documentation](mesomathpackage)) and to the command line as an efficient and versalite calculator as you will see along this tutorial.
 
+>As of version 1.2.1, a [`Jupyter` notebook](https://jupyter.org/) version of this tutorial is in preparation. You can also try `babcalc` in the cloud, without installing anything on your computer, simply by clicking the badge below. Please be patient and wait for [`Binder`](https://mybinder.org/) to finish preparing the virtual machine for you.
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+    
+
 ## `babcalc`: Running MesoMath as a Mesopotamian/Babylonian calculator
 
 If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you only have to issue:
 
     $ babcalc
 
-    Welcome to Babylonian Calculator 1.2.0
+    Welcome to Babylonian Calculator 1.2.2
         ...the calculator that every scribe should have!
 
     Use: bn(number) for sexagesimal calculations
@@ -433,7 +438,6 @@ Logical operators are available and can be combined with integers. This can be u
 
 ### Other BabN class methods
 
-Still to be documented. In the meantime, you can consult Appendix B for help on the `BabB` class (called **`bn`** in this tutorial because we used: `from mesomath.babn import BabN as` **`bn`**).
 
 #### .rec()
 
@@ -513,7 +517,6 @@ Returns the first n sexagesimal digits of the number without rounding:
     8:52:1:10:56:9:27
     --> 
 
-You will find this method and the next one used in the `example-melville.py` file in your installation directory.
 
 #### .tail(n)
 
@@ -535,8 +538,8 @@ This was not intended for interactive use.
 
 #### .searchreg(minn, maxn, limdigits=6, prt=False)
 
-Searches the `bn.database` database for the closest regular number to the object's.
-minn and maxn: must be sexagesimal strings using ":" separator. limdigits max value is 20.
+Searches the `BabN.database` database for the closest regular number to the object's.
+`minn` and `maxn`: must be sexagesimal strings using ":" separator. `limdigits` max value is 20.
 
     --> c
     8:52:1:10:56:9:27:29:15:44
@@ -846,12 +849,12 @@ This changes the default for objects of the `bv` class and makes the output more
     (7 bur 2 iku) gan (2 ges 1 u 3 dis) se
     >>>
 
-If you want this to be the default for all classes, add:
+If you want this to be the default for all classes, use:
 
     from mesomath.npvs import MesoM
     MesoM.prtsex = True
 
-to your `initmm.py` file or initiation script.
+
 
 The third input method cited above makes use of these types of strings; in fact, the parentheses have been introduced to make them easier to parse as input:
 
@@ -868,7 +871,7 @@ The third input method cited above makes use of these types of strings; in fact,
 
 #### Fractions
 
-There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), thei can be entered in several ways:
+There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), they can be entered in several ways:
 
     --> a=bl('0+1/3 ninda')
     --> a

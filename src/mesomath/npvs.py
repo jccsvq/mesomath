@@ -20,7 +20,8 @@ but class Npvs is of general use.
 """
 
 from re import sub
-from typing import Final, Self
+from typing import Final
+from typing_extensions import Self
 from mesomath.babn import BabN
 
 # Data
@@ -206,8 +207,7 @@ class Npvs:
         result.append(x)
         return result
 
-    def sexsys(self, x):
-        return NotImplemented
+
 
     def __init__(self, x: int | str) -> None:
         """Class constructor
@@ -432,7 +432,7 @@ class _MesoM(Npvs):
                     if xy[-1].find(self.uname[-1]) >= 0:
                         coef = self.sexsys(xy[0])
                     else:
-                        coef = self.sexsys(xy[0])
+                        coef = BsyS(xy[0])
                     xnew += str(coef.dec) + " "
                     xnew += xy[1] + " "
                 xnew = sub(r" *\+", "+", xnew)
@@ -443,6 +443,7 @@ class _MesoM(Npvs):
             l2 = ll[1::2]
             t = 0
             for _ in range(len(l2)):
+                #print(f"{l2 = }, {self.uname = }")
                 j = self.uname.index(l2[_])
                 if l1[_].find("+") >= 0:
                     l3 = l1[_].split("+")

@@ -1,6 +1,11 @@
+[![Docs](https://app.readthedocs.org/projects/mesomath/badge/?version=latest)](https://mesomath.readthedocs.io/)
+![PyPI - Version](https://img.shields.io/pypi/v/mesomath)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+
+
 ![mesomath](_static/mesomath.png) 
 
-# MesoMath v1.2.0
+# MesoMath v1.2.2
 
 ## Overview
 

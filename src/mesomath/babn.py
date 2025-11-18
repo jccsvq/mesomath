@@ -6,7 +6,8 @@ from math import log, sqrt
 from os.path import exists
 from sqlite3 import connect
 from types import NotImplementedType
-from typing import Final, Self
+from typing import Final
+from typing_extensions import Self
 
 
 class BabN:

@@ -2,7 +2,7 @@
 name = "mesomath"
 description = "Mesopotamian Calculator"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 license = "CC0-1.0"
 license-files = ["LICEN[CS]E*"]
 authors = [
@@ -23,6 +23,7 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
@@ -84,6 +85,7 @@ exclude = [
   "caca*.*",
   "*cache",
   "docs/build/*",
+  ".ipynb_checkpoints/"
 ]
 
 [[tool.mypy.overrides]]
