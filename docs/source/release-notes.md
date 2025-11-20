@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.2.3 (2025-11-20)
+
+* Fixed a bug in the `mesomath.mtlookup` module
+
 ## v1.2.2 (2025-11-18)
 
 * Fixed a bug in the `mesomath.babn` module

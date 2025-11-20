@@ -140,12 +140,22 @@ def main():
                 if args.strict:
                     if str(aa) == str(pp):
                         if args.verbose:
-                            print(y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp)
+                            if args.fractions < 0:
+                                print(
+                                    y, "\n    Equiv.: ", y.SI(), "\n    Abstract: ", pp
+                                )
+                            else:
+                                print(
+                                    y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp
+                                )
                         else:
                             print(y, " <- ", pp)
                 else:
                     if args.verbose:
-                        print(y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp)
+                        if args.fractions < 0:
+                            print(y, "\n    Equiv.: ", y.SI(), "\n    Abstract: ", pp)
+                        else:
+                            print(y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp)
                     else:
                         print(y, " <- ", pp)
 

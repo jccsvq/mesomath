@@ -1,5 +1,5 @@
 
-MesoMath v1.2.2 Documentation
+MesoMath v1.2.3 Documentation
 =============================
 
 .. toctree::

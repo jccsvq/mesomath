@@ -1,5 +1,5 @@
 (tutorialmesomath)=
-# MesoMath ``v1.2.2`` Tutorial
+# MesoMath ``v1.2.3`` Tutorial
 
 ![mesomath](_static/mesomath.png)
 
@@ -25,7 +25,7 @@ If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you
 
     $ babcalc
 
-    Welcome to Babylonian Calculator 1.2.2
+    Welcome to Babylonian Calculator 1.2.3
         ...the calculator that every scribe should have!
 
     Use: bn(number) for sexagesimal calculations

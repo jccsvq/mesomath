@@ -59,7 +59,7 @@ to install from [pypi.org](https://pypi.org/). Read the [documentation](https://
 
 The dependencies expressed in `requirements.txt` are for testing and documentation building.
 
-Tested with Python 3.11.2 under Debian GNU/Linux 12 (bookworm) in x86_64 and aarch64 (raspberrypi 5).
+Tested with Python 3.11.2 and 3.12.8 under Debian GNU/Linux 12 (bookworm), 3.11.2 in x86_64 under aarch64 (raspberrypi 5) and Python 3.10.19 in Binder.
 
 ##   `babn.py`
 

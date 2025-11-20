@@ -177,7 +177,7 @@ Most interestingly, here are some examples to get an idea of ​​what the prog
     1 kus 25 susi         ->  9:10
     2 kus                 ->  10
 
-or with the  `-v` or `--verbose` options to obtain a header with more information and a new column with the reciprocals of the abstract numbers if they are regular or "igi nu" ("not regular" in Sumerian) if thei are not:
+or with the  `-v` or `--verbose` options to obtain a header with more information and a new column with the reciprocals of the abstract numbers if they are regular or "igi nu" ("not regular" in Sumerian) if they are not:
 
     $ metrotable -x 1 -v
 
