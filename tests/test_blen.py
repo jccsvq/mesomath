@@ -42,5 +42,5 @@ def test_blen():
     assert str(a) == "(1 dis) ninda (3 dis) kus (7 dis) susi"
     assert str(b) == "(1 dis) us (8 dis) kus (1 u 6 dis) susi"
     assert b.prtf(1, 1) == "(1 dis) UŠ 2/3 ninda 1/2 kuš3 (1 dis) šu-si"
-    
+    assert bl("(1 dis) us (8 dis) kus (1 u 6 dis) susi").dec == 21856
     assert bl("(1 dis) UŠ 2/3 ninda 1/2 kuš3 (1 dis) šu-si").dec == 21856

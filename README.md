@@ -55,7 +55,7 @@ to install from [pypi.org](https://pypi.org/). Read the [documentation](https://
 
 ## Dependencies
 
-`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
+Depending on the version of `Python 3` installed, you may need `typing-extensions>=4.0.0`, which was added as a dependency starting with version v1.2.4. Otherwise,`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
 
 The dependencies expressed in `requirements.txt` are for testing and documentation building.
 

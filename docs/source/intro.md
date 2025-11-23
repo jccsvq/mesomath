@@ -5,7 +5,7 @@
 
 ![mesomath](_static/mesomath.png) 
 
-# MesoMath v1.2.3
+# MesoMath v1.2.4
 
 ## Overview
 
@@ -51,7 +51,7 @@ Documentation for this package is in [Read the Docs](https://mesomath.readthedoc
 
 ## Dependencies
 
-`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
+Depending on the version of `Python 3` installed, you may need `typing-extensions>=4.0.0`, which was added as a dependency starting with version v1.2.4. Otherwise,`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
 
 The dependencies expressed in `requirements.txt` are for testing and documentation building.
 
@@ -78,7 +78,39 @@ Regular or Hamming numbers are numbers of the form:
     
     where  i, j, k ≥ 0 
 
-This module is used to obtain lists of such numbers and ultimately build a SQLite3 database of them up to 20 sexagesimal digits. This database is used by BabN to search for regular numbers close to a given one. See the scripts: `createDB.py` and `test-hamming.py`.
+This module is used to obtain lists of such numbers and ultimately build a `SQLite3` database of them up to 20 sexagesimal digits. This database is used by BabN to search for regular numbers close to a given one. The database schema is:
+
+    CREATE TABLE regulars (
+            id INTEGER PRIMARY KEY,
+            regular    TEXT,
+            len     INTEGER
+            );
+    CREATE UNIQUE INDEX regs ON regulars (regular);
+
+where `len` is the number of sexagesimal digits of the regular numbers. The database comprises 11109 regular numbers and is complete up to 20 sexagesimal digits with the following statistic:
+
+| Digits | Regulars |
+|--------|----------|
+| 1      | 25       |
+| 2      | 79       |
+| 3      | 136      |
+| 4      | 192      |
+| 5      | 245      |
+| 6      | 305      |
+| 7      | 360      |
+| 8      | 413      |
+| 9      | 473      |
+| 10     | 526      |
+| 11     | 584      |
+| 12     | 640      |
+| 13     | 694      |
+| 14     | 752      |
+| 15     | 806      |
+| 16     | 864      |
+| 17     | 920      |
+| 18     | 976      |
+| 19     | 1030     |
+| 20     | 1089     |
 
 ## `npvs.py`
 

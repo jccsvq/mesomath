@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path('../../src').resolve()))
 project = 'MesoMath'
 copyright = '2025, jccsvq'
 author = 'jccsvq'
-release = '1.2.3'
+release = '1.2.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -7,7 +7,12 @@ from os.path import exists
 from sqlite3 import connect
 from types import NotImplementedType
 from typing import Final
-from typing_extensions import Self
+import sys
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
 class BabN:
@@ -130,7 +135,7 @@ class BabN:
 
     @staticmethod
     def genDB(dbname: str) -> None:
-        """Generates sqlite3 database of regular numbers
+        """Generates a sqlite3 database of regular numbers up to 20 sexagesimal digits
 
         :dbname: database path and name
         :type dbname: str
@@ -480,7 +485,7 @@ class BabN:
             print("x must be a positive integer")
             return None
 
-    def __lt__(self, other)-> bool:
+    def __lt__(self, other) -> bool:
         """Overloads < operator
 
         :other: May be another BabN object or a positive int.
@@ -493,7 +498,7 @@ class BabN:
         else:
             raise NotImplementedError
 
-    def __le__(self, other)-> bool:
+    def __le__(self, other) -> bool:
         """Overloads <= operator
 
         :other: May be another BabN object or a positive int.

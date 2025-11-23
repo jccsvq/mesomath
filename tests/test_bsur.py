@@ -16,3 +16,8 @@ def test_bsur():
 
     assert c.title == "Babylonian volume meassurement"
     assert str(c) == "10 sar 17 gin 51 se"
+
+    a.prtsex=1
+
+    assert str(a) == '(1 u) sar (1 u 7 dis) gin (5 u 1 dis) se'
+    assert (bs('(1 u) sar (1 u 7 dis) gin (5 u 1 dis) se')).dec == 111111

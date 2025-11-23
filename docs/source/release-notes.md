@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.2.4 (2025-11-24)
+
+* Added `typing_extensions` to dependencies.
+
 ## v1.2.3 (2025-11-20)
 
 * Fixed a bug in the `mesomath.mtlookup` module

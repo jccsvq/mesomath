@@ -30,7 +30,9 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
-dependencies = []
+dependencies = [
+    "typing-extensions>=4.0.0",
+]
 dynamic = ["version"]
 
 [project.urls]
