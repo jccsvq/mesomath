@@ -1,5 +1,6 @@
 sphinx
 myst_parser
-sphinx_rtd_theme
+sphinx_book_theme
 pytest
 jupyterlab
+typing-extensions>=4.0.0
