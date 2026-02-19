@@ -27,6 +27,8 @@ extensions = [
    'sphinx.ext.autosummary',
    'sphinx_book_theme',
    'myst_parser',
+   'sphinx.ext.napoleon', # Para procesar estilos Google/NumPy si los usas
+   'sphinx.ext.mathjax',
 ]
 templates_path = ['_templates']
 exclude_patterns = []
@@ -40,6 +42,9 @@ source_suffix = {
 autodoc_default_options = {
     'private-members': True,
 }
+
+autoclass_content = 'both'
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

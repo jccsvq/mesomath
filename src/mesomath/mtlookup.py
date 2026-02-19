@@ -11,6 +11,18 @@ from mesomath.npvs import Bwei as bw
 from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
 
+# Mapping of types to classes and specific ubase
+METROLOGY_MAP = {
+    "L": (bl, None),  # Class, ubase (None uses the class one)
+    "Lh": (bl, 1),  # Length using 'kus' as a base
+    "S": (bs, None),
+    "V": (bv, None),
+    "C": (bc, None),
+    "W": (bw, None),
+    "SysG": (bG, None),
+    "SysS": (bS, None),
+}
+
 
 def gen_parser() -> argparse.ArgumentParser:
     """User interface parser"""
@@ -61,8 +73,10 @@ def gen_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-p",
         "--pedantic",
-        help="Write the coefficients of the units in the measurements using the\
-         S and G Systems",
+        help=(
+            "Write the coefficients of the units in the measurements "
+            "using the S and G Systems"
+        ),
         action="store_true",
         default=False,
     )
@@ -90,77 +104,47 @@ def main():
     parser = gen_parser()
     args = parser.parse_args()
 
-    # Main section; selecting classes and defining default table ubase
-    if args.type == "L":
-        met = bl
-    elif args.type == "Lh":
-        met = bl
-    elif args.type == "S":
-        met = bs
-    elif args.type == "V":
-        met = bv
-    elif args.type == "C":
-        met = bc
-    elif args.type == "W":
-        met = bw
-    elif args.type == "SysG":
-        met = bG
-    elif args.type == "SysS":
-        met = bS
-    else:
-        exit()
+    selection = METROLOGY_MAP.get(args.type)
+    if not selection:
+        exit("Error: Tipo de metrología no reconocido.")
 
-    ubase = met.ubase
-    if args.type == "Lh":
-        ubase = 1
-    if int(args.force) >= 0:
-        ubase = int(args.force)
-    if args.pedantic and not any([met == bG, met == bS]):
-        met.prtsex = True
+    met, ubase_override = selection
+    ubase = ubase_override if ubase_override is not None else met.ubase
 
     # executing
 
     if args.reverse:
-        a = args.VALUE
-        aa = bn(a)
-        adec = aa.dec
-        x = adec * met.cfact[ubase]
-        print("\nLooking for ", met.title + "s with abstract = ", a)
-        print("    Base unit: ", met.uname[ubase])
-        print("========================================================")
-        for i in range(-3, 5):
-            x1 = int(x // 60**i)
-            if x1 >= 1:
-                if args.fractions < 0:
-                    y = met(x1)
-                else:
-                    y = met(x1).prtf(args.fractions, args.academic)
-                    y0 = met(x1)
-                pp = met(x1).sex(ubase)
-                if args.strict:
-                    if str(aa) == str(pp):
-                        if args.verbose:
-                            if args.fractions < 0:
-                                print(
-                                    y, "\n    Equiv.: ", y.SI(), "\n    Abstract: ", pp
-                                )
-                            else:
-                                print(
-                                    y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp
-                                )
-                        else:
-                            print(y, " <- ", pp)
-                else:
-                    if args.verbose:
-                        if args.fractions < 0:
-                            print(y, "\n    Equiv.: ", y.SI(), "\n    Abstract: ", pp)
-                        else:
-                            print(y, "\n    Equiv.: ", y0.SI(), "\n    Abstract: ", pp)
-                    else:
-                        print(y, " <- ", pp)
+        aa = bn(args.VALUE)
+        x = aa.dec * met.cfact[ubase]
 
-            else:
+        print(f"\nLooking for {met.title} with Abstract = {aa}")
+        print(f"Base reference unit: {met.uname[ubase]}")
+        print("-" * 50)
+
+        for i in range(-3, 5):
+            val_dec = int(x // 60**i)
+            if val_dec < 1:
                 break
+
+            obj = met(val_dec)
+            # Measurement formatting
+            medida_str = (
+                obj.prtf(args.fractions, args.academic)
+                if args.fractions >= 0
+                else str(obj)
+            )
+            abstracto = obj.sex(ubase)
+
+            # Strict filter
+            if args.strict and str(aa) != str(abstracto):
+                continue
+
+            if args.verbose:
+                print(f"Medida:   {medida_str}")
+                print(f"Equiv.:   {obj.SI()}")
+                print(f"Abstract: {abstracto}\n")
+            else:
+                print(f"{medida_str:<25} <- {abstracto}")
         exit()
 
     m = args.VALUE

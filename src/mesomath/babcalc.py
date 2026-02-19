@@ -9,15 +9,15 @@ import sys
 
 from mesomath.__about__ import __version__ as VERSION
 
-from mesomath.babn import BabN as bn  # noqa: F401
-from mesomath.npvs import Blen as bl  # noqa: F401
-from mesomath.npvs import Bsur as bs  # noqa: F401
-from mesomath.npvs import Bvol as bv  # noqa: F401
-from mesomath.npvs import Bcap as bc  # noqa: F401
-from mesomath.npvs import Bwei as bw  # noqa: F401
-from mesomath.npvs import BsyG as bG  # noqa: F401
-from mesomath.npvs import BsyS as bS  # noqa: F401
-from mesomath.npvs import Bbri as bb  # noqa: F401
+from mesomath import BabN as bn  # noqa: F401
+from mesomath import Blen as bl  # noqa: F401
+from mesomath import Bsur as bs  # noqa: F401
+from mesomath import Bvol as bv  # noqa: F401
+from mesomath import Bcap as bc  # noqa: F401
+from mesomath import Bwei as bw  # noqa: F401
+from mesomath import BsyG as bG  # noqa: F401
+from mesomath import BsyS as bS  # noqa: F401
+from mesomath import Bbri as bb  # noqa: F401
 
 message = f"""\nWelcome to Babylonian Calculator {VERSION}
     ...the calculator that every scribe should have!
@@ -30,8 +30,6 @@ jccsvq fecit, 2025.
 """
 
 sys.ps1 = "--> "
-
-
 
 
 def main():
@@ -51,7 +49,9 @@ def main():
         "bG": bG,
         "bS": bS,
         "bb": bb,
-        "VERSION": VERSION, 
+        "VERSION": VERSION,
+        "exit": exit,
+        "quit": quit,
     }
 
     # Case: Help
@@ -125,7 +125,7 @@ def start_interactive_repl(local_vars: dict = None, banner: str = ""):
     :type local_vars: dict, optional
     :param banner: welcome banner, defaults to ""
     :type banner: str, optional
-    """    
+    """
     # 1. Configure the history file
     history_file = os.path.expanduser("~/.babcalc_history")
     if os.path.exists(history_file):
@@ -134,18 +134,25 @@ def start_interactive_repl(local_vars: dict = None, banner: str = ""):
     # 2. Configure autocomplete with TAB
     # The completer needs to know the local variable dictionary
     readline.set_completer(rlcompleter.Completer(local_vars).complete)
-    readline.parse_and_bind("tab: complete")
+    # libedit/readline
+    if "libedit" in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
 
     # 3. Save history on exit
     import atexit
 
     atexit.register(readline.write_history_file, history_file)
+    
+    # print(f"DEBUG: bn está en contexto: {'bn' in local_vars}")
+    # print(f"DEBUG: dir(bn) funciona: {dir(local_vars['bn'])}")
 
     # 4. Launch the REPL
     code.interact(
         banner=banner,
         local=local_vars,
-        exitmsg="\n--- Exiting babcalc-Kriger, Bye! ---\n",
+        exitmsg="\n--- Exiting babcalc, Bye! ---\n",
     )
 
 

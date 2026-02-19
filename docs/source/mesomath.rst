@@ -19,7 +19,8 @@ mesomath.babn module
 
 .. automodule:: mesomath.babn
    :members:
-   :special-members:
+   :special-members: '__init__'
+   :undoc-members:
    :show-inheritance:
 
 mesomath.hamming module

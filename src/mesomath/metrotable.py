@@ -13,6 +13,13 @@ from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
 
 
+
+SYSTEMS = {
+    "L": (bl, None), "Lh": (bl, 1), "S": (bs, None),
+    "V": (bv, None), "C": (bc, None), "W": (bw, None),
+    "SysG": (bG, None), "SysS": (bS, None)
+}
+
 # Functions
 
 
@@ -89,54 +96,49 @@ def metrolist(
     :width: width reserved for printing the variable (default: 20)
     
     """
+    # We process the lists of limits and increments
+    max_list = str(maxv).split(",")
+    inc_list = str(inc).split(",")
+    
+    # We activate pedantic mode if requested (coefficients in S and G)
+    if args.pedantic:
+        met.prtsex = True
 
-    mc = m = met(minv)
-    maxv = maxv.split(",")
-    inc = inc.split(",")
-    for i in range(len(maxv)):
+    # Initial object
+    m = met(minv)
+
+    for i in range(len(max_list)):
         if i > 0:
-            m -= mc
-            print("---------------------------------------------------")
-        mb = met(maxv[i])
-        mc = met(inc[i])
-        #        m += mc
-        while m <= mb:
-            pp = m.sex(ubase)
-            #            print('fractions: ',args.fractions)
-            if args.fractions < 0:
-                if args.verbose:
-                    if pp.isreg:
-                        print(str(m).ljust(width), " -> ", str(pp).ljust(15), pp.rec())
-                    else:
-                        print(
-                            str(m).ljust(width), " -> ", str(pp).ljust(15), "--igi nu--"
-                        )
-                else:
-                    print(str(m).ljust(width), " -> ", str(pp).ljust(15))
-            else:
-                if args.verbose:
-                    if pp.isreg:
-                        print(
-                            (m.prtf(args.fractions, args.academic)).ljust(width),
-                            " -> ",
-                            str(pp).ljust(15),
-                            pp.rec(),
-                        )
-                    else:
-                        print(
-                            (m.prtf(args.fractions, args.academic)).ljust(width),
-                            " -> ",
-                            str(pp).ljust(15),
-                            "--igi nu--",
-                        )
-                else:
-                    print(
-                        (m.prtf(args.fractions, args.academic)).ljust(width),
-                        " -> ",
-                        str(pp).ljust(15),
-                    )
+            print("-" * (width + 30))
+        
+        target_val = met(max_list[i].strip())
+        step_val = met(inc_list[i].strip())
 
-            m += mc
+        while m <= target_val:
+            # 1. Get the abstract number
+            pp = m.sex(ubase)
+            
+            # 2. Format the measurement (standard or with fractions/academic names)
+            if args.fractions < 0:
+                m_str = str(m)
+            else:
+                m_str = m.prtf(args.fractions, args.academic)
+            
+            # 3. Build the baseline
+            line = f"{m_str.ljust(width)} -> {str(pp).ljust(15)}"
+            
+            # 4. Add reciprocal in verbose mode
+            if args.verbose:
+                recip = pp.rec() if pp.isreg else "--igi nu--"
+                line += f" | {recip}"
+            
+            print(line)
+            
+            # 5. Increased security by reinstancing
+            m = met(m.dec + step_val.dec)
+
+        # Reset to the end of the section to avoid dragging into the next one
+        m = met(target_val.dec)
 
 
 def gen_parser() -> argparse.ArgumentParser:
@@ -320,6 +322,11 @@ def main():
             names = met.aname
         else:
             names = met.uname
+    else:
+        # Load values from command-line arguments
+        met, u_override = SYSTEMS[args.type]
+        ubase = args.force if args.force >= 0 else (u_override or met.ubase)
+        minv, maxv, inc = args.min, args.max, args.increment
 
     # Examples section; execution
     if args.example is not None:
@@ -329,43 +336,18 @@ def main():
         metrolist(args, met, names, ubase, minv, maxv, inc, width)
         exit()
 
-    # Main section; selecting classes and defining default table ubase
-    if args.type == "L":
-        met = bl
-    elif args.type == "Lh":
-        met = bl
-    elif args.type == "S":
-        met = bs
-    elif args.type == "V":
-        met = bv
-    elif args.type == "C":
-        met = bc
-    elif args.type == "W":
-        met = bw
-    elif args.type == "SysG":
-        met = bG
-    elif args.type == "SysS":
-        met = bS
-    else:
-        exit()
-    if args.type == "Lh":
-        ubase = 1
-    else:
-        ubase = met.ubase
-    if args.pedantic and not any([met == bS, met == bG]):
-        met.prtsex = True
-    #        print('Pedantic!')
+
+
+    # Load values from command-line arguments
+    met, u_override = SYSTEMS[args.type]
+    ubase = args.force if args.force >= 0 else (u_override or met.ubase)
+    minv, maxv, inc = args.min, args.max, args.increment
+    width = int(args.width)
     if args.academic:
         names = met.aname
     else:
         names = met.uname
 
-    minv = args.min
-    maxv = args.max
-    inc = args.increment
-    width = int(args.width)
-    if args.force >= 0:  # Force ubase to given value
-        ubase = args.force
 
     # Executing
     header(args, met, names, ubase, width)

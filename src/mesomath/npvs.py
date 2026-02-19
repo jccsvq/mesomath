@@ -62,11 +62,15 @@ fdic1: Final[dict] = {
 def cmul(x: list[int]) -> list[int]:
     """Utility function. Returns list of cumulative products of the factor list x
 
-    :x: list of ints
-    :raises: TypeError
-
     Example: cmul([4,3,3,22,10,8,3]) returns:
-         [1, 4, 12, 36, 792, 7920, 63360, 190080]"""
+         [1, 4, 12, 36, 792, 7920, 63360, 190080]
+
+    :param x: list of factors
+    :type x: list[int]
+    :raises TypeError: if x is not a list
+    :return: list of cumulative products of the factor list x
+    :rtype: list[int]
+    """
     if isinstance(x, list):
         prod = 1
         prodl = [1]
@@ -79,12 +83,13 @@ def cmul(x: list[int]) -> list[int]:
 
 
 def normalize(st: str) -> str:
-    """Converts aname's to unit names and standardizes fractions.
+    """Converts `aname`'s to unit names and standardizes fractions.
 
-    :st: input strig to be normalized
-
+    :param st: input strig to be normalized
+    :type st: str
+    :return: normalized string
+    :rtype: str
     """
-
     # Consolidate character and word replacements
     replacements = {
         r"[šŠ]": "s",
@@ -174,7 +179,10 @@ class Npvs:
     def scheme(self, actual: bool = False) -> list:
         """Returns list with the unit names separated by the corresponding factors
 
-        :actual: Uses actual or academic unit names if True (default: False)
+        :param actual: Uses actual or academic unit names if True, defaults to False
+        :type actual: bool, optional
+        :return: list with the unit names separated by the corresponding factors
+        :rtype: list
 
         Example:
 
@@ -200,11 +208,14 @@ class Npvs:
         return ll
 
     def dec2un(self, x: int) -> list:
-        """
-        Converts the decimal integer n to a list of integers, such that, for
+        """Converts the decimal integer n to a list of integers, such that, for
         example, 1001 (inches) becomes ``[1, 1, 2, 5, 1, 0, 0, 0]``, which means
         that 1001 inches equals: 1 chain 5 yards 2 feet 1 hand 1 inch.
 
+        :param x: input decimal integer
+        :type x: int
+        :return: list of unit coefficients
+        :rtype: list
         """
         result = []
         for i in self.ufact:
@@ -213,14 +224,12 @@ class Npvs:
         result.append(x)
         return result
 
-
-
     def __init__(self, x: int | str) -> None:
         """Class constructor
 
-        :n: The parameter n can be an integer (sign is ignored) or a properly
+        :param x: The parameter n can be an integer (sign is ignored) or a properly
          formatted string representing the value. See the tutorial
-
+        :type x: int | str
         """
         if type(x) is int:
             x = abs(x)
@@ -262,8 +271,10 @@ class Npvs:
     def __add__(self, other: Self) -> Self | None:
         """Overloads ``+`` operator: returns object with the sum of operands
 
-        :other: another Npvs object or instance
-
+        :param other: operand
+        :type other: Self
+        :return: object with the sum of operands
+        :rtype: Self | None
         """
         if type(other) is type(self):
             return self.__class__(self.dec + other.dec)
@@ -271,11 +282,13 @@ class Npvs:
             return None
 
     def __sub__(self, other: Self) -> Self | None:
-        """Overloads ``+`` operator: returns object with the absolute difference
+        """Overloads ``-`` operator: returns object with the absolute difference
         of operands
 
-        :other: another Npvs object or instance
-
+        :param other: operand
+        :type other: Self
+        :return: object with the absolute difference of operands
+        :rtype: Self | None
         """
         if type(other) is type(self):
             return self.__class__(abs(self.dec - other.dec))
@@ -285,41 +298,58 @@ class Npvs:
     def __mul__(self, other: int | float) -> Self:
         """Overloads ``*`` operator: returns object with the operands product
 
-        :other: a positive int or float
-
+        :param other: operand
+        :type other: int | float
+        :return: object with the operands product
+        :rtype: Self
         """
         t = self.dec * other
         return self.__class__(int(round(t, 0)))
 
-    def __rmul__(self, other) -> Self:
+    def __rmul__(self, other: int) -> Self:
         """Overloads ``*`` operator: returns object with the operands product
 
-        :other: a positive int or float
-
+        :param other: operand
+        :type other: int | float
+        :return: object with the operands product
+        :rtype: Self
         """
         return self.__mul__(other)
 
     def __truediv__(self, other: int | float) -> Self:
-        """Overloads ``/`` operator: returns object with the operands product
+        """Overloads ``/`` operator: returns object with the operands quotient
 
-        :other: a positive int or float
-
+        :param other: operand
+        :type other: int | float
+        :return: object with the operands quotient
+        :rtype: Self
         """
         return self.__class__(int(round(self.dec / other, 0)))
 
     def si(self) -> float:
-        """Returns the numeric equivalent in SI units"""
+        """Returns the numeric equivalent in SI units
+
+        :return: numeric equivalent in SI units
+        :rtype: float
+        """
         return self.dec * self.siv
 
     def SI(self) -> str:
-        """Returns formated string with the equivalent in SI units"""
+        """Returns formated string with the equivalent in SI units
+
+        :return: formated string with the equivalent in SI units
+        :rtype: str
+        """
         return f"{self.dec * self.siv} {self.siu}"
 
     def __lt__(self, other: Self) -> bool:
         """Overloads ``<`` operator
 
-        :other: another Npvs object
-
+        :param other: another Npvs object
+        :type other: Self
+        :raises NotImplementedError: if not Self object
+        :return: comparison result
+        :rtype: bool
         """
         if isinstance(other, type(self)):
             return self.dec <= other.dec
@@ -329,30 +359,39 @@ class Npvs:
     def __le__(self, other: Self) -> bool:
         """Overloads ``<=`` operator
 
-        :other: another Npvs object
-
+        :param other: another Npvs object
+        :type other: Self
+        :raises NotImplementedError: if not Self object
+        :return: comparison result
+        :rtype: bool
         """
         if isinstance(other, type(self)):
             return self.dec <= other.dec
         else:
             raise NotImplementedError
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Self) -> bool:
         """Overloads ``==`` operator
 
-        :other: another Npvs object
-
+        :param other: another Npvs object
+        :type other: Self
+        :raises NotImplementedError: if not Self object
+        :return: comparison result
+        :rtype: bool
         """
         if isinstance(other, type(self)):
             return self.dec == other.dec
         else:
             raise NotImplementedError
 
-    def __ne__(self, other: object) -> bool:
+    def __ne__(self, other: Self) -> bool:
         """Overloads ``!=`` operator
 
-        :other: another Npvs object
-
+        :param other: another Npvs object
+        :type other: Self
+        :raises NotImplementedError: if not Self object
+        :return: comparison result
+        :rtype: bool
         """
         if isinstance(other, type(self)):
             return self.dec != other.dec
@@ -362,8 +401,11 @@ class Npvs:
     def __gt__(self, other: Self) -> bool:
         """Overloads ``>`` operator
 
-        :other: another Npvs object
-
+        :param other: another Npvs object
+        :type other: Self
+        :raises NotImplementedError: if not Self object
+        :return: comparison result
+        :rtype: bool
         """
         if isinstance(other, type(self)):
             return self.dec > other.dec
@@ -373,8 +415,11 @@ class Npvs:
     def __ge__(self, other: Self) -> bool:
         """Overloads ``>=`` operator
 
-        :other: another Npvs object
-
+        :param other: another Npvs object
+        :type other: Self
+        :raises NotImplementedError: if not Self object
+        :return: comparison result
+        :rtype: bool
         """
         if isinstance(other, type(self)):
             return self.dec >= other.dec
@@ -419,15 +464,20 @@ class _MesoM(Npvs):
     prtsex: bool = False  # Printing meassurements in sexagesimal
     ubase: int = 0  # Base unit for metrological tables
 
-    def __init__(self, x: int | str) -> None:
+    def __init__(self, x: int | str | float) -> None:
         """Class constructor
 
-        | n: The parameter n can be an integer (sign is ignored) or a properly
-             formatted string representing the value. See the tutorial"""
+        :param x: The parameter n can be an integer (sign is ignored) or a properly
+             formatted string representing the value. See the tutorial
+        :type x: int | float | str
+        """
         if type(x) is int:
             x = abs(x)
             dec = x
             lista = self.dec2un(x)
+        elif type(x) is float:
+            dec = int(round(abs(x), 0))
+            lista = self.dec2un(dec)
         elif type(x) is str:
             x = normalize(x)
             if x.find("(") >= 0:
@@ -449,7 +499,7 @@ class _MesoM(Npvs):
             l2 = ll[1::2]
             t = 0
             for _ in range(len(l2)):
-                #print(f"{l2 = }, {self.uname = }")
+                # print(f"{l2 = }, {self.uname = }")
                 j = self.uname.index(l2[_])
                 if l1[_].find("+") >= 0:
                     l3 = l1[_].split("+")
@@ -484,14 +534,19 @@ class _MesoM(Npvs):
     def sex(self, r: int = 0) -> BabN | None:
         """Return sexagesimal floating value of object
 
-        :r: index of reference unit in uname
-
+        :param r: index of reference unit in uname, defaults to 0
+        :type r: int, optional
+        :return: sexagesimal floating value of object
+        :rtype: BabN | None
         """
-
         return BabN(self.dec) // self.cfact[r]
 
     def metval(self) -> BabN | None:
-        """Returns metrological value of object"""
+        """Returns metrological value of object
+
+        :return: metrological value of object
+        :rtype: BabN | None
+        """
         return self.sex(r=self.ubase)
 
     def explain(self) -> None:
@@ -513,7 +568,6 @@ class _MesoM(Npvs):
         :type onesixth: bool, (default = False)
         :actual: if True, uses academic unit names on output
         :type actual: bool, (default: False)
-
         """
         if onesixth:
             fdic = fdic1
@@ -662,6 +716,85 @@ class MesoM(_MesoM):
 
         return ss[:-1]
 
+    def labor_cost(self, work_man: str | int) -> float:
+        """Calculate the number of workdays or man-days required for the task.
+
+        :param work_man: work done in a day by worker
+        :type work_man: str | int
+        :return: number of workdays or man-days
+        :rtype: float
+        """
+        try:
+            wm = self.__class__(work_man)
+            return self.dec / wm.dec
+        except (ValueError, ZeroDivisionError) as e:
+            # More specific error handling
+            raise ValueError(f"Error in cost calculation: {e}")
+
+    def rations(self, work_man: str | int, wage: str | int) -> "Bcap":
+        """Calculate the cost of the work when payment is in capacity units
+
+        :param work_man: work done in a day by worker (magnitude of current class)
+        :type work_man: str | int
+        :param wage: dayly payment for worker (grain, beer, etc. in capacity units)
+        :type wage: str | int
+        :return: total amount to pay
+        :rtype: Bcap
+        """
+        from mesomath.npvs import Bcap
+
+        try:
+            # 1. We convert inputs into metrological objects
+            wm = self.__class__(work_man)
+            wg = Bcap(wage)
+
+            # 2. We calculate exact wages (float)
+            # We do not round here to allow proportional payments
+            workdays = self.dec / wm.dec
+
+            # 3. Final calculation of the total grain
+            # We multiply the float by the minimum unit of the salary
+            # We round only at the end to get an integer of 'se'
+            total_se = int(round(workdays * wg.dec))
+
+            return Bcap(total_se)
+
+        except (ValueError, ZeroDivisionError) as e:
+            # More specific error handling
+            raise ValueError(f"Error in rations calculation: {e}")
+
+    def silver_payments(self, work_man: str | int, wage: str | int) -> "Bwei":
+        """Calculate the cost of the work when payment is in silver (weight).
+
+        :param work_man: work done in a day by worker (magnitude of current class)
+        :type work_man: str | int
+        :param wage: dayly payment for worker (in silver weight units, e.g., '8 se')
+        :type wage: str | int
+        :return: total amount of silver to pay
+        :rtype: Bwei
+        """
+        from mesomath.npvs import Bwei
+
+        try:
+            # 1. We convert inputs into metrological objects
+            wm = self.__class__(work_man)
+            wg = Bwei(wage)
+
+            # 2. We calculate exact wages (float)
+            # We do not round here to allow proportional payments
+            workdays = self.dec / wm.dec
+
+            # 3. Final calculation of the total silver payment
+            # We multiply the float by the minimum unit of the salary
+            # We round only at the end to get an integer of 'se'
+            total_se = int(round(workdays * wg.dec))
+
+            return Bwei(total_se)
+
+        except (ValueError, ZeroDivisionError) as e:
+            # More specific error handling
+            raise ValueError(f"Error in silver payment calculation: {e}")
+
     def __repr__(self) -> str:
         """Returns string representation of object."""
         ss = []
@@ -695,11 +828,13 @@ class Blen(MesoM):  # Length
     siu: str = "meters"
     ubase: int = 2  # ninda
 
-    def __mul__(self, other):
+    def __mul__(self, other: object) -> object:
         """Overloads ``*`` operator: returns object with the operands product
 
-        :other: It can be a ``Blen`` or ``Bsur`` or float object and the returned product will, accordingly, be a ``Bsur`` or ``Bvol`` or ``Blen`` object.
-
+        :param other: operand
+        :type other: "Blen" or "Bsur" or float
+        :return: product
+        :rtype: "Bsur" | "Bvol" | "Blen"
         """
         if type(other) is Blen:
             t = int(round((self.dec * other.dec) / 12.0, 0))
@@ -730,11 +865,13 @@ class Bsur(MesoM):  # Surface
     ubase: int = 1  # gin
     sexsys: type[BsyS] | type[BsyG] = BsyG
 
-    def __mul__(self, other):
-        """Overloads ``*`` operator: returns object with the operands product
+    def __mul__(self, other: object) -> object:
+        """Overloads ``*`` operator
 
-        :other: It can be a ``Blen`` or float object and the returned product will, accordingly, be a ``Bvol`` or ``Bsur`` object.
-
+        :param other: operand
+        :type other: "Blen" or float
+        :return: product
+        :rtype: "Bvol" | "Bsur" | None
         """
         if type(other) is Blen:
             t = int(round((self.dec * other.dec) / 30.0, 0))
@@ -766,11 +903,14 @@ class Bvol(MesoM):  # Volume
         """Convert volume to capacity meassurement"""
         return Bcap(18000 * self.dec)
 
-    def bricks(self, nalb: float = 1.0):
+    def bricks(self, nalb: float = 1.0) -> "Bbri":
         """Returns the volume in number of bricks equivalent based on their
-        "Nalbanum." 720 for 1 sar volume if nalb is 1. Output is a ``Bbri`` object.
+        "Nalbanum." 720 for 1 sar volume if nalb is 1.
 
-        :nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks (defaul: 1.0)
+        :param nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks, defaults to 1.0
+        :type nalb: float, optional
+        :return: volume in bricks equivalent
+        :rtype: "Bbri"
 
         ==========  ============  ============
         Brick type  Nalb. (dec.)  Nalb. (sex.)
@@ -790,8 +930,45 @@ class Bvol(MesoM):  # Volume
         ==========  ============  ============
 
         """
-        tt = int(nalb * self.dec)
-        return Bbri(tt)
+        return Bbri(int(nalb * self.dec))
+
+    # Conceptual example for calculating wages
+    def labor_cost_(self, daily_quota: float = 2.0) -> float:
+        """Calculate how many man-days or wages are needed to process this volume.
+
+        :param daily_quota: how many SARs can a man process in a day, defaults to 2.0
+        :type daily_quota: float, optional
+        :return: man-days/wages needed (erín-1-am)
+        :rtype: float
+        """
+        # We convert our internal value to 'sar' units
+        # We use cfact[2] because it is the factor for 'sar' in Bvol
+        total_sar = self.dec / self.cfact[2]  # Value in 'sar' units
+        return total_sar / daily_quota
+
+    def rations_(
+        self, daily_ration_sila: float = 2.0, daily_quota_sar: float = 3.0
+    ) -> "Bcap":
+        """
+        Calcula la cebada total para una obra.
+        :param daily_ration_sila: Sila de cebada por hombre/día (ej. 2.0)
+        :param daily_quota_sar: Sar de volumen procesados por hombre/día (ej. 3.0)
+        """
+        from mesomath.npvs import Bcap
+
+        # 1. Obtenemos el volumen total en 'sar' (unidad técnica de trabajo)
+        # self.cfact[2] es el factor para 'sar' en Bvol
+        total_vol_sar = self.dec / self.cfact[2]
+
+        # 2. Calculamos jornales totales
+        total_workdays = total_vol_sar / daily_quota_sar
+
+        # 3. Total de raciones en sila
+        total_sila = total_workdays * daily_ration_sila
+
+        # 4. Convertimos a Bcap.
+        # En Bcap, el factor para 'sila' es cfact[2] (180*60)
+        return Bcap(int(round(total_sila * Bcap.cfact[2])))
 
 
 class Bcap(MesoM):  # Capacity
@@ -812,7 +989,11 @@ class Bcap(MesoM):  # Capacity
     ubase: int = 1  # gin
 
     def vol(self) -> Bvol | None:
-        """Convert capacity to volume meassurement"""
+        """Convert capacity to volume meassurement
+
+        :return: volume meassurement
+        :rtype: "Bvol" | None
+        """
         if self.dec >= 18000:
             return Bvol(self.dec // 18000)
         else:
@@ -856,13 +1037,14 @@ class Bbri(MesoM):  # Counting bricks
     ubase: int = 1  # gin
     sexsys: type[BsyS] | type[BsyG] = BsyG
 
-    def vol(self, nalb: float = 1.0):
+    def vol(self, nalb: float = 1.0) -> "Bvol":
         """Returns the volume corresponding to a number of bricks  based on their
-        *Nalbanum*.  1 sar volume for 720 bricks if nalb is 1.
-        Output is a ``Bvol`` object.
+        *Nalbanum*.  1 sar volume for 720 bricks if nalb is 1
 
-        :nalb: *nalbanum* in decimal e.g. 7.20 for type 2 bricks (defaul: 1.0)
-        :type nalb: float
+        :param nalb: nalbanum in decimal e.g. 7.20 for type 2 bricks, defaults to 1.0
+        :type nalb: float, optional
+        :return: equivalent volume
+        :rtype: Bvol
 
         ==========  ============  ============
         Brick type  Nalb. (dec.)  Nalb. (sex.)

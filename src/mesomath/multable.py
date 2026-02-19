@@ -3,8 +3,8 @@
 # import's section
 
 import argparse
+
 from mesomath.babn import BabN as bn
-from typing import Final
 
 
 # Functions
@@ -26,40 +26,52 @@ def multable(
     :pad: add left zero to sexagesimal digits <= 9 (default: False)
 
     """
-    oldsep: str = bn.sep
-    oldfill: bool = bn.fill
-    bn.sep = sep
-    bn.fill = fill
-    if isinstance(n, int):
-        nn = n
-    elif isinstance(n, str):
-        nn = bn(n).dec
-    if pral:
-        pnum = [i + 1 for i in range(20)] + [30, 40, 50]
-    else:
-        pnum = [i + 1 for i in range(59)]
-    print("\n  i", ("i * " + str(n)).rjust(20), "\n =======================")
-    for i in pnum:
-        print(f" {i:2d} {str(bn(nn * i)).rjust(20)}")
-    bn.sep = oldsep
-    bn.fill = oldfill
+    # Normalization: we accept int, str, or even BabN
+    nn = bn(str(n)).dec if not isinstance(n, bn) else n.dec
+
+    # Backup of BabN's global state
+    oldsep, oldfill = bn.sep, bn.fill
+    bn.sep, bn.fill = sep, fill
+
+    try:
+        # The 'principal' numbers of the Babylonian tradition
+        pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
+
+        header = f"  i  |  i * {n}"
+        print(f"\n{header}")
+        print("-" * (len(header) + 10))
+
+        for i in pnum:
+            # Dynamic alignment so that the table doesn't break with large numbers
+            print(f" {i:2d}  |  {str(bn(nn * i)):>15}")
+    finally:
+        # Guaranteed state restoration
+        bn.sep, bn.fill = oldsep, oldfill
 
 
 def listtables() -> None:
     """Lists multipliers traditionally used by Babylonian scribes."""
-    a: Final[list[str]] = (
-        "50 45 44:26:40 40 36 30 25 24 22:30 20 18 16:40 16 15 12:30 12"
-        + " 10 9 8:20 8 7:30 7:12 7 6:40 6 5 4:30 4 3:45 3:20 3 2:30 2:24 2 1:40"
-        + " 1:30 1:20 1:15"
+    multipliers = (
+        "50 45 44:26:40 40 36 30 25 24 22:30 20 18 16:40 16 15 12:30 12 "
+        "10 9 8:20 8 7:30 7:12 7 6:40 6 5 4:30 4 3:45 3:20 3 2:30 2:24 2 1:40 "
+        "1:30 1:20 1:15"
     ).split()
 
-    print("List of multipliers:\n")
-    for i in a:
-        if i == "7":
-            print(7)
-        else:
-            tt = bn(i)
-            print(str(tt).ljust(8), str(tt.rec()).rjust(6))
+    print("\nSTANDARD MULTIPLIERS TABLE")
+    print(f"{'Value':<12} | {'Reciprocal':>10}")
+    print("-" * 25)
+
+    for m in multipliers:
+        val = bn(m)
+        try:
+            # We try to calculate the reciprocal
+            rec = str(val.rec())
+        except Exception as e:
+            # For "irregular" numbers like 7
+            rec = "irreg."
+            print(e)
+
+        print(f"{str(val):<12} | {rec:>10}")
 
 
 def gen_parser() -> argparse.ArgumentParser:

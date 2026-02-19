@@ -1,4 +1,5 @@
-from mesomath.babn import BabN as bn 
+from mesomath.babn import BabN as bn
+#import pytest
 
 
 def test_babn():
@@ -14,6 +15,8 @@ def test_babn():
     assert b.isreg is False
     assert a.factors == (0, 4, 1, 1)
     assert b.factors == (0, 0, 0, 4343)
+
+    assert bn('59:55:19:56:29:53:35:26:59:56:27:48:02:50:23:52:37:01:52:30').isreg
 
     assert (a + b).__repr__() == "1:19:8"
     assert (b + a).__repr__() == "1:19:8"
@@ -60,3 +63,36 @@ def test_babn():
     # Database
     z = a.searchreg("01:10", "01:20", 5, 1)
     assert z == bn("01:20")
+
+
+def test_normalization_and_protection():
+    # 1. Test de Normalización (La "habilidad")
+    assert bn([1, 125]).list == [3, 5]
+
+    # 2. Test de Blindaje (La "aduana")
+    # Intentar meter algo que NO sea int, str o BabN puro
+    class FakeUnit:
+        def __int__(self):
+            return 10
+
+    fake = FakeUnit()
+    try:
+        bn([1, fake])
+    except TypeError:
+        print("Success: Metrological unit blocked!")
+
+def test_metrological_blocking():
+    from mesomath.npvs import Blen as bl
+    
+    # 1. Este debería fallar (Intento de mezclar longitud con número puro)
+    #with pytest.raises(TypeError) as excinfo:
+    try:
+        bn([1, bl(10)])
+    except TypeError:
+        print("Success: Metrological unit blocked!")
+    #assert "Prohibited element:" in str(excinfo.value)
+
+    # 2. Este debería funcionar (Conversión explícita por el usuario)
+    # El usuario "asume la responsabilidad" al usar int()
+    a = bn([1, int(bl(10))]) 
+    assert isinstance(a, bn)
