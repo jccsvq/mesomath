@@ -1,7 +1,7 @@
 .. _mesomathpackage:
 
-mesomath package
-================
+API reference
+=============
 
 Module contents
 ---------------

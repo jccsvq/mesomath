@@ -1,5 +1,5 @@
 (tutorialmesomath)=
-# MesoMath ``v1.2.4`` Tutorial
+# `babcalc` {{ release }} Tutorial
 
 ![mesomath](_static/mesomath.png)
 
@@ -25,7 +25,7 @@ If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you
 
     $ babcalc
 
-    Welcome to Babylonian Calculator 1.2.4
+    Welcome to Babylonian Calculator 1.3.0
         ...the calculator that every scribe should have!
 
     Use: bn(number) for sexagesimal calculations
@@ -573,9 +573,9 @@ Searches the `BabN.database` database for the closest regular number to the obje
     7:1:52:30
     >>>
 
-### Metrology
+## Metrology
 
-#### Basics
+### Basics
 
 In the following, it is assumed that your startup script contains the lines:
 
@@ -758,7 +758,7 @@ Since version v1.1.0 you can get the metrological value of an object directly us
     >>>
 
 
-#### Operations
+### Operations
 
 For objects of the same class, the following operations are available:
 
@@ -826,7 +826,7 @@ Additionally, for length measurements we can multiply them together to obtain su
     True
     --> 
 
-#### Systems S and G
+### Systems S and G
 
 Finally, in cases like this:
 
@@ -869,7 +869,7 @@ The third input method cited above makes use of these types of strings; in fact,
     460800 gan 44 sar 20 gin
     >>>
 
-#### Fractions
+### Fractions
 
 There is also basic support for entering *principal fractions*: `1/6, 1/3, 1/2, 2/3, 5/6` (and only for them), they can be entered in several ways:
 
@@ -935,7 +935,7 @@ These results can be used for input:
     11223344
     >>>
 
-#### Academic names
+### Academic names
 
 Since v1.1.0, the .prtf() method has a second switch that allows the academic unit names to be used in the output:
 
@@ -967,7 +967,7 @@ equivalent to:
     11223344
     >>>
 
-#### Volume vs. Capacity
+### Volume vs. Capacity
 
 There were two systems for measuring volume: **capacities**, used to measure grain, beer, and other types of food and goods, and **volume** proper, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
 
@@ -996,7 +996,7 @@ There were two systems for measuring volume: **capacities**, used to measure gra
     Approximate SI value: 0.3 cube meters
     --> 
 
-#### Bricks
+### Bricks
 
 Volume measurements were frequently transformed into their "brick" equivalents. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "*Nalbanum*," or the number of *sar-b* of that type that fits in 1 *sar* of volume. The `.sarb()` method allows us to perform this transformation:
 
@@ -1073,4 +1073,158 @@ Here is an excerpt from a table found
 |12|1.00 |1  |
 
 
+
+## Advanced Topic: Extending Metrology
+
+One of the core strengths of `mesomath` **v{{ release }}** is its extensibility. You are not limited to the built-in Babylonian units; you can define your own metrological systems by inheriting from the base classes.
+
+### The "Vertical Problem": Defining Height
+
+In many Mesopotamian mathematical problems, vertical measurements (height or depth) are treated with specific units that, while sharing the same names as lengths, behave differently in calculations.
+
+Let's define a custom class `bh` (Babylonian Height) that inherits from the length system (`bl` or `Blen`) but fixes the base unit to the *kuš3* (cubit).
+
+```python
+from mesomath.npvs import Blen, Bsur, Bvol
+
+# We define our custom height class
+class bh(Blen):
+    title: str = "Babylonian Height Measurement"
+    ubase: int = 1  # Fixed to 'kus' (cubit)
+
+```
+
+### Seamless Interaction
+
+Thanks to the polymorphic design of **v{{ release }}**, your custom classes are recognized by the core engine. You can multiply a standard surface (`Bsur`) by your new height (`bh`) to obtain a volume (`Bvol`) without any type errors.
+
+```python
+# 1. Define a surface of 1 sar
+area = Bsur('1 sar')
+
+# 2. Define a height using our custom class
+height = bh('1 kus')
+
+# 3. Calculate volume (Area * Height)
+# The system recognizes 'bh' as a valid length for this operation.
+volume = area * height
+
+print(f"Volume: {volume}") 
+# Output: 1 sar
+
+```
+
+### Automatic Utilities
+
+By inheriting from `MesoM` (via `Blen`), your new class automatically gains all the new administrative and diagnostic tools of this version:
+
+1. **Metrological Lists**: Generate tables for your custom units instantly.
+```python
+bh.metrolist('1 kus', '5 kus', '1 kus', verbose=True)
+
+```
+
+
+2. **Economic Calculations**: Use the new methods for labor costs.
+```python
+# Calculate silver payment for digging this height
+payment = height.silver_payments(work_man='0;05 kus', wage='8 se')
+
+```
+
+### Late Babylonian Period Metrology
+
+
+`mesomath` is designed to work with the metrology of the Old Babylonian period, but it can be extended to use the metrology of other periods. For example, for the Late Babylonian period, we can start by defining a class `LBcap` for the capacities in a file `lateb.py`:
+
+```python
+from mesomath.npvs import Bcap, Bvol
+
+
+class LBcap(Bcap):  # Capacity
+    """This class implement Non-Place-Value System arithmetic
+    for Late Babylonian Period capacity units:
+
+        **gur <-5- bariga <-6- ban2 <-10- sila3 <-10- GAR**
+
+    """
+
+    title: str = "Late Babylonian capacity meassurement"
+    uname: list[str] = "gar sila ban bariga gur".split()
+    aname: list[str] = "GAR sila3 ban2 bariga gur".split()
+    ufact: list[int] = [10, 10, 6, 5]
+    cfact: list[int] = [1, 10, 100, 600, 3000]
+    siv: float = 0.1
+    siu: str = "litres"
+    ubase: int = 3  # bariga
+
+    def vol(self) -> object:
+        """Convert capacity to volume meassurement
+
+        :return: volume meassurement
+        :rtype: "Bvol"
+        """
+        return LBvol(int(round(self.dec/(100/6))))
+
+class LBvol(Bvol):  # Volume
+    """This class implement Non-Place-Value System arithmetic
+    for Late Babylonian Period volume units:
+
+        **GAN2 <-100- sar <-60- gin2 <-180- še**
+
+    """
+    title: str = "Late Babylonian volume meassurement"
+    
+    def cap(self) -> object:
+        """Convert volume to capacity meassurement"""
+        return LBcap(int(round(self.dec*(100/6))))
+```
+
+and then:
+
+```bash
+$ babcalc -i lateb.py 
+--> a = LBcap('1000 sila')
+--> b = a.vol()
+--> b
+3 gin 60 se
+--> b.explain() 
+This is a Late Babylonian volume meassurement: 3 gin 60 se
+    Metrology:  gan <-100- sar <-60- gin <-180- se
+    Factor with unit 'se':  1 180 10800 1080000
+Meassurement in terms of the smallest unit: 600 (se)
+Sexagesimal floating value of the above: 10
+Approximate SI value: 0.9999999999999999 cube meters
+--> c=b.cap() 
+--> c
+3 gur 1 bariga 4 ban
+--> c.SI() 
+'1000.0 litres'
+--> c.explain() 
+This is a Late Babylonian capacity meassurement: 3 gur 1 bariga 4 ban
+    Metrology:  gur <-5- bariga <-6- ban <-10- sila <-10- gar
+    Factor with unit 'gar':  1 10 100 600 3000
+Meassurement in terms of the smallest unit: 10000 (gar)
+Sexagesimal floating value of the above: 2:46:40
+Approximate SI value: 1000.0 litres
+-->
+--> LBcap.metrolist('1 bariga','3 bariga', '1 ban',1)
+1 bariga             | 1              
+1 bariga 1 ban       | 1:10           
+1 bariga 2 ban       | 1:20           
+1 bariga 3 ban       | 1:30           
+1 bariga 4 ban       | 1:40           
+1 bariga 5 ban       | 1:50           
+2 bariga             | 2              
+2 bariga 1 ban       | 2:10           
+2 bariga 2 ban       | 2:20           
+2 bariga 3 ban       | 2:30           
+2 bariga 4 ban       | 2:40           
+2 bariga 5 ban       | 2:50           
+3 bariga             | 3              
+--> 
+
+```
+
+etc. but we should also redefine the rest of the classes to ensure consistency in the operations with the new units.
 

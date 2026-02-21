@@ -1,131 +1,32 @@
-[![Docs](https://app.readthedocs.org/projects/mesomath/badge/?version=latest)](https://mesomath.readthedocs.io/)
-![PyPI - Version](https://img.shields.io/pypi/v/mesomath)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 
+# Introduction to `mesomath`
 
-![mesomath](_static/mesomath.png) 
+`mesomath` is not just a calculator; it is a digital bridge to the mathematical mind of the ancient Mesopotamian scribe. While modern mathematics relies on abstract decimal notation, the Old Babylonian period (c. 1900–1600 BCE) developed a sophisticated sexagesimal (base-60) system that combined floating-point arithmetic with a complex web of metrological units.
 
-# MesoMath v1.2.4
+## Core Concepts
 
-## Overview
+### 1. Sexagesimal Arithmetic (`babn.py`)
 
-This project aims to bring:
+Unlike modern calculators, `mesomath` treats numbers in their "floating" aspect. In the Babylonian context, the absolute value of a number often depended on its metrological context rather than a fixed decimal point. The `BabN` class implements this logic, allowing for:
 
-*  the arithmetic of natural sexagesimal numbers, mainly in their “floating” aspect (i.e., by removing all possible trailing sexagesimal zeros from the right), as performed by the Babylonian scribes and their apprentices in ancient times. 
+* **Reciprocal-based division**: Traditional Babylonian division was performed by multiplying by the reciprocal of "regular" numbers.
+* **Hamming Numbers**: Integration with a SQLite database to handle regular numbers up to 20 sexagesimal digits.
 
-* the arithmetic of physical quantities, length, surface, etc. described using the metrology of the Old Babylonian Period.
+### 2. Metrological Systems (`npvs.py`)
 
-to `Python3` programming and to the `Python3` command line as an interactive calculator.
+The project manages physical quantities through a hierarchy of Non-Place-Value Systems (NPVS).
 
-It has been inspired by the arithmetic and metrological parts of [MesoCalc](https://github.com/BapMel/mesocalc) by Baptiste Mélès. 
+* **Inheritance**: All metrological classes (length, area, volume, capacity, weight, and bricks) inherit from a generic `MesoM` class.
+* **Interoperability**: You can convert between systems—such as finding the capacity of a grain pile from its measured volume—using historically accurate factors.
 
-The package includes:
+## Why version {{ release }}?
 
-* the `mesomath` module containing three main submodules:
+This version marks a transition from pure calculation to **simulation of administrative tasks**. With the introduction of `rations()` and `silver_payments()` in the base metrology classes, the library now supports the analysis of historical economic documents directly from their raw measurements.
 
-    *  `babn.py`: Containing the class `BabN` for *Babylonian* (sexagesimal) *numbers*.
-    *  `npvs.py`: Containing *metrological* classes for measurements of distance, area, volume, capacity, weight,...
-    *  `hamming.py`: For generating lists of *regular numbers*, as well as the [`SQLite3`](https://www.sqlite.org/) database of these used by the `BabN` class.
+## Project Structure
 
+The ecosystem is divided into three main pillars:
 
-* four application submodules:
-
-    * `babcalc.py` implementing the interactive *Babylonian calculator* `babcalc`.
-    * `metrotable.py`: implementation of the metrological table printing application `metrotable`.
-    * `mtlookup.py`: implementation of the metrological table search application `mtlookup`.
-    * `multable.py`: implementation of the sexagesimal multiplication table printing utility `bmultab`.
-
-* Test files for `pytest` in the `test` subdirectory.
-* [`Sphinx`](https://www.sphinx-doc.org/en/master/) source files for the documentation in the `docs` subdirectory, including tutorials for the four applications: `babcalc`, `metrotable`, `mtlookup` and `bmultab`.
-
-
-## Download
-
-From the [GitHub repository](https://github.com/jccsvq/mesomath). Read below about the [installation](installation).
-
-## Documentation
-
-Documentation for this package is in [Read the Docs](https://mesomath.readthedocs.io/index.html),
-
-
-
-## Dependencies
-
-Depending on the version of `Python 3` installed, you may need `typing-extensions>=4.0.0`, which was added as a dependency starting with version v1.2.4. Otherwise,`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
-
-The dependencies expressed in `requirements.txt` are for testing and documentation building.
-
-Tested with Python 3.11.2 and 3.12.8 under Debian GNU/Linux 12 (bookworm), 3.11.2 in x86_64 under aarch64 (raspberrypi 5) and Python 3.10.19 in Binder.
-
-##   `babn.py`
-
-This is the main module defining the `BabN` class for representing sexagesimal natural numbers. You can perform mathematical operations on objects of the `BabN` class using the operators +, -, *, **, /, and //, and combine them using parentheses, both in a program and interactively on the Python command line. It also allows you to obtain their reciprocals in the case of regular numbers, their approximate inverses in the general case, approximate square and cube floating roots and obtain divisors and lists of "nearest" regular numbers. See the `test-babn.py` script.
-
-### Note:
-
-*  Operator `/` return the approximate floating division of `a/b` for any pair of numbers.
-*  Operator `//` is for the "Babylonian Division" of `a` by `b`, i.e. `a//b` returns `a` times the reciprocal of `b`, which requires `b` to be regular.
-
-###  Use as an interactive calculator
-
-Consult the [tutorial](https://mesomath.readthedocs.io/tutorial.html)!
-
-## `hamming.py`
-
-Regular or Hamming numbers are numbers of the form:
-
-    H = 2^i * 3^j × 5^k
-    
-    where  i, j, k ≥ 0 
-
-This module is used to obtain lists of such numbers and ultimately build a `SQLite3` database of them up to 20 sexagesimal digits. This database is used by BabN to search for regular numbers close to a given one. The database schema is:
-
-    CREATE TABLE regulars (
-            id INTEGER PRIMARY KEY,
-            regular    TEXT,
-            len     INTEGER
-            );
-    CREATE UNIQUE INDEX regs ON regulars (regular);
-
-where `len` is the number of sexagesimal digits of the regular numbers. The database comprises 11109 regular numbers and is complete up to 20 sexagesimal digits with the following statistic:
-
-| Digits | Regulars |
-|--------|----------|
-| 1      | 25       |
-| 2      | 79       |
-| 3      | 136      |
-| 4      | 192      |
-| 5      | 245      |
-| 6      | 305      |
-| 7      | 360      |
-| 8      | 413      |
-| 9      | 473      |
-| 10     | 526      |
-| 11     | 584      |
-| 12     | 640      |
-| 13     | 694      |
-| 14     | 752      |
-| 15     | 806      |
-| 16     | 864      |
-| 17     | 920      |
-| 18     | 976      |
-| 19     | 1030     |
-| 20     | 1089     |
-
-## `npvs.py`
-
-This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the `_MesoM` class which adapts it to Mesopotamian metrological use. The `_MesoM` class, in turn, is inherited by:
-
-*  class `BsyG`: Babylonian counting System G (iku ese bur bur_u sar sar_u sar_gal)
-*  class `BsyS`: Babylonian counting  System S (dis u ges gesu sar sar_u sar_gal)
-*  class `MesoM`: To represent physical quantities, inherited by:
-    *  class `Blen`: Babylonian length system (susi kus ninda us danna)
-    *  class `Bsur`: Babylonian surface system (se gin sar gan)
-    *  class `Bvol`: Babylonian volume system  (se gin sar gan)
-    *  class `Bcap`: Babylonian capacity system  (se gin sila ban bariga gur)
-    *  class `Bwei`: Babylonian weight system (se gin mana gu)
-    *  class `Bbri`: Babylonian brick counting system (se gin sar gan)
-
-Please, read the [tutorial](https://mesomath.readthedocs.io/tutorial.html) to see how to use all these classes.
-
-
+1. **The Core Library**: `babn.py`, `npvs.py`, and `hamming.py`.
+2. **The Toolset**: Command-line utilities (`babcalc`, `metrotable`, `mtlookup`, `bmultable`) designed for the shell-oriented researcher.
+3. **The Interactive Lab**: Jupyter Notebooks (available via Binder) for educational and exploratory use.

@@ -1,5 +1,47 @@
 # Release Notes
 
+## v1.3.0 (2026-03-  )
+
+This version marks a milestone in the evolution of MesoMath, transforming it from a fixed-system calculator into an extensible metrology environment designed for Assyriological research and administrative calculations.
+
+### Main New Features
+
+#### 1. Extensible and Polymorphic Metrology
+
+The core of `npvs.py` has been refactored to allow user classes to interact natively with the system:
+
+* **Use of `isinstance()`: The system now recognizes custom subclasses (such as height measurements or regional variants) as valid types for complex operations (e.g., Area * Height = Volume).
+
+* **Safe extraction of `.dec`: Arithmetic has been shielded to prevent rounding errors when operating between different metrology systems.
+
+#### 2. Economic and Administrative Management
+
+Cost calculation methods have been integrated directly into the base class `MesoM`, available for all units of measure:
+
+* **`rations()`**: Calculates grain rations from work volumes or capacity.
+
+* **`silver_payments()`**: Manages silver (weight) payments with decimal precision, rounding to the smallest unit (*s*) only in the final step to ensure historical accuracy.
+
+#### 3. Dynamic Metrological Tables (`metrolist`)
+
+Any metrological class (including user-created ones) can now generate its own reference tables using the new `metrolist()` class method:
+
+* Allows for quick previewing of unit progression in the `babcalc` REPL.
+
+* Supports the use of `**kwargs` for future format expansions.
+
+### Documentation Improvements
+
+* **Migration to Markdown**: The main index and manuals now use MyST Markdown for more agile and readable writing.
+
+* **Version Automation**: A system has been implemented that automatically synchronizes the version across all documentation directly from the source code.
+
+### Internal Changes (Refactoring)
+
+* Removal of redundant methods in `Bvol` to unify the API under `MesoM`.
+
+* Improved robustness of the magic methods `__add__`, `__sub__`, and `__mul__`.
+
 ## v1.2.4 (2025-11-24)
 
 * Added `typing_extensions` to dependencies.

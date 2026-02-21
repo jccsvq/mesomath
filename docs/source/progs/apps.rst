@@ -1,3 +1,6 @@
+mesomath apps. reference
+========================
+
 metrotable app.
 ---------------
 .. automodule:: mesomath.metrotable
@@ -10,7 +13,7 @@ mtlookup app.
    :members:
    :undoc-members:
 
-bmultab app.
+bmultable app.
 ---------------
 .. automodule:: mesomath.multable
    :members:

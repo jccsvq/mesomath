@@ -268,32 +268,30 @@ class Npvs:
         """Getter"""
         return self.__list
 
-    def __add__(self, other: Self) -> Self | None:
+    def __add__(self, other: Self) -> Self:
         """Overloads ``+`` operator: returns object with the sum of operands
 
         :param other: operand
         :type other: Self
         :return: object with the sum of operands
-        :rtype: Self | None
+        :rtype: Self
         """
-        if type(other) is type(self):
+        if isinstance(other, Npvs):
             return self.__class__(self.dec + other.dec)
-        else:
-            return None
+        return NotImplemented
 
-    def __sub__(self, other: Self) -> Self | None:
+    def __sub__(self, other: Self) -> Self:
         """Overloads ``-`` operator: returns object with the absolute difference
         of operands
 
         :param other: operand
         :type other: Self
         :return: object with the absolute difference of operands
-        :rtype: Self | None
+        :rtype: Self
         """
-        if type(other) is type(self):
+        if isinstance(other, Npvs):
             return self.__class__(abs(self.dec - other.dec))
-        else:
-            return None
+        return NotImplemented
 
     def __mul__(self, other: int | float) -> Self:
         """Overloads ``*`` operator: returns object with the operands product
@@ -810,6 +808,45 @@ class MesoM(_MesoM):
                 ss.append(self.uname[i])
         return " ".join(ss)
 
+    @classmethod
+    def metrolist(
+        cls,
+        mmin: str | int,
+        mmax: str | int,
+        step: str | int,
+        verbose: bool = False,
+        **kwargs,
+    ):
+        """Generate a list of metrological values for the current class.
+
+        :param mmin: Initial value (e.g., '1 ninda' or integer)
+        :type mmin: str | int
+        :param mmax: Final value
+        :type mmax: str | int
+        :param step: Increment
+        :type step: str | int
+        :param verbose: If it is True, it returns the floating metrological value, defaults to False
+        :type verbose: bool, optional
+        :return: List of formatted strings
+        :rtype: list
+        """
+        width = 20
+        start_dec = cls(mmin).dec
+        end_dec = cls(mmax).dec
+        step_dec = cls(step).dec
+
+        current = start_dec
+        while current <= end_dec:
+            obj = cls(int(round(current)))
+            # If verbose=True, we return the system's metrological value
+            if verbose:
+                line = f"{str(obj).ljust(width)} | {str(obj.metval()).ljust(15)}"
+            else:
+                line = str(obj).ljust(width)
+            print(line)
+
+            current += step_dec
+
 
 class Blen(MesoM):  # Length
     """This class implement Non-Place-Value System arithmetic
@@ -836,15 +873,19 @@ class Blen(MesoM):  # Length
         :return: product
         :rtype: "Bsur" | "Bvol" | "Blen"
         """
-        if type(other) is Blen:
+        # 1. Case: Length * Length (or subclasses) -> Area
+        if isinstance(other, Blen):
             t = int(round((self.dec * other.dec) / 12.0, 0))
             return Bsur(t)
-        elif type(other) is Bsur:
+        # 2. Case: Length * Surface (or subclasses) -> Volume
+        elif isinstance(other, Bsur):
             t = int(round((self.dec * other.dec) / 30.0, 0))
             return Bvol(t)
-        else:
+        # 3. Case: Scale (number)
+        elif isinstance(other, (int, float)):
             t = self.dec * other
             return self.__class__(int(round(t, 0)))
+        return NotImplemented
 
 
 class Bsur(MesoM):  # Surface
@@ -873,12 +914,15 @@ class Bsur(MesoM):  # Surface
         :return: product
         :rtype: "Bvol" | "Bsur" | None
         """
-        if type(other) is Blen:
+        # 1. Case: Area * Length (or subclasses) -> Volume
+        if isinstance(other, Blen):
             t = int(round((self.dec * other.dec) / 30.0, 0))
             return Bvol(t)
-        else:
+        # 2. Case: Scale (number)
+        elif isinstance(other, (int, float)):
             t = self.dec * other
             return self.__class__(int(round(t, 0)))
+        return NotImplemented
 
 
 class Bvol(MesoM):  # Volume
@@ -931,44 +975,6 @@ class Bvol(MesoM):  # Volume
 
         """
         return Bbri(int(nalb * self.dec))
-
-    # Conceptual example for calculating wages
-    def labor_cost_(self, daily_quota: float = 2.0) -> float:
-        """Calculate how many man-days or wages are needed to process this volume.
-
-        :param daily_quota: how many SARs can a man process in a day, defaults to 2.0
-        :type daily_quota: float, optional
-        :return: man-days/wages needed (erín-1-am)
-        :rtype: float
-        """
-        # We convert our internal value to 'sar' units
-        # We use cfact[2] because it is the factor for 'sar' in Bvol
-        total_sar = self.dec / self.cfact[2]  # Value in 'sar' units
-        return total_sar / daily_quota
-
-    def rations_(
-        self, daily_ration_sila: float = 2.0, daily_quota_sar: float = 3.0
-    ) -> "Bcap":
-        """
-        Calcula la cebada total para una obra.
-        :param daily_ration_sila: Sila de cebada por hombre/día (ej. 2.0)
-        :param daily_quota_sar: Sar de volumen procesados por hombre/día (ej. 3.0)
-        """
-        from mesomath.npvs import Bcap
-
-        # 1. Obtenemos el volumen total en 'sar' (unidad técnica de trabajo)
-        # self.cfact[2] es el factor para 'sar' en Bvol
-        total_vol_sar = self.dec / self.cfact[2]
-
-        # 2. Calculamos jornales totales
-        total_workdays = total_vol_sar / daily_quota_sar
-
-        # 3. Total de raciones en sila
-        total_sila = total_workdays * daily_ration_sila
-
-        # 4. Convertimos a Bcap.
-        # En Bcap, el factor para 'sila' es cfact[2] (180*60)
-        return Bcap(int(round(total_sila * Bcap.cfact[2])))
 
 
 class Bcap(MesoM):  # Capacity
@@ -1064,5 +1070,5 @@ class Bbri(MesoM):  # Counting bricks
         ==========  ============  ============
 
         """
-        tt = int(self.dec / nalb)
+        tt = int(round(self.dec / nalb, 0))
         return Bvol(tt)

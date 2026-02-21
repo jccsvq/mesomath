@@ -1,6 +1,6 @@
 [project]
 name = "mesomath"
-description = "Mesopotamian Calculator"
+description = "Mesopotamian Calculator and Metrology Tools"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "CC0-1.0"
@@ -31,12 +31,12 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
-    "typing-extensions>=4.0.0",
+  "typing-extensions>=4.0.0",
 ]
 dynamic = ["version"]
 
 [project.urls]
-Homepage = "https:mesomath.readthedocs.io"
+Homepage = "https://mesomath.readthedocs.io"
 Issues = "https://github.com/jccsvq/mesomath/issues"
 Source = "https://github.com/jccsvq/mesomath"
 
@@ -82,14 +82,14 @@ check = "mypy --install-types --non-interactive {args:src/mesomath tests}"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
-  ".fslckout",
+  "/.github",
+  "/.ipynb_checkpoints",
+  "/docs/build",
   "tempo.py",
   "*.db3",
   "caca*.*",
-  "*cache",
-  "other/",
-  "docs/build/*",
-  ".ipynb_checkpoints/"
+  "*.ipynb", 
+  "tests/.pytest_cache",
 ]
 
 [[tool.mypy.overrides]]

@@ -145,15 +145,21 @@ def start_interactive_repl(local_vars: dict = None, banner: str = ""):
 
     atexit.register(readline.write_history_file, history_file)
     
-    # print(f"DEBUG: bn está en contexto: {'bn' in local_vars}")
-    # print(f"DEBUG: dir(bn) funciona: {dir(local_vars['bn'])}")
-
     # 4. Launch the REPL
-    code.interact(
-        banner=banner,
-        local=local_vars,
-        exitmsg="\n--- Exiting babcalc, Bye! ---\n",
-    )
+    if not sys.stdin.isatty() or len(sys.argv) > 1:
+        # Silent mode
+        code.interact(
+            banner="",
+            local=local_vars,
+            exitmsg="",
+        )
+    else:
+        # Interactive mode
+        code.interact(
+            banner=banner,
+            local=local_vars,
+            exitmsg="\n--- Exiting babcalc, Bye! ---\n",
+        )
 
 
 if __name__ == "__main__":
