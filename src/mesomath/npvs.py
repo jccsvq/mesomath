@@ -555,7 +555,7 @@ class _MesoM(Npvs):
         print(
             f"Meassurement in terms of the smallest unit: {self.dec} ({self.uname[0]})"
         )
-        print(f"Sexagesimal floating value of the above: {self.sex(False)}")
+        print(f"Sexagesimal floating value of the above: {self.sex(0)}")
         print(f"Approximate SI value: {self.SI()}")
 
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
@@ -815,6 +815,7 @@ class MesoM(_MesoM):
         mmax: str | int,
         step: str | int,
         verbose: bool = False,
+        ubase: int | None = None,
         **kwargs,
     ):
         """Generate a list of metrological values for the current class.
@@ -827,6 +828,8 @@ class MesoM(_MesoM):
         :type step: str | int
         :param verbose: If it is True, it returns the floating metrological value, defaults to False
         :type verbose: bool, optional
+        :param ubase: force ubase unit, defaults to None
+        :type ubase: int, optional
         :return: List of formatted strings
         :rtype: list
         """
@@ -834,13 +837,14 @@ class MesoM(_MesoM):
         start_dec = cls(mmin).dec
         end_dec = cls(mmax).dec
         step_dec = cls(step).dec
-
+        if ubase is None:
+            ubase = cls.ubase
         current = start_dec
         while current <= end_dec:
             obj = cls(int(round(current)))
             # If verbose=True, we return the system's metrological value
             if verbose:
-                line = f"{str(obj).ljust(width)} | {str(obj.metval()).ljust(15)}"
+                line = f"{str(obj).ljust(width)} | {str(obj.sex(r=ubase)).ljust(15)}"
             else:
                 line = str(obj).ljust(width)
             print(line)

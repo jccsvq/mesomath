@@ -24,4 +24,6 @@ formats:
 python:
    install:
    - requirements: requirements_rtd.txt
+   - method: pip
+     path: .  # Instala el proyecto mesomath actual
         

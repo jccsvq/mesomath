@@ -25,8 +25,6 @@ message = f"""\nWelcome to Babylonian Calculator {VERSION}
 Use: bn(number) for sexagesimal calculations
 Metrological classes: bl, bs, bv, bc, bw, bG, bS and bb loaded.
 Use exit() or Ctrl-D (i.e. EOF) to exit
-
-jccsvq fecit, 2025.
 """
 
 sys.ps1 = "--> "
@@ -56,13 +54,13 @@ def main():
 
     # Case: Help
     if "--help" in args or "-h" in args:
-        print(f"MesoMath {VERSION} - Command Line Interface")
+        print(f"babcalc {VERSION} - Command Line Interface")
         print("\nUsage:")
         print("  babcalc                 Launch interactive REPL")
         print("  babcalc <script.py>     Execute a script")
         print("  babcalc -i <script.py>  Execute a script and stay in interactive mode")
         print(
-            "  babcalc -m <module>     Run a library module (e.g., babcalc.examples.msh_tune)"
+            "  babcalc -m <module>     Run a library module (Reserved for future use)"
         )
         print("  babcalc --help          Show this message")
         return

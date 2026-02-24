@@ -1,6 +1,7 @@
 sphinx
 myst_parser
 sphinx_book_theme
+sphinx-copybutton
 pytest
 jupyterlab
 typing-extensions>=4.0.0

@@ -110,7 +110,10 @@ def main():
 
     met, ubase_override = selection
     ubase = ubase_override if ubase_override is not None else met.ubase
-
+    if args.pedantic and not any([met == bG, met == bS]):
+        met.prtsex = True
+    
+    
     # executing
 
     if args.reverse:

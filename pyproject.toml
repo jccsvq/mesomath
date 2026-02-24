@@ -80,6 +80,16 @@ extra-dependencies = [
 [tool.hatch.envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/mesomath tests}"
 
+[tool.hatch.envs.docs]
+dependencies = [
+  "sphinx>=8.0",
+  "myst-parser",
+  "sphinx-copybutton",
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "make -C docs html"
+
 [tool.hatch.build.targets.sdist]
 exclude = [
   "/.github",
@@ -88,7 +98,7 @@ exclude = [
   "tempo.py",
   "*.db3",
   "caca*.*",
-  "*.ipynb", 
+  "*.ipynb",
   "tests/.pytest_cache",
 ]
 
