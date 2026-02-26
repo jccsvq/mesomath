@@ -1,5 +1,5 @@
 (tutorialmultable)=
-# `bmultable` tutorial
+# `bmultable` Tutorial
 
 `bmultable` is a simple utility for printing sexagesimal multiplication tables in the style of those that aspiring scribes in ancient Babylon struggled to memorize.
 

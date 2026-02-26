@@ -1,7 +1,7 @@
 (References)=
 # References
 
-This bibliography provides the academic and historical foundations for the metrological systems and mathematical logic implemented in `mesomath`.
+This bibliography provides the academic and historical foundations for the metrological systems and mathematical logic implemented in **MesoMath**.
 
 ---
 

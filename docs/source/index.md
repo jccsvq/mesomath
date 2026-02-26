@@ -12,10 +12,10 @@ intro.md
 release-notes.md
 install.md
 tutorial.md
-references.md
 progs/metrotable.md
 progs/mtlookup.md
 progs/multable.md
+references.md
 mesomath
 progs/apps
 

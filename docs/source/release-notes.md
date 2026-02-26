@@ -4,9 +4,17 @@
 
 This version marks a milestone in the evolution of MesoMath, transforming it from a fixed-system calculator into an extensible metrology environment designed for Assyriological research and administrative calculations.
 
-### Main New Features
+### 🚀 Main New Features
 
-#### 1. Extensible and Polymorphic Metrology
+#### 1. `babcalc` Improvements
+
+`babcalc`, the central engine of MesoMath, now has new features that make it more user-friendly and functional:
+
+    * History is now saved between sessions.
+    * Tab completion.
+    * Ability to run and debug scripts in pure Python.
+
+#### 2. Extensible and Polymorphic Metrology
 
 The core of `npvs.py` has been refactored to allow user classes to interact natively with the system:
 
@@ -14,15 +22,17 @@ The core of `npvs.py` has been refactored to allow user classes to interact nati
 
 * **Safe extraction of `.dec`: Arithmetic has been shielded to prevent rounding errors when operating between different metrology systems.
 
-#### 2. Economic and Administrative Management
+#### 3. Economic and Administrative Management
 
 Cost calculation methods have been integrated directly into the base class `MesoM`, available for all units of measure:
+
+* **`.labor_cost(work_man)`**: Calculate the total number of workdays (man-days) required for a task based on standard Babylonian perfo
 
 * **`rations()`**: Calculates grain rations from work volumes or capacity.
 
 * **`silver_payments()`**: Manages silver (weight) payments with decimal precision, rounding to the smallest unit (*s*) only in the final step to ensure historical accuracy.
 
-#### 3. Dynamic Metrological Tables (`metrolist`)
+#### 4. Dynamic Metrological Tables (`metrolist`)
 
 Any metrological class (including user-created ones) can now generate its own reference tables using the new `metrolist()` class method:
 
@@ -30,17 +40,21 @@ Any metrological class (including user-created ones) can now generate its own re
 
 * Supports the use of `**kwargs` for future format expansions.
 
-### Documentation Improvements
+### 📖 Documentation Improvements
+
+* **Smart Copy-Paste**: Code examples in the documentation now feature a "smart" copy button that automatically ignores prompts (`-->` or `$`), allowing you to paste code directly into your terminal or script.
 
 * **Migration to Markdown**: The main index and manuals now use MyST Markdown for more agile and readable writing.
 
 * **Version Automation**: A system has been implemented that automatically synchronizes the version across all documentation directly from the source code.
 
-### Internal Changes (Refactoring)
+* **Standardization of the API docstrings**: The python help is more useful now.
 
-* Removal of redundant methods in `Bvol` to unify the API under `MesoM`.
+### 🛠 Internal Changes (Refactoring)
 
-* Improved robustness of the magic methods `__add__`, `__sub__`, and `__mul__`.
+* Significant AI-assisted refactoring
+
+* Improved robustness of class constructors and magic methods `__add__`, `__sub__`, `__mul__`, etc.
 
 ## v1.2.4 (2025-11-24)
 

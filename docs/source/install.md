@@ -1,90 +1,138 @@
+
 (installation)=
 # Installing MesoMath
 
-## Using `pip` or `pipx`
+## Prerequisites
 
-Since version `v1.1.0` you can install `MesoMath` from [pypi.org](https://pypi.org/project/mesomath/) using [`pip`](https://pypi.org/project/pip/) or [`pipx`](https://pipx.pypa.io/stable/):
+* **Python:** Version 3.10 or higher.
+* **[`pip`](https://pypi.org/project/pip/)** or **[`pipx`](https://pipx.pypa.io/stable/):** Latest version recommended.
 
-### `pip`
+## Standard Installation Using `pip` or `pipx`
 
-Start by creating a virtual environment anywhere convenient in your directory tree, call it whatever you like, for example: `myenv` and `cd` to that directory:
+### `pipx` (Recommended for most users)
 
-    $ python -m venv myenv
-    $ cd myenv
-    $ bin/python -m pip install mesomath
+This is the simplest way to install **MesoMath** as a standalone tool without worrying about Python environments.
 
-or perhaps:
+```bash
+$ pipx install mesomath
 
-    $ python -m venv myenv
-    $ cd myenv
-    $ bin/pip install mesomath
+```
 
-if your system intalls `pip` in the virtual environment.
+This will install the four MesoMath commands in your system's PATH:
 
-This will install a repackaged version of `MesoMath` into your environment, containing the library and three commands that you can invoke as:
+* **`babcalc`**: The interactive Mesopotamian calculator.
+* **`mtlookup`**: Tool for consulting metrological tables.
+* **`metrotable`**: Tool for printing metrological tables.
+* **`bmultable`**: Sexagesimal multiplication table generator.
 
+If you cannot run the commands after installation, try:
 
+```bash
+$ pipx ensurepath
 
-    $ bin/babcalc:     # the interactive calculator with all metrological classes.
-    ...
-    $ bin/metrotable   # for printing metrological tables
-    ...
-    $ bin/mtlookup     # for consulting values in metrological tables
-    ...
+```
 
-The rest of the test scripts (test-babn.py, test-npvs.py,...) are accessible as:
+To uninstall the package at any time, simply run:
 
-    $ bin/python -m mesomath.test.test-babn
-    ...
-    $ bin/python -m mesomath.test.test-npvs
-    ...
+```bash
+$ pipx uninstall mesomath
 
-etc.
+```
 
-You can [activate/deactivate](https://docs.python.org/3/tutorial/venv.html) your virtual environment.
+### `pip` (Virtual Environment)
 
-Consult: [Installing python packages guide](https://packaging.python.org/en/latest/tutorials/installing-packages/)
+If you prefer using standard `pip`, it is highly recommended to use a virtual environment:
 
-### `pipx`
+```bash
+$python -m venv myenv$ source myenv/bin/activate  # On Windows use: myenv\Scripts\activate
+$ pip install mesomath
 
-If your system has `pipx` installed you don't have to worry about creating a virtual environment, `pipx` will do it and manage it for you, simply:
+```
 
-    $ pipx install mesomath
+Once installed, you can run any of the tools directly (e.g., `$ babcalc`).
 
+## Developer Installation from Sources
 
-This will install a repackaged version of `MesoMath` in a hidden virtual environment, containing the library and three commands:
+1. Clone the repository:
+```bash
+$ git clone [https://github.com/jccsvq/mesomath.git](https://github.com/jccsvq/mesomath.git)
+$ cd mesomath
 
-    $ babcalc:     # the interactive calculator with all metrological classes.
-    ...
-    $ metrotable   # for printing metrological tables
-    ...
-    $ mtlookup     # for consulting values in metrological tables
-    ...
-
-that should work directly, if it is not the case, try:
-
-    $ pipx ensurepath
-
-to expose them in your PATH.
-
-Consult: [Getting started with `pipx`](https://pipx.pypa.io/stable/getting-started/)
+```
 
 
-## From sources
+2. We recommend using [`hatch`](https://hatch.pypa.io/latest/) for development:
+```bash
+$ hatch shell
 
-1. Download a source package from the [GitHub repository](https://github.com/jccsvq/mesomath/) and extract it to a directory of your choice. Alternatively, clone the repository to a local directory.
-2. cd to that directory
+```
 
 
-    $cd mesomath
+This creates an isolated environment with all dependencies (including `typing-extensions`) and installs `mesomath` in editable mode.
 
-3. If you have [`hatch`](https://hatch.pypa.io/latest/) in your system,
+## Verification
 
-    $ hatch shell
+To verify the installation, check the version of the calculator:
 
-This will install the package in edit mode in a virtual environment and activate it, so you can directly start using/modifying it:
+```bash
+$ babcalc --help
+babcalc 1.3.0 - Command Line Interface
 
-    (mesomath) $ babcalc
-    ...
+Usage:
+  babcalc                 Launch interactive REPL
+  babcalc <script.py>     Execute a script
+  babcalc -i <script.py>  Execute a script and stay in interactive mode
+  babcalc -m <module>     Run a library module (Reserved for future use)
+  babcalc --help          Show this message
 
-etc.
+```
+
+
+## Troubleshooting
+
+If you encounter issues during installation or while running the tools, check the following common solutions:
+
+### "Command not found" after installation
+
+This usually happens when your Python script directory is not in your system's `PATH`.
+
+* **If using `pipx**`: Run `pipx ensurepath` to automatically add the necessary directories to your profile.
+* **If using `pip**`: Ensure you have activated your virtual environment (`source myenv/bin/activate`) before running the commands.
+* **Manual Check**: Verify that the scripts listed in `pyproject.toml` (like `babcalc` or `mtlookup`) are present in your environment's `bin` (Linux/macOS) or `Scripts` (Windows) folder.
+
+### Python Version Mismatch
+
+**MesoMath** requires **Python 3.10 or higher**.
+
+* Check your version by running `$ python --version`.
+* If your system's default `python` is an older version (e.g., 3.8), try using `python3` instead:
+```bash
+$ python3 -m venv myenv
+
+```
+
+
+* The package uses `typing-extensions` to ensure compatibility with modern type hints on older supported versions of Python.
+
+### Conflicts with other packages
+
+If you see errors related to dependency versions:
+
+* **Isolated Environment**: We strongly recommend using a virtual environment or `pipx` to avoid conflicts with other installed Python tools.
+* **Hatch Users**: If `hatch shell` fails, try cleaning the environment first:
+```bash
+$ hatch env prune
+
+```
+
+
+
+### SyntaxWarnings in Documentation (Developers)
+
+If you see a `SyntaxWarning: invalid escape sequence` when building the docs, ensure your `conf.py` uses a **raw string** for the copy button prompt:
+
+```python
+# Correct way:
+copybutton_prompt_text = r"--> |\.\.\. |\$ "
+
+```

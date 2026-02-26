@@ -5,18 +5,18 @@
 
 ![mesomath](docs/source/_static/mesomath.png) 
 
-# `mesomath`: Mesopotamian Calculator and Metrology Tools
+# MesoMath: Mesopotamian Calculator and Metrology Tools
 
 
 
 ## Overview
 
-`mesomath` is a complete ecosystem for the study of ancient **Mesopotamian Mathematics** written in pure `Python3`. In this sense, it incorporates:
+**MesoMath** is a complete ecosystem for the study of ancient **Mesopotamian Mathematics** written in pure `Python3`. In this sense, it incorporates:
 
 * the arithmetic of natural **sexagesimal numbers**, mainly in their *floating* aspect, as performed by Babylonian scribes and their apprentices in ancient times. 
 * the arithmetic of **physical quantities**, length, surface, etc. described using the metrology of the **Old Babylonian Period** (but also extensible to other periods).
 
-For this purpose, `mesomath` provides four command-line applications:
+For this purpose, MesoMath provides four command-line applications:
 
 * `babcalc`: a custom `Python3` REPL, the **Babylonian Calculator**, with tab completion and history support for interactive use and fully scriptable for batch processing.
 * `metrotable`: An utility to create custom metrological list and tables.
@@ -103,7 +103,7 @@ length.metval()          length.si()
 
 ## Power Usage and Scripting
 
-`mesomath` is designed to be fully scriptable and integrable into automated workflows, whether you are on Linux, macOS, or Windows.
+**MesoMath** is designed to be fully scriptable and integrable into automated workflows, whether you are on Linux, macOS, or Windows.
 
 ### Running Scripts
 You can write your metrological logic in a file (e.g., `myscript.py`):
@@ -125,17 +125,17 @@ $ babcalc myscript.py
 
 ### Stream Processing (Pipes)
 
-All utilities support standard input/output streams. You can chain `mesomath` with other command-line tools to filter and process data:
+All utilities support standard input/output streams. You can chain MesoMath with other command-line tools to filter and process data:
 
 ```bash
 $ cat myscript.py | babcalc | grep "surface" > output.txt
 
 ```
-This makes `mesomath` a powerful engine for large-scale archaeological or mathematical data processing.
+This makes MesoMath a powerful engine for large-scale archaeological or mathematical data processing.
 
 ### Extending metrology
 
-`mesomath` is designed to work with the metrology of the Old Babylonian period, but it can be extended to use the metrology of other periods. For example, for the Late Babylonian period, we can start by defining a class `LBcap` for the capacities in a file `lateb.py`:
+MesoMath is designed to work with the metrology of the Old Babylonian period, but it can be extended to use the metrology of other periods. For example, for the Late Babylonian period, we can start by defining a class `LBcap` for the capacities in a file `lateb.py`:
 
 ```python
 from mesomath.npvs import Bcap, Bvol
@@ -256,7 +256,7 @@ to install from [pypi.org](https://pypi.org/). But you can also install from the
 
 ## Dependencies
 
-Depending on the version of `Python 3` installed, you may need `typing-extensions>=4.0.0`, which was added as a dependency starting with version v1.2.4. Otherwise,`mesomath` only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
+Depending on the version of `Python 3` installed, you may need `typing-extensions>=4.0.0`, which was added as a dependency starting with version v1.2.4. Otherwise,MesoMath only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
 
 The dependencies expressed in `requirements.txt` are for testing and documentation building.
 
@@ -273,7 +273,7 @@ This is the main module defining the `BabN` class for representing sexagesimal n
 
 ###  Use as an interactive calculator
 
-Once `mesomath` is installed, simply run:
+Once MesoMath is installed, simply run:
 
     $ babcalc
 

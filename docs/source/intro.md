@@ -1,13 +1,13 @@
 
-# Introduction to `mesomath`
+# Introduction to MesoMath
 
-`mesomath` is not just a calculator; it is a digital bridge to the mathematical mind of the ancient Mesopotamian scribe. While modern mathematics relies on abstract decimal notation, the Old Babylonian period (c. 1900–1600 BCE) developed a sophisticated sexagesimal (base-60) system that combined floating-point arithmetic with a complex web of metrological units.
+**MesoMath** is not just a calculator; it is a digital bridge to the mathematical mind of the ancient Mesopotamian scribe. While modern mathematics relies on abstract decimal notation, the Old Babylonian period (c. 1900–1600 BCE) developed a sophisticated sexagesimal (base-60) system that combined floating-point arithmetic with a complex web of metrological units.
 
 ## Core Concepts
 
 ### 1. Sexagesimal Arithmetic (`babn.py`)
 
-Unlike modern calculators, `mesomath` treats numbers in their "floating" aspect. In the Babylonian context, the absolute value of a number often depended on its metrological context rather than a fixed decimal point. The `BabN` class implements this logic, allowing for:
+Unlike modern calculators, MesoMath treats numbers in their "floating" aspect. In the Babylonian context, the absolute value of a number often depended on its metrological context rather than a fixed decimal point. The `BabN` class implements this logic, allowing for:
 
 * **Reciprocal-based division**: Traditional Babylonian division was performed by multiplying by the reciprocal of "regular" numbers.
 * **Hamming Numbers**: Integration with a SQLite database to handle regular numbers up to 20 sexagesimal digits.

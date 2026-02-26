@@ -1,6 +1,6 @@
 .. _mesomathpackage:
 
-API reference
+API Reference
 =============
 
 Module contents

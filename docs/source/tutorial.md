@@ -8,12 +8,12 @@
 (babcalc-intro)=
 ## Introduction
 
-`babcalc` is the core engine of MesoMath; it is a custom or specialized [REPL/shell/interpreter](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) for Python 3, designed to make using this package as an interactive calculator easier as well as to run [scripts](#scripting).
+`babcalc` is the core engine of **MesoMath**; it is a custom or specialized [REPL/shell/interpreter](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) for Python 3, designed to make using this package as an interactive calculator easier as well as to run [scripts](#scripting).
 
 * In **interactive** use, it will show you an environment where arithmetic and metrological classes are preloaded (and abbreviated for smooth use) and you can start working directly. 
 * In **scripting**, it will save you from having to locate the Python interpreter of your virtual environment, which, depending on your installation, may be in obscure places on your system (e.g., if you used `pipx`).
 
->If you're not very familiar with `Python`, you might be interested to know that ***classes*** are a central concept in Object-Oriented Programming (OOP). They are the way to inform the programming language that we will be working with ***objects*** of a certain type, characterized by a series of ***properties*** on which we wish perform specific operations or processes through certain ***methods***. The classes and objects defined in `MesoMath` are:
+>If you're not very familiar with `Python`, you might be interested to know that ***classes*** are a central concept in Object-Oriented Programming (OOP). They are the way to inform the programming language that we will be working with ***objects*** of a certain type, characterized by a series of ***properties*** on which we wish perform specific operations or processes through certain ***methods***. The classes and objects defined in MesoMath are:
 
 | Class  | Object              | abbrev.  |
 |--------|---------------------|----------|
@@ -33,11 +33,12 @@
 
 ## Running `babcalc` as an interactive calculator
 
-If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, etc., you should have the `babcalc` command in your PATH, so you only need to invoke it to see the banner:
+If you [installed](installation)  MesoMath using `pip`, `pipx` or `hatch`, etc., you should have the `babcalc` command in your PATH, so you only need to invoke it to see the banner:
 
 ```bash
 $ babcalc
-
+```
+```text
 Welcome to Babylonian Calculator 1.3.0
     ...the calculator that every scribe should have!
 
@@ -72,7 +73,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 
 
-In the unlikely event that after installing the package you have the `mesomath` module accessible in your `PYTHONPATH` but not the `babcalc` command, you can run it from the console:
+In the unlikely event that after installing the package you have the MesoMath module accessible in your `PYTHONPATH` but not the `babcalc` command, you can run it from the console:
 
 ```bash
 $ python -m mesomath.babcalc
@@ -900,7 +901,7 @@ will print this excerpt of the metrological table for length using ninda (x.sex(
 
 (See page 8 of [Floating calculation in Mesopotamia](https://hal.science/hal-01515645v2/document) by Christine Proust).
 
-But you will rarely need to resort to programming, since MesoMath has specialized resources for building metrological lists and tables:
+But you will rarely need to resort to programming, since **MesoMath** has specialized resources for building metrological lists and tables:
 
 *   The [`metrotable`](#metrotable-tutorial) tool, which specializes in printing segments of metrological list and tables.
 *   The [`mtlookup`](#mtlookup-tutorial) tool that simulates direct and inverse searches in metrological tables.
@@ -1299,7 +1300,7 @@ The `-m` option is reserved for future use. Currently, there are no modules in M
 (advanced-topics)=
 ## Advanced Topic: Extending Metrology
 
-One of the core strengths of `mesomath` **v{{ release }}** is its extensibility. You are not limited to the built-in Babylonian units; you can define your own metrological systems by inheriting from the base classes.
+One of the core strengths of **MesoMath v{{ release }}** is its extensibility. You are not limited to the built-in Babylonian units; you can define your own metrological systems by inheriting from the base classes.
 
 (vertical-class)=
 ### The "Vertical Problem": Defining Height
@@ -1411,7 +1412,7 @@ Total silver payment: 16 se
 ### Late Babylonian Period Metrology
 
 
-`mesomath` is designed to work with the metrology of the Old Babylonian period, but it can be extended to use the metrology of other periods. For example, for the {ref}`Late Babylonian Period <ref-Proust2>`, we can start by defining a class `LBcap` for the capacities in a file `lateb.py`:
+**MesoMath** is designed to work with the metrology of the Old Babylonian period, but it can be extended to use the metrology of other periods. For example, for the {ref}`Late Babylonian Period <ref-Proust2>`, we can start by defining a class `LBcap` for the capacities in a file `lateb.py`:
 
 ```python
 from mesomath.npvs import Bcap, Bvol

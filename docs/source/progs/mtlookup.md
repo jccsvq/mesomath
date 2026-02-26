@@ -1,6 +1,6 @@
 
 (mtlookup-tutorial)=
-# `mtlookup` tutorial
+# `mtlookup` Tutorial
 
 
 ## Introduction

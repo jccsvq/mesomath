@@ -1,5 +1,5 @@
-mesomath apps. reference
-========================
+Apps. Reference
+===============
 
 metrotable app.
 ---------------

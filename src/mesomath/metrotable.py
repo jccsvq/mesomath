@@ -68,11 +68,15 @@ def header(
             print("  cfact: ", *met.cfact)
         print(f"Base unit: {names[ubase]}\n")
         if args.verbose:
-            print("Meassurement".ljust(width + 5), "Abstract".ljust(15), "Reciprocal")
-            print("====================================================")
+            line="Meassurement".ljust(width + 4) + "Abstract".ljust(18) + "Reciprocal"
+            print(line)
+            print("=" * len(line))
         else:
-            print("Meassurement".ljust(width + 5), "Abstract".ljust(15))
-            print("=========================================")
+            line="Meassurement".ljust(width + 4) + "Abstract".ljust(18)
+            print(line)
+            print("=" * len(line))
+
+
 
 
 def metrolist(

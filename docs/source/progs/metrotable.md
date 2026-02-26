@@ -1,7 +1,7 @@
 <link rel="icon" type="image/svg" href="../favicon.svg">
 
 (metrotable-tutorial)=
-# `metrotable` tutorial
+# `metrotable` Tutorial
 
 
 ## Introduction

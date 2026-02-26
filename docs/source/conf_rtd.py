@@ -80,8 +80,12 @@ rst_epilog = f"""
 .. |release| replace::  {release}
 """
 
-# Configuración de sphinx-copybutton para los prompts de mesomath
+# sphinx-copybutton configuration for mesomath prompts
 copybutton_prompt_text = r"--> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
-copybutton_only_copy_prompt_lines = True
+
+copybutton_only_copy_attr_src = False
 copybutton_remove_prompts = True
+copybutton_copy_empty_lines = False
+
+copybutton_line_continuation_character = "\\"
