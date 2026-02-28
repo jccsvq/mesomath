@@ -1,6 +1,6 @@
 # Release Notes
 
-## v1.3.0 (2026-03-  )
+## v1.3.0 (2026-02-28)
 
 This version marks a milestone in the evolution of MesoMath, transforming it from a fixed-system calculator into an extensible metrology environment designed for Assyriological research and administrative calculations.
 
