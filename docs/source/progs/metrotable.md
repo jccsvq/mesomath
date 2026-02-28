@@ -41,45 +41,45 @@ $ metrotable --help
 
 to get a listing of short and long options:
 
-    usage: metrotable [-h] [-t {L,Lh,S,V,C,W,SysG,SysS}] [-m MIN] [-M MAX]
-                      [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
-                      [-v] [-r] [-p]
+    usage: metrotable [-h] [-t {L,Lh,S,V,C,W,B,SysG,SysS}] [-m MIN] [-M MAX]
+                    [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
+                    [-v] [-r] [-F {0,1}] [-p] [-a]
 
     Prints an excerpt of a metrological table
 
     options:
-      -h, --help            show this help message and exit
-      -t {L,Lh,S,V,C,W,SysG,SysS}, --type {L,Lh,S,V,C,W,SysG,SysS}
+    -h, --help            show this help message and exit
+    -t {L,Lh,S,V,C,W,B,SysG,SysS}, --type {L,Lh,S,V,C,W,B,SysG,SysS}
                             Type of metrological table to print (Try: -r for a
                             remainder) (default: None)
-      -m MIN, --min MIN     Minimun value of variable to print, ex: "10 susi"
+    -m MIN, --min MIN     Minimun value of variable to print, ex: "10 susi"
                             (default: 1)
-      -M MAX, --max MAX     Maximun value of variable to print, ex:"2 kus", or a
+    -M MAX, --max MAX     Maximun value of variable to print, ex:"2 kus", or a
                             comma separated list "2 kus,5 kus" (default: 10)
-      -i INCREMENT, --increment INCREMENT
+    -i INCREMENT, --increment INCREMENT
                             Increment of the variable between table lines, ex: "5
                             susi" or a comma separated list matching MAX in length
                             "5 susi,1 kus" (default: 1)
-      -w WIDTH, --width WIDTH
+    -w WIDTH, --width WIDTH
                             Sets the reserved width for printing measurement
                             values ​​to WIDTH (default: 20)
-      -f FORCE, --force FORCE
+    -f FORCE, --force FORCE
                             Force base unit to number FORCE (default: -1)
-      -x {1,2,3,4}, --example {1,2,3,4}
+    -x {1,2,3,4}, --example {1,2,3,4}
                             Runs an example test (default: None)
-      -n, --noheader        Suppress header printing (for chaining results)
+    -n, --noheader        Suppress header printing (for chaining results)
                             (default: False)
-      -v, --verbose         More information in the header and reciprocals if the
+    -v, --verbose         More information in the header and reciprocals if the
                             abstract numbers are regular (default: False)
-      -r, --remainder       Lists the available measurement systems and their
+    -r, --remainder       List the available measurement systems and their
                             units, then exits (default: False)
-      -F {0,1}, --fractions {0,1}
+    -F {0,1}, --fractions {0,1}
                             Use fractions, -F 1 to include 1/6 (default: -1)
-      -p, --pedantic        Write the coefficients of the units in the
+    -p, --pedantic        Write the coefficients of the units in the
                             measurements using the S and G Systems (default:
                             False)
-      -a, --academic        With [-F|--fractions] or [-r|--remainder] uses the academic names of
-                            units. (default: False)
+    -a, --academic        With [-F|--fractions] or [-r|--remainder] uses the
+                            academic names of units. (default: False)
 
     jccsvq fecit, 2025. Public domain.
 
@@ -115,12 +115,16 @@ to take a look at the metrological systems covered by this application:
     System W:  Babylonian weight meassurements
         Units:  gu <-60- mana <-60- gin <-180- se
         Base unit:  gin
+    System B:  Babylonian brick counts
+        Units:  gan <-100- sar <-60- gin <-180- se
+        Base unit:  gin
     NPVN System S:  Babylonian System S to count objects
         Units:  sargal <-6- saru <-10- sar <-6- gesu <-10- ges <-6- u <-10- dis
         Base unit:  dis
     NPVN System G:  Babylonian System G to count objects
         Units:  sargal <-6- saru <-10- sar <-6- buru <-10- bur <-3- ese <-6- iku
         Base unit:  iku
+
 
 or
 
@@ -146,6 +150,9 @@ System C:  Babylonian capacity meassurements
     Base unit:  gin
 System W:  Babylonian weight meassurements
     Units:  gu2 <-60- ma-na <-60- gin2 <-180- še
+    Base unit:  gin
+System B:  Babylonian brick counts
+    Units:  GAN2 <-100- sar <-60- gin2 <-180- še
     Base unit:  gin
 NPVN System S:  Babylonian System S to count objects
     Units:  šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
@@ -365,6 +372,7 @@ The program needs four pieces of data to calculate a segment of a metrological t
     * V:   volume meassurements
     * C:   capacity meassurements
     * W:   weight meassurements
+    * B:   brick counts
     * SysS:   System S to count objects
     * SysG:   System G to count objects
 *  Starting meassurement value (options `-t` or `--min`)
@@ -489,8 +497,8 @@ $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -f 0
 Metrological list for Babylonian weight meassurements
 Base unit: se
 
-Meassurement              Abstract       
-=========================================
+Meassurement            Abstract          
+==========================================
 1 mana               -> 3              
 2 mana               -> 6              
 3 mana               -> 9              
@@ -509,8 +517,8 @@ $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
 Metrological list for Babylonian weight meassurements
 Base unit: gin
 
-Meassurement                        Abstract       
-=========================================
+Meassurement                      Abstract          
+====================================================
 1 mana                         -> 1              
 2 mana                         -> 2              
 3 mana                         -> 3              
@@ -531,7 +539,7 @@ Metrological list for Babylonian length meassurements
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement              Abstract        Reciprocal
+Meassurement            Abstract          Reciprocal
 ====================================================
 (1 u) susi           -> 1:40            | 36
 (1 u 5 dis) susi     -> 2:30            | 24
@@ -544,7 +552,6 @@ Meassurement              Abstract        Reciprocal
 (1 dis) kus (2 u) susi -> 8:20            | 7:12
 (1 dis) kus (2 u 5 dis) susi -> 9:10            | --igi nu--
 (2 dis) kus          -> 10              | 6
-
 ```
 
 
@@ -552,27 +559,26 @@ Meassurement              Abstract        Reciprocal
 This may distort the output; combine it with `-w`:
 
 ```bash
-$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pvw 30
+$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pvw35
 
 Metrological list for Babylonian length meassurements
   units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement                        Abstract        Reciprocal
-====================================================
-(1 u) susi                     -> 1:40            | 36
-(1 u 5 dis) susi               -> 2:30            | 24
-(2 u) susi                     -> 3:20            | 18
-(2 u 5 dis) susi               -> 4:10            | 14:24
-(1 dis) kus                    -> 5               | 12
-(1 dis) kus (5 dis) susi       -> 5:50            | --igi nu--
-(1 dis) kus (1 u) susi         -> 6:40            | 9
-(1 dis) kus (1 u 5 dis) susi   -> 7:30            | 8
-(1 dis) kus (2 u) susi         -> 8:20            | 7:12
-(1 dis) kus (2 u 5 dis) susi   -> 9:10            | --igi nu--
-(2 dis) kus                    -> 10              | 6
-
+Meassurement                           Abstract          Reciprocal
+===================================================================
+(1 u) susi                          -> 1:40            | 36
+(1 u 5 dis) susi                    -> 2:30            | 24
+(2 u) susi                          -> 3:20            | 18
+(2 u 5 dis) susi                    -> 4:10            | 14:24
+(1 dis) kus                         -> 5               | 12
+(1 dis) kus (5 dis) susi            -> 5:50            | --igi nu--
+(1 dis) kus (1 u) susi              -> 6:40            | 9
+(1 dis) kus (1 u 5 dis) susi        -> 7:30            | 8
+(1 dis) kus (2 u) susi              -> 8:20            | 7:12
+(1 dis) kus (2 u 5 dis) susi        -> 9:10            | --igi nu--
+(2 dis) kus                         -> 10              | 6
 ```
 
 
@@ -647,24 +653,24 @@ Meassurement              Abstract
 You may combine it with `-p` (pedantic mode):
 
 ```bash
-$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF0
+$ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF0 -w 30
 
 Metrological list for Babylonian length meassurements
 Base unit: ninda
 
-Meassurement              Abstract       
-=========================================
-1/3 kus              -> 1:40           
-1/2 kus              -> 2:30           
-2/3 kus              -> 3:20           
-5/6 kus              -> 4:10           
-(1 dis) kus          -> 5              
-(1 dis) kus (5 dis) susi -> 5:50           
-(1 dis) 1/3 kus      -> 6:40           
-(1 dis) 1/2 kus      -> 7:30           
-(1 dis) 2/3 kus      -> 8:20           
-(1 dis) 5/6 kus      -> 9:10           
-(2 dis) kus          -> 10           
+Meassurement                      Abstract          
+====================================================
+1/3 kus                        -> 1:40           
+1/2 kus                        -> 2:30           
+2/3 kus                        -> 3:20           
+5/6 kus                        -> 4:10           
+(1 dis) kus                    -> 5              
+(1 dis) kus (5 dis) susi       -> 5:50           
+(1 dis) 1/3 kus                -> 6:40           
+(1 dis) 1/2 kus                -> 7:30           
+(1 dis) 2/3 kus                -> 8:20           
+(1 dis) 5/6 kus                -> 9:10           
+(2 dis) kus                    -> 10          
 ```
 
 ```bash

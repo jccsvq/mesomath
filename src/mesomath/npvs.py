@@ -816,6 +816,10 @@ class MesoM(_MesoM):
         step: str | int,
         verbose: bool = False,
         ubase: int | None = None,
+        width: int = 20,
+        fractions: int = -1,
+        actual: bool = False,
+        echo: bool = True,  # Nuevo switch para control de salida
         **kwargs,
     ):
         """Generate a list of metrological values for the current class.
@@ -830,26 +834,56 @@ class MesoM(_MesoM):
         :type verbose: bool, optional
         :param ubase: force ubase unit, defaults to None
         :type ubase: int, optional
+        :param width: output width, defaults to 20
+        :type width: int, optional
+        :param fractions: Use fractions if 1 and add 1/6 if 2, defaults to -1 (no fractions)
+        :type fractions: int, optional
+        :param actual: use academic unit names
+        :type actual: bool, optional
+        :param echo: If True, prints the table to stdout. If False, only returns the list.
+        :type echo: bool, optional
         :return: List of formatted strings
         :rtype: list
         """
-        width = 20
         start_dec = cls(mmin).dec
         end_dec = cls(mmax).dec
         step_dec = cls(step).dec
+
         if ubase is None:
             ubase = cls.ubase
-        current = start_dec
-        while current <= end_dec:
-            obj = cls(int(round(current)))
-            # If verbose=True, we return the system's metrological value
-            if verbose:
-                line = f"{str(obj).ljust(width)} | {str(obj.sex(r=ubase)).ljust(15)}"
-            else:
-                line = str(obj).ljust(width)
-            print(line)
 
+        results = []
+
+        # Helper function to handle output according to the switch
+        def handle_output(text):
+            if echo:
+                print(text)
+            results.append(text)
+
+        if verbose:
+            handle_output(f"{'Measurement'.ljust(width)} | {'Sexag. (base)'}")
+            handle_output("-" * (width + 18))
+
+        current = start_dec
+        while current <= end_dec + (step_dec / 10):
+            obj = cls(int(round(current)))
+
+            if fractions in {1, 2}:
+                ln = obj.prtf(onesixth=fractions == 2, actual=actual)
+            else:
+                ln = str(obj)
+
+            if verbose:
+                line = f"{ln.ljust(width)} | {str(obj.sex(r=ubase)).ljust(15)}"
+            else:
+                line = ln.ljust(width)
+
+            handle_output(line)
             current += step_dec
+
+        # Only return the list if echo is False (prevents duplication in REPL)
+        if not echo:
+            return results
 
 
 class Blen(MesoM):  # Length

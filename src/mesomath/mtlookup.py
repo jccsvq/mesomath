@@ -8,6 +8,7 @@ from mesomath.npvs import Bsur as bs
 from mesomath.npvs import Bvol as bv
 from mesomath.npvs import Bcap as bc
 from mesomath.npvs import Bwei as bw
+from mesomath.npvs import Bbri as bb
 from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
 
@@ -19,6 +20,7 @@ METROLOGY_MAP = {
     "V": (bv, None),
     "C": (bc, None),
     "W": (bw, None),
+    "B": (bb, None),
     "SysG": (bG, None),
     "SysS": (bS, None),
 }
@@ -41,7 +43,7 @@ def gen_parser() -> argparse.ArgumentParser:
         "-t",
         "--type",
         help="Metrology to use",
-        choices=["L", "Lh", "S", "V", "C", "W", "SysG", "SysS"],
+        choices=["L", "Lh", "S", "V", "C", "W", "B", "SysG", "SysS"],
         default=None,
     )
     parser.add_argument("VALUE", type=str, help="Value ")
@@ -61,6 +63,12 @@ def gen_parser() -> argparse.ArgumentParser:
         help="Prints more information",
         action="store_true",
         default=False,
+    )
+    parser.add_argument(
+        "-w",
+        "--width",
+        help="Sets the reserved width for printing measurement values ​​to WIDTH",
+        default=20,
     )
     parser.add_argument(
         "-F",
@@ -106,13 +114,14 @@ def main():
 
     selection = METROLOGY_MAP.get(args.type)
     if not selection:
-        exit("Error: Tipo de metrología no reconocido.")
+        exit("Error: Unrecognized type of metrology.")
 
     met, ubase_override = selection
     ubase = ubase_override if ubase_override is not None else met.ubase
     if args.pedantic and not any([met == bG, met == bS]):
         met.prtsex = True
     
+    width = int(args.width)
     
     # executing
 
@@ -120,9 +129,10 @@ def main():
         aa = bn(args.VALUE)
         x = aa.dec * met.cfact[ubase]
 
-        print(f"\nLooking for {met.title} with Abstract = {aa}")
+        line =f"\nLooking for {met.title} with Abstract = {aa}"
+        print(line)
         print(f"Base reference unit: {met.uname[ubase]}")
-        print("-" * 50)
+        print("-" * len(line))
 
         for i in range(-3, 5):
             val_dec = int(x // 60**i)
@@ -143,11 +153,11 @@ def main():
                 continue
 
             if args.verbose:
-                print(f"Medida:   {medida_str}")
+                print(f"Meassure:   {medida_str}")
                 print(f"Equiv.:   {obj.SI()}")
                 print(f"Abstract: {abstracto}\n")
             else:
-                print(f"{medida_str:<25} <- {abstracto}")
+                print(f"{medida_str.ljust(width)} <- {abstracto}")
         exit()
 
     m = args.VALUE
@@ -164,9 +174,10 @@ def main():
 
     pp = aa.sex(ubase)
     if args.verbose:
-        print("\nAbstract number for ", met.title)
+        line=f"\nAbstract number for {met.title}"
+        print(line)
         print("    Base unit: ", met.uname[ubase])
-        print("========================================================")
+        print("=" * len(line))
         if pp.isreg:
             print(y, " -> ", pp, "Reciprocal: ", pp.rec())
         else:

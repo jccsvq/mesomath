@@ -2,10 +2,9 @@
 
 ***Mesopotamian Calculator and Metrology Tools***
 
->**Note:** We are currently working on this documentation for the future version {{ release }}.
 
 ```{toctree}
-:maxdepth: 4
+:maxdepth: 1
 :caption: "Contents:"
 
 intro.md

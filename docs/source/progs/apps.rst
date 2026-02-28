@@ -1,6 +1,12 @@
 Apps. Reference
 ===============
 
+babcalc app.
+------------
+.. automodule:: mesomath.babcalc
+   :members:
+   :undoc-members:
+
 metrotable app.
 ---------------
 .. automodule:: mesomath.metrotable

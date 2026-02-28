@@ -65,7 +65,7 @@ autodoc_default_options = {
 add_module_names = False
 
 # Ordena los métodos por tipo (clase, método, etc.) o por fuente
-autodoc_member_order = "bysource"
+autodoc_member_order = "groupwise"
 
 autoclass_content = "both"
 

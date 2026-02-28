@@ -293,15 +293,26 @@ This module is used to obtain lists of such numbers and ultimately build a SQLit
 
 This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the `_MesoM` class which adapts it to Mesopotamian metrological use. The `_MesoM` class, in turn, is inherited by:
 
-*  class `BsyG`: Babylonian counting System G (iku ese bur bur_u sar sar_u sar_gal)
-*  class `BsyS`: Babylonian counting  System S (dis u ges gesu sar sar_u sar_gal)
+*  class `BsyG`: Babylonian counting System G
+    * `šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku`
+*  class `BsyS`: Babylonian counting  System S
+    * `šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš`
 *  class `MesoM`: To represent physical quantities, inherited by:
-    *  class `Blen`: Babylonian length system (susi kus ninda us danna)
-    *  class `Bsur`: Babylonian surface system (se gin sar gan)
-    *  class `Bvol`: Babylonian volume system  (se gin sar gan)
-    *  class `Bcap`: Babylonian capacity system  (se gin sila ban bariga gur)
-    *  class `Bwei`: Babylonian weight system (se gin mana gu)
-    *  class `Bbri`: Babylonian brick counting system (se gin sar gan)
+    *  class `Blen`: Babylonian length system
+        * `danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si`
+    *  class `Bsur`: Babylonian surface system
+        * `gan <-100- sar <-60- gin <-180- se`
+    *  class `Bvol`: Babylonian volume system
+        * `gan <-100- sar <-60- gin <-180- se`
+    *  class `Bcap`: Babylonian capacity system
+        * `gur <-5- bariga <-6- ban2 <-10- sila3 <-10- GAR`
+    *  class `Bwei`: Babylonian weight systemgu)
+        * `gu2 <-60- ma-na <-60- gin2 <-180- še`
+    *  class `Bbri`: Babylonian brick counting system
+        * `gan <-100- sar <-60- gin <-180- se`
+
+
+
 
 Please, read the [tutorial](https://mesomath.readthedocs.io/tutorial.html) to see how to use all these classes.
 

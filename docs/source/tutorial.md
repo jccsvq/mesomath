@@ -1349,12 +1349,50 @@ By inheriting from `MesoM` (via `Blen`), your new class automatically gains all 
 Please see the options for {meth}`.metrolist()<.metrolist>` method.
 
 ```pycon
+--> from mesomath.npvs import Blen, Bsur, Bvol
+--> 
+--> # We define our custom height class
+--> class bh(Blen):
+...     title: str = "Babylonian Height Measurement"
+...     ubase: int = 1  # Fixed to 'kus' (cubit)
+... 
 --> bh.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase=None)
+Measurement          | Sexag. (base)
+--------------------------------------
 1 kus                | 1              
 2 kus                | 2              
 3 kus                | 3              
 4 kus                | 4              
-5 kus                | 5 
+5 kus                | 5              
+--> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
+Measurement                    | Sexag. (base)
+------------------------------------------------
+1/3 kuš3                       | 20             
+1/2 kuš3                       | 30             
+2/3 kuš3                       | 40             
+5/6 kuš3                       | 50             
+1 kuš3                         | 1              
+1 1/6 kuš3                     | 1:10           
+1 1/3 kuš3                     | 1:20           
+1 1/2 kuš3                     | 1:30           
+1 2/3 kuš3                     | 1:40           
+1 5/6 kuš3                     | 1:50           
+1/6 ninda                      | 2              
+--> bh.prtsex = 1
+--> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
+Measurement                    | Sexag. (base)
+------------------------------------------------
+1/3 kuš3                       | 20             
+1/2 kuš3                       | 30             
+2/3 kuš3                       | 40             
+5/6 kuš3                       | 50             
+(1 dis) kuš3                   | 1              
+(1 dis) 1/6 kuš3               | 1:10           
+(1 dis) 1/3 kuš3               | 1:20           
+(1 dis) 1/2 kuš3               | 1:30           
+(1 dis) 2/3 kuš3               | 1:40           
+(1 dis) 5/6 kuš3               | 1:50           
+1/6 ninda                      | 2 
 ```
 
 

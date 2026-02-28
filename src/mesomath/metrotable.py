@@ -9,6 +9,7 @@ from mesomath.npvs import Bsur as bs
 from mesomath.npvs import Bvol as bv
 from mesomath.npvs import Bcap as bc
 from mesomath.npvs import Bwei as bw
+from mesomath.npvs import Bbri as bb
 from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
 
@@ -16,7 +17,7 @@ from mesomath.npvs import BsyS as bS
 
 SYSTEMS = {
     "L": (bl, None), "Lh": (bl, 1), "S": (bs, None),
-    "V": (bv, None), "C": (bc, None), "W": (bw, None),
+    "V": (bv, None), "C": (bc, None), "W": (bw, None),  "B": (bb, None),
     "SysG": (bG, None), "SysS": (bS, None)
 }
 
@@ -161,7 +162,7 @@ def gen_parser() -> argparse.ArgumentParser:
         "-t",
         "--type",
         help="Type of metrological table to print (Try: -r for a remainder)",
-        choices=["L", "Lh", "S", "V", "C", "W", "SysG", "SysS"],
+        choices=["L", "Lh", "S", "V", "C", "W","B", "SysG", "SysS"],
         default=None,
     )
     parser.add_argument(
@@ -277,6 +278,9 @@ def main():
         print("System W: ", bw.title + "s")
         print("    Units: ", *bw.scheme(bw, args.academic))
         print("    Base unit: ", bw.uname[bw.ubase])
+        print("System B: ", bb.title + "s")
+        print("    Units: ", *bb.scheme(bb, args.academic))
+        print("    Base unit: ", bb.uname[bb.ubase])
         print("NPVN System S: ", bS.title)
         print("    Units: ", *bS.scheme(bS, args.academic))
         print("    Base unit: ", bS.uname[bS.ubase])
