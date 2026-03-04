@@ -18,6 +18,7 @@
 
 # %%
 from mesomath.hamming import hamming, genCSV
+from mesomath.babn import BabN as bn
 
 print(hamming(1, 63))
 
@@ -26,7 +27,11 @@ print(hamming(1, 63))
 print(hamming(1691)[0])
 
 # %%
-print(hamming(1000000)[0])
+big_regular = hamming(1000000)[0]
+print(big_regular)
+
+# %%
+bn(big_regular).float()
 
 # %%
 genCSV(63)

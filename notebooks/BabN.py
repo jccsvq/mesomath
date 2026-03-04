@@ -24,7 +24,6 @@
 
 # %%
 from mesomath.babn import BabN as bn
-from ipywidgets import interactive
 
 
 
@@ -48,10 +47,10 @@ print(f"{len(a) = }\n")      ## Number of sexagesimal digits
 print(f"{a.dec = }\n")       ## decimal quivalent
 print(f"{int(a) = }\n")      ## decimal quivalent
 print(f"{a.list = }\n")      ## list of sexagesimal digits
-print(f"{a.factors = }\n")   ## tuplle (i, j, k, l); number is (2^i * 3^j * 5^k * l)
-print(f"{a.isreg = }\n")     ## number is regular
+print(f"{a.factors = }\n")   ## tuple (i, j, k, l); number is (2^i * 3^j * 5^k * l)
+print(f"{a.isreg = }\n")     ## is number regular?
 
-a.explain()  ## Print a short report about the number
+a.explain()                  ## Print a short report about the number
 
 
 # %% [markdown]
@@ -70,13 +69,13 @@ print(f"{b.list = }\n")      ## list of sexagesimal digits
 print(f"{b.factors = }\n")   ## tuplle (i, j, k, l); number is (2^i * 3^j * 5^k * l)
 print(f"{b.isreg = }\n")     ## number is regular?
 
-b.explain()  ## Print a short report about the number
+b.explain()                  ## Print a short report about the number
 
 
 # %% [markdown]
 # ### Sexagesimal input
 #
-# Sexagesimal numbers are entered as strings, using `:` or `.` as digit separators
+# Sexagesimal numbers are entered as strings, using   `:`,  `;`, `.`, `,`,`-` and blank space (` `) as input separators:
 
 # %%
 c = bn('3:5:11:6:40')
@@ -89,6 +88,10 @@ d = bn("19.26.24")
 
 d.explain()
 
+
+# %%
+strange_input = bn('1:2;3,4.5 6-7')
+strange_input
 
 # %% [markdown]
 # ### Tuple input
@@ -111,11 +114,12 @@ print(f"{e.float() = }\n")
 
 (e.f()).explain()
 
-
 # %% [markdown]
 # use the widgets bellow to experiment generating regular numbers
 
 # %%
+from ipywidgets import interactive
+
 def demo_ijk(i=1, j=1, k=1):
     n = bn((i, j, k, 1))
     print(f"{              n = }")
@@ -126,7 +130,7 @@ def demo_ijk(i=1, j=1, k=1):
     print(f"{  (n.rec().dec) = }")
     print(f"{    (n*n.rec()) = }")
     print(f"{(n*n.rec()).dec = }")
-
+    print(f"{((n*n.rec()).f()) = }")
 
 w = interactive(
     demo_ijk,
@@ -411,7 +415,7 @@ d = ((a+b)*(a-b))//c**2
 ll=[a,b,c,d]
 
 print(f"{a = }, {b = }, {c = }\n")
-print(f"{d = }\n")
+print(f"{((a+b)*(a-b))//c**2 = }\n")
 print(f"{ll = }\n")
 print(f"{min(ll) = }\n")
 print(f"{max(ll) = }\n")
@@ -532,6 +536,9 @@ print(f"{c.tail(6) = }\n")
 #
 # Searches the `BabN.database` database for the closest regular number to the object's.
 # `minn` and `maxn`: must be sexagesimal strings using ":" separator. `limdigits` max value is 20.
+
+# %%
+help(c.searchreg)
 
 # %%
 print(f"{c = }\n")

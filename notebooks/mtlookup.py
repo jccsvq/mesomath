@@ -49,6 +49,7 @@
 # * V:   volume meassurements
 # * C:   capacity meassurements
 # * W:   weight meassurements
+# * B:   brick count
 # * SysS:   System S to count objects
 # * SysG:   System G to count objects
 #
@@ -87,7 +88,7 @@
 # you can use options `-s --strict` to suppress them:
 
 # %%
-# ! mtlookup -r -t L 6.40.38 -s
+# ! mtlookup -r -t L 6.40.38 -w 30
 
 # %% [markdown]
 # ###  Pedantic mode
@@ -96,10 +97,10 @@
 
 # %%
 # ! mtlookup -t V '128 gan 133 se' -p
-    
+
 
 # %%
-# ! mtlookup -t V 3:33:20:0:44:20 -pr
+# ! mtlookup -t V 3:33:20:0:44:20 -pr -w 55
 
 # %% [markdown]
 # ### Fractions
@@ -113,7 +114,7 @@
 # You may combine it with `-p` (pedantic mode):
 
 # %%
-# ! mtlookup -t L 1.30 -r -pF1
+# ! mtlookup -t L 1.30 -r -pF1 -w 30
 
 # %% [markdown]
 # ### Academic unit names
@@ -124,6 +125,6 @@
 # ! mtlookup -t L '1 us 30 ninda' -aF1
 
 # %%
-# ! mtlookup -t L 1.30 -r -pF1 -a
+# ! mtlookup -t L 1.30 -r -pF1 -aw 30
 
 # %%

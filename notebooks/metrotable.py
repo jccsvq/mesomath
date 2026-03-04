@@ -30,7 +30,7 @@
 
 # %%
 # ! metrotable
-    
+
 
 # %% [markdown]
 # The output: "Nothing to do, exiting!" indicates that `metrotable` is there, but you haven't told it what to do. You can try also:

@@ -21,19 +21,20 @@
 # In the following, it is assumed that your startup script contains the lines:
 
 # %%
-from mesomath.babn import BabN as bn
-from mesomath.npvs import Blen as bl
-from mesomath.npvs import Bsur as bs
-from mesomath.npvs import Bvol as bv
-from mesomath.npvs import Bcap as bc
-from mesomath.npvs import Bwei as bw
-from mesomath.npvs import BsyG as bG
-from mesomath.npvs import BsyS as bS
-from mesomath.npvs import Bbri as bb
+# Essential imports
+from mesomath.babn import BabN as bl  # Sexagesimal arithmetic
+from mesomath.npvs import Blen as bl  # Length (horizontal and vertical)
+from mesomath.npvs import Bsur as bs  # Surface
+from mesomath.npvs import Bvol as bv  # Volume
+from mesomath.npvs import Bcap as bc  # Capacity
+from mesomath.npvs import Bwei as bw  # Weight
+from mesomath.npvs import BsyG as bG  # Counting system G
+from mesomath.npvs import BsyS as bS  # Counting system S
+from mesomath.npvs import Bbri as bb  # Brick count
 
 
 # %% [markdown]
-# so that we can access the classes `BabN, Blen, Bsur,`... using the shorter aliases `bn, bl, bs,` etc. If you are using `babcalc`, this has already been done for you automatically.
+# so that we can access the classes `BabN`, `Blen`, `Bsur`,... using the shorter aliases `bn`, `bl`, `bs`, etc. If you are using `babcalc`, this has already been done for you automatically.
 #
 # This is what the classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, `bS` and `ba` represent:
 #
@@ -100,6 +101,11 @@ print(*bc.scheme(bc))
 print(*bc.scheme(bc,1))
 
 # %% [markdown]
+# >**There is no class dedicated to Babylonian height measurements**; this is by design because it is unnecessary. The only difference between horizontal and vertical length measurements lies in their metrological tables, and this is covered in the [`metrotable` tutorial](metrotable.ipynb) utility. However, if you need one, you can easily [create one](extensions.ipynb) yourself.
+
+# %% [markdown]
+# ## Entering meassurements
+#
 # In a similar way to what we saw for sexagesimal numbers with the `bn` class. We can introduce measurements in two different ways:
 
 # %%
@@ -168,12 +174,13 @@ for i in ls:
 # %% [markdown]
 # (See page 8 of [Floating calculation in Mesopotamia](https://hal.science/hal-01515645v2/document) by Christine Proust).
 #
+# But you will rarely need to resort to this since you have specialized tools available:
 #
-# > The `metrotable.py` tool, which specializes in printing segments of metrological tables, is located in the `progs` subdirectory of this package. It also includes its own [tutorial](https://jccsvq.github.io/mesomath/progs/metrotable.html).
-# >
-# >The `mtlookup.py` tool in the `progs` subdirectory simulates direct and inverse searches in metrological tables. It also includes its own [tutorial](https://jccsvq.github.io/mesomath/progs/mtlookup.html).
-# >
-#
+# * The [`metrotable`](metrotable.ipynb) tool, which specializes in printing segments of metrological tables.
+# * The [`mtlookup.py`](mtlookup.ipynb) tool, which simulates direct and inverse searches in metrological tables.
+# * The `.metrolist()` method that we will see bellow.
+
+# %% [markdown]
 # Since version v1.1.0 you can get the metrological value of an object directly using the `.metval()` method:
 
 # %%
@@ -196,34 +203,34 @@ bl('1 kus 15 susi').metval()
 a >= b
 
 # %%
-a+b
+a + b
 
 # %%
-a-b
+a - b
 
 # %%
-b-a                   # a-b == b-a !!!
+b - a                   # a-b == b-a !!!
 
 # %%
-a-b == b-a
+a - b == b - a
 
 # %%
-2*a
+2 * a
 
 # %%
-b*2
+b * 2
 
 # %%
-b*2.5
+b * 2.5
 
 # %%
-a/2
+a / 2
 
 # %%
-(a+2*b)/5
+(a + 2 * b) / 5
 
 # %%
-(a+2*b)/5.3
+(a + 2 * b) / 5.3
 
 # %% [markdown]
 # Additionally, for length measurements we can multiply them together to obtain surfaces and volumes, and for surfaces we can multiply them by lengths to obtain volumes:
@@ -249,7 +256,7 @@ print(f"v = {s * c = }\n")
  v.explain()
 
 # %%
-v2=a*b*c
+v2 = a * b * c
 print(f"v2 = {a * b * c = }\n")
 v2 == v
 print(f"{v2 == v = }\n")
@@ -258,7 +265,7 @@ print(f"{v2 == v = }\n")
 # %% [markdown]
 # ## Systems S and G
 #
-# n cases like this:
+# In cases like this:
 
 # %%
 a = bv('128 gan')
@@ -459,7 +466,7 @@ b
 
 # %%
 b.SI()
-    
+
 
 # %% [markdown]
 # If you have 10000 type-2 bricks, you can do:
@@ -476,7 +483,7 @@ c.SI()
 
 # %%
 c.explain()
-    
+
 
 # %% [markdown]
 # that you can convert into a volume:

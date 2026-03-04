@@ -26,6 +26,8 @@
 #
 # * [`BabN` class tutorial](BabN.ipynb)
 # * [Metrological classes tutorial](Metrology.ipynb)
+# * [Extending **MesoMath**](extension.ipynb)
+# * [Economic methods](economics.ipynb)
 #
 # ## Application tutorials
 #

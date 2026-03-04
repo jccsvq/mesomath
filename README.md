@@ -258,6 +258,8 @@ to install from [pypi.org](https://pypi.org/). But you can also install from the
 
 Depending on the version of `Python 3` installed, you may need `typing-extensions>=4.0.0`, which was added as a dependency starting with version v1.2.4. Otherwise,MesoMath only uses  standard Python modules: `math`, `itertools`, `argparse`, `os`, `re`, `types`, `typing` and `sqlite3`. 
 
+Since version `v1.4.0` MesoMath requires `parsimonious==0.11.0`.
+
 The dependencies expressed in `requirements.txt` are for testing and documentation building.
 
 Tested with Python 3.11.2 and 3.12.8 under Debian GNU/Linux 12 (bookworm), 3.11.2 in x86_64 under aarch64 (raspberrypi 5) and Python 3.10.19 in Binder.

@@ -19,15 +19,16 @@ but class Npvs is of general use.
 
 """
 
+import sys
 from re import sub
 from typing import Final
-
-import sys
 
 if sys.version_info >= (3, 11):
     from typing import Self
 else:
     from typing_extensions import Self
+from parsimonious.exceptions import IncompleteParseError, ParseError, VisitationError
+
 from mesomath.babn import BabN
 
 # Data
@@ -469,55 +470,49 @@ class _MesoM(Npvs):
              formatted string representing the value. See the tutorial
         :type x: int | float | str
         """
+        # CASE 1: Numeric input (Integer)
+        # Directly represents the value in the smallest unit of the system.
         if type(x) is int:
             x = abs(x)
             dec = x
             lista = self.dec2un(x)
+
+        # CASE 2: Numeric input (Float)
+        # Rounded to the nearest integer to maintain discrete metrological consistency.
         elif type(x) is float:
             dec = int(round(abs(x), 0))
             lista = self.dec2un(dec)
-        elif type(x) is str:
-            x = normalize(x)
-            if x.find("(") >= 0:
-                xx = x.split("(")[1:]
-                xnew = ""
-                for i in xx:
-                    xy = i.split(")")
-                    if xy[-1].find(self.uname[-1]) >= 0:
-                        coef = self.sexsys(xy[0])
-                    else:
-                        coef = BsyS(xy[0])
-                    xnew += str(coef.dec) + " "
-                    xnew += xy[1] + " "
-                xnew = sub(r" *\+", "+", xnew)
-                #                print(xnew)
-                x = xnew
-            ll = x.split()
-            l1 = ll[::2]
-            l2 = ll[1::2]
-            t = 0
-            for _ in range(len(l2)):
-                # print(f"{l2 = }, {self.uname = }")
-                j = self.uname.index(l2[_])
-                if l1[_].find("+") >= 0:
-                    l3 = l1[_].split("+")
-                    t += int(l3[0]) * self.cfact[j]
-                    if l3[1] == "1/6":
-                        t += self.cfact[j] // 6
-                    elif l3[1] == "1/3":
-                        t += self.cfact[j] // 3
-                    elif l3[1] == "1/2":
-                        t += self.cfact[j] // 2
-                    elif l3[1] == "2/3":
-                        t += 2 * self.cfact[j] // 3
-                    elif l3[1] == "5/6":
-                        t += 5 * self.cfact[j] // 6
-                else:
-                    t += int(l1[_]) * self.cfact[j]
-            dec = t
-            lista = self.dec2un(t)
-        self.__dec: Final[int] = dec
-        self.__list: Final[list[int]] = lista
+
+        # CASE 3: String input (The "Cuneiform" parser)
+        # Handles complex strings like "1(u) 2(dis) nindan" or fractions.
+        elif isinstance(x, str):
+            from mesomath.parser import MesoInterpreter
+
+            # IMPORTANTE: No envíes la clase base BsyS.
+            # Envía el sistema que esta clase específica (Bcap, Bwei, etc.) usa.
+            # Si tu clase tiene un atributo 'sexsys' definido a nivel de clase:
+            target_sexsys = getattr(self, "sexsys", None)
+
+            try:
+                # Create the interpreter with the current class context
+                parser = MesoInterpreter(self.__class__, target_sexsys)
+
+                # Parse the string into a decimal value
+                dec = parser.parse(x)
+
+                # Convert decimal value to the internal unit list representation
+                # This uses your existing dec2un method
+                lista = self.dec2un(dec)
+
+            except (ParseError, IncompleteParseError, VisitationError, ValueError):
+                # Handles "unrecognized" characters or grammar violations
+                raise ValueError(
+                    "Incorrect input string: check format or units."
+                ) from None
+
+        # Internal state storage (Immutable/Final)
+        self.__dec: Final[int] = dec  # Total value in smallest units
+        self.__list: Final[list[int]] = lista  # Value broken down by unit
 
     @property
     def dec(self):
@@ -635,6 +630,15 @@ class BsyG(_MesoM):  # Babylonian System G numeration
     siv: float = 1
     siu: str = "#"
     ubase: int = 0  # iku
+    dic_cfact = {
+        "iku": 1,
+        "ese": 6,
+        "bur": 18,
+        "buru": 180,
+        "sar": 1080,
+        "saru": 10800,
+        "sargal": 64800,
+    }
 
 
 class BsyS(_MesoM):  # Babylonian System S numeration
@@ -653,6 +657,15 @@ class BsyS(_MesoM):  # Babylonian System S numeration
     siv: float = 1
     siu: str = "#"
     ubase: int = 0  # dis
+    dic_cfact = {
+        "dis": 1,
+        "u": 10,
+        "ges": 60,
+        "gesu": 600,
+        "sar": 3600,
+        "saru": 36000,
+        "sargal": 216000,
+    }
 
 
 class MesoM(_MesoM):

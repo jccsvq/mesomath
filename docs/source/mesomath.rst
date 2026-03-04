@@ -39,3 +39,10 @@ mesomath.npvs module
    :special-members:
    :show-inheritance:
 
+mesomath.parser.interpreter module
+----------------------------------
+
+.. automodule:: mesomath.parser.interpreter
+   :members:
+   :special-members:
+   :show-inheritance:
