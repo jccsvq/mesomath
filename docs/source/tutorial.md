@@ -25,6 +25,7 @@
 | `Bwei` | OBP weights         | `bw`     |
 | `BsyG` | System **G** counts | `bG`     |
 | `BsyS` | System **S** counts | `bS`     |
+| `BsyC` | System **C** counts | `bC`     |
 | `Bbri` | OBP volume in bricks| `bb`     |
 
 >**(*) OBS:** Old Babylonian Period
@@ -65,6 +66,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> from mesomath.npvs import Bwei as bw
 >>> from mesomath.npvs import BsyG as bG
 >>> from mesomath.npvs import BsyS as bS
+>>> from mesomath.npvs import BsyC as bC
 >>> from mesomath.npvs import Bbri as bb
 >>> ...
 ```
@@ -732,6 +734,7 @@ from mesomath.npvs import Bcap as bc
 from mesomath.npvs import Bwei as bw
 from mesomath.npvs import BsyG as bG
 from mesomath.npvs import BsyS as bS
+from mesomath.npvs import BsyC as bC
 from mesomath.npvs import Bbri as bb
 ```
 
@@ -757,6 +760,9 @@ This is what the classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, `bS` and `bb` repre
 
     class  bS: Babylonian counting System S:
                šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
+    
+    class  bC: Babylonian counting System C:
+               u <-10- diš
 
     Class  bb: Babylonian brick counting system:
                GAN2 <-100- sar <-60- gin2 <-180- še
@@ -772,6 +778,7 @@ bc| Babylonian capacity system|  se, gin, sila, ban, bariga, gur
 bw| Babylonian weight system|  se, gin, mana, gu
 bG| Babylonian System G|  iku, ese, bur, buru, sar, saru, sargal
 bS| Babylonian System S|  dis, u, ges, gesu, sar, saru, sargal
+bC| Babylonian System C|  dis, u
 bb| Babylonian brick counting system|  se gin sar gan
 
 >Note that scribes wrote volumes as an equivalent surface area multiplied by a standard height of 1 kus; thus, they used the same metrology for surfaces and volumes. Here, however, two different classes will be used, so that one can multiply a surface area by a length to obtain a volume, but one cannot multiply a volume by a length to obtain a four-dimensional volume, which was probably beyond the scribes' understanding.
@@ -784,6 +791,12 @@ At any time, you can review the names of the units in each system and their fact
 --> bc.ufact
 [180, 60, 10, 6, 5]
 ```
+the cumulative factors:
+
+```pycon
+--> bc.cfact
+[1, 180, 10800, 108000, 648000, 3240000]
+```
 
 and the academic names:
 
@@ -792,7 +805,7 @@ and the academic names:
 ['še', 'gin2', 'sila3', 'ban2', 'bariga', 'gur']
 ```
 
-or
+or, otherwise:
 
 ```pycon
 --> print(*bc.scheme(bc))
@@ -858,20 +871,24 @@ Note that the value given as "Sexagesimal floating value of the above:" is gener
 This will be useful if you want to recreate **metrological lists** yourself. For example, code:
 
 ```python
-from mesomath.npvs import Blen as bl
+from mesomath import Blen as bl
 
-ls =[]
-for i in range(1,10):
-    ls.append(str(i)+' susi')
-for i in '10 15 20 25'.split():
-    ls.append(i+' susi')
-ls.append('1 kus')
-for i in '10 15 20 25'.split():
-    ls.append('1 kus '+i+' susi')
-ls.append('2 kus')
+ls = []
+for i in range(1, 10):
+    ls.append(str(i) + " susi")
+
+for i in "10 15 20 25".split():
+    ls.append(i + " susi")
+
+ls.append("1 kus")
+for i in "10 15 20 25".split():
+    ls.append("1 kus " + i + " susi")
+
+ls.append("2 kus")
 for i in ls:
-    x=bl(i)
-    print(f'{str(x).ljust(15)} -> {str(x.sex(2)).rjust(6)}')
+    x = bl(i)
+    print(f"{str(x).ljust(15)} -> {str(x.sex(2)).rjust(6)}")
+
 ```
 
 
@@ -917,6 +934,7 @@ For instance for horizontal distances (base unit ninda)
 5 kus                | 25   
 ```
 
+
 For vertical distances (base unit kus)
 ```pycon
 --> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase =1)
@@ -927,17 +945,26 @@ For vertical distances (base unit kus)
 5 kus                | 5   
 ```
 
-Since version v1.1.0 you can get the metrological value of an object directly using the `.metval()` method:
+You can get also the metrological value of an object directly using the `.metval()` method:
 
 ```pycon
 --> bl('1 kus 15 susi').metval()
 7:30
 ```
 
+We finish this section with the `.si()` and `.SI()` methods that show us the approximate equivalence of the Babylonic measures in the International System of Units:
+
+```pycon
+--> w = bw(' 1 mana 3 gin')
+--> w.si()
+0.525
+--> w.SI()
+'0.525 kilograms'
+```
 
 ### Operations
 
-For objects of the same class, the following operations are available:
+For objects of the **same** class, the following operations are available:
 
 * Addition
 * Subtraction (returns the absolute value of the difference)
@@ -1014,20 +1041,20 @@ Finally, in cases like this:
 128 gan
 ```
 
-we might prefer to see the coefficients of the units expressed in the S system (G system for surfaces and volumes), to do this:
+we might prefer to see the coefficients of the units expressed in the sexagesimal systems C, S and G (see [Appendix](#systems-SGC) for the use of System C, S and G in MesoMath Metrology):
 
 ```pycon
---> bv.prtsex=True
+--> bv.prtsex=True  # switch to sexagesimal mode
 --> a
 (7 bur 2 iku) gan
 ```
 
-This changes the default for objects of the `bv` class and makes the output more closely mimic the way the measurements were actually inscribed on the clay tablets, but it complicates things for the modern reader:
+This changes the default for objects of the `bv` class and makes the output more closely mimic the way the measurements were actually inscribed on clay tablets, but it complicates things for the modern reader:
 
 ```pycon
 --> a = bv('128 gan 133 se')
 --> a
-(7 bur 2 iku) gan (2 ges 1 u 3 dis) se
+(7 bur 2 iku) gan (7 bur 1 ese 1 iku) se
 ```
 
 If you want this to be the default for all classes, use:
@@ -1055,6 +1082,16 @@ The third input method cited above makes use of these types of strings; in fact,
 460800 gan 44 sar 20 gin
 ```
 
+Note that we can also enter the coefficients of the units in sexagesimal form:
+
+```pycon
+--> b = bv('2:8:0:0 gan 44 sar 20 gin')
+--> b
+460800 gan 44 sar 20 gin
+```
+
+but only using `:` as a separator.
+
 ### Fractions
 
 There is also basic support for entering the **principal fractions**: 1/6, 1/3, 1/2, 2/3, 5/6 (and only for them), they can be entered in several ways:
@@ -1078,6 +1115,7 @@ There is also basic support for entering the **principal fractions**: 1/6, 1/3, 
 --> a=bl('21/3 ninda')
 --> a
 2 ninda 4 kus
+
 ```
 
 
@@ -1091,7 +1129,7 @@ For output using 1/3, 1/2, 2/3, 5/6 fractions, you can use the `.prtf()` method:
 '17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
 ```
 
-and if you wish also include  `1/6`:
+and if you wish also include the less frecuently used fraction `1/6`:
 
 ```pycon
 --> a.prtf(1)
@@ -1143,6 +1181,7 @@ Since v1.1.0, the .prtf() method has a second switch that allows the academic un
 '(1 u 7 dis) danna (9 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
 --> a.prtf(1,1)
 '(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
+
 ```
 
 This kind of string can also be used as input:
@@ -1163,7 +1202,12 @@ equivalent to:
 
 ### Volume vs. Capacity
 
-There were two systems for measuring volume: **capacities**, used to measure grain, beer, and other types of food and goods, and **volume** proper, used to measure everything else. Here, they are represented by the metrological classes `Bcap` (imported here as `bc`) and `Bvol` (`bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `.cap()` and `.vol()`:
+There were two systems for measuring volume: 
+
+* **capacities**, used to measure grain, beer, and other types of food and goods
+* **volume** proper, used to measure everything else. 
+
+Here, they are represented by the metrological classes `Bcap` (imported in `babcalc` as `bc`) and `Bvol` (imported as `bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `Bvol.cap()` and `Bcap.vol()`:
 
 ```pycon
 --> a = bv('1 gin')
@@ -1221,10 +1265,11 @@ This is for  *nalbanum* =1.0  type-12 bricks, for type-2 bricks with decimal *na
 '5184.0 bricks'
 ```
 
-If you have 10000 type-2 bricks, you can do:
+A *sar* is equivalent to 10800 *še* and also to 720 bricks; therefore, each brick is equivalent to $10800/720=15$ *še*.
+Then, if we have 10000 type-2 bricks,  we can do:
 
 ```pycon
---> c = bb(15 * 10000)
+--> c = bb(15 * 10000)  # 15 še/brick
 --> c
 13 sar 53 gin 60 se
 --> c.SI()
@@ -1246,7 +1291,7 @@ Approximate SI value: 10000.0 bricks
 that you can convert into a volume:
 
 ```pycon
---> d = c.vol(7.20)
+--> d = c.vol(7.20)  # 7.20 nalbanum of type-2 bricks
 --> d.explain()
 This is a Babylonian volume meassurement: 1 sar 55 gin 133 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
@@ -1544,3 +1589,134 @@ Approximate SI value: 1000.0 litres
 
 etc. but we should also redefine the rest of the classes to ensure consistency in the operations with the new units.
 
+
+## Apendix
+
+(systems-SGC)=
+### Use of System C, S and G in MesoMath Metrology
+
+According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneiform to Transliteration.  Table 9 <ref-Proust3>`
+
+|Meassurement| System | Unit   | Class            |
+|------------|--------|--------|------------------|
+| capacities | C      | gin2   | Bcap             |
+| capacities | C	  | sila3  | Bcap             |
+| capacities | C*     | ban2   | Bcap             |
+| capacities | C*     | bariga | Bcap             |
+| capacities | S      | gur	   | Bcap             |
+| weights    | C      | še     | Bwei             |
+| weights    | C	  | gin2   | Bwei             |
+| weights    | C	  | ma-na  | Bwei             |
+| weights    | S	  | gu2    | Bwei             |
+| surfaces   | C      | še     | Bsur, Bvol, Bbri |
+| surfaces   | C      | gin2   | Bsur, Bvol, Bbri |
+| surfaces   | C      | sar    | Bsur, Bvol, Bbri |
+| surfaces   | G      | GAN2   | Bsur, Bvol, Bbri |
+| lengths    | C      | šu-si  | Blen             |
+| lengths    | C      | kuš3   | Blen             |
+| lengths    | C      | ninda  | Blen             |
+| lengths    | C      | UŠ     | Blen             |
+| lengths    | C      | danna  | Blen             |
+
+>**(*)**: Note These are not in the reference.
+
+(catalog-of-metrological-expressions)=
+### Catalog of metrological expressions
+
+#### class: Blen  
+
+    (1 u 7 dis) danna (9 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si
+    (1 u 7 dis) danna (9 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi
+    17 danna 9 us 35 ninda 11 kus 14 susi
+    17 1/6 danna 4 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si
+    17 danna 9 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si
+    17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi
+    (1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si
+    (1 u 7 dis) danna (9 dis) us (3 u 5 dis) ninda (1 u 1 dis) kus (1 u 4 dis) susi
+    (1 u 7 dis) 1/6 danna (4 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi
+    17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi
+
+#### class: Bsur  
+
+    (1 ese 4 iku) GAN2 (3 u 9 dis) sar (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
+    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) gin (9 bur 2 iku) se
+    10 gan 39 sar 11 gin 164 se
+    10 GAN2 39 sar 11 5/6 gin2 14 še
+    10 gan 39 1/6 sar 1 5/6 gin 14 se
+    (1 ese 4 iku) gan (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin (1 u 4 dis) se
+    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) 5/6 gin (1 u 4 dis) se
+    10 gan 39 sar 11 5/6 gin 14 se
+    (1 ese 4 iku) GAN2 (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin2 (1 u 4 dis) še
+    10 GAN2 39 1/6 sar 1 5/6 gin2 14 še
+
+#### class: Bvol  
+
+    (1 ese 4 iku) GAN2 (3 u 9 dis) sar (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
+    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) gin (9 bur 2 iku) se
+    10 gan 39 sar 11 gin 164 se
+    10 GAN2 39 sar 11 5/6 gin2 14 še
+    10 gan 39 1/6 sar 1 5/6 gin 14 se
+    (1 ese 4 iku) gan (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin (1 u 4 dis) se
+    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) 5/6 gin (1 u 4 dis) se
+    10 gan 39 sar 11 5/6 gin 14 se
+    (1 ese 4 iku) GAN2 (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin2 (1 u 4 dis) še
+    10 GAN2 39 1/6 sar 1 5/6 gin2 14 še
+
+#### class: Bcap  
+
+    (3 as) gur (2 as) 1/6 bariga 1/2 ban (4 dis) 1/6 sila (1 dis) 5/6 gin (1 u 4 dis) se
+    (3 as) gur (2 as) bariga (1 dis) ban (9 dis) sila (1 u 1 dis) gin (2 ges 4 u 4 as) se
+    3 gur 2 1/6 bariga 1/2 ban2 4 1/6 sila3 1 5/6 gin2 14 še
+    (3 as) gur (2 as) bariga (1 dis) 1/2 ban2 (4 dis) sila3 (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
+    (3 as) gur (2 as) bariga (1 dis) 1/2 ban (4 dis) sila (1 u 1 dis) 5/6 gin (1 u 4 dis) se
+    3 gur 2 bariga 1 ban 9 sila 11 gin 164 se
+    3 gur 2 1/6 bariga 1/2 ban 4 1/6 sila 1 5/6 gin 14 se
+    3 gur 2 bariga 1 1/2 ban2 4 sila3 11 5/6 gin2 14 še
+    (3 as) gur (2 as) 1/6 bariga 1/2 ban2 (4 dis) 1/6 sila3 (1 dis) 5/6 gin2 (1 u 4 dis) še
+    3 gur 2 bariga 1 1/2 ban 4 sila 11 5/6 gin 14 se
+
+#### class: Bwei  
+
+    (1 u 7 as) gu (1 u 9 dis) mana (1 u 1 dis) gin (2 ges 4 u 4 as) se
+    17 1/6 gu 9 1/6 mana 1 5/6 gin 14 se
+    (1 u 7 as) 1/6 gu (9 dis) 1/6 mana (1 dis) 5/6 gin (1 u 4 dis) se
+    17 gu 19 mana 11 gin 164 se
+    (1 u 7 as) gu (1 u 9 dis) mana (1 u 1 dis) 5/6 gin (1 u 4 dis) se
+    (1 u 7 as) gu2 (1 u 9 dis) ma-na (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
+    17 gu2 19 ma-na 11 5/6 gin2 14 še
+    17 gu 19 mana 11 5/6 gin 14 se
+    (1 u 7 as) 1/6 gu2 (9 dis) 1/6 ma-na (1 dis) 5/6 gin2 (1 u 4 dis) še
+    17 1/6 gu2 9 1/6 ma-na 1 5/6 gin2 14 še
+
+#### class: Bbri  
+
+    (1 ese 4 iku) GAN2 (3 u 9 dis) sar (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
+    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) gin (9 bur 2 iku) se
+    10 gan 39 sar 11 gin 164 se
+    10 GAN2 39 sar 11 5/6 gin2 14 še
+    10 gan 39 1/6 sar 1 5/6 gin 14 se
+    (1 ese 4 iku) gan (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin (1 u 4 dis) se
+    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) 5/6 gin (1 u 4 dis) se
+    10 gan 39 sar 11 5/6 gin 14 se
+    (1 ese 4 iku) GAN2 (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin2 (1 u 4 dis) še
+    10 GAN2 39 1/6 sar 1 5/6 gin2 14 še
+
+#### class: BsyS  
+
+    51 5/6 šar2-gal 1/2 šaru 2 1/2 šar2 1/2 gešu 2/3 geš 4 aš
+    51 sargal 5 saru 7 sar 3 gesu 5 ges 4 u 4 as
+    (5 u 1 dis) 5/6 šar2-gal 1/2 šaru (2 dis) 1/2 šar2 1/2 gešu 2/3 geš (4 dis) aš
+    51 5/6 sargal 1/2 saru 2 1/2 sar 1/2 gesu 2/3 ges 4 as
+
+#### class: BsyG  
+
+    (17 u 3 dis) šar2-gal (1 dis) šaru (1 dis) 5/6 šar2 1/2 buru (4 dis) bur3 1/3 eše3
+    173 šar2-gal 1 šaru 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
+    173 1/6 sargal 1 5/6 sar 1/2 buru 4 bur 1/3 ese
+    (17 u 3 dis) 1/6 šar2-gal (1 dis) 5/6 šar2 1/2 buru (4 dis) bur3 1/3 eše3
+    (17 u 3 dis) sargal (1 dis) saru (1 dis) 5/6 sar 1/2 buru (4 dis) bur 1/3 ese
+    2:53 sargal 1 saru 1 sar 5 buru 9 bur 2 iku
+    (17 u 3 dis) 1/6 sargal (1 dis) 5/6 sar 1/2 buru (4 dis) bur 1/3 ese
+    173 sargal 1 saru 1 sar 5 buru 9 bur 2 iku
+    173 1/6 šar2-gal 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
+    173 sargal 1 saru 1 5/6 sar 1/2 buru 4 bur 1/3 ese

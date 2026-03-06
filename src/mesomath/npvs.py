@@ -488,9 +488,6 @@ class _MesoM(Npvs):
         elif isinstance(x, str):
             from mesomath.parser import MesoInterpreter
 
-            # IMPORTANTE: No envíes la clase base BsyS.
-            # Envía el sistema que esta clase específica (Bcap, Bwei, etc.) usa.
-            # Si tu clase tiene un atributo 'sexsys' definido a nivel de clase:
             target_sexsys = getattr(self, "sexsys", None)
 
             try:
@@ -553,47 +550,74 @@ class _MesoM(Npvs):
         print(f"Sexagesimal floating value of the above: {self.sex(0)}")
         print(f"Approximate SI value: {self.SI()}")
 
+    def pure_sex(self) -> str:
+        """Devuelve la representación numérica pura sin nombres de unidades."""
+        # Para BsyG esto devolvería "9:1:5" en lugar de "9 bur 1 ese 5 iku"
+        return ":".join(str(v) for v in reversed(self.list)).strip("0:") or "0"
+
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
-        the units in the output
+        the units in the output. Modified version for v1.4.0: Integrates with 
+        MesoInterpreter's scholastic systems (C and S)
 
         :onesixth: Adds 1/6 to the previous set of fractions if True
         :type onesixth: bool, (default = False)
         :actual: if True, uses academic unit names on output
         :type actual: bool, (default: False)
         """
-        if onesixth:
-            fdic = fdic1
-        else:
-            fdic = fdic0
+        fdic = fdic1 if onesixth else fdic0
         length = len(self.list)
         ll = self.list.copy()
         ff = ["" for i in range(length)]
+
+        # 1. Fraction detection logic
         for i in range(length - 1):
             k = self.ufact[i]
-            (zfrac, z) = fdic[k]
-            for j in range(len(z)):
-                if ll[i] >= z[j]:
-                    ll[i] -= z[j]
-                    ff[i + 1] = zfrac[j]
-                    break
+            if k in fdic: # We avoid errors if the factor is not in the dictionary
+                zfrac, z = fdic[k]
+                for j in range(len(z)):
+                    if ll[i] >= z[j]:
+                        ll[i] -= z[j]
+                        ff[i + 1] = zfrac[j]
+                        break
+
+        # 2. Construction of value strings
+        threshold = getattr(self, "sex_threshold", 0)
+        
         for i in range(length):
-            if ll[i] == 0 and ff[i] == "":
-                pass
-            else:
-                if ff[i] == "":
-                    ff[i] = str(ll[i])
+            value_str = ""
+            if ll[i] != 0 or ff[i] != "":
+                if ll[i] != 0:
+                    # --- IMPROVEMENT: We respect prtsex and C/S Systems ---
+                    if not self.prtsex:
+                        value_str = str(ll[i])
+                    else:
+                        # If unit >= threshold or value >= 60 -> System S
+                        if i >= threshold or ll[i] >= 60:
+                            # Final recommended version for prtf and __repr__
+                            if hasattr(self, 'sexsys') and self.sexsys:
+                               # We use the "place value" (BabN) representation for the inside
+                                # of the parentheses, avoiding unit names that break the parser.
+                                val_obj = self.sexsys(ll[i])
+                                value_str = f"({val_obj.pure_sex()})" 
+                            else:
+                                value_str = f"({BsyC(ll[i])})"
+
+                
+                # We combine the value (if it exists) with the fraction found
+                if ff[i] != "":
+                    ff[i] = (value_str + " " + ff[i]).strip()
                 else:
-                    if ll[i] != 0:
-                        ff[i] = str(ll[i]) + " " + ff[i]
-        ss = ""
+                    ff[i] = value_str
+
+        # 3. Final assembly
+        ss = []
+        names = self.aname if actual else self.uname
         for i in reversed(range(length)):
             if ff[i] != "":
-                if actual:
-                    ss += ff[i] + " " + self.aname[i] + " "
-                else:
-                    ss += ff[i] + " " + self.uname[i] + " "
-        return ss[:-1]
+                ss.append(f"{ff[i]} {names[i]}")
+        
+        return " ".join(ss)
 
     def __repr__(self) -> str:
         """Returns string representation of object."""
@@ -616,7 +640,7 @@ class _MesoM(Npvs):
 
 class BsyG(_MesoM):  # Babylonian System G numeration
     """This class implement Non-Place-Value System arithmetic
-    for Babylonian System-G numeration
+    for Babylonian System-G (GAN2) numeration
 
         **šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku**
 
@@ -643,22 +667,22 @@ class BsyG(_MesoM):  # Babylonian System G numeration
 
 class BsyS(_MesoM):  # Babylonian System S numeration
     """This class implement Non-Place-Value System arithmetic
-    for Babylonian System-S numeration
+    for Babylonian System-S (Sexagesimal) numeration
 
-        **šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš**
+        **šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- aš**
 
     """
 
     title: str = "Babylonian System S to count objects"
-    uname: list[str] = "dis u ges gesu sar saru sargal".split()
-    aname: list[str] = "diš u geš geš'u šar2 šar'u šar2-gal".split()
+    uname: list[str] = "as u ges gesu sar saru sargal".split()
+    aname: list[str] = "aš u geš geš'u šar2 šar'u šar2-gal".split()
     ufact: list[int] = [10, 6, 10, 6, 10, 6]
     cfact: list[int] = [1, 10, 60, 600, 3600, 36000, 216000]
     siv: float = 1
     siu: str = "#"
-    ubase: int = 0  # dis
+    ubase: int = 0  # as
     dic_cfact = {
-        "dis": 1,
+        "as": 1,
         "u": 10,
         "ges": 60,
         "gesu": 600,
@@ -666,6 +690,24 @@ class BsyS(_MesoM):  # Babylonian System S numeration
         "saru": 36000,
         "sargal": 216000,
     }
+
+class BsyC(_MesoM):  # Babylonian System S numeration
+    """This class implement Non-Place-Value System arithmetic
+    for Babylonian System-C (Common) numeration
+
+        **u <-10- diš**
+
+    """
+
+    title: str = "Babylonian System S to count objects"
+    uname: list[str] = "dis u".split()
+    aname: list[str] = "diš u".split()
+    ufact: list[int] = [10]
+    cfact: list[int] = [1, 10]
+    siv: float = 1
+    siu: str = "#"
+    ubase: int = 0  # dis
+
 
 
 class MesoM(_MesoM):
@@ -699,24 +741,34 @@ class MesoM(_MesoM):
                     ll[i] -= z[j]
                     ff[i + 1] = zfrac[j]
                     break
+        # DENTRO DE prtf, en el bucle de construcción:
+        threshold = getattr(self, "sex_threshold", 0)
+        
         for i in range(length):
-            if ll[i] == 0 and ff[i] == "":
-                pass
-            else:
-                if self.prtsex:
-                    if ff[i] == "":
-                        ff[i] = "(" + str(self.sexsys(ll[i])) + ")"
-                    #                        ff[i] = '('+(self.sexsys(ll[i])).prtf(onesixth)+')'
-                    else:
-                        if ll[i] != 0:
-                            ff[i] = "(" + str(self.sexsys(ll[i])) + ")" + " " + ff[i]
-                #                            ff[i] =  '('+(self.sexsys(ll[i])).prtf(onesixth)+')'+' '+ff[i]
+            if ll[i] != 0 or ff[i] != "":
+                if not self.prtsex:
+                    value_str = str(ll[i]) if ll[i] != 0 else ""
                 else:
-                    if ff[i] == "":
-                        ff[i] = str(ll[i])
+                    if ll[i] == 0:
+                        value_str = ""
                     else:
-                        if ll[i] != 0:
-                            ff[i] = str(ll[i]) + " " + ff[i]
+                        # REGLA DE ORO v1.4.0
+                        # Si el índice de la unidad es menor al umbral Y el valor < 60:
+                        if i < threshold and ll[i] < 60:
+                            value_str = f"({BsyC(ll[i])})"
+                        else:
+                            # Versión final recomendada para prtf y __repr__
+                            if hasattr(self, 'sexsys'):
+                                value_str = f"({self.sexsys(ll[i])})"
+                            else:
+                                # Si soy BsyS, me represento a mí mismo sin buscar un sexsys
+                                value_str = f"({self.__class__(ll[i]).__repr_base__()})"
+                
+                # Unir con la fracción
+                if ff[i] != "":
+                    ff[i] = (value_str + " " + ff[i]).strip()
+                else:
+                    ff[i] = value_str
         ss = ""
         for i in reversed(range(length)):
             if ff[i] != "":
@@ -807,18 +859,33 @@ class MesoM(_MesoM):
             raise ValueError(f"Error in silver payment calculation: {e}")
 
     def __repr__(self) -> str:
-        """Returns string representation of object."""
+        """
+        Academic representation: System C for small units, System S for large 
+        units or overflow values (>60).
+        """
+        if not self.list or all(v == 0 for v in self.list):
+            return f"0 {self.uname[0]}"
+
         ss = []
+        # We retrieve the threshold; if it does not exist, by default it is 0 (all sexagesimal)
+        threshold = getattr(self, "sex_threshold", 0)
+
         for i in reversed(range(len(self.uname))):
-            if self.list[i] != 0:
+            val = self.list[i]
+            if val != 0:
                 if not self.prtsex:
-                    ss.append(str(self.list[i]))
+                    # Standard output (pure decimal)
+                    ss.append(str(val))
                 else:
-                    if i == len(self.uname) - 1:
-                        ss.append("(" + str(self.sexsys(self.list[i])) + ")")
+                    # Academic Output (Scholastic)
+                    # If we are above the threshold OR the value is >= 60 (problem of 180)
+                    if i >= threshold or val >= 60:
+                        ss.append(f"({self.sexsys(val)})")
                     else:
-                        ss.append("(" + str(BsyS(self.list[i])) + ")")
+                        ss.append(f"({BsyC(val)})")
+                
                 ss.append(self.uname[i])
+        
         return " ".join(ss)
 
     @classmethod
@@ -912,6 +979,7 @@ class Blen(MesoM):  # Length
     aname: list[str] = "šu-si kuš3 ninda UŠ danna".split()
     ufact: list[int] = [30, 12, 60, 30]
     cfact: list[int] = [1, 30, 360, 21600, 648000]
+    sex_threshold = 5
     siv: float = 0.5 / 30
     siu: str = "meters"
     ubase: int = 2  # ninda
@@ -952,6 +1020,7 @@ class Bsur(MesoM):  # Surface
     aname: list[str] = "še gin2 sar GAN2".split()
     ufact: list[int] = [180, 60, 100]
     cfact: list[int] = [1, 180, 10800, 1080000]
+    sex_threshold = 3
     siv: float = 36.0 / 60 / 180
     siu: str = "square meters"
     ubase: int = 1  # gin
@@ -989,6 +1058,7 @@ class Bvol(MesoM):  # Volume
     aname: list[str] = "še gin2 sar GAN2".split()
     ufact: list[int] = [180, 60, 100]
     cfact: list[int] = [1, 180, 10800, 1080000]
+    sex_threshold = 3
     siv: float = 18.0 / 60 / 180
     siu: str = "cube meters"
     ubase: int = 1  # gin
@@ -1041,6 +1111,7 @@ class Bcap(MesoM):  # Capacity
     aname: list[str] = "še gin2 sila3 ban2 bariga gur".split()
     ufact: list[int] = [180, 60, 10, 6, 5]
     cfact: list[int] = [1, 180, 10800, 108000, 648000, 3240000]
+    sex_threshold = 4
     siv: float = 1.0 / 60 / 180
     siu: str = "litres"
     ubase: int = 1  # gin
@@ -1071,6 +1142,7 @@ class Bwei(MesoM):  # Weight
     aname: list[str] = "še gin2 ma-na gu2".split()
     ufact: list[int] = [180, 60, 60]
     cfact: list[int] = [1, 180, 10800, 648000]
+    sex_threshold = 3
     siv: float = 0.5 / 60 / 180
     siu: str = "kilograms"
     ubase: int = 1  # gin
@@ -1089,6 +1161,7 @@ class Bbri(MesoM):  # Counting bricks
     aname: list[str] = "še gin2 sar GAN2".split()
     ufact: list[int] = [180, 60, 100]
     cfact: list[int] = [1, 180, 10800, 1080000]
+    sex_threshold = 3
     siv: float = 720.0 / 10800
     siu: str = "bricks"
     ubase: int = 1  # gin

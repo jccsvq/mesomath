@@ -17,13 +17,14 @@ from mesomath import Bcap as bc  # noqa: F401
 from mesomath import Bwei as bw  # noqa: F401
 from mesomath import BsyG as bG  # noqa: F401
 from mesomath import BsyS as bS  # noqa: F401
+from mesomath import BsyC as bC  # noqa: F401
 from mesomath import Bbri as bb  # noqa: F401
 
 message = f"""\nWelcome to Babylonian Calculator {VERSION}
     ...the calculator that every scribe should have!
 
 Use: bn(number) for sexagesimal calculations
-Metrological classes: bl, bs, bv, bc, bw, bG, bS and bb loaded.
+Metrological classes: bl, bs, bv, bc, bw, bG, bS, bC and bb loaded.
 Use exit() or Ctrl-D (i.e. EOF) to exit
 """
 
@@ -46,6 +47,7 @@ def main():
         "bw": bw,
         "bG": bG,
         "bS": bS,
+        "bC": bC,
         "bb": bb,
         "VERSION": VERSION,
         "exit": exit,

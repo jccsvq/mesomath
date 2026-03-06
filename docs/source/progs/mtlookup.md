@@ -5,7 +5,7 @@
 
 ## Introduction
 
-Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number (option: `-r`).
+`mtlookup` is a Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number (option: `-r`).
 
 ## Running `mtlookup`
 
@@ -188,29 +188,35 @@ Options `-p` `--pedantic` will print the coefficients of the units expressed in 
 
 ```bash
 $ mtlookup -t V '128 gan 133 se' -p
-(7 bur 2 iku) gan (2 ges 1 u 3 dis) se  ->  3:33:20:0:44:20
+(7 bur 2 iku) gan (7 bur 1 ese 1 iku) se  ->  3:33:20:0:44:20
 ```
 
 ```bash
-$ mtlookup -t V 3:33:20:0:44:20 -prw 55
+$ mtlookup -t V 3:33:20:0:44:20 -prw 60
 
 Looking for Babylonian volume meassurement with Abstract = 3:33:20:0:44:20
 Base reference unit: gin
 ---------------------------------------------------------------------------
-(1536001 sargal 2 saru 8 sar 4 buru) gan                <- 3:33:20:0:44:20
-(25600 sargal 1 sar 2 buru 8 bur 2 ese) gan             <- 3:33:20:0:44:20
-(426 sargal 4 saru 1 bur 1 ese 2 iku) gan (1 ges) sar   <- 3:33:20:0:44:20
-(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin   <- 3:33:20:0:44:20
-(7 sar 6 bur 2 ese) gan (4 u 4 dis) gin (1 ges) se      <- 3:33:20:0:44:20
-(7 bur 2 iku) gan (2 ges 1 u 3 dis) se                  <- 3:33:20:0:44:20
-(2 iku) gan (1 u 3 dis) sar (2 u) gin (2 dis) se        <- 3:33:20:0:40
-(3 dis) sar (3 u 3 dis) gin (1 ges) se                  <- 3:33:20
+(1536001 sargal 2 saru 8 sar 4 buru) gan                     <- 3:33:20:0:44:20
+(25600 sargal 1 sar 2 buru 8 bur 2 ese) gan                  <- 3:33:20:0:44:20
+(426 sargal 4 saru 1 bur 1 ese 2 iku) gan (3 bur 1 ese) sar  <- 3:33:20:0:44:20
+(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin        <- 3:33:20:0:44:20
+(7 sar 6 bur 2 ese) gan (4 u 4 dis) gin (3 bur 1 ese) se     <- 3:33:20:0:44:20
+(7 bur 2 iku) gan (7 bur 1 ese 1 iku) se                     <- 3:33:20:0:44:20
+(2 iku) gan (1 u 3 dis) sar (2 u) gin (2 dis) se             <- 3:33:20:0:40
+(3 dis) sar (3 u 3 dis) gin (3 bur 1 ese) se                 <- 3:33:20
+
 ```
 
 
 ### Fractions
 
 Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`, `-F1` to also include the fraction `1/6`:
+
+```bash
+$ mtlookup -t V '128 gan 133 se' -pF0
+(7 bur 2 iku) gan 2/3 gin (1 u 3 dis) se  ->  3:33:20:0:44:20
+```
 
 ```bash
 $ mtlookup -t L 1.30 -r -F0

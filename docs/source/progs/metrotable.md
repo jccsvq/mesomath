@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) for printing fragments of [**metrological tables**](https://cdli.earth/articles/cdlj/2009-1.pdf) in the style of those used by ancient Babylonian scribes and their apprentices.
+`metrotable` is a Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) for printing fragments of [**metrological tables**](https://cdli.earth/articles/cdlj/2009-1.pdf) in the style of those used by ancient Babylonian scribes and their apprentices.
 
 The metrological tables showed the correspondence between the additive values ​​of measurements of length, surface, weight, etc. and the abstract multiplicative sexagesimal numbers required by multiplicative arithmetic (calculations of areas, volumes, etc.). A modern analogy would be the following: we have a square with a side measuring one yard, two feet, and five inches (the additive measurement), and we want to calculate its area. We would need to convert the measurement to a homogeneous unit, for example, inches, with 65 inches. With this value, we can calculate the area of ​​the square as 65^2 = 4225 square inches. This value of 65 would be our abstract multiplicative number, and a modern metrological table would show us an entry for the association:
 

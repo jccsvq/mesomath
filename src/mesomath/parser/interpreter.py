@@ -1,6 +1,6 @@
 """This module implements the Babylonian metrological expression interpreter based on **PEG** grammars.
 
-The interpreter must be able to accept all 69 types of **MesoMath** output
+The interpreter must be able to accept all 75 types of **MesoMath** output
 expressions so that they can be fed back as inputs.
 """
 
@@ -69,9 +69,11 @@ class SexagInterpreter(NodeVisitor):
         # Fallback map for common units if not defined in the system
         emergency_map = {
             "dis": 1,
+            "as": 1,
             "u": 10,
-            "ges": 60,
-            "ges2": 60,
+            #"iku": 1,
+            #"ges": 60,
+            #"ges2": 60,
         }
 
         # Merge maps: base_map (specific system) takes priority over emergency_map

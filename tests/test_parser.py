@@ -1,4 +1,4 @@
-""" Test for the 69 types of MesoMath output metrological expressions used as input.
+""" Test for the 75 types of MesoMath output metrological expressions used as input.
 """
 
 import mesomath as mm

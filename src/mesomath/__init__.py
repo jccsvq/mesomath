@@ -1,11 +1,10 @@
-"""This package is intended for the arithmetic of natural sexagesimal numbers,
-mainly in their "floating" aspect (i.e., by removing all possible trailing
-sexagesimal zeros from the right), as performed by the Babylonian scribes and
-their apprentices in ancient times.
+"""This package is designed for the study of metrology and arithmetic of 
+natural sexagesimal numbers used by Babylonian scribes and their apprentices 
+in antiquity.
 
-Inpired by the arithmetic part of Baptiste Mélès' MesoCalc, it aims to bring
-this type of calculation to Python programming and to the command line as a
-calculator."""
+Inpired by the arithmetic and metrological parts of Baptiste Mélès' MesoCalc, 
+it aims to bring this type of calculation to Python programming and to the 
+command line as a calculator."""
 
 from .__about__ import __version__
 from .babn import BabN
@@ -16,6 +15,7 @@ from .npvs import Bcap
 from .npvs import Bwei
 from .npvs import BsyG
 from .npvs import BsyS
+from .npvs import BsyC
 from .npvs import Bbri
 
 BabN.__module__ = "mesomath"
@@ -26,6 +26,7 @@ Bcap.__module__ = "mesomath"
 Bwei.__module__ = "mesomath"
 BsyG.__module__ = "mesomath"
 BsyS.__module__ = "mesomath"
+BsyC.__module__ = "mesomath"
 Bbri.__module__ = "mesomath"
 
 
@@ -38,6 +39,7 @@ __all__ = [
     "Bwei",
     "BsyG",
     "BsyS",
+    "BsyC",
     "Bbri",
     "__version__",
 ]

@@ -19,7 +19,10 @@ This bibliography provides the academic and historical foundations for the metro
 * **Robson, E.** (2008). *Mathematics in Ancient Iraq: A Social History*. Princeton University Press.
 > *Note: Essential for understanding the social context of the S and G systems used in `BsyS` and `BsyG`.*
 
+(ref-proust3)=
 
+* **Proust, C** (2009) *Numerical and Metrological Graphemes: From Cuneiform to Transliteration* Cuneiform Digital Library Journal, 2009, 1
+> *Note: Source of the use of systems C, S and G in Babylonian metrology*
 
 (ref-chambon)=
 

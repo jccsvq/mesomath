@@ -295,10 +295,12 @@ This module is used to obtain lists of such numbers and ultimately build a SQLit
 
 This module defines the generic class `Npvs` for handling measurements in various units within a system. It is built using length measurements in the imperial system of units, from inches to leagues, as an example. This class is inherited by the `_MesoM` class which adapts it to Mesopotamian metrological use. The `_MesoM` class, in turn, is inherited by:
 
-*  class `BsyG`: Babylonian counting System G
+*  class `BsyG`: Babylonian counting System G (GAN2)
     * `šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku`
-*  class `BsyS`: Babylonian counting  System S
+*  class `BsyS`: Babylonian counting  System  (Exagesimal)
     * `šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš`
++*  class `BsyC`: Babylonian counting  System C (Common)
+    * `u <-10- diš`
 *  class `MesoM`: To represent physical quantities, inherited by:
     *  class `Blen`: Babylonian length system
         * `danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si`
