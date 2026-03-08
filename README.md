@@ -27,11 +27,12 @@ It has been inspired by the arithmetic and metrological parts of [MesoCalc](http
 
 The package includes:
 
-* the `mesomath` module containing three main submodules:
+* the `mesomath` module containing four main submodules:
 
     *  `babn.py`: Containing the class `BabN` for *Babylonian* (sexagesimal) *numbers*.
     *  `npvs.py`: Containing *metrological* classes for measurements of distance, area, volume, capacity, weight,...
     *  `hamming.py`: For generating lists of *regular numbers*, as well as the [`SQLite3`](https://www.sqlite.org/) database of these used by the `BabN` class.
+    *  `parser.interpreter.py`: Formal grammar engine to handle metrological string parsing.
 
 
 * four application submodules:
@@ -318,6 +319,6 @@ This module defines the generic class `Npvs` for handling measurements in variou
 
 
 
-Please, read the [tutorial](https://mesomath.readthedocs.io/tutorial.html) to see how to use all these classes.
+Please, read the [tutorials](https://mesomath.readthedocs.io) to see how to use all these classes.
 
 

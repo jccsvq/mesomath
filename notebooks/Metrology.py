@@ -30,6 +30,7 @@ from mesomath.npvs import Bcap as bc  # Capacity
 from mesomath.npvs import Bwei as bw  # Weight
 from mesomath.npvs import BsyG as bG  # Counting system G
 from mesomath.npvs import BsyS as bS  # Counting system S
+from mesomath.npvs import BsyC as bC  # Counting system C
 from mesomath.npvs import Bbri as bb  # Brick count
 
 
@@ -59,6 +60,9 @@ from mesomath.npvs import Bbri as bb  # Brick count
 #     class  bS: Babylonian counting System S:
 #                šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
 #
+#     class  bC: Babylonian counting System C:
+#                u <-10- diš
+#
 #     Class  bb: Babylonian brick counting system:
 #                GAN2 <-100- sar <-60- gin2 <-180- še
 #
@@ -73,6 +77,7 @@ from mesomath.npvs import Bbri as bb  # Brick count
 # bw| Babylonian weight system|  se, gin, mana, gu
 # bG| Babylonian System G|  iku, ese, bur, buru, sar, saru, sargal
 # bS| Babylonian System S|  dis, u, ges, gesu, sar, saru, sargal
+# bS| Babylonian System C|  dis, u
 # bb| Babylonian brick counting system|  se gin sar gan
 #
 # >Note that scribes wrote volumes as an equivalent surface area multiplied by a standard height of 1 kus; thus, they used the same metrology for surfaces and volumes. Here, however, two different classes will be used, so that one can multiply a surface area by a length to obtain a volume, but one cannot multiply a volume by a length to obtain a four-dimensional volume, which was probably beyond the scribes' understanding.

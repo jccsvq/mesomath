@@ -100,7 +100,7 @@
 
 
 # %%
-# ! mtlookup -t V 3:33:20:0:44:20 -pr -w 55
+# ! mtlookup -t V 3:33:20:0:44:20 -pr -w 60
 
 # %% [markdown]
 # ### Fractions
