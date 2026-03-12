@@ -7,7 +7,7 @@ from math import log, sqrt
 from os.path import exists
 from sqlite3 import connect
 
-#from typing import Final
+# from typing import Final
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -71,6 +71,103 @@ class BabN:
     rdigits: int = 6
     floatmult: bool = False
     database: str = "regular.db3"
+
+    def __init__(self, value: int | str | list[int] | tuple[int, int, int, int]):
+        """
+        Initialize a new Babylonian number (BabN).
+
+        This constructor acts as a robust gateway for sexagesimal data. It normalizes
+        input values, enforces the non-negative constraint of Babylonian mathematics,
+        and protects against improper metrological mixing.
+
+        :param value: The source data for the number. Supported formats:
+
+            * **int | float**: Absolute integer value.
+            * **str**: Sexagesimal digits separated by non-numeric characters (e.g., "1:20", "1.20").
+            * **list**: Coefficients of the sexagesimal polynomial. Values > 59 are
+              automatically normalized (carry-over).
+            * **tuple**: A 4-element factor tuple (i, j, k, x) representing
+              :math:`2^i \\cdot 3^j \\cdot 5^k \\cdot x`.
+
+        :type value: int | str | list | tuple
+
+        :raises ValueError: If the input string contains no digits, a tuple does not
+            have 4 elements, or factors are invalid.
+        :raises TypeError: If an unsupported type is passed, or if a metrological
+            unit (e.g., Blen, Bwei) is found inside a list.
+
+        .. note::
+           **Normalization Logic**: If a list is provided as ``[1, 125]``, it is
+           treated as :math:`1 \\cdot 60^1 + 125 \\cdot 60^0 = 185`, which
+           normalizes to ``[3, 5]`` (3:05).
+
+        .. warning::
+           To maintain historical rigor, all negative inputs are converted to
+           their absolute value.
+        """
+        self.__list: list[int] = []
+        self.__dec: int = 0
+        # CASE 1: Tuple (i, j, k, x)
+        if isinstance(value, tuple):
+            if len(value) != 4:
+                raise ValueError(
+                    "Factor tuple must have exactly 4 elements: (i, j, k, x)"
+                )
+
+            try:
+                i, j, k, x = [int(v) for v in value]
+                # Los exponentes i, j, k sí deberían ser positivos para ser Hamming
+                if i < 0 or j < 0 or k < 0:
+                    raise ValueError(
+                        "Exponents i, j, k in factor tuple must be non-negative."
+                    )
+            except (ValueError, TypeError) as e:
+                raise ValueError(f"Invalid factor tuple: {value}") from e
+
+            self.__dec = (2**i) * (3**j) * (5**k) * abs(x)
+            self.__list = self._to_sexagesimal(self.__dec)
+        # CASE 2: String (with regex for any separator)
+        elif isinstance(value, str):
+            import re
+
+            parts = re.split(r"[:;.,\-\s]+", value.strip())
+            self.__list = [int(p) for p in parts if p]
+            if not parts:
+                raise ValueError(f"Text string without valid numbers: '{value}'")
+            ll = [int(p) for p in parts]
+            self.__dec = self._to_decimal(ll)
+            self.__list = self._to_sexagesimal(self.__dec)
+        # CASE 3: List
+        elif isinstance(value, list):
+            ll = []
+            for v in value:
+                # WHITE LIST: We only allow the exact type BabN, int, or str.
+                # Any other object (like bl, bs...) that has __int__ will be rejected.
+                if type(v) in (int, str, BabN):
+                    try:
+                        ll.append(abs(int(v)))
+                    except (ValueError, TypeError):
+                        raise ValueError(f"Could not convert '{v}' to an integer.")
+                else:
+                    raise TypeError(
+                        f"Prohibited element: {v} (type {type(v).__name__})."
+                        "To use a metrological unit in a BabN list, "
+                        "convert it explicitly to an integer with int()."
+                    )
+
+            self.__dec = self._to_decimal(ll)
+            self.__list = self._to_sexagesimal(self.__dec)
+        # CASE 4: Int or Float
+        elif isinstance(value, (int, float, BabN)):
+            self.__dec = abs(int(value))
+            self.__list = self._to_sexagesimal(self.__dec)
+
+        # Instance attributes (Lazy)
+        self.__factors = None
+        self.__isreg = None
+        # self.__factors = self._calculate_factors(self.__dec)
+        # self.__isreg = (self.factors[3] == 1)
+        # print(f"{self.__dec=} -> {self.__list=} -> {self.__factors=} -> {self.__isreg=}")
 
     @staticmethod
     def genDB(dbname: str) -> None:
@@ -191,103 +288,6 @@ class BabN:
         """
         return cls(data)
 
-    def __init__(self, value: int | str | list[int] | tuple[int, int, int, int]):
-        """
-        Initialize a new Babylonian number (BabN).
-
-        This constructor acts as a robust gateway for sexagesimal data. It normalizes 
-        input values, enforces the non-negative constraint of Babylonian mathematics, 
-        and protects against improper metrological mixing.
-
-        :param value: The source data for the number. Supported formats:
-            
-            * **int | float**: Absolute integer value.
-            * **str**: Sexagesimal digits separated by non-numeric characters (e.g., "1:20", "1.20").
-            * **list**: Coefficients of the sexagesimal polynomial. Values > 59 are 
-              automatically normalized (carry-over).
-            * **tuple**: A 4-element factor tuple (i, j, k, x) representing 
-              :math:`2^i \\cdot 3^j \\cdot 5^k \\cdot x`.
-
-        :type value: int | str | list | tuple
-        
-        :raises ValueError: If the input string contains no digits, a tuple does not 
-            have 4 elements, or factors are invalid.
-        :raises TypeError: If an unsupported type is passed, or if a metrological 
-            unit (e.g., Blen, Bwei) is found inside a list.
-
-        .. note::
-           **Normalization Logic**: If a list is provided as ``[1, 125]``, it is 
-           treated as :math:`1 \\cdot 60^1 + 125 \\cdot 60^0 = 185`, which 
-           normalizes to ``[3, 5]`` (3:05).
-
-        .. warning::
-           To maintain historical rigor, all negative inputs are converted to 
-           their absolute value.
-        """
-        self.__list: list[int] = []
-        self.__dec: int = 0
-        # CASE 1: Tuple (i, j, k, x)
-        if isinstance(value, tuple):
-            if len(value) != 4:
-                raise ValueError(
-                    "Factor tuple must have exactly 4 elements: (i, j, k, x)"
-                )
-
-            try:
-                i, j, k, x = [int(v) for v in value]
-                # Los exponentes i, j, k sí deberían ser positivos para ser Hamming
-                if i < 0 or j < 0 or k < 0:
-                    raise ValueError(
-                        "Exponents i, j, k in factor tuple must be non-negative."
-                    )
-            except (ValueError, TypeError) as e:
-                raise ValueError(f"Invalid factor tuple: {value}") from e
-
-            self.__dec = (2**i) * (3**j) * (5**k) * abs(x)
-            self.__list = self._to_sexagesimal(self.__dec)
-        # CASE 2: String (with regex for any separator)
-        elif isinstance(value, str):
-            import re
-
-            parts = re.split(r"[:;.,\-\s]+", value.strip())
-            self.__list = [int(p) for p in parts if p]
-            if not parts:
-                raise ValueError(f"Text string without valid numbers: '{value}'")
-            ll = [int(p) for p in parts]
-            self.__dec = self._to_decimal(ll)
-            self.__list = self._to_sexagesimal(self.__dec)
-        # CASE 3: List
-        elif isinstance(value, list):
-            ll = []
-            for v in value:
-                # WHITE LIST: We only allow the exact type BabN, int, or str.
-                # Any other object (like bl, bs...) that has __int__ will be rejected.
-                if type(v) in (int, str, BabN):
-                    try:
-                        ll.append(abs(int(v)))
-                    except (ValueError, TypeError):
-                        raise ValueError(f"Could not convert '{v}' to an integer.")
-                else:
-                    raise TypeError(
-                        f"Prohibited element: {v} (type {type(v).__name__})."
-                        "To use a metrological unit in a BabN list, "
-                        "convert it explicitly to an integer with int()."
-                    )
-
-            self.__dec = self._to_decimal(ll)
-            self.__list = self._to_sexagesimal(self.__dec)
-        # CASE 4: Int or Float
-        elif isinstance(value, (int, float, BabN)):
-            self.__dec = abs(int(value))
-            self.__list = self._to_sexagesimal(self.__dec)
-
-        # Instance attributes (Lazy)
-        self.__factors = None
-        self.__isreg = None
-        # self.__factors = self._calculate_factors(self.__dec)
-        # self.__isreg = (self.factors[3] == 1)
-        # print(f"{self.__dec=} -> {self.__list=} -> {self.__factors=} -> {self.__isreg=}")
-
     @property
     def dec(self):
         """Getter"""
@@ -405,20 +405,204 @@ class BabN:
         else:
             return self
 
-    def _ensure_babn(self, other: object) -> "BabN":
-        """Internal helper to normalize types before operating.
+    def rec(self) -> Self | None:
+        """Returns the reciprocal of the BabN object using the factorization method."""
+        if not self.isreg:
+            print("Not regular, (igi nu)!")
+            return None
 
-        :param other: operand
-        :type other: object
-        :return: BabN object
+        # If we've already calculated it before, we return it (Lazy pattern manual)
+        if hasattr(self, "_cached_rec"):
+            return self._cached_rec
+
+        i, j, k, _ = self.factors
+
+        # The goal is to find i', j', k' such that:
+        # (2^i * 3^j * 5^k) * (2^i' * 3^j' * 5^k') = 60^m = 2^(2m) * 3^m * 5^m
+        # Therefore: m >= j, m >= k, 2m >= i
+        m = max(j, k, (i + 1) // 2)
+
+        i_prime = 2 * m - i
+        j_prime = m - j
+        k_prime = m - k
+
+        # We calculate the decimal value of the reciprocal
+        # We use bit shifts for the factor of 2 (very fast)
+        res_dec = (1 << i_prime) * (3**j_prime) * (5**k_prime)
+
+        self._cached_rec = self.create_new(res_dec)
+        return self._cached_rec
+
+    def sqrt(self) -> "BabN":
+        """Returns BabN object with approximate floating square root
+
+        :return: approximate floating square root
         :rtype: BabN
         """
-        if isinstance(other, BabN):
-            return other
-        if isinstance(other, (int, float)):
-            # Here we centralize the parsing of simple numbers
-            return BabN(int(other))
-        return NotImplemented
+        digits = BabN.rdigits - 1
+        x = self.dec
+        sqr = (pow(60, digits)) * sqrt(x)
+        sqr = int(round(sqr, 0))
+        while sqr % 60 == 0:
+            sqr //= 60
+        return self.create_new(sqr)
+
+    def cbrt(self) -> "BabN":
+        """Returns BabN object with approximate floating cube root
+
+        :return: approximate floating cube root
+        :rtype: BabN
+        """
+        digits = BabN.rdigits - 1
+        x = self.dec
+        cbr = (pow(60, digits)) * x ** (1.0 / 3)
+        cbr = int(round(cbr, 0))
+        while cbr % 60 == 0:
+            cbr //= 60
+        return self.create_new(cbr)
+
+    def dist(self, n: str | int | type(Self)) -> int:
+        """Estimates a certain "pseudo-distance" between two sexagesimal numbers.
+
+        The objective is, given a non-regular number, to select the regular
+        number that is closest to it from a list. Since these are floating-point
+        numbers, this pseudo-distance must be based on the similarity of the most
+        significant sexagesimal digits, so that 7 is "close" to 6:59:54:14:24
+        (decimals 7 and 90699264).
+
+        :param n: may be an integer, formated string (ex: "1:2:3"), a list (ex., [1, 12, 23]) or another BabN object.
+        :type n: str | int | type
+        :return: pseudo-distance
+        :rtype: int
+        """
+        list1 = [] + self.list
+        len1 = self.len()
+        if type(n) is BabN:
+            list2 = [] + n.list
+            len2 = n.len()
+            print(self.dec, n.dec)
+        else:
+            new_object = self.create_new(n)
+            list2 = new_object.list
+            len2 = len(list2)
+        if len1 > len2:
+            list2 += [0 for i in range(len1 - len2)]
+        elif len2 > len1:
+            nextd = list2[len1]
+            list2 = list2[:len1]
+            if nextd > 30:
+                list2[-1] += 1
+        return (BabN(list1) - BabN(list2)).dec
+
+    def searchreg(
+        self,
+        minn: str | int,
+        maxn: str | int,
+        limdigits: int = 6,
+        prt: bool = False,
+    ) -> "BabN":
+        """Search database for regulars between sexagesimals minn y maxn.
+        Returns BabN object with the closest regular found.
+
+        :param minn: and maxn: must be sexagesimal strings using ":" separator
+        :type minn: str | int
+        :param maxn: and maxn: must be sexagesimal strings using ":" separator
+        :type maxn: str | int
+        :param limdigits:  max regular digits number, defaults to 6
+        :type limdigits: int, optional
+        :param prt: print list of found regulars, defaults to False
+        :type prt: bool, optional
+        :return: closest regular found as BabN object
+        :rtype: BabN
+        """
+        if not exists(BabN.database):
+            __class__.genDB(BabN.database)
+
+        conn = connect(BabN.database)
+        cursor = conn.cursor()
+        sql_line = """
+SELECT regular
+  FROM regulars
+ WHERE len <= ? AND 
+       regular BETWEEN ? AND ?
+ ORDER BY regular
+;
+"""
+        cursor.execute(sql_line, (limdigits, minn, maxn))
+        rl = cursor.fetchall()
+        conn.commit()
+        conn.close()
+
+        tmplist = [] + self.__list
+        if len(tmplist) < limdigits:
+            tmplist = tmplist + [0 for i in range(limdigits - len(tmplist))]
+
+        a = __class__.create_new(tmplist)
+        mind = a.dist(rl[0][0])
+        minr = rl[0][0]
+        for i in rl:
+            if prt:
+                print(f" {a.dist(i[0]):12d} {i[0]}")
+            ndis = a.dist(i[0])
+            if ndis < mind:
+                mind = ndis
+                minr = i[0]
+        if prt:
+            print(f"Minimal distance: {mind}, closest regular is: {minr}")
+        return self.create_new(minr)
+
+    def explain(self) -> None:
+        """Explains number; print out basic information about the object."""
+        print(f"|  Sexagesimal number: {self.list} is the decimal number: {self.dec}.")
+        (i, j, k, x) = self.factors
+        print(f"|    It may be written as (2^{i} * 3^{j} * 5^{k} * {x}),")
+        if self.isreg:
+            print(f"|    so, it is a regular number with reciprocal: {self.rec()}")
+        else:
+            print("|    so, it is NOT a regular number and has NO reciprocal.")
+            print(f"|    but an approximate inverse is: {self.inv()}")
+            cr = self.searchreg("01:0", "59:59", 5, 0)
+            if cr is not None:
+                print(f"|    and a close regular is: {cr}")
+                print(f"|    whose reciprocal is: {cr.rec()}")
+
+    def cuneiform(self, alter: bool = False, stroke: bool = False) -> str:
+        """Cuneiform version of sexagesimal number
+
+        Requires Noto Sans Cuneiform font or similar to be present in your system.
+        This method uses U+2009 Thin Space Unicode Characters
+
+        :param obj: BabN object or string to be converted
+        :type obj: Any
+        :param alter: alternate version of some signs, defaults to False
+        :type alter: bool, optional
+        :param stroke: strike out empty space (sexagesimal digit zero), defaults to False
+        :type stroke: bool, optional
+        :return: cuneiform string
+        :rtype: str
+        """
+        #: cuneiform unit dicttionary
+        l1 = [" ", "𒐕", "𒐖", "𒐗", "𒐘", "𒐙", "𒐚", "𒑂", "𒑄", "𒑆"]
+        #: cuneiform tens dictionaries
+        l10a = [" ", "𒌋", "𒎙", "𒌍", "𒑩", "𒑪"]  # alternate signs
+        l10b = [" ", "𒌋", "𒎙", "𒌍", "𒐏", "𒐐"]
+
+        l10 = l10a if alter else l10b
+        ln = (self.list).copy()
+
+        out = ""
+        for i in ln:
+            if i == 0:
+                if stroke:
+                    out += "𒀹 "  # 𒍻
+                else:
+                    out += " "
+            else:
+                tens, unit = divmod(i, 10)
+                out += l10[tens]
+                out += l1[unit] + " "
+        # print(obj, out)
+        return out
 
     def __add__(self, other: object) -> "BabN":
         """Overloads `+` operator: returns BabN object with the sum of operands
@@ -447,8 +631,8 @@ class BabN:
         """Overloads `-` operator: returns BabN object with the absolute value
         of the operands difference
 
-        Babylonian mathematics did not use negative numbers. To maintain 
-        consistency with historical practice, this operator always returns 
+        Babylonian mathematics did not use negative numbers. To maintain
+        consistency with historical practice, this operator always returns
         the absolute value of the subtraction (|a - b|), i.e: this subtraction is conmutative!
 
         :other: May be another BabN object or a positive int.
@@ -673,167 +857,6 @@ class BabN:
             return NotImplemented
         return self.dec >= other_obj.dec
 
-    def rec(self) -> Self | None:
-        """Returns the reciprocal of the BabN object using the factorization method."""
-        if not self.isreg:
-            print("Not regular, (igi nu)!")
-            return None
-
-        # If we've already calculated it before, we return it (Lazy pattern manual)
-        if hasattr(self, "_cached_rec"):
-            return self._cached_rec
-
-        i, j, k, _ = self.factors
-
-        # The goal is to find i', j', k' such that:
-        # (2^i * 3^j * 5^k) * (2^i' * 3^j' * 5^k') = 60^m = 2^(2m) * 3^m * 5^m
-        # Therefore: m >= j, m >= k, 2m >= i
-        m = max(j, k, (i + 1) // 2)
-
-        i_prime = 2 * m - i
-        j_prime = m - j
-        k_prime = m - k
-
-        # We calculate the decimal value of the reciprocal
-        # We use bit shifts for the factor of 2 (very fast)
-        res_dec = (1 << i_prime) * (3**j_prime) * (5**k_prime)
-
-        self._cached_rec = self.create_new(res_dec)
-        return self._cached_rec
-
-    def sqrt(self) -> "BabN":
-        """Returns BabN object with approximate floating square root
-
-        :return: approximate floating square root
-        :rtype: BabN
-        """
-        digits = BabN.rdigits - 1
-        x = self.dec
-        sqr = (pow(60, digits)) * sqrt(x)
-        sqr = int(round(sqr, 0))
-        while sqr % 60 == 0:
-            sqr //= 60
-        return self.create_new(sqr)
-
-    def cbrt(self) -> "BabN":
-        """Returns BabN object with approximate floating cube root
-
-        :return: approximate floating cube root
-        :rtype: BabN
-        """
-        digits = BabN.rdigits - 1
-        x = self.dec
-        cbr = (pow(60, digits)) * x ** (1.0 / 3)
-        cbr = int(round(cbr, 0))
-        while cbr % 60 == 0:
-            cbr //= 60
-        return self.create_new(cbr)
-
-    def dist(self, n: str | int | type(Self)) -> int:
-        """Estimates a certain "pseudo-distance" between two sexagesimal numbers.
-
-        The objective is, given a non-regular number, to select the regular
-        number that is closest to it from a list. Since these are floating-point 
-        numbers, this pseudo-distance must be based on the similarity of the most 
-        significant sexagesimal digits, so that 7 is "close" to 6:59:54:14:24 
-        (decimals 7 and 90699264).
-
-        :param n: may be an integer, formated string (ex: "1:2:3"), a list (ex., [1, 12, 23]) or another BabN object.
-        :type n: str | int | type
-        :return: pseudo-distance
-        :rtype: int
-        """
-        list1 = [] + self.list
-        len1 = self.len()
-        if type(n) is BabN:
-            list2 = [] + n.list
-            len2 = n.len()
-            print(self.dec, n.dec)
-        else:
-            new_object = self.create_new(n)
-            list2 = new_object.list
-            len2 = len(list2)
-        if len1 > len2:
-            list2 += [0 for i in range(len1 - len2)]
-        elif len2 > len1:
-            nextd = list2[len1]
-            list2 = list2[:len1]
-            if nextd > 30:
-                list2[-1] += 1
-        return (BabN(list1) - BabN(list2)).dec
-
-    def searchreg(
-        self,
-        minn: str | int,
-        maxn: str | int,
-        limdigits: int = 6,
-        prt: bool = False,
-    ) -> "BabN":
-        """Search database for regulars between sexagesimals minn y maxn.
-        Returns BabN object with the closest regular found.
-
-        :param minn: and maxn: must be sexagesimal strings using ":" separator
-        :type minn: str | int
-        :param maxn: and maxn: must be sexagesimal strings using ":" separator
-        :type maxn: str | int
-        :param limdigits:  max regular digits number, defaults to 6
-        :type limdigits: int, optional
-        :param prt: print list of found regulars, defaults to False
-        :type prt: bool, optional
-        :return: closest regular found as BabN object
-        :rtype: BabN
-        """
-        if not exists(BabN.database):
-            __class__.genDB(BabN.database)
-
-        conn = connect(BabN.database)
-        cursor = conn.cursor()
-        sql_line = """
-SELECT regular
-  FROM regulars
- WHERE len <= ? AND 
-       regular BETWEEN ? AND ?
- ORDER BY regular
-;
-"""
-        cursor.execute(sql_line, (limdigits, minn, maxn))
-        rl = cursor.fetchall()
-        conn.commit()
-        conn.close()
-
-        tmplist = [] + self.__list
-        if len(tmplist) < limdigits:
-            tmplist = tmplist + [0 for i in range(limdigits - len(tmplist))]
-
-        a = __class__.create_new(tmplist)
-        mind = a.dist(rl[0][0])
-        minr = rl[0][0]
-        for i in rl:
-            if prt:
-                print(f" {a.dist(i[0]):12d} {i[0]}")
-            ndis = a.dist(i[0])
-            if ndis < mind:
-                mind = ndis
-                minr = i[0]
-        if prt:
-            print(f"Minimal distance: {mind}, closest regular is: {minr}")
-        return self.create_new(minr)
-
-    def explain(self) -> None:
-        """Explains number; print out basic information about the object."""
-        print(f"|  Sexagesimal number: {self.list} is the decimal number: {self.dec}.")
-        (i, j, k, x) = self.factors
-        print(f"|    It may be written as (2^{i} * 3^{j} * 5^{k} * {x}),")
-        if self.isreg:
-            print(f"|    so, it is a regular number with reciprocal: {self.rec()}")
-        else:
-            print("|    so, it is NOT a regular number and has NO reciprocal.")
-            print(f"|    but an approximate inverse is: {self.inv()}")
-            cr = self.searchreg("01:0", "59:59", 5, 0)
-            if cr is not None:
-                print(f"|    and a close regular is: {cr}")
-                print(f"|    whose reciprocal is: {cr.rec()}")
-
     def __repr__(self) -> str:
         """Returns string representation of sexagesimal number.
 
@@ -860,3 +883,18 @@ SELECT regular
 
     __len__ = len
     __round__ = round
+
+    def _ensure_babn(self, other: object) -> "BabN":
+        """Internal helper to normalize types before operating.
+
+        :param other: operand
+        :type other: object
+        :return: BabN object
+        :rtype: BabN
+        """
+        if isinstance(other, BabN):
+            return other
+        if isinstance(other, (int, float)):
+            # Here we centralize the parsing of simple numbers
+            return BabN(int(other))
+        return NotImplemented

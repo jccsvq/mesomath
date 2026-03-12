@@ -14,7 +14,7 @@ def test_bsur():
 
     c = a * lon
 
-    assert c.title == "Babylonian volume meassurement"
+    assert c.title == "Babylonian volume measurement"
     assert str(c) == "10 sar 17 gin 51 se"
 
     a.prtsex=1

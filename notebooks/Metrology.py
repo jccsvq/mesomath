@@ -109,7 +109,7 @@ print(*bc.scheme(bc,1))
 # >**There is no class dedicated to Babylonian height measurements**; this is by design because it is unnecessary. The only difference between horizontal and vertical length measurements lies in their metrological tables, and this is covered in the [`metrotable` tutorial](metrotable.ipynb) utility. However, if you need one, you can easily [create one](extensions.ipynb) yourself.
 
 # %% [markdown]
-# ## Entering meassurements
+# ## Entering measurements
 #
 # In a similar way to what we saw for sexagesimal numbers with the `bn` class. We can introduce measurements in two different ways:
 

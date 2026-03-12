@@ -83,10 +83,10 @@ jccsvq fecit, 2025.
 --> length
 1 danna 6 us
 --> length.explain()         # what kind of quantity is `length`?
-This is a Babylonian length meassurement: 1 danna 6 us
+This is a Babylonian length measurement: 1 danna 6 us
     Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
     Factor with unit 'susi':  1 30 360 21600 648000
-Meassurement in terms of the smallest unit: 777600 (susi)
+measurement in terms of the smallest unit: 777600 (susi)
 Sexagesimal floating value of the above: 3:36
 Approximate SI value: 12960.0 meters
 --> length.                  # press <Tab> twice to see options
@@ -150,7 +150,7 @@ class LBcap(Bcap):  # Capacity
 
     """
 
-    title: str = "Late Babylonian capacity meassurement"
+    title: str = "Late Babylonian capacity measurement"
     uname: list[str] = "gar sila ban bariga gur".split()
     aname: list[str] = "GAR sila3 ban2 bariga gur".split()
     ufact: list[int] = [10, 10, 6, 5]
@@ -160,9 +160,9 @@ class LBcap(Bcap):  # Capacity
     ubase: int = 3  # bariga
 
     def vol(self) -> object:
-        """Convert capacity to volume meassurement
+        """Convert capacity to volume measurement
 
-        :return: volume meassurement
+        :return: volume measurement
         :rtype: "Bvol"
         """
         return LBvol(int(round(self.dec/(100/6))))
@@ -174,10 +174,10 @@ class LBvol(Bvol):  # Volume
         **GAN2 <-100- sar <-60- gin2 <-180- še**
 
     """
-    title: str = "Late Babylonian volume meassurement"
+    title: str = "Late Babylonian volume measurement"
     
     def cap(self) -> object:
-        """Convert volume to capacity meassurement"""
+        """Convert volume to capacity measurement"""
         return LBcap(int(round(self.dec*(100/6))))
 ```
 
@@ -190,10 +190,10 @@ $ babcalc -i lateb.py
 --> b
 3 gin 60 se
 --> b.explain() 
-This is a Late Babylonian volume meassurement: 3 gin 60 se
+This is a Late Babylonian volume measurement: 3 gin 60 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 600 (se)
+measurement in terms of the smallest unit: 600 (se)
 Sexagesimal floating value of the above: 10
 Approximate SI value: 0.9999999999999999 cube meters
 --> c=b.cap() 
@@ -202,10 +202,10 @@ Approximate SI value: 0.9999999999999999 cube meters
 --> c.SI() 
 '1000.0 litres'
 --> c.explain() 
-This is a Late Babylonian capacity meassurement: 3 gur 1 bariga 4 ban
+This is a Late Babylonian capacity measurement: 3 gur 1 bariga 4 ban
     Metrology:  gur <-5- bariga <-6- ban <-10- sila <-10- gar
     Factor with unit 'gar':  1 10 100 600 3000
-Meassurement in terms of the smallest unit: 10000 (gar)
+measurement in terms of the smallest unit: 10000 (gar)
 Sexagesimal floating value of the above: 2:46:40
 Approximate SI value: 1000.0 litres
 -->

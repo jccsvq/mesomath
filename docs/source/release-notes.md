@@ -1,5 +1,27 @@
 # Release Notes
 
+## [1.5.0] - 2026-03-16
+
+
+📜 MesoMath v1.5.0: Consolidation Summary
+
+1. Evolution of the Autograph (to_cunei)
+Ambiguity Intelligence: Implementation of the "Proust Patch" for the king system (BsyK). Now the logogram 𒋢𒋛 (šu-ši) only appears when the lower unit is zero, avoiding the historical confusion between 1 and 60.
+
+Handling Silent Units: The stroke=True parameter allows visualization of the positional skeleton with the wedge 𒀹 without the need for text labels, maintaining the purity of the tablet.
+
+Support for Special Fractions: Integration of onesixth and other fractional glyphs directly into the cuneiform string.
+
+2. Semantics of Measure (subsdict)
+Substance Determinants: A robust dictionary of substances (Metals, Grains, Lands, Personnel) has been created, allowing a number to be transformed into an actual administrative record (e.g., 5 silver shekels 𒆬𒌓).
+
+Mathematical Metadata: Incorporation of 𒅆𒉡 (igi-nu) to identify numbers without an exact reciprocal, a standard in Babylonian inverse tables.
+
+3. The Digital Tablet (metrotable)
+Grid Format: Transition to a structured visual design that mimics scribes' columns.
+
+Inverse Logic: Ability to detect irregular numbers and mark them with the glyph for "does not open" or "does not appear."
+
 ## [1.4.0] - 2026-03-08
 
 ### Added

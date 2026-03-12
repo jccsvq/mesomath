@@ -93,17 +93,17 @@
 # The program needs four pieces of data to calculate a segment of a metrological table:
 #
 # * Metrological table type (options `-t` or `--type`)
-#     * L:   length meassurements
-#     * Lh:   length meassurements (Heights)
-#     * S:   surface meassurements
-#     * V:   volume meassurements
-#     * C:   capacity meassurements
-#     * W:   weight meassurements
+#     * L:   length measurements
+#     * Lh:   length measurements (Heights)
+#     * S:   surface measurements
+#     * V:   volume measurements
+#     * C:   capacity measurements
+#     * W:   weight measurements
 #     * SysS:   System S to count objects
 #     * SysG:   System G to count objects
-# *  Starting meassurement value (options `-t` or `--min`)
-# *  Final meassurement value (options `-M` or `--max`)
-# *  Meassurement increment between table rows (options `-i` or `--inc`)
+# *  Starting measurement value (options `-t` or `--min`)
+# *  Final measurement value (options `-M` or `--max`)
+# *  measurement increment between table rows (options `-i` or `--inc`)
 #
 # For example, the following will reproduce example 1 (add `-v` at will).:
 
@@ -152,7 +152,7 @@
 # %% [markdown]
 # #### Options `-w`  `--width`
 #
-# Changes the default of 20 chars width  of the meassurement text field
+# Changes the default of 20 chars width  of the measurement text field
 
 # %%
 # ! metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30

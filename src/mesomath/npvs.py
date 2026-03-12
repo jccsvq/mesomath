@@ -138,13 +138,13 @@ class Npvs:
     :cfact: Factor with the smallest unit
     :siv: S.I. value of the smallest unit
     :siu: S.I. unit name
-    :prtsex: Printing meassurements in sexagesimal (default: False)
+    :prtsex: Printing measurements in sexagesimal (default: False)
 
 
     Instance Attributes:
     --------------------
 
-    :dec: Decimal value of meassurement in terms of the smallest unit
+    :dec: Decimal value of measurement in terms of the smallest unit
     :list: List of values per unit
 
     Operators
@@ -158,7 +158,7 @@ class Npvs:
 
     """
 
-    title: str = "Imperial length meassurement"
+    title: str = "Imperial length measurement"
     uname: list[str] = "in hh ft yd ch fur mi lea".split()  # Unit names
     aname: list[str] = (
         "inch hand foot yard chain furlong mile league".split()
@@ -177,7 +177,8 @@ class Npvs:
     siv: float = 0.0254  # meters per inch
     siu: str = "meters"  # S.I. unit name
 
-    def scheme(self, actual: bool = False) -> list:
+    @classmethod
+    def scheme(cls, actual: bool = False) -> list:
         """Returns list with the unit names separated by the corresponding factors
 
         :param actual: Uses actual or academic unit names if True, defaults to False
@@ -196,15 +197,15 @@ class Npvs:
         """
         ll = []
         if actual:
-            for i in range(len(self.ufact)):
-                ll.append(self.aname[i])
-                ll.append("<-" + str(self.ufact[i]) + "-")
-            ll.append(self.aname[-1])
+            for i in range(len(cls.ufact)):
+                ll.append(cls.aname[i])
+                ll.append("⟵" + str(cls.ufact[i]) + "-")
+            ll.append(cls.aname[-1])
         else:
-            for i in range(len(self.ufact)):
-                ll.append(self.uname[i])
-                ll.append("<-" + str(self.ufact[i]) + "-")
-            ll.append(self.uname[-1])
+            for i in range(len(cls.ufact)):
+                ll.append(cls.uname[i])
+                ll.append("⟵" + str(cls.ufact[i]) + "-")
+            ll.append(cls.uname[-1])
         ll.reverse()
         return ll
 
@@ -269,6 +270,22 @@ class Npvs:
         """Getter"""
         return self.__list
 
+    def si(self) -> float:
+        """Returns the numeric equivalent in SI units
+
+        :return: numeric equivalent in SI units
+        :rtype: float
+        """
+        return self.dec * self.siv
+
+    def SI(self) -> str:
+        """Returns formated string with the equivalent in SI units
+
+        :return: formated string with the equivalent in SI units
+        :rtype: str
+        """
+        return f"{self.dec * self.siv} {self.siu}"
+
     def __add__(self, other: Self) -> Self:
         """Overloads ``+`` operator: returns object with the sum of operands
 
@@ -324,22 +341,6 @@ class Npvs:
         :rtype: Self
         """
         return self.__class__(int(round(self.dec / other, 0)))
-
-    def si(self) -> float:
-        """Returns the numeric equivalent in SI units
-
-        :return: numeric equivalent in SI units
-        :rtype: float
-        """
-        return self.dec * self.siv
-
-    def SI(self) -> str:
-        """Returns formated string with the equivalent in SI units
-
-        :return: formated string with the equivalent in SI units
-        :rtype: str
-        """
-        return f"{self.dec * self.siv} {self.siu}"
 
     def __lt__(self, other: Self) -> bool:
         """Overloads ``<`` operator
@@ -460,7 +461,7 @@ class _MesoM(Npvs):
     cfact: list[int] = [1, 60, 3600, 216000]  # Factor with the smallest unit
     siv: float = 1.0  #
     siu: str = "counts"  # S.I. unit name
-    prtsex: bool = False  # Printing meassurements in sexagesimal
+    prtsex: bool = False  # Printing measurements in sexagesimal
     ubase: int = 0  # Base unit for metrological tables
 
     def __init__(self, x: int | str | float) -> None:
@@ -511,6 +512,42 @@ class _MesoM(Npvs):
         self.__dec: Final[int] = dec  # Total value in smallest units
         self.__list: Final[list[int]] = lista  # Value broken down by unit
 
+    @classmethod
+    def scheme(cls, actual: bool = False, cuneiform: bool = False) -> list:
+        """
+        Extended scheme for MesoMath.
+        If cuneiform=True, it fetches glyphs from the central MAP_UNIT_LOGOGRAMS.
+        """
+        # Traemos el mapeo dinámicamente para evitar dependencias circulares si fuera necesario
+        from .glyphs import MAP_UNIT_LOGOGRAMS
+
+        ll = []
+        # Seleccionamos la lista de nombres base
+        names = cls.aname if actual else cls.uname
+
+        for i in range(len(cls.ufact)):
+            unit_name = names[i]
+            # Si se pide cuneiforme, buscamos el glifo; si no, el nombre
+            label = (
+                MAP_UNIT_LOGOGRAMS.get(unit_name, unit_name) if cuneiform else unit_name
+            )
+
+            ll.append(label)
+            if cuneiform:
+                ll.append(f" ⟵ {cls.ufact[i]}⟵ ")
+            else:
+                ll.append(f"<-{cls.ufact[i]}-")
+
+        # Añadimos la última unidad
+        last_unit = names[-1]
+        last_label = (
+            MAP_UNIT_LOGOGRAMS.get(last_unit, last_unit) if cuneiform else last_unit
+        )
+        ll.append(last_label)
+
+        ll.reverse()
+        return ll
+
     @property
     def dec(self):
         """Getter"""
@@ -545,19 +582,25 @@ class _MesoM(Npvs):
         print("    Metrology: ", *self.scheme())
         print(f"    Factor with unit '{self.uname[0]}': ", *self.cfact)
         print(
-            f"Meassurement in terms of the smallest unit: {self.dec} ({self.uname[0]})"
+            f"Measurement in terms of the smallest unit: {self.dec} ({self.uname[0]})"
         )
         print(f"Sexagesimal floating value of the above: {self.sex(0)}")
         print(f"Approximate SI value: {self.SI()}")
 
     def pure_sex(self) -> str:
-        """Devuelve la representación numérica pura sin nombres de unidades."""
-        # Para BsyG esto devolvería "9:1:5" en lugar de "9 bur 1 ese 5 iku"
+        """Returns the pure numerical representation without unit names.
+
+        :return: pure numerical representation without unit names
+        :rtype: str
+        """
+        # For BsyG this would return "9:1:5" instead of "9 bur 1 ese 5 iku"
         return ":".join(str(v) for v in reversed(self.list)).strip("0:") or "0"
+
+    
 
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
-        the units in the output. Modified version for v1.4.0: Integrates with 
+        the units in the output. Modified version for v1.4.0: Integrates with
         MesoInterpreter's scholastic systems (C and S)
 
         :onesixth: Adds 1/6 to the previous set of fractions if True
@@ -565,25 +608,16 @@ class _MesoM(Npvs):
         :actual: if True, uses academic unit names on output
         :type actual: bool, (default: False)
         """
-        fdic = fdic1 if onesixth else fdic0
         length = len(self.list)
-        ll = self.list.copy()
-        ff = ["" for i in range(length)]
+        # ll = self.list.copy()
+        # ff = ["" for i in range(length)]
 
         # 1. Fraction detection logic
-        for i in range(length - 1):
-            k = self.ufact[i]
-            if k in fdic: # We avoid errors if the factor is not in the dictionary
-                zfrac, z = fdic[k]
-                for j in range(len(z)):
-                    if ll[i] >= z[j]:
-                        ll[i] -= z[j]
-                        ff[i + 1] = zfrac[j]
-                        break
+        ll, ff, _ = self._get_decomposed_data(onesixth)
 
         # 2. Construction of value strings
         threshold = getattr(self, "sex_threshold", 0)
-        
+
         for i in range(length):
             value_str = ""
             if ll[i] != 0 or ff[i] != "":
@@ -595,15 +629,14 @@ class _MesoM(Npvs):
                         # If unit >= threshold or value >= 60 -> System S
                         if i >= threshold or ll[i] >= 60:
                             # Final recommended version for prtf and __repr__
-                            if hasattr(self, 'sexsys') and self.sexsys:
-                               # We use the "place value" (BabN) representation for the inside
+                            if hasattr(self, "sexsys") and self.sexsys:
+                                # We use the "place value" (BabN) representation for the inside
                                 # of the parentheses, avoiding unit names that break the parser.
                                 val_obj = self.sexsys(ll[i])
-                                value_str = f"({val_obj.pure_sex()})" 
+                                value_str = f"({val_obj.pure_sex()})"
                             else:
                                 value_str = f"({BsyC(ll[i])})"
 
-                
                 # We combine the value (if it exists) with the fraction found
                 if ff[i] != "":
                     ff[i] = (value_str + " " + ff[i]).strip()
@@ -616,8 +649,187 @@ class _MesoM(Npvs):
         for i in reversed(range(length)):
             if ff[i] != "":
                 ss.append(f"{ff[i]} {names[i]}")
-        
+
         return " ".join(ss)
+
+
+
+    def to_cunei(
+        self,
+        stroke: bool = False,
+        onesixth: bool = False,
+        alter: bool = False,
+        subst: str = None,
+    ) -> str:
+        """
+        Generates a pure cuneiform autograph representation of the number/measurement.
+
+        This method converts internal numerical data into a hierarchical string of
+        Unicode cuneiform glyphs. It distinguishes between numerical systems (where
+        units are implicit in the sign shape) and metrological systems (where
+        units are explicitly marked with logograms).
+
+        :param stroke: If True, uses the '𒀹' (DIŠ-tenû) sign to mark empty units,
+                       acting as a positional 'zero' placeholder.
+        :type stroke: bool, optional
+        :param onesixth: If True, allows decomposition into 1/6 units (specific to
+                         certain metrological contexts).
+        :type onesixth: bool, optional
+        :param alter: If True, uses alternative glyphs for tens (40: '𒑩', 50: '𒑪')
+                      instead of the standard additive wedges.
+        :type alter: bool, optional
+        :param subst: add substance glyph to line
+        :type subst: str, optional
+        :return: A string of cuneiform glyphs separated by thin spaces.
+        """
+        from . import glyphs
+
+        # 1. External Logogram Mapping (For metrological units)
+        MAP_UNIT_LOGOGRAMS = {
+            "DANNA": "𒆜𒁍",
+            "US": "𒍑",
+            "NINDA": "𒃻",
+            "KUS": "𒌑",
+            "SUSI": "𒋗𒋛",
+            "GU": "𒄘",
+            "MANA": "𒈠𒈾",
+            "GIN": "𒂆",
+            "SE": "𒊺",
+            "GUR": "𒄥",
+            "BARIGA": "𒁹",
+            "BAN": "𒑏",
+            "SILA": "𒋡",
+            "GAN": "𒃷",
+            "SAR": "𒊬",
+        }
+
+        # Retrieve decomposed values and fractions
+        ll, ff, uname = self._get_decomposed_data(onesixth=onesixth)
+
+        # 2. Dynamic Tens Construction (l10)
+        l10 = [""] + glyphs.l_u
+        if alter and len(l10) > 5:
+            l10[4], l10[5] = "𒑩", "𒑪"
+
+        out = []
+        # Process units from largest to smallest
+        for i in reversed(range(len(ll))):
+            val, frac_str, unit = ll[i], ff[i], uname[i].upper()
+            block = ""
+
+            # A. Arithmogram Identification (Self-identifying unit signs)
+            unit_key = unit.lower()
+            synonyms = {
+                "sargal": "sar2_gal",
+                "saru": "saru",
+                "sar2": "sar2",
+                "sar": "as",
+                "bur": "bur3",
+                "ese": "ese3",
+                "iku": "as",
+                "as": "as",
+                "ges": "ges",
+                "gesu": "gesu",
+            }
+            search_name = synonyms.get(unit_key, unit_key).replace("-", "_")
+            arithm_list = getattr(glyphs, f"l_{search_name}", None)
+
+            # B. Numeral Construction
+            if val > 0:
+                val_int = int(val)
+                if arithm_list:
+                    # Case 1: Unit has specialized numerical signs (1-9)
+                    if len(arithm_list) >= 9:
+                        tens, unit_val = divmod(val_int, 10)
+                        # Tens handling with overflow protection
+                        if tens < len(l10):
+                            block += l10[tens]
+                        else:
+                            block += l10[-1] * (tens // 9) + l10[tens % 9]
+
+                        if unit_val > 0:
+                            block += arithm_list[unit_val - 1]
+                    else:
+                        # Case 2: Multi-sign additive units (e.g., ŠARGAL)
+                        block += arithm_list[0] * val_int
+                else:
+                    # Case 3: Standard decimal/sexagesimal without specific arithmograms
+                    tens, unit_val = divmod(val_int, 10)
+                    if tens < len(l10):
+                        block += l10[tens]
+                    else:
+                        block += l10[-1] * (tens // 9) + l10[tens % 9]
+                    if unit_val > 0:
+                        block += glyphs.l_dis[unit_val - 1]
+
+            # C. Fractions
+            if frac_str:
+                block += glyphs.MAP_FRACTIONS.get(frac_str, frac_str)
+
+            # D. Final Assembly and Historical Disambiguation
+            if val > 0 or frac_str:
+                if arithm_list:
+                    # Historical Clarification: Add 'šu-ši' to GEŠ (60) in King Lists
+                    # if the lower unit (U) is zero to avoid ambiguity with DIŠ (1).
+                    if unit == "GES" and self.list[1] == 0:
+                        out.append(f"{block} 𒋢𒋛")
+                    else:
+                        out.append(block)
+                else:
+                    # Append external logogram for metrological units
+                    unit_glyph = MAP_UNIT_LOGOGRAMS.get(unit, unit)
+                    out.append(f"{block} {unit_glyph}")
+
+            elif stroke:
+                # Placeholder logic for empty units
+                if arithm_list:
+                    # Implicit units show only the stroke
+                    out.append("𒀹")
+                else:
+                    # Explicit units show the stroke and the unit logogram
+                    unit_sign = MAP_UNIT_LOGOGRAMS.get(unit, unit)
+                    out.append(f"𒀹 {unit_sign}")
+
+            res = " ".join(out)
+        # E. Final Polish: Substance Determinant (v1.6.0)
+        if subst:
+            from .glyphs import subsdict
+
+            # Si subst es una clave en subsdict, usamos el logograma;
+            # de lo contrario, devolvemos el texto original o nada.
+            glyph_subst = subsdict.get(subst.lower(), "")
+            if glyph_subst:
+                res += f"  {glyph_subst}"
+
+        return res
+
+    def _get_decomposed_data(self, onesixth=False) -> tuple[list, list]:
+        """Decompose the list of coefficients into two, one of them for fractional parts.
+
+        :param onesixth: Adds 1/6 to the previous set of fractions if True, defaults to False
+        :type onesixth: bool, optional
+        :return: tuple of lists
+        :rtype: tuple[list, list]
+        """
+        fdic = fdic1 if onesixth else fdic0
+        length = len(self.list)
+        ll = self.list.copy()
+        ff = ["" for i in range(length)]
+        is_numeric_system = self.__class__.__name__.startswith("Bsy")
+        if is_numeric_system:
+            return ll, ff, self.uname
+
+        # 1. Fraction detection logic
+        for i in range(length - 1):
+            k = self.ufact[i]
+            if k in fdic:  # We avoid errors if the factor is not in the dictionary
+                zfrac, z = fdic[k]
+                for j in range(len(z)):
+                    if ll[i] >= z[j]:
+                        ll[i] -= z[j]
+                        ff[i + 1] = zfrac[j]
+                        break
+        return ll, ff, self.uname
 
     def __repr__(self) -> str:
         """Returns string representation of object."""
@@ -691,7 +903,35 @@ class BsyS(_MesoM):  # Babylonian System S numeration
         "sargal": 216000,
     }
 
-class BsyC(_MesoM):  # Babylonian System S numeration
+
+class BsyK(_MesoM):  # Babylonian System SKL numeration
+    """This class implement Non-Place-Value System arithmetic
+    for Babylonian System-SKL (Sumerian King List) numeration
+
+        **šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš**
+
+    """
+
+    title: str = "Babylonian System SKL to count years"
+    uname: list[str] = "dis u ges gesu sar saru sargal".split()
+    aname: list[str] = "diš u geš geš'u šar2 šar'u šar2-gal".split()
+    ufact: list[int] = [10, 6, 10, 6, 10, 6]
+    cfact: list[int] = [1, 10, 60, 600, 3600, 36000, 216000]
+    siv: float = 1
+    siu: str = "#"
+    ubase: int = 0  # as
+    dic_cfact = {
+        "dis": 1,
+        "u": 10,
+        "ges": 60,
+        "gesu": 600,
+        "sar": 3600,
+        "saru": 36000,
+        "sargal": 216000,
+    }
+
+
+class BsyC(_MesoM):  # Babylonian System C numeration
     """This class implement Non-Place-Value System arithmetic
     for Babylonian System-C (Common) numeration
 
@@ -709,13 +949,116 @@ class BsyC(_MesoM):  # Babylonian System S numeration
     ubase: int = 0  # dis
 
 
-
 class MesoM(_MesoM):
     """This class complements the _MesoN class by allowing you to express unit
     coefficients in measurements using the S and G systems as appropriate. It
     introduces the sexsys attribute and enhances the __repr__ method."""
 
     sexsys: type[BsyS] | type[BsyG] = BsyS
+
+    @classmethod
+    def metrolist(
+        cls,
+        mmin: str | int,
+        mmax: str | int,
+        step: str | int,
+        verbose: bool = False,
+        ubase: int | None = None,
+        width: int = 20,
+        fractions: int = -1,
+        actual: bool = False,
+        echo: bool = True,
+        cuneiform: bool = False,
+        subst: str = None,
+        **kwargs,
+    ):
+        """Generate a list of metrological values for the current class.
+
+        :param mmin: Initial value (e.g., '1 ninda' or integer)
+        :type mmin: str | int
+        :param mmax: Final value
+        :type mmax: str | int
+        :param step: Increment
+        :type step: str | int
+        :param verbose: If it is True, it returns the floating metrological value, defaults to False
+        :type verbose: bool, optional
+        :param ubase: force ubase unit, defaults to None
+        :type ubase: int, optional
+        :param width: output width, defaults to 20
+        :type width: int, optional
+        :param fractions: Use fractions if 1 and add 1/6 if 2, defaults to -1 (no fractions)
+        :type fractions: int, optional
+        :param actual: use academic unit names
+        :type actual: bool, optional
+        :param echo: If True, prints the table to stdout. If False, only returns the list.
+        :type echo: bool, optional
+        :param cuniform: If True, prints the table in cuneiform.
+        :type cuneiform: bool, optional
+        :param subst: add substance glyph to line
+        :type subst: str, optional
+        :return: List of formatted strings
+        :rtype: list
+        """
+        from .glyphs import MAP_UNIT_LOGOGRAMS
+
+
+        start_dec = cls(mmin).dec
+        end_dec = cls(mmax).dec
+        step_dec = cls(step).dec
+
+        if ubase is None:
+            ubase = cls.ubase
+
+        results = []
+
+        # Helper function to handle output according to the switch
+        def handle_output(text):
+            if echo:
+                print(text)
+            results.append(text)
+
+        if echo:
+            print("\n"+ cls.title)
+            print(*cls.scheme(actual=actual, cuneiform=cuneiform))
+            if cuneiform:
+                ubase_glyph = MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
+                line=f"{'Measurement'.ljust(width)} | {f'Sexag. (ubase= {ubase_glyph}  )'}"
+            else:
+                line=f"{'Measurement'.ljust(width)} | {f'Sexag. (ubase={cls.uname[ubase]})'}"
+
+            print(line)
+            print("-" * len(line))
+
+        current = start_dec
+        while current <= end_dec + (step_dec / 10):
+            obj = cls(int(round(current)))
+            if cuneiform:
+                ln = (
+                    obj.to_cunei(onesixth=True, subst=subst)
+                    if fractions > 0
+                    else obj.to_cunei(onesixth=False, subst=subst)
+                )
+                if verbose:
+                    line = f"{ln.ljust(width)} | {((obj.sex(r=ubase)).cuneiform(alter=True)).ljust(15)}"
+                else:
+                    line = ln.ljust(width)
+            else:
+                if fractions in {1, 2}:
+                    ln = obj.prtf(onesixth=fractions == 2, actual=actual) + f" {subst}"
+                else:
+                    ln = str(obj) + f" {subst}"
+
+                if verbose:
+                    line = f"{ln.ljust(width)} | {str(obj.sex(r=ubase)).ljust(15)}"
+                else:
+                    line = ln.ljust(width)
+
+            handle_output(line)
+            current += step_dec
+
+        # Only return the list if echo is False (prevents duplication in REPL)
+        if not echo:
+            return results
 
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
@@ -726,24 +1069,14 @@ class MesoM(_MesoM):
         :actual: use academic unit names if True
         :type actual: bool, (default = False)
         """
-        if onesixth:
-            fdic = fdic1
-        else:
-            fdic = fdic0
         length = len(self.list)
-        ll = self.list.copy()
-        ff = ["" for i in range(length)]
-        for i in range(length - 1):
-            k = self.ufact[i]
-            (zfrac, z) = fdic[k]
-            for j in range(len(z)):
-                if ll[i] >= z[j]:
-                    ll[i] -= z[j]
-                    ff[i + 1] = zfrac[j]
-                    break
-        # DENTRO DE prtf, en el bucle de construcción:
+
+        # 1. Fraction detection logic
+        ll, ff, _ = self._get_decomposed_data(onesixth)
+
+        # 2. Construction of value strings
         threshold = getattr(self, "sex_threshold", 0)
-        
+
         for i in range(length):
             if ll[i] != 0 or ff[i] != "":
                 if not self.prtsex:
@@ -758,12 +1091,12 @@ class MesoM(_MesoM):
                             value_str = f"({BsyC(ll[i])})"
                         else:
                             # Versión final recomendada para prtf y __repr__
-                            if hasattr(self, 'sexsys'):
+                            if hasattr(self, "sexsys"):
                                 value_str = f"({self.sexsys(ll[i])})"
                             else:
                                 # Si soy BsyS, me represento a mí mismo sin buscar un sexsys
                                 value_str = f"({self.__class__(ll[i]).__repr_base__()})"
-                
+
                 # Unir con la fracción
                 if ff[i] != "":
                     ff[i] = (value_str + " " + ff[i]).strip()
@@ -860,7 +1193,7 @@ class MesoM(_MesoM):
 
     def __repr__(self) -> str:
         """
-        Academic representation: System C for small units, System S for large 
+        Academic representation: System C for small units, System S for large
         units or overflow values (>60).
         """
         if not self.list or all(v == 0 for v in self.list):
@@ -883,87 +1216,12 @@ class MesoM(_MesoM):
                         ss.append(f"({self.sexsys(val)})")
                     else:
                         ss.append(f"({BsyC(val)})")
-                
+
                 ss.append(self.uname[i])
-        
+
         return " ".join(ss)
 
-    @classmethod
-    def metrolist(
-        cls,
-        mmin: str | int,
-        mmax: str | int,
-        step: str | int,
-        verbose: bool = False,
-        ubase: int | None = None,
-        width: int = 20,
-        fractions: int = -1,
-        actual: bool = False,
-        echo: bool = True,  # Nuevo switch para control de salida
-        **kwargs,
-    ):
-        """Generate a list of metrological values for the current class.
 
-        :param mmin: Initial value (e.g., '1 ninda' or integer)
-        :type mmin: str | int
-        :param mmax: Final value
-        :type mmax: str | int
-        :param step: Increment
-        :type step: str | int
-        :param verbose: If it is True, it returns the floating metrological value, defaults to False
-        :type verbose: bool, optional
-        :param ubase: force ubase unit, defaults to None
-        :type ubase: int, optional
-        :param width: output width, defaults to 20
-        :type width: int, optional
-        :param fractions: Use fractions if 1 and add 1/6 if 2, defaults to -1 (no fractions)
-        :type fractions: int, optional
-        :param actual: use academic unit names
-        :type actual: bool, optional
-        :param echo: If True, prints the table to stdout. If False, only returns the list.
-        :type echo: bool, optional
-        :return: List of formatted strings
-        :rtype: list
-        """
-        start_dec = cls(mmin).dec
-        end_dec = cls(mmax).dec
-        step_dec = cls(step).dec
-
-        if ubase is None:
-            ubase = cls.ubase
-
-        results = []
-
-        # Helper function to handle output according to the switch
-        def handle_output(text):
-            if echo:
-                print(text)
-            results.append(text)
-
-        if verbose:
-            handle_output(f"{'Measurement'.ljust(width)} | {'Sexag. (base)'}")
-            handle_output("-" * (width + 18))
-
-        current = start_dec
-        while current <= end_dec + (step_dec / 10):
-            obj = cls(int(round(current)))
-
-            if fractions in {1, 2}:
-                ln = obj.prtf(onesixth=fractions == 2, actual=actual)
-            else:
-                ln = str(obj)
-
-            if verbose:
-                line = f"{ln.ljust(width)} | {str(obj.sex(r=ubase)).ljust(15)}"
-            else:
-                line = ln.ljust(width)
-
-            handle_output(line)
-            current += step_dec
-
-        # Only return the list if echo is False (prevents duplication in REPL)
-        if not echo:
-            return results
 
 
 class Blen(MesoM):  # Length
@@ -974,7 +1232,7 @@ class Blen(MesoM):  # Length
 
     """
 
-    title: str = "Babylonian length meassurement"
+    title: str = "Babylonian length measurement"
     uname: list[str] = "susi kus ninda us danna".split()
     aname: list[str] = "šu-si kuš3 ninda UŠ danna".split()
     ufact: list[int] = [30, 12, 60, 30]
@@ -1015,7 +1273,7 @@ class Bsur(MesoM):  # Surface
 
     """
 
-    title: str = "Babylonian surface meassurement"
+    title: str = "Babylonian surface measurement"
     uname: list[str] = "se gin sar gan".split()
     aname: list[str] = "še gin2 sar GAN2".split()
     ufact: list[int] = [180, 60, 100]
@@ -1053,7 +1311,7 @@ class Bvol(MesoM):  # Volume
 
     """
 
-    title: str = "Babylonian volume meassurement"
+    title: str = "Babylonian volume measurement"
     uname: list[str] = "se gin sar gan".split()
     aname: list[str] = "še gin2 sar GAN2".split()
     ufact: list[int] = [180, 60, 100]
@@ -1065,7 +1323,7 @@ class Bvol(MesoM):  # Volume
     sexsys: type[BsyS] | type[BsyG] = BsyG
 
     def cap(self):  # noqa: F821
-        """Convert volume to capacity meassurement"""
+        """Convert volume to capacity measurement"""
         return Bcap(18000 * self.dec)
 
     def bricks(self, nalb: float = 1.0) -> "Bbri":
@@ -1106,7 +1364,7 @@ class Bcap(MesoM):  # Capacity
 
     """
 
-    title: str = "Babylonian capacity meassurement"
+    title: str = "Babylonian capacity measurement"
     uname: list[str] = "se gin sila ban bariga gur".split()
     aname: list[str] = "še gin2 sila3 ban2 bariga gur".split()
     ufact: list[int] = [180, 60, 10, 6, 5]
@@ -1117,9 +1375,9 @@ class Bcap(MesoM):  # Capacity
     ubase: int = 1  # gin
 
     def vol(self) -> Bvol | None:
-        """Convert capacity to volume meassurement
+        """Convert capacity to volume measurement
 
-        :return: volume meassurement
+        :return: volume measurement
         :rtype: "Bvol" | None
         """
         if self.dec >= 18000:
@@ -1137,7 +1395,7 @@ class Bwei(MesoM):  # Weight
 
     """
 
-    title: str = "Babylonian weight meassurement"
+    title: str = "Babylonian weight measurement"
     uname: list[str] = "se gin mana gu".split()
     aname: list[str] = "še gin2 ma-na gu2".split()
     ufact: list[int] = [180, 60, 60]

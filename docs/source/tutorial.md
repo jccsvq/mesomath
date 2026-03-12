@@ -833,18 +833,18 @@ Once you have defined measurements, you can "explain" them:
 
 ```pycon
 --> a.explain()
-This is a Babylonian length meassurement: 30 ninda 10 kus 11 susi
+This is a Babylonian length measurement: 30 ninda 10 kus 11 susi
     Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
     Factor with unit 'susi':  1 30 360 21600 648000
-Meassurement in terms of the smallest unit: 11111 (susi)
+measurement in terms of the smallest unit: 11111 (susi)
 Sexagesimal floating value of the above: 3:5:11
 Approximate SI value: 185.18333333333334 meters
 --> 
 --> b.explain()
-This is a Babylonian length meassurement: 5 ninda 25 susi
+This is a Babylonian length measurement: 5 ninda 25 susi
     Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
     Factor with unit 'susi':  1 30 360 21600 648000
-Meassurement in terms of the smallest unit: 1825 (susi)
+measurement in terms of the smallest unit: 1825 (susi)
 Sexagesimal floating value of the above: 30:25
 Approximate SI value: 30.416666666666668 meters
 ```
@@ -922,7 +922,7 @@ But you will rarely need to resort to programming, since **MesoMath** has specia
 
 *   The [`metrotable`](#metrotable-tutorial) tool, which specializes in printing segments of metrological list and tables.
 *   The [`mtlookup`](#mtlookup-tutorial) tool that simulates direct and inverse searches in metrological tables.
-*   The [`.metrolist()`] method that works with all metrological classes, including [those you define yourself](#advanced-topics).
+*   The `.metrolist()` method that works with all metrological classes, including [those you define yourself](#advanced-topics).
 
 For instance for horizontal distances (base unit ninda)
 ```pycon
@@ -952,7 +952,7 @@ You can get also the metrological value of an object directly using the `.metval
 7:30
 ```
 
-We finish this section with the `.si()` and `.SI()` methods that show us the approximate equivalence of the Babylonic measures in the International System of Units:
+We finish this section with the `.si()` and `.SI()` methods that show us the approximate equivalence of the Babylonic measurementss in the International System of Units:
 
 ```pycon
 --> w = bw(' 1 mana 3 gin')
@@ -1009,20 +1009,20 @@ Additionally, for length measurements we can multiply them together to obtain su
 --> s
 1 gan 56 sar 27 gin 138 se
 --> s.explain()
-This is a Babylonian surface meassurement: 1 gan 56 sar 27 gin 138 se
+This is a Babylonian surface measurement: 1 gan 56 sar 27 gin 138 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 1689798 (se)
+measurement in terms of the smallest unit: 1689798 (se)
 Sexagesimal floating value of the above: 7:49:23:18
 Approximate SI value: 5632.66 square meters
 --> v=s*c
 --> v
 3 gan 12 sar 55 gin 96 se
 --> v.explain()
-This is a Babylonian volume meassurement: 3 gan 12 sar 55 gin 96 se
+This is a Babylonian volume measurement: 3 gan 12 sar 55 gin 96 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 3379596 (se)
+measurement in terms of the smallest unit: 3379596 (se)
 Sexagesimal floating value of the above: 15:38:46:36
 Approximate SI value: 5632.66 cube meters
 
@@ -1212,25 +1212,25 @@ Here, they are represented by the metrological classes `Bcap` (imported in `babc
 ```pycon
 --> a = bv('1 gin')
 --> a.explain()
-This is a Babylonian volume meassurement: 1 gin
+This is a Babylonian volume measurement: 1 gin
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 180 (se)
+measurement in terms of the smallest unit: 180 (se)
 Sexagesimal floating value of the above: 3
 Approximate SI value: 0.3 cube meters
 --> b = a.cap()
 --> b.explain()
-This is a Babylonian capacity meassurement: 1 gur
+This is a Babylonian capacity measurement: 1 gur
     Metrology:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 108000 648000 3240000
-Meassurement in terms of the smallest unit: 3240000 (se)
+measurement in terms of the smallest unit: 3240000 (se)
 Sexagesimal floating value of the above: 15
 Approximate SI value: 300.0 litres
 --> (b.vol()).explain()
-This is a Babylonian volume meassurement: 1 gin
+This is a Babylonian volume measurement: 1 gin
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 180 (se)
+measurement in terms of the smallest unit: 180 (se)
 Sexagesimal floating value of the above: 3
 Approximate SI value: 0.3 cube meters
 ```
@@ -1250,7 +1250,7 @@ Volume measurements were frequently transformed into their **"brick" equivalents
 This is a Babylonian brick counting: 1 sar
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 10800 (se)
+measurement in terms of the smallest unit: 10800 (se)
 Sexagesimal floating value of the above: 3
 Approximate SI value: 720.0 bricks
 ```
@@ -1283,7 +1283,7 @@ Then, if we have 10000 type-2 bricks,  we can do:
 This is a Babylonian brick counting: 13 sar 53 gin 60 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 150000 (se)
+measurement in terms of the smallest unit: 150000 (se)
 Sexagesimal floating value of the above: 41:40
 Approximate SI value: 10000.0 bricks
 ```
@@ -1293,10 +1293,10 @@ that you can convert into a volume:
 ```pycon
 --> d = c.vol(7.20)  # 7.20 nalbanum of type-2 bricks
 --> d.explain()
-This is a Babylonian volume meassurement: 1 sar 55 gin 133 se
+This is a Babylonian volume measurement: 1 sar 55 gin 133 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 20833 (se)
+measurement in terms of the smallest unit: 20833 (se)
 Sexagesimal floating value of the above: 5:47:13
 Approximate SI value: 34.721666666666664 cube meters
 ```
@@ -1509,7 +1509,7 @@ class LBcap(Bcap):  # Capacity
 
     """
 
-    title: str = "Late Babylonian capacity meassurement"
+    title: str = "Late Babylonian capacity measurement"
     uname: list[str] = "gar sila ban bariga gur".split()
     aname: list[str] = "GAR sila3 ban2 bariga gur".split()
     ufact: list[int] = [10, 10, 6, 5]
@@ -1519,9 +1519,9 @@ class LBcap(Bcap):  # Capacity
     ubase: int = 3  # bariga
 
     def vol(self) -> object:
-        """Convert capacity to volume meassurement
+        """Convert capacity to volume measurement
 
-        :return: volume meassurement
+        :return: volume measurement
         :rtype: "Bvol"
         """
         return LBvol(int(round(self.dec/(100/6))))
@@ -1533,10 +1533,10 @@ class LBvol(Bvol):  # Volume
         **GAN2 <-100- sar <-60- gin2 <-180- še**
 
     """
-    title: str = "Late Babylonian volume meassurement"
+    title: str = "Late Babylonian volume measurement"
     
     def cap(self) -> object:
-        """Convert volume to capacity meassurement"""
+        """Convert volume to capacity measurement"""
         return LBcap(int(round(self.dec*(100/6))))
 ```
 
@@ -1552,10 +1552,10 @@ $ babcalc -i lateb.py
 --> b
 3 gin 60 se
 --> b.explain() 
-This is a Late Babylonian volume meassurement: 3 gin 60 se
+This is a Late Babylonian volume measurement: 3 gin 60 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-Meassurement in terms of the smallest unit: 600 (se)
+measurement in terms of the smallest unit: 600 (se)
 Sexagesimal floating value of the above: 10
 Approximate SI value: 0.9999999999999999 cube meters
 --> c=b.cap() 
@@ -1564,10 +1564,10 @@ Approximate SI value: 0.9999999999999999 cube meters
 --> c.SI() 
 '1000.0 litres'
 --> c.explain() 
-This is a Late Babylonian capacity meassurement: 3 gur 1 bariga 4 ban
+This is a Late Babylonian capacity measurement: 3 gur 1 bariga 4 ban
     Metrology:  gur <-5- bariga <-6- ban <-10- sila <-10- gar
     Factor with unit 'gar':  1 10 100 600 3000
-Meassurement in terms of the smallest unit: 10000 (gar)
+measurement in terms of the smallest unit: 10000 (gar)
 Sexagesimal floating value of the above: 2:46:40
 Approximate SI value: 1000.0 litres
 -->
@@ -1590,14 +1590,16 @@ Approximate SI value: 1000.0 litres
 etc. but we should also redefine the rest of the classes to ensure consistency in the operations with the new units.
 
 
-## Apendix
+
+
+## Appendix
 
 (systems-SGC)=
 ### Use of System C, S and G in MesoMath Metrology
 
 According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneiform to Transliteration.  Table 9 <ref-Proust3>`
 
-|Meassurement| System | Unit   | Class            |
+|Measurement| System | Unit   | Class            |
 |------------|--------|--------|------------------|
 | capacities | C      | gin2   | Bcap             |
 | capacities | C	  | sila3  | Bcap             |
@@ -1720,3 +1722,46 @@ According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneifor
     173 sargal 1 saru 1 sar 5 buru 9 bur 2 iku
     173 1/6 šar2-gal 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
     173 sargal 1 saru 1 5/6 sar 1/2 buru 4 bur 1/3 ese
+
+## Test Cuneiform (𒈗𒁕𒇻) 𒓢𒓬
+
+<div class="tablet">
+
+| Measurement | Abstract | Reciprocal |
+| :--- | :--- | :--- |
+| 𒌋 𒂆 𒆬𒌓 | 𒌋 |  Ellie |
+| 𒑚 𒈠𒈾 𒆬𒌓 | 𒎙 | 𒎙𒐘 |
+
+</div>
+
+Texto
+
+<div class="tablet">
+
+|Measurement          | Sexag. (ubase= 𒂆  )|
+| :--- | :--- |
+|𒌋 𒂆  𒆬𒌓           | 𒌋       |       
+|𒑚 𒈠𒈾  𒆬𒌓        | 𒎙        |      
+|𒈦 𒈠𒈾  𒆬𒌓        | 𒌍       |       
+|𒑛 𒈠𒈾  𒆬𒌓        | 𒑩      |        
+|𒑜 𒈠𒈾  𒆬𒌓        | 𒑪     |         
+|𒁹 𒈠𒈾  𒆬𒌓         |  𒐕  |
+</div>
+
+Texto
+
+<div class="tablet">
+
+|Babylonian weight measurement|
+|---|
+|𒄘  ⟵ 60 ⟵  𒈠𒈾  ⟵ 60 ⟵  𒂆  ⟵ 180 ⟵  𒊺|
+
+|Measurement          | Sexag. (ubase= 𒂆  )|
+| :--- | :--- |
+|𒌋 𒂆  𒆬𒌓           | 𒌋       |       
+|𒑚 𒈠𒈾  𒆬𒌓        | 𒎙        |      
+|𒈦 𒈠𒈾  𒆬𒌓        | 𒌍       |       
+|𒑛 𒈠𒈾  𒆬𒌓        | 𒑩      |        
+|𒑜 𒈠𒈾  𒆬𒌓        | 𒑪     |         
+|𒁹 𒈠𒈾  𒆬𒌓         |  𒐕  |
+</div>

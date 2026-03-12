@@ -69,11 +69,11 @@ def header(
             print("  cfact: ", *met.cfact)
         print(f"Base unit: {names[ubase]}\n")
         if args.verbose:
-            line="Meassurement".ljust(width + 4) + "Abstract".ljust(18) + "Reciprocal"
+            line="Measurement".ljust(width + 4) + "Abstract".ljust(18) + "Reciprocal"
             print(line)
             print("=" * len(line))
         else:
-            line="Meassurement".ljust(width + 4) + "Abstract".ljust(18)
+            line="Measurement".ljust(width + 4) + "Abstract".ljust(18)
             print(line)
             print("=" * len(line))
 
@@ -114,7 +114,7 @@ def metrolist(
 
     for i in range(len(max_list)):
         if i > 0:
-            print("-" * (width + 30))
+            print("-" * (width + 32))
         
         target_val = met(max_list[i].strip())
         step_val = met(inc_list[i].strip())
@@ -122,20 +122,27 @@ def metrolist(
         while m <= target_val:
             # 1. Get the abstract number
             pp = m.sex(ubase)
-            
-            # 2. Format the measurement (standard or with fractions/academic names)
-            if args.fractions < 0:
-                m_str = str(m)
+
+            if args.cuneiform:
+                m_str = m.to_cunei(onesixth=True) if args.fractions > 0 else m.to_cunei(onesixth=False)
+                line = f"|{m_str.ljust(width)} | {str(pp.cuneiform(alter=True,stroke=True)).ljust(15)}|"
+                if args.verbose:
+                    recip = (pp.rec()).cuneiform(alter=True,stroke=True) if pp.isreg else "𒅆𒉡"
+                    line += f" {recip.ljust(10)}|"
             else:
-                m_str = m.prtf(args.fractions, args.academic)
-            
-            # 3. Build the baseline
-            line = f"{m_str.ljust(width)} -> {str(pp).ljust(15)}"
-            
-            # 4. Add reciprocal in verbose mode
-            if args.verbose:
-                recip = pp.rec() if pp.isreg else "--igi nu--"
-                line += f" | {recip}"
+                # 2. Format the measurement (standard or with fractions/academic names)
+                if args.fractions < 0:
+                    m_str = str(m)
+                else:
+                    m_str = m.prtf(args.fractions, args.academic)
+                
+                # 3. Build the baseline
+                line = f"{m_str.ljust(width)} -> {str(pp).ljust(15)}"
+                
+                # 4. Add reciprocal in verbose mode
+                if args.verbose:
+                    recip = pp.rec() if pp.isreg else "--igi nu--"
+                    line += f" | {recip}"
             
             print(line)
             
@@ -246,6 +253,13 @@ def gen_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
     )
+    parser.add_argument(
+        "-c",
+        "--cuneiform",
+        help="Write table in cuneiform",
+        action="store_true",
+        default=False,
+    )    
 
     return parser
 

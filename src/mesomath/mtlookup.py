@@ -30,7 +30,7 @@ def gen_parser() -> argparse.ArgumentParser:
     """User interface parser"""
     # Option definitions
 
-    DESC = """Prints abstract number corresponding to a meassure or lists 
+    DESC = """Prints abstract number corresponding to a measure or lists 
     measures having an abstract number."""
     EPIL = "jccsvq fecit, 2025. Public domain."
 
@@ -153,7 +153,7 @@ def main():
                 continue
 
             if args.verbose:
-                print(f"Meassure:   {medida_str}")
+                print(f"Measure:   {medida_str}")
                 print(f"Equiv.:   {obj.SI()}")
                 print(f"Abstract: {abstracto}\n")
             else:

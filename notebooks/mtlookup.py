@@ -43,12 +43,12 @@
 #
 # Metrology is selected with the options `-t` or `--type`:
 #
-# * L:   length meassurements
-# * Lh:   length meassurements (Heights)
-# * S:   surface meassurements
-# * V:   volume meassurements
-# * C:   capacity meassurements
-# * W:   weight meassurements
+# * L:   length measurements
+# * Lh:   length measurements (Heights)
+# * S:   surface measurements
+# * V:   volume measurements
+# * C:   capacity measurements
+# * W:   weight measurements
 # * B:   brick count
 # * SysS:   System S to count objects
 # * SysG:   System G to count objects

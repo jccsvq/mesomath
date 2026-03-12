@@ -95,7 +95,7 @@ class LBcap(Bcap):  # Capacity
 
     """
 
-    title: str = "Late Babylonian capacity meassurement"
+    title: str = "Late Babylonian capacity measurement"
     uname: list[str] = "gar sila ban bariga gur".split()
     aname: list[str] = "GAR sila3 ban2 bariga gur".split()
     ufact: list[int] = [10, 10, 6, 5]
@@ -105,9 +105,9 @@ class LBcap(Bcap):  # Capacity
     ubase: int = 3  # bariga
 
     def vol(self) -> object:
-        """Convert capacity to volume meassurement
+        """Convert capacity to volume measurement
 
-        :return: volume meassurement
+        :return: volume measurement
         :rtype: "Bvol"
         """
         return LBvol(int(round(self.dec/(100/6))))
@@ -119,10 +119,10 @@ class LBvol(Bvol):  # Volume
         **GAN2 <-100- sar <-60- gin2 <-180- še**
 
     """
-    title: str = "Late Babylonian volume meassurement"
+    title: str = "Late Babylonian volume measurement"
     
     def cap(self) -> object:
-        """Convert volume to capacity meassurement"""
+        """Convert volume to capacity measurement"""
         return LBcap(int(round(self.dec*(100/6))))
 
 

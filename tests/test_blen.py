@@ -7,7 +7,7 @@ def test_blen():
 
     assert str(a) == "1 ninda 3 kus 7 susi"
     assert str(b) == "1 us 8 kus 16 susi"
-    assert a.title == "Babylonian length meassurement"
+    assert a.title == "Babylonian length measurement"
     assert b.dec == 21856
     assert a.uname == ["susi", "kus", "ninda", "us", "danna"]
     assert a.aname == "šu-si kuš3 ninda UŠ danna".split()
@@ -26,10 +26,10 @@ def test_blen():
     assert str(2 * a) == "2 ninda 6 kus 14 susi"
 
     assert str(a * b) == "77 sar 4 gin 29 se"
-    assert (a * b).title == "Babylonian surface meassurement"
+    assert (a * b).title == "Babylonian surface measurement"
     assert (a * b).SI() == "2774.4966666666664 square meters"
     v = (a * b) * bl("1 kus")
-    assert v.title == "Babylonian volume meassurement"
+    assert v.title == "Babylonian volume measurement"
     assert v.SI() == "1387.2483333333332 cube meters"
 
     assert b.prtf() == "1 us 2/3 ninda 1/2 kus 1 susi"

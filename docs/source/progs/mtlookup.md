@@ -36,7 +36,7 @@ usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,B,SysG,SysS}] [-r] [-f FORCE] [-v]
                 [-F {0,1}] [-p] [-s] [-a]
                 VALUE
 
-Prints abstract number corresponding to a meassure or lists measures having an
+Prints abstract number corresponding to a measure or lists measures having an
 abstract number.
 
 positional arguments:
@@ -68,12 +68,12 @@ jccsvq fecit, 2025. Public domain.
 
 Metrology is selected with the options `-t` or `--type`:
 
-* L:   length meassurements
-* Lh:   length meassurements (Heights)
-* S:   surface meassurements
-* V:   volume meassurements
-* C:   capacity meassurements
-* W:   weight meassurements
+* L:   length measurements
+* Lh:   length measurements (Heights)
+* S:   surface measurements
+* V:   volume measurements
+* C:   capacity measurements
+* W:   weight measurements
 * B:   brick counts
 * SysS:   System S to count objects
 * SysG:   System G to count objects
@@ -92,7 +92,7 @@ You can use the verbose options `-v` or `--verbose`:
 ```bash
 $ mtlookup -t L '1 us 30 ninda' --verbose
 
-Abstract number for Babylonian length meassurement
+Abstract number for Babylonian length measurement
     Base unit:  ninda
 ===================================================
 1 us 30 ninda  ->  1:30 Reciprocal:  40
@@ -106,7 +106,7 @@ With the `-r` or `--reverse` options you get a list of measures that match the g
 ```bash
 $ mtlookup -t L 1.30 -r
 
-Looking for Babylonian length meassurement with Abstract = 1:30
+Looking for Babylonian length measurement with Abstract = 1:30
 Base reference unit: ninda
 ----------------------------------------------------------------
 10800 danna          <- 1:30
@@ -121,30 +121,30 @@ Base reference unit: ninda
 ```bash
 $ mtlookup -t L 1.30 -r -v
 
-Looking for Babylonian length meassurement with Abstract = 1:30
+Looking for Babylonian length measurement with Abstract = 1:30
 Base reference unit: ninda
 ----------------------------------------------------------------
-Meassure:   10800 danna
+measure:   10800 danna
 Equiv.:   116640000.0 meters
 Abstract: 1:30
 
-Meassure:   180 danna
+measure:   180 danna
 Equiv.:   1944000.0 meters
 Abstract: 1:30
 
-Meassure:   3 danna
+measure:   3 danna
 Equiv.:   32400.0 meters
 Abstract: 1:30
 
-Meassure:   1 us 30 ninda
+measure:   1 us 30 ninda
 Equiv.:   540.0 meters
 Abstract: 1:30
 
-Meassure:   1 ninda 6 kus
+measure:   1 ninda 6 kus
 Equiv.:   9.0 meters
 Abstract: 1:30
 
-Meassure:   9 susi
+measure:   9 susi
 Equiv.:   0.15 meters
 Abstract: 1:30
 ```
@@ -154,7 +154,7 @@ In some cases, due to the discrete nature of the measurements and rounding, the 
 ```bash
 $ mtlookup -r -t L 6.40.38 -w 30
 
-Looking for Babylonian length meassurement with Abstract = 6:40:38
+Looking for Babylonian length measurement with Abstract = 6:40:38
 Base reference unit: ninda
 -------------------------------------------------------------------
 2884560 danna                  <- 6:40:38
@@ -172,7 +172,7 @@ you can use options `-s --strict` to suppress them:
 ```bash
 $ mtlookup -r -t L 6.40.38 -sw 30
 
-Looking for Babylonian length meassurement with Abstract = 6:40:38
+Looking for Babylonian length measurement with Abstract = 6:40:38
 Base reference unit: ninda
 -------------------------------------------------------------------
 2884560 danna                  <- 6:40:38
@@ -194,7 +194,7 @@ $ mtlookup -t V '128 gan 133 se' -p
 ```bash
 $ mtlookup -t V 3:33:20:0:44:20 -prw 60
 
-Looking for Babylonian volume meassurement with Abstract = 3:33:20:0:44:20
+Looking for Babylonian volume measurement with Abstract = 3:33:20:0:44:20
 Base reference unit: gin
 ---------------------------------------------------------------------------
 (1536001 sargal 2 saru 8 sar 4 buru) gan                     <- 3:33:20:0:44:20
@@ -221,7 +221,7 @@ $ mtlookup -t V '128 gan 133 se' -pF0
 ```bash
 $ mtlookup -t L 1.30 -r -F0
 
-Looking for Babylonian length meassurement with Abstract = 1:30
+Looking for Babylonian length measurement with Abstract = 1:30
 Base reference unit: ninda
 ----------------------------------------------------------------
 10800 danna          <- 1:30
@@ -238,7 +238,7 @@ You may combine it with `-p` (pedantic mode):
 ```bash
 $ mtlookup -t L 1.30 -r -pF1
 
-Looking for Babylonian length meassurement with Abstract = 1:30
+Looking for Babylonian length measurement with Abstract = 1:30
 Base reference unit: ninda
 ----------------------------------------------------------------
 (3 sar) danna        <- 1:30
@@ -261,7 +261,7 @@ $ mtlookup -t L '1 us 30 ninda' -aF1
 ```bash
 $ mtlookup -t L 1.30 -r -pF1 -aw 25
 
-Looking for Babylonian length meassurement with Abstract = 1:30
+Looking for Babylonian length measurement with Abstract = 1:30
 Base reference unit: ninda
 ----------------------------------------------------------------
 (3 sar) danna             <- 1:30

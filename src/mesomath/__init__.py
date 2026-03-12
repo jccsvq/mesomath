@@ -16,6 +16,7 @@ from .npvs import Bwei
 from .npvs import BsyG
 from .npvs import BsyS
 from .npvs import BsyC
+from .npvs import BsyK
 from .npvs import Bbri
 
 BabN.__module__ = "mesomath"
@@ -27,6 +28,7 @@ Bwei.__module__ = "mesomath"
 BsyG.__module__ = "mesomath"
 BsyS.__module__ = "mesomath"
 BsyC.__module__ = "mesomath"
+BsyK.__module__ = "mesomath"
 Bbri.__module__ = "mesomath"
 
 
@@ -40,6 +42,7 @@ __all__ = [
     "BsyG",
     "BsyS",
     "BsyC",
+    "BsyK",
     "Bbri",
     "__version__",
 ]

@@ -17,6 +17,7 @@ def test_parser_consistency(value=11223344):
         mm.Bbri,
         mm.BsyS,
         mm.BsyG,
+        mm.BsyK
     ]
 
     results = {"pass": 0, "fail": 0, "errors": []}

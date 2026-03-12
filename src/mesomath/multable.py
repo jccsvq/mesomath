@@ -13,6 +13,8 @@ def multable(
     pral: bool = True,
     sep: str = ":",
     fill: bool = False,
+    cuneiform: bool = False,
+    stroke: bool = False,
 ) -> None:
     """Returns the n multiplication table for principal numbers or for all
 
@@ -22,8 +24,16 @@ def multable(
           if False writes the table for:
           [i+1 for i in range(59)]
           (default: True)
+    :type pral: bool, (default: True)
     :sep: sexagesimal digits separator (default: ":")
-    :pad: add left zero to sexagesimal digits <= 9 (default: False)
+    :type sep: str, (default: ":")
+    :fill: add left zero to sexagesimal digits <= 9 (default: False)
+    :type fill: bool, (default: False)
+    :cuneiform: output is in cuneiform (default: False)
+    :type cuneiform: bool, (default: False)
+    :stroke: strike out empty space (sexagesimal digit zero), default: False
+    :type stroke: bool, (default: False)
+    :return: None
 
     """
     # Normalization: we accept int, str, or even BabN
@@ -37,13 +47,22 @@ def multable(
         # The 'principal' numbers of the Babylonian tradition
         pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
 
-        header = f"  i  |  i * {n}"
+        header = f"  i   |  i * {bn(n).cuneiform(stroke=stroke)}"
         print(f"\n{header}")
-        print("-" * (len(header) + 10))
+        print("-" * len(header))
 
         for i in pnum:
             # Dynamic alignment so that the table doesn't break with large numbers
-            print(f" {i:2d}  |  {str(bn(nn * i)):>15}")
+            if cuneiform:
+                if stroke:
+                    a1 = bn(i).cuneiform(stroke=True)
+                    a2 = bn(nn * i).cuneiform(stroke=True)
+                else:
+                    a1 = bn(i).cuneiform()
+                    a2 = bn(nn * i).cuneiform()
+                print(f" {a1:4} | {a2:>12}",)
+            else:
+                print(f" {i:2d}  |  {str(bn(nn * i)):>14}")
     finally:
         # Guaranteed state restoration
         bn.sep, bn.fill = oldsep, oldfill
@@ -103,6 +122,20 @@ def gen_parser() -> argparse.ArgumentParser:
         default=False,
     )
     parser.add_argument(
+        "-c",
+        "--cuneiform",
+        help="Output is cuneiform",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-z",
+        "--zeros",
+        help="strike out empty spaces",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
         "-f", "--fill", help="Pad with zeros", action="store_true", default=False
     )
 
@@ -119,7 +152,14 @@ def main():
     if args.mult == "0":
         listtables()
     else:
-        multable(args.mult, pral=args.principal, sep=args.separator, fill=args.fill)
+        multable(
+            args.mult,
+            pral=args.principal,
+            sep=args.separator,
+            fill=args.fill,
+            cuneiform=args.cuneiform,
+            stroke=args.zeros,
+        )
 
 
 if __name__ == "__main__":

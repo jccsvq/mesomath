@@ -97,22 +97,22 @@ to take a look at the metrological systems covered by this application:
 
     Remainder of systems and units: Old Babylonian Period
     =======================================================
-    System L:  Babylonian length meassurements
+    System L:  Babylonian length measurements
         Units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
         Base unit:  ninda
-    System Lh:  Babylonian length meassurements (Heights)
+    System Lh:  Babylonian length measurements (Heights)
         Units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
         Base unit:  kus
-    System S:  Babylonian surface meassurements
+    System S:  Babylonian surface measurements
         Units:  gan <-100- sar <-60- gin <-180- se
         Base unit:  gin
-    System V:  Babylonian volume meassurements
+    System V:  Babylonian volume measurements
         Units:  gan <-100- sar <-60- gin <-180- se
         Base unit:  gin
-    System C:  Babylonian capacity meassurements
+    System C:  Babylonian capacity measurements
         Units:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
         Base unit:  gin
-    System W:  Babylonian weight meassurements
+    System W:  Babylonian weight measurements
         Units:  gu <-60- mana <-60- gin <-180- se
         Base unit:  gin
     System B:  Babylonian brick counts
@@ -133,22 +133,22 @@ $ metrotable -ra
 
 Remainder of systems and units: Old Babylonian Period
 =======================================================
-System L:  Babylonian length meassurements
+System L:  Babylonian length measurements
     Units:  danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
     Base unit:  ninda
-System Lh:  Babylonian length meassurements (Heights)
+System Lh:  Babylonian length measurements (Heights)
     Units:  danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
     Base unit:  kus
-System S:  Babylonian surface meassurements
+System S:  Babylonian surface measurements
     Units:  GAN2 <-100- sar <-60- gin2 <-180- še
     Base unit:  gin
-System V:  Babylonian volume meassurements
+System V:  Babylonian volume measurements
     Units:  GAN2 <-100- sar <-60- gin2 <-180- še
     Base unit:  gin
-System C:  Babylonian capacity meassurements
+System C:  Babylonian capacity measurements
     Units:  gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
     Base unit:  gin
-System W:  Babylonian weight meassurements
+System W:  Babylonian weight measurements
     Units:  gu2 <-60- ma-na <-60- gin2 <-180- še
     Base unit:  gin
 System B:  Babylonian brick counts
@@ -169,17 +169,17 @@ Most interestingly, here are some examples to get an idea of ​​what the prog
 $ metrotable -x 1
 
 Example 1:
-        Table: Babylonian length meassurements
+        Table: Babylonian length measurements
         ubase: 2 (ninda)
         From: 10 susi
         To: 2 kus
         Step by: 5 susi
 Output follows:
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 10 susi              -> 1:40           
 15 susi              -> 2:30           
@@ -200,19 +200,19 @@ or with the  `-v` or `--verbose` options to obtain a header with more informatio
 $ metrotable -x 1 -v
 
 Example 1:
-        Table: Babylonian length meassurements
+        Table: Babylonian length measurements
         ubase: 2 (ninda)
         From: 10 susi
         To: 2 kus
         Step by: 5 susi
 Output follows:
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
   units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement              Abstract        Reciprocal
+measurement              Abstract        Reciprocal
 ====================================================
 10 susi              -> 1:40            | 36
 15 susi              -> 2:30            | 24
@@ -235,19 +235,19 @@ and, in the same way:
 $ metrotable -x 2 -v
 
 Example 2:
-        Table: Babylonian surface meassurements
+        Table: Babylonian surface measurements
         ubase: 2 (sar)
         From: 10 gin
         To: 2 sar
         Step by: 10 gin
 Output follows:
 
-Metrological list for Babylonian surface meassurements
+Metrological list for Babylonian surface measurements
   units:  gan <-100- sar <-60- gin <-180- se
   cfact:  1 180 10800 1080000
 Base unit: sar
 
-Meassurement              Abstract        Reciprocal
+measurement              Abstract        Reciprocal
 ====================================================
 10 gin               -> 10              | 6
 20 gin               -> 20              | 3
@@ -268,19 +268,19 @@ Meassurement              Abstract        Reciprocal
 $ metrotable -x 3 -v
 
 Example 3:
-        Table: Babylonian capacity meassurements
+        Table: Babylonian capacity measurements
         ubase: 2 (sila)
         From: 1 gur
         To: 3 gur
         Step by: 3 ban
 Output follows:
 
-Metrological list for Babylonian capacity meassurements
+Metrological list for Babylonian capacity measurements
   units:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
   cfact:  1 180 10800 108000 648000 3240000
 Base unit: sila
 
-Meassurement              Abstract        Reciprocal
+measurement              Abstract        Reciprocal
 ====================================================
 1 gur                -> 5               | 12
 1 gur 3 ban          -> 5:30            | --igi nu--
@@ -310,19 +310,19 @@ Meassurement              Abstract        Reciprocal
 $ metrotable -x 4 -v
 
 Example 4:
-        Table: Babylonian length meassurements
+        Table: Babylonian length measurements
         ubase: 2 (ninda)
         From: 10 susi
         To: 2 kus,12 kus,5 ninda
         Step by: 5 susi,1 kus,6 kus
 Output follows:
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
   units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement              Abstract        Reciprocal
+measurement              Abstract        Reciprocal
 ====================================================
 10 susi              -> 1:40            | 36
 15 susi              -> 2:30            | 24
@@ -366,28 +366,28 @@ Meassurement              Abstract        Reciprocal
 The program needs four pieces of data to calculate a segment of a metrological table:
 
 * Metrological table type (options `-t` or `--type`)
-    * L:   length meassurements
-    * Lh:   length meassurements (Heights)
-    * S:   surface meassurements
-    * V:   volume meassurements
-    * C:   capacity meassurements
-    * W:   weight meassurements
+    * L:   length measurements
+    * Lh:   length measurements (Heights)
+    * S:   surface measurements
+    * V:   volume measurements
+    * C:   capacity measurements
+    * W:   weight measurements
     * B:   brick counts
     * SysS:   System S to count objects
     * SysG:   System G to count objects
-*  Starting meassurement value (options `-t` or `--min`)
-*  Final meassurement value (options `-M` or `--max`)
-*  Meassurement increment between table rows (options `-i` or `--inc`)
+*  Starting measurement value (options `-t` or `--min`)
+*  Final measurement value (options `-M` or `--max`)
+*  measurement increment between table rows (options `-i` or `--inc`)
 
 For example, the following will reproduce example 1 (add `-v` at will):
 
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi'
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 10 susi              -> 1:40           
 15 susi              -> 2:30           
@@ -415,12 +415,12 @@ we obtain the table from 10 susi to 2 kus with increment of 5 susi, from 2 ku to
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus,12 kus,5 ninda' -i '5 susi,1 kus,6 kus' -v
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
   units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement              Abstract        Reciprocal
+measurement              Abstract        Reciprocal
 ====================================================
 10 susi              -> 1:40            | 36
 15 susi              -> 2:30            | 24
@@ -479,10 +479,10 @@ It allows the calculation of abstract numbers by forcing any unit as the base un
 ```bash
 $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana'
 
-Metrological list for Babylonian weight meassurements
+Metrological list for Babylonian weight measurements
 Base unit: gin
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 1 mana               -> 1              
 2 mana               -> 2              
@@ -494,10 +494,10 @@ Meassurement              Abstract
 ```bash
 $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -f 0
 
-Metrological list for Babylonian weight meassurements
+Metrological list for Babylonian weight measurements
 Base unit: se
 
-Meassurement            Abstract          
+measurement            Abstract          
 ==========================================
 1 mana               -> 3              
 2 mana               -> 6              
@@ -509,15 +509,15 @@ Meassurement            Abstract
 
 #### Options `-w`  `--width`
 
-Changes the default of 20 chars width  of the meassurement text field
+Changes the default of 20 chars width  of the measurement text field
 
 ```bash
 $ metrotable -t W -m '1 mana' -M '5 mana' -i '1 mana' -w 30
 
-Metrological list for Babylonian weight meassurements
+Metrological list for Babylonian weight measurements
 Base unit: gin
 
-Meassurement                      Abstract          
+measurement                      Abstract          
 ====================================================
 1 mana                         -> 1              
 2 mana                         -> 2              
@@ -534,12 +534,12 @@ Will print the coefficients of the units expressed in the system S  (system G fo
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pv
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
   units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement            Abstract          Reciprocal
+measurement            Abstract          Reciprocal
 ====================================================
 (1 u) susi           -> 1:40            | 36
 (1 u 5 dis) susi     -> 2:30            | 24
@@ -561,12 +561,12 @@ This may distort the output; combine it with `-w`:
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pvw35
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
   units:  danna <-30- us <-60- ninda <-12- kus <-30- susi
   cfact:  1 30 360 21600 648000
 Base unit: ninda
 
-Meassurement                           Abstract          Reciprocal
+measurement                           Abstract          Reciprocal
 ===================================================================
 (1 u) susi                          -> 1:40            | 36
 (1 u 5 dis) susi                    -> 2:30            | 24
@@ -589,10 +589,10 @@ Use the `-F0` option to have the output use the fractions `1/3, 1/2, 2/3, 5/6'`,
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi'
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 10 susi              -> 1:40           
 15 susi              -> 2:30           
@@ -611,10 +611,10 @@ Meassurement              Abstract
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -F0
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 1/3 kus              -> 1:40           
 1/2 kus              -> 2:30           
@@ -632,10 +632,10 @@ Meassurement              Abstract
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -F1
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 1/3 kus              -> 1:40           
 1/2 kus              -> 2:30           
@@ -655,10 +655,10 @@ You may combine it with `-p` (pedantic mode):
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF0 -w 30
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement                      Abstract          
+measurement                      Abstract          
 ====================================================
 1/3 kus                        -> 1:40           
 1/2 kus                        -> 2:30           
@@ -676,10 +676,10 @@ Meassurement                      Abstract
 ```bash
 $ metrotable -t L -m '10 susi' -M '2 kus' -i '5 susi' -pF1
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
 Base unit: ninda
 
-Meassurement              Abstract       
+measurement              Abstract       
 =========================================
 1/3 kus              -> 1:40           
 1/2 kus              -> 2:30           
@@ -704,19 +704,19 @@ You can combine the `-F --fractions` options with `-a --academic` to obtain list
 $ metrotable -x 1 -aF1 -f0 -v
 
 Example 1:
-        Table: Babylonian length meassurements
+        Table: Babylonian length measurements
         ubase: 0 (šu-si)
         From: 10 susi
         To: 2 kus
         Step by: 5 susi
 Output follows:
 
-Metrological list for Babylonian length meassurements
+Metrological list for Babylonian length measurements
   units:  danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
   cfact:  1 30 360 21600 648000
 Base unit: šu-si
 
-Meassurement              Abstract        Reciprocal
+measurement              Abstract        Reciprocal
 ====================================================
 1/3 kuš3             -> 10              | 6
 1/2 kuš3             -> 15              | 4
