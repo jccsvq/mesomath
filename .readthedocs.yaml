@@ -15,9 +15,7 @@ sphinx:
   configuration: docs/source/conf_rtd.py
 
 formats:
-  - pdf
   - epub
-# ... resto del archivo
 
 python:
   install:

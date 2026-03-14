@@ -100,12 +100,3 @@ html_css_files = [
     'custom.css',
 ]
 
-# 2. For LaTeX (PDF)
-latex_engine = 'xelatex' # Necesario para manejar Unicode real
-latex_elements = {
-    'preamble': r'''
-        \usepackage{fontspec}
-        \setmonofont{Noto Sans Cuneiform} 
-        \newfontfamily\cuneifont{Noto Sans Cuneiform}
-    ''',
-}
