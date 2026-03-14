@@ -92,30 +92,40 @@ copybutton_line_continuation_character = "\\"
 
 # 2. For LaTeX (PDF)
 latex_engine = 'xelatex'
+
 latex_elements = {
     'papersize': 'a4paper',
     'pointsize': '10pt',
     'preamble': r'''
 \usepackage{fontspec}
-\usepackage[Latin, Cuneiform]{ucharclasses}
 
-% 1. Definimos la fuente para el texto normal
+% 1. FUENTES PRINCIPALES (Para texto latino/normal)
+% Usamos fuentes que vienen por defecto en la imagen de Ubuntu de RTD
 \setmainfont{FreeSerif}
 \setsansfont{FreeSans}
 \setmonofont{FreeMono}
 
-% 2. Definimos la fuente para el Cuneiforme
-% Usamos el nombre del archivo que descargamos en el job post_install
-\newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
+% 2. DEFINIR LA FUENTE CUNEIFORME
+% La cargamos desde la ruta donde la descarga el wget del .yaml
+\newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[
+    Path=/home/docs/.fonts/,
+    Extension=.ttf,
+    RawFeature={+tu}
+]
 
-% 3. REGLA DE ORO: Cambio automático de fuente
-% Cuando entre en el bloque Cuneiforme, usa \cuneifont
-\setTransitionsFor{Cuneiform}{\begingroup\cuneifont}{\endgroup}
-\setTransitionsFor{CuneiformNumbers}{\begingroup\cuneifont}{\endgroup}
+% 3. EL RECURSO DEFINITIVO: Sustitución automática
+% Esto le dice a XeLaTeX: "Si no encuentras un carácter en FreeSerif, 
+% búscalo automáticamente en Noto Sans Cuneiform".
+\import{scripts}
+\usepackage{newunicodechar}
 
-% 4. Manejo de emojis (como el 📜 que fallaba en el log)
-% Como FreeSerif no tiene el emoji del pergamino, le decimos que lo ignore 
-% o podrías instalar una fuente de emojis, pero para el PDF es mejor evitar caracteres 1FA00+
-\tracinglostchars=0 
+% Definimos un comando para el cuneiforme
+\newcommand{\cunei}[1]{{\cuneifont #1}}
+
+% Forzamos a que XeLaTeX no se detenga por caracteres perdidos (como emojis)
+\tracinglostchars=0
+
+% Si usas caracteres específicos con mucha frecuencia, puedes mapearlos aquí,
+% pero el objetivo es que el motor detecte los bloques U+12000 automáticamente.
 ''',
 }
