@@ -1,35 +1,25 @@
-# Read the Docs configuration file
-# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
-
-# Required
 version: 2
 
-# Set the OS, Python version, and other tools you might need
 build:
   os: ubuntu-24.04
   tools:
-   python: "3.13"
-   jobs:
-      post_install:
-         # Instalamos la fuente en el servidor de RTD para que XeLaTeX la encuentre
-         - mkdir -p ~/.fonts
-         - wget https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSansCuneiform/NotoSansCuneiform-Regular.ttf -P ~/.fonts
-         - fc-cache -f -v
+    python: "3.13"
+  # 'jobs' debe estar al mismo nivel que 'tools', no dentro.
+  jobs:
+    post_install:
+      - mkdir -p ~/.fonts
+      - wget https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSansCuneiform/NotoSansCuneiform-Regular.ttf -P ~/.fonts
+      - fc-cache -f -v
 
-# Build documentation in the "docs/" directory with Sphinx
 sphinx:
-   configuration: docs/source/conf_rtd.py
+  configuration: docs/source/conf_rtd.py
 
 formats:
-   - pdf
-   - epub
+  - pdf
+  - epub
 
-# Optionally, but recommended,
-# declare the Python requirements required to build your documentation
-# See https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html
 python:
-   install:
-   - requirements: requirements_rtd.txt
-   - method: pip
-     path: .  # Instala el proyecto mesomath actual
-        
+  install:
+    - requirements: requirements_rtd.txt
+    - method: pip
+      path: .
