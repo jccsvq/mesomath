@@ -927,22 +927,32 @@ But you will rarely need to resort to programming, since **MesoMath** has specia
 For instance for horizontal distances (base unit ninda)
 ```pycon
 --> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True)
-1 kus                | 5              
-2 kus                | 10             
-3 kus                | 15             
-4 kus                | 20             
-5 kus                | 25   
+
+Babylonian length measurement
+danna <-30- us <-60- ninda <-12- kus <-30- susi
+Measurement          | Sexag. (ubase=ninda)
+-------------------------------------------
+1 kus None           | 5              
+2 kus None           | 10             
+3 kus None           | 15             
+4 kus None           | 20             
+5 kus None           | 25 
 ```
 
 
 For vertical distances (base unit kus)
 ```pycon
 --> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase =1)
-1 kus                | 1              
-2 kus                | 2              
-3 kus                | 3              
-4 kus                | 4              
-5 kus                | 5   
+
+Babylonian length measurement
+danna <-30- us <-60- ninda <-12- kus <-30- susi
+Measurement          | Sexag. (ubase=kus)
+-----------------------------------------
+1 kus None           | 1              
+2 kus None           | 2              
+3 kus None           | 3              
+4 kus None           | 4              
+5 kus None           | 5  
 ```
 
 You can get also the metrological value of an object directly using the `.metval()` method:
@@ -1402,42 +1412,51 @@ Please see the options for {meth}`.metrolist()<.metrolist>` method.
 ...     ubase: int = 1  # Fixed to 'kus' (cubit)
 ... 
 --> bh.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase=None)
-Measurement          | Sexag. (base)
---------------------------------------
-1 kus                | 1              
-2 kus                | 2              
-3 kus                | 3              
-4 kus                | 4              
-5 kus                | 5              
+
+Babylonian Height Measurement
+danna <-30- us <-60- ninda <-12- kus <-30- susi
+Measurement          | Sexag. (ubase=kus)
+-----------------------------------------
+1 kus None           | 1              
+2 kus None           | 2              
+3 kus None           | 3              
+4 kus None           | 4              
+5 kus None           | 5              
 --> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
-Measurement                    | Sexag. (base)
-------------------------------------------------
-1/3 kuš3                       | 20             
-1/2 kuš3                       | 30             
-2/3 kuš3                       | 40             
-5/6 kuš3                       | 50             
-1 kuš3                         | 1              
-1 1/6 kuš3                     | 1:10           
-1 1/3 kuš3                     | 1:20           
-1 1/2 kuš3                     | 1:30           
-1 2/3 kuš3                     | 1:40           
-1 5/6 kuš3                     | 1:50           
-1/6 ninda                      | 2              
+
+Babylonian Height Measurement
+danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+Measurement                    | Sexag. (ubase=kuš3)
+----------------------------------------------------
+1/3 kuš3 None                  | 20             
+1/2 kuš3 None                  | 30             
+2/3 kuš3 None                  | 40             
+5/6 kuš3 None                  | 50             
+1 kuš3 None                    | 1              
+1 1/6 kuš3 None                | 1:10           
+1 1/3 kuš3 None                | 1:20           
+1 1/2 kuš3 None                | 1:30           
+1 2/3 kuš3 None                | 1:40           
+1 5/6 kuš3 None                | 1:50           
+1/6 ninda None                 | 2              
 --> bh.prtsex = 1
 --> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
-Measurement                    | Sexag. (base)
-------------------------------------------------
-1/3 kuš3                       | 20             
-1/2 kuš3                       | 30             
-2/3 kuš3                       | 40             
-5/6 kuš3                       | 50             
-(1 dis) kuš3                   | 1              
-(1 dis) 1/6 kuš3               | 1:10           
-(1 dis) 1/3 kuš3               | 1:20           
-(1 dis) 1/2 kuš3               | 1:30           
-(1 dis) 2/3 kuš3               | 1:40           
-(1 dis) 5/6 kuš3               | 1:50           
-1/6 ninda                      | 2 
+
+Babylonian Height Measurement
+danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+Measurement                    | Sexag. (ubase=kuš3)
+----------------------------------------------------
+1/3 kuš3 None                  | 20             
+1/2 kuš3 None                  | 30             
+2/3 kuš3 None                  | 40             
+5/6 kuš3 None                  | 50             
+(1 dis) kuš3 None              | 1              
+(1 dis) 1/6 kuš3 None          | 1:10           
+(1 dis) 1/3 kuš3 None          | 1:20           
+(1 dis) 1/2 kuš3 None          | 1:30           
+(1 dis) 2/3 kuš3 None          | 1:40           
+(1 dis) 5/6 kuš3 None          | 1:50           
+1/6 ninda None                 | 2
 ```
 
 
@@ -1764,4 +1783,19 @@ Texto
 |𒑛 𒈠𒈾  𒆬𒌓        | 𒑩      |        
 |𒑜 𒈠𒈾  𒆬𒌓        | 𒑪     |         
 |𒁹 𒈠𒈾  𒆬𒌓         |  𒐕  |
+</div>
+
+Texto
+
+<div class="tablet">
+
+| Measurement | Sexag. (ubase= 𒂆 ) |
+| :--- | :--- |
+| 𒌋 𒂆 𒆬𒌓 | 𒌋 |
+| 𒑚 𒈠𒈾 𒆬𒌓 | 𒎙 |
+| 𒈦 𒈠𒈾 𒆬𒌓 | 𒌍 |
+| 𒑛 𒈠𒈾 𒆬𒌓 | 𒑩 |
+| 𒑜 𒈠𒈾 𒆬𒌓 | 𒑪 |
+| 𒁹 𒈠𒈾 𒆬𒌓 | 𒐕 |
+
 </div>

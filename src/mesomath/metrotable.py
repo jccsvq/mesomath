@@ -15,6 +15,7 @@ from mesomath.npvs import BsyS as bS
 
 
 
+
 SYSTEMS = {
     "L": (bl, None), "Lh": (bl, 1), "S": (bs, None),
     "V": (bv, None), "C": (bc, None), "W": (bw, None),  "B": (bb, None),
@@ -65,15 +66,21 @@ def header(
     if not args.noheader:
         print(f"\nMetrological list for {met.title}s")
         if args.verbose:
-            print("  units: ", *met.scheme(met, args.academic))
+            print("  units: ", *met.scheme(args.academic, cuneiform=args.cuneiform))
             print("  cfact: ", *met.cfact)
-        print(f"Base unit: {names[ubase]}\n")
+        
+        if args.cuneiform:
+            print(f"Base unit: {met.cname()[ubase]}\n")
+        elif args.academic:
+            print(f"Base unit: {met.aname[ubase]}\n")
+        else:
+            print(f"Base unit: {met.uname[ubase]}\n")
         if args.verbose:
             line="Measurement".ljust(width + 4) + "Abstract".ljust(18) + "Reciprocal"
             print(line)
             print("=" * len(line))
         else:
-            line="Measurement".ljust(width + 4) + "Abstract".ljust(18)
+            line="Measurement".ljust(width + 4) + "Abstract".ljust(16)
             print(line)
             print("=" * len(line))
 
@@ -125,9 +132,9 @@ def metrolist(
 
             if args.cuneiform:
                 m_str = m.to_cunei(onesixth=True) if args.fractions > 0 else m.to_cunei(onesixth=False)
-                line = f"|{m_str.ljust(width)} | {str(pp.cuneiform(alter=True,stroke=True)).ljust(15)}|"
+                line = f"|{m_str.ljust(width)} | {str(pp.to_cunei(alter=True,stroke=True)).ljust(15)}|"
                 if args.verbose:
-                    recip = (pp.rec()).cuneiform(alter=True,stroke=True) if pp.isreg else "𒅆𒉡"
+                    recip = (pp.rec()).to_cunei(alter=True,stroke=True) if pp.isreg else "𒅆𒉡"
                     line += f" {recip.ljust(10)}|"
             else:
                 # 2. Format the measurement (standard or with fractions/academic names)

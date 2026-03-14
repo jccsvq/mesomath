@@ -51,11 +51,99 @@ $ pip install mesomath
 
 Once installed, you can run any of the tools directly (e.g., `$ babcalc`).
 
+
+## Font Configuration (Unicode Cuneiform)
+
+MesoMath requires a font compatible with the Unicode Cuneiform standard to correctly display the glyphs. We recommend Google's **Noto Sans Cuneiform**.
+
+### 1. Font Download
+
+1. Visit [Google Noto Fonts](https://fonts.google.com/noto/specimen/Noto+Sans+Cuneiform).
+
+2. Click on **Download Family**.
+
+3. Unzip the `.zip` file to obtain the `NotoSansCuneiform-Regular.ttf` file.
+
+---
+
+### 2. Installation by Operating System
+
+#### 🐧 Linux
+
+On most distributions, simply move the file to your local fonts directory:
+
+1. Create the directory if it doesn't exist: `mkdir -p ~/.local/share/fonts` (or `~/.fonts` on older systems).
+
+2. Copy the file: `cp NotoSansCuneiform-Regular.ttf ~/.local/share/fonts/`
+3. Update the font cache: `fc-cache -f -v`
+
+#### 🪟 [W] Windows
+
+Windows offers two methods, one of which does not require administrator privileges:
+
+1. **Quick Method:** Right-click on the `.ttf` file.
+
+2. Select **"Install for all users"** (requires Admin privileges) or simply **"Install"** (for the current user).
+
+3. Alternatively, you can drag the file to the `C:\Windows\Fonts` folder.
+
+#### 🍎 macOS
+
+The process on Mac is very intuitive using the Font Catalog:
+
+1. Double-click the `NotoSansCuneiform-Regular.ttf` file.
+
+2. A preview window will open. Click the **Install Font** button.
+
+3. The font will be automatically saved to `~/Library/Fonts` and will be available to all your applications (including Terminal).
+
+---
+
+### 3. Verification
+
+Once installed, restart your terminal or IDE and run this test command in Python to confirm that the system recognizes the glyphs:
+
+```python
+# Quick Render Test
+print("\n\t𒄘 ╼60╾ 𒈠𒈾 ╼60╾ 𒂆\n")
+
+```
+
+If you see the cuneiform characters clearly (and not rectangles), the installation was a success!
+
+<div class="tablet">
+
+| 𒁲 |  |
+| --- | --- |
+| **Status** | **Environment Ready** |
+|  | 𒁲 |
+
+</div>
+
+
+### ⚙️ Editor Configuration (Optional)
+
+If you're using a code editor, make sure to add 'Noto Sans Cuneiform' to your font family list so the internal console displays MesoMath results correctly.
+
+#### VS Code
+
+1. Go to `Settings` (Ctrl + ,).
+
+2. Search for `Editor: Font Family`.
+
+3. Add `'Noto Sans Cuneiform'` to the beginning of the list (e.g., `'Noto Sans Cuneiform', 'Consoles', 'Courier New'`).
+
+#### PyCharm
+
+1. Go to `Settings` > `Editor` > `Font`.
+
+2. Make sure the **"Enable ligatures"** box is checked and add the font as a **"Fallback font"** or primary font.
+
 ## Developer Installation from Sources
 
 1. Clone the repository:
 ```bash
-$ git clone [https://github.com/jccsvq/mesomath.git](https://github.com/jccsvq/mesomath.git)
+$ git clone https://github.com/jccsvq/mesomath.git
 $ cd mesomath
 
 ```

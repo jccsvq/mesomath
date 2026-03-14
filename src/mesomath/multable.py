@@ -47,7 +47,7 @@ def multable(
         # The 'principal' numbers of the Babylonian tradition
         pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
 
-        header = f"  i   |  i * {bn(n).cuneiform(stroke=stroke)}"
+        header = f"  i   |  i * {bn(n).to_cunei(stroke=stroke)}"
         print(f"\n{header}")
         print("-" * len(header))
 
@@ -55,11 +55,11 @@ def multable(
             # Dynamic alignment so that the table doesn't break with large numbers
             if cuneiform:
                 if stroke:
-                    a1 = bn(i).cuneiform(stroke=True)
-                    a2 = bn(nn * i).cuneiform(stroke=True)
+                    a1 = bn(i).to_cunei(stroke=True)
+                    a2 = bn(nn * i).to_cunei(stroke=True)
                 else:
-                    a1 = bn(i).cuneiform()
-                    a2 = bn(nn * i).cuneiform()
+                    a1 = bn(i).to_cunei()
+                    a2 = bn(nn * i).to_cunei()
                 print(f" {a1:4} | {a2:>12}",)
             else:
                 print(f" {i:2d}  |  {str(bn(nn * i)):>14}")

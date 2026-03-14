@@ -2,13 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap');
 
 /* 2. BASE DE LA DOCUMENTACIÓN */
+/* Añade Noto Sans Cuneiform al final de la lista de fuentes del cuerpo */
 body {
-    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Helvetica', 'Arial', 'Noto Sans Cuneiform', sans-serif !important;
 }
 
 /* 3. EL CONTENEDOR DE LA TABLILLA (TABLET) */
 div.tablet {
-    background-color: #f89602 !important;
+    background-color: #e2c08d !important;
     /* Textura de grano fino y degradado de arcilla */
     background-image: 
         repeating-radial-gradient(circle at 0 0, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 10px),

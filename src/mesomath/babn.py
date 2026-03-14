@@ -566,7 +566,7 @@ SELECT regular
                 print(f"|    and a close regular is: {cr}")
                 print(f"|    whose reciprocal is: {cr.rec()}")
 
-    def cuneiform(self, alter: bool = False, stroke: bool = False) -> str:
+    def to_cunei(self, alter: bool = False, stroke: bool = False) -> str:
         """Cuneiform version of sexagesimal number
 
         Requires Noto Sans Cuneiform font or similar to be present in your system.

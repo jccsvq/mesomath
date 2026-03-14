@@ -513,37 +513,48 @@ class _MesoM(Npvs):
         self.__list: Final[list[int]] = lista  # Value broken down by unit
 
     @classmethod
-    def scheme(cls, actual: bool = False, cuneiform: bool = False) -> list:
+    def cname(cls) -> list:
+        """Return list of unit cuneiform glyphs
+
+        :return: list of unit cuneiform glyphs
+        :rtype: list
         """
-        Extended scheme for MesoMath.
-        If cuneiform=True, it fetches glyphs from the central MAP_UNIT_LOGOGRAMS.
-        """
-        # Traemos el mapeo dinámicamente para evitar dependencias circulares si fuera necesario
         from .glyphs import MAP_UNIT_LOGOGRAMS
 
+        return [MAP_UNIT_LOGOGRAMS.get(_, _) for _ in cls.uname]
+
+    @classmethod
+    def scheme(cls, actual: bool = False, cuneiform: bool = False) -> list:
+        """Factor diagram for MesoMath.
+
+        :param actual: uses actual or academic unit names if True, defaults to False
+        :type actual: bool, optional
+        :param cuneiform: write cuneiform glyphs if True, defaults to False
+        :type cuneiform: bool, optional
+        :return: list with the unit names separated by the corresponding factors
+        :rtype: list
+        """
         ll = []
-        # Seleccionamos la lista de nombres base
-        names = cls.aname if actual else cls.uname
+        # Select the list of base names
+        if cuneiform:
+            names = cls.cname()
+        elif actual:
+            names = cls.aname
+        else:
+            names = cls.uname
 
         for i in range(len(cls.ufact)):
             unit_name = names[i]
-            # Si se pide cuneiforme, buscamos el glifo; si no, el nombre
-            label = (
-                MAP_UNIT_LOGOGRAMS.get(unit_name, unit_name) if cuneiform else unit_name
-            )
 
-            ll.append(label)
+            ll.append(unit_name)
             if cuneiform:
-                ll.append(f" ⟵ {cls.ufact[i]}⟵ ")
+                ll.append(f"  ╼{cls.ufact[i]}╾ ")
             else:
                 ll.append(f"<-{cls.ufact[i]}-")
 
-        # Añadimos la última unidad
+        # Append last unit
         last_unit = names[-1]
-        last_label = (
-            MAP_UNIT_LOGOGRAMS.get(last_unit, last_unit) if cuneiform else last_unit
-        )
-        ll.append(last_label)
+        ll.append(last_unit)
 
         ll.reverse()
         return ll
@@ -595,8 +606,6 @@ class _MesoM(Npvs):
         """
         # For BsyG this would return "9:1:5" instead of "9 bur 1 ese 5 iku"
         return ":".join(str(v) for v in reversed(self.list)).strip("0:") or "0"
-
-    
 
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
@@ -651,8 +660,6 @@ class _MesoM(Npvs):
                 ss.append(f"{ff[i]} {names[i]}")
 
         return " ".join(ss)
-
-
 
     def to_cunei(
         self,
@@ -1001,7 +1008,6 @@ class MesoM(_MesoM):
         """
         from .glyphs import MAP_UNIT_LOGOGRAMS
 
-
         start_dec = cls(mmin).dec
         end_dec = cls(mmax).dec
         step_dec = cls(step).dec
@@ -1018,16 +1024,17 @@ class MesoM(_MesoM):
             results.append(text)
 
         if echo:
-            print("\n"+ cls.title)
+            print("\n" + cls.title)
             print(*cls.scheme(actual=actual, cuneiform=cuneiform))
             if cuneiform:
                 ubase_glyph = MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
-                line=f"{'Measurement'.ljust(width)} | {f'Sexag. (ubase= {ubase_glyph}  )'}"
+                line = f"{'|Measurement'.ljust(width)} | {f'Sexag. (ubase= {ubase_glyph}  )'}|"
             else:
-                line=f"{'Measurement'.ljust(width)} | {f'Sexag. (ubase={cls.uname[ubase]})'}"
+                line = f"{'|Measurement'.ljust(width)} | {f'Sexag. (ubase={cls.aname[ubase] if actual else cls.uname[ubase]})|'}"
 
             print(line)
-            print("-" * len(line))
+            lenh = len(line)
+            print("-" * lenh)
 
         current = start_dec
         while current <= end_dec + (step_dec / 10):
@@ -1039,17 +1046,20 @@ class MesoM(_MesoM):
                     else obj.to_cunei(onesixth=False, subst=subst)
                 )
                 if verbose:
-                    line = f"{ln.ljust(width)} | {((obj.sex(r=ubase)).cuneiform(alter=True)).ljust(15)}"
+                    line = f"|{ln.ljust(width - 1)} | {((obj.sex(r=ubase)).to_cunei(alter=True)).ljust(lenh - width - 4)}|"
                 else:
                     line = ln.ljust(width)
             else:
                 if fractions in {1, 2}:
-                    ln = obj.prtf(onesixth=fractions == 2, actual=actual) + f" {subst}"
+                    ln = (
+                        obj.prtf(onesixth=fractions == 2, actual=actual)
+                        + f" {'' if subst is None else subst}"
+                    )
                 else:
-                    ln = str(obj) + f" {subst}"
+                    ln = str(obj) + f" {'' if subst is None else subst}"
 
                 if verbose:
-                    line = f"{ln.ljust(width)} | {str(obj.sex(r=ubase)).ljust(15)}"
+                    line = f"|{ln.ljust(width - 1)} | {str(obj.sex(r=ubase)).ljust(lenh - width - 4)}|"
                 else:
                     line = ln.ljust(width)
 
@@ -1220,8 +1230,6 @@ class MesoM(_MesoM):
                 ss.append(self.uname[i])
 
         return " ".join(ss)
-
-
 
 
 class Blen(MesoM):  # Length
