@@ -92,34 +92,30 @@ copybutton_line_continuation_character = "\\"
 
 # 2. For LaTeX (PDF)
 latex_engine = 'xelatex'
-
 latex_elements = {
     'papersize': 'a4paper',
     'pointsize': '10pt',
     'preamble': r'''
 \usepackage{fontspec}
-\usepackage{ucharclasses}
+\usepackage[Latin, Cuneiform]{ucharclasses}
 
-% 1. FUENTES BASE (Obligatorias para texto normal)
-\setmainfont{FreeSans}
+% 1. Definimos la fuente para el texto normal
+\setmainfont{FreeSerif}
 \setsansfont{FreeSans}
 \setmonofont{FreeMono}
 
-% 2. DEFINIR CUNEIFORME
-% Intentamos cargarla por nombre de sistema primero, y por ruta después
-\IfFontExistsTF{Noto Sans Cuneiform}{
-    \newfontfamily\cuneifont{Noto Sans Cuneiform}
-}{
-    \newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
-}
+% 2. Definimos la fuente para el Cuneiforme
+% Usamos el nombre del archivo que descargamos en el job post_install
+\newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
 
-% 3. MAPEO DE CARACTERES
-% Este es el bloque exacto de Unicode para Cuneiforme y Números Cuneiformes
+% 3. REGLA DE ORO: Cambio automático de fuente
+% Cuando entre en el bloque Cuneiforme, usa \cuneifont
 \setTransitionsFor{Cuneiform}{\begingroup\cuneifont}{\endgroup}
 \setTransitionsFor{CuneiformNumbers}{\begingroup\cuneifont}{\endgroup}
 
-% 4. PREVENCIÓN DE ERRORES
-% Forzamos a que no se queje por caracteres faltantes en la fuente principal
-\tracinglostchars=0
+% 4. Manejo de emojis (como el 📜 que fallaba en el log)
+% Como FreeSerif no tiene el emoji del pergamino, le decimos que lo ignore 
+% o podrías instalar una fuente de emojis, pero para el PDF es mejor evitar caracteres 1FA00+
+\tracinglostchars=0 
 ''',
 }
