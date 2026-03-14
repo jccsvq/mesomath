@@ -92,27 +92,34 @@ copybutton_line_continuation_character = "\\"
 
 # 2. For LaTeX (PDF)
 latex_engine = 'xelatex'
+
 latex_elements = {
     'papersize': 'a4paper',
     'pointsize': '10pt',
     'preamble': r'''
 \usepackage{fontspec}
-
-% 1. Definimos la fuente principal para texto normal (ASCII/Latino)
-\setmainfont{DejaVu Sans}
-\setsansfont{DejaVu Sans}
-\setmonofont{DejaVu Sans Mono}
-
-% 2. Definimos la fuente para el Cuneiforme
-% Usamos el nombre del archivo porque lo descargamos en ~/.fonts/
-\newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
-
-% 3. El TRUCO: Configurar XeLaTeX para que cambie de fuente automáticamente
-% cuando encuentre caracteres del bloque Cuneiforme (U+12000 a U+1247F)
 \usepackage{ucharclasses}
-\setTransitionsFor{Cuneiform}{\begingroup\cuneifont}{\endgroup}
 
-% Opcional: Comando manual por si acaso
-\DeclareTextFontCommand{\textcunei}{\cuneifont}
+% 1. FUENTES BASE (Obligatorias para texto normal)
+\setmainfont{FreeSans}
+\setsansfont{FreeSans}
+\setmonofont{FreeMono}
+
+% 2. DEFINIR CUNEIFORME
+% Intentamos cargarla por nombre de sistema primero, y por ruta después
+\IfFontExistsTF{Noto Sans Cuneiform}{
+    \newfontfamily\cuneifont{Noto Sans Cuneiform}
+}{
+    \newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
+}
+
+% 3. MAPEO DE CARACTERES
+% Este es el bloque exacto de Unicode para Cuneiforme y Números Cuneiformes
+\setTransitionsFor{Cuneiform}{\begingroup\cuneifont}{\endgroup}
+\setTransitionsFor{CuneiformNumbers}{\begingroup\cuneifont}{\endgroup}
+
+% 4. PREVENCIÓN DE ERRORES
+% Forzamos a que no se queje por caracteres faltantes en la fuente principal
+\tracinglostchars=0
 ''',
 }
