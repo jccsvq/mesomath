@@ -91,11 +91,15 @@ copybutton_copy_empty_lines = False
 copybutton_line_continuation_character = "\\"
 
 # 2. For LaTeX (PDF)
-latex_engine = 'xelatex' # Necesario para manejar Unicode real
+latex_engine = 'xelatex'
 latex_elements = {
+    'papersize': 'a4paper',
+    'pointsize': '11pt',
     'preamble': r'''
-        \usepackage{fontspec}
-        \setmonofont{Noto Sans Cuneiform} 
-        \newfontfamily\cuneifont{Noto Sans Cuneiform}
-    ''',
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans} 
+% Intentamos cargar la fuente descargada por el nombre del archivo
+\newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
+\DeclareTextFontCommand{\textcunei}{\cuneifont}
+''',
 }
