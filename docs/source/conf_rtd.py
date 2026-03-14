@@ -94,12 +94,25 @@ copybutton_line_continuation_character = "\\"
 latex_engine = 'xelatex'
 latex_elements = {
     'papersize': 'a4paper',
-    'pointsize': '11pt',
+    'pointsize': '10pt',
     'preamble': r'''
 \usepackage{fontspec}
-\setmainfont{DejaVu Sans} 
-% Intentamos cargar la fuente descargada por el nombre del archivo
+
+% 1. Definimos la fuente principal para texto normal (ASCII/Latino)
+\setmainfont{DejaVu Sans}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+
+% 2. Definimos la fuente para el Cuneiforme
+% Usamos el nombre del archivo porque lo descargamos en ~/.fonts/
 \newfontfamily\cuneifont{NotoSansCuneiform-Regular.ttf}[Path=/home/docs/.fonts/]
+
+% 3. El TRUCO: Configurar XeLaTeX para que cambie de fuente automáticamente
+% cuando encuentre caracteres del bloque Cuneiforme (U+12000 a U+1247F)
+\usepackage{ucharclasses}
+\setTransitionsFor{Cuneiform}{\begingroup\cuneifont}{\endgroup}
+
+% Opcional: Comando manual por si acaso
 \DeclareTextFontCommand{\textcunei}{\cuneifont}
 ''',
 }

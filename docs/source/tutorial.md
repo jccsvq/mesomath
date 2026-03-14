@@ -1742,7 +1742,7 @@ According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneifor
     173 1/6 šar2-gal 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
     173 sargal 1 saru 1 5/6 sar 1/2 buru 4 bur 1/3 ese
 
-## Test Cuneiform (𒈗𒁕𒇻) 𒓢𒓬
+## Test Cuneiform (𒈗𒁕𒇻) 
 
 <div class="tablet">
 
