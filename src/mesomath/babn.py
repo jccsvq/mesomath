@@ -594,7 +594,7 @@ SELECT regular
         for i in ln:
             if i == 0:
                 if stroke:
-                    out += "𒀹 "  # 𒍻
+                    out += "𒃵 "  # 𒍻
                 else:
                     out += " "
             else:

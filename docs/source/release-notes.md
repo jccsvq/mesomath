@@ -8,7 +8,7 @@
 1. Evolution of the Autograph (to_cunei)
 Ambiguity Intelligence: Implementation of the "Proust Patch" for the king system (BsyK). Now the logogram 𒋢𒋛 (šu-ši) only appears when the lower unit is zero, avoiding the historical confusion between 1 and 60.
 
-Handling Silent Units: The stroke=True parameter allows visualization of the positional skeleton with the wedge 𒀹 without the need for text labels, maintaining the purity of the tablet.
+Handling Silent Units: The stroke=True parameter allows visualization of the positional skeleton with the wedge 𒃵 without the need for text labels, maintaining the purity of the tablet.
 
 Support for Special Fractions: Integration of onesixth and other fractional glyphs directly into the cuneiform string.
 

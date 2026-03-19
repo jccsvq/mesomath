@@ -4,22 +4,29 @@
 # import's section
 
 import argparse
+
+from mesomath.glyphs import pad_cuneiform
+from mesomath.npvs import Bbri as bb
+from mesomath.npvs import Bcap as bc
 from mesomath.npvs import Blen as bl
 from mesomath.npvs import Bsur as bs
-from mesomath.npvs import Bvol as bv
-from mesomath.npvs import Bcap as bc
-from mesomath.npvs import Bwei as bw
-from mesomath.npvs import Bbri as bb
 from mesomath.npvs import BsyG as bG
+from mesomath.npvs import BsyK as bK
 from mesomath.npvs import BsyS as bS
-
-
-
+from mesomath.npvs import Bvol as bv
+from mesomath.npvs import Bwei as bw
 
 SYSTEMS = {
-    "L": (bl, None), "Lh": (bl, 1), "S": (bs, None),
-    "V": (bv, None), "C": (bc, None), "W": (bw, None),  "B": (bb, None),
-    "SysG": (bG, None), "SysS": (bS, None)
+    "L": (bl, None),
+    "Lh": (bl, 1),
+    "S": (bs, None),
+    "V": (bv, None),
+    "C": (bc, None),
+    "W": (bw, None),
+    "B": (bb, None),
+    "SysG": (bG, None),
+    "SysS": (bS, None),
+    "SysK": (bK, None),
 }
 
 # Functions
@@ -55,12 +62,12 @@ def header(
     width: int = 20,
 ):
     """Prints header of metrological table
-    
+
     :args: argument namespace
     :met: class of magnitude to be plotted
     :ubase: base unit
     :width: line width
-    
+
     """
     width = int(width)
     if not args.noheader:
@@ -68,7 +75,7 @@ def header(
         if args.verbose:
             print("  units: ", *met.scheme(args.academic, cuneiform=args.cuneiform))
             print("  cfact: ", *met.cfact)
-        
+
         if args.cuneiform:
             print(f"Base unit: {met.cname()[ubase]}\n")
         elif args.academic:
@@ -76,15 +83,26 @@ def header(
         else:
             print(f"Base unit: {met.uname[ubase]}\n")
         if args.verbose:
-            line="Measurement".ljust(width + 4) + "Abstract".ljust(18) + "Reciprocal"
+            ll1 = "|Measurement".ljust(width + 2)
+            ll2 = "|Abstract".ljust(17)
+            ll3 = "|Reciprocal  |"
+            line = ll1 + ll2 + ll3
             print(line)
-            print("=" * len(line))
+            print(
+                "|"
+                + "-" * (len(ll1) - 1)
+                + "|"
+                + "-" * (len(ll2) - 1)
+                + "|"
+                + "-" * (len(ll3) - 2)
+                + "|"
+            )
         else:
-            line="Measurement".ljust(width + 4) + "Abstract".ljust(16)
+            ll1 = "|Measurement".ljust(width + 2)
+            ll2 = "|Abstract".ljust(17) + "|"
+            line = ll1 + ll2
             print(line)
-            print("=" * len(line))
-
-
+            print("|" + "-" * (len(ll1) - 1) + "|" + "-" * (len(ll2) - 2) + "|")
 
 
 def metrolist(
@@ -106,12 +124,12 @@ def metrolist(
     :maxv: maximum value of the variable to print
     :inc: variable increment or step
     :width: width reserved for printing the variable (default: 20)
-    
+
     """
     # We process the lists of limits and increments
     max_list = str(maxv).split(",")
     inc_list = str(inc).split(",")
-    
+
     # We activate pedantic mode if requested (coefficients in S and G)
     if args.pedantic:
         met.prtsex = True
@@ -122,7 +140,7 @@ def metrolist(
     for i in range(len(max_list)):
         if i > 0:
             print("-" * (width + 32))
-        
+
         target_val = met(max_list[i].strip())
         step_val = met(inc_list[i].strip())
 
@@ -131,28 +149,36 @@ def metrolist(
             pp = m.sex(ubase)
 
             if args.cuneiform:
-                m_str = m.to_cunei(onesixth=True) if args.fractions > 0 else m.to_cunei(onesixth=False)
-                line = f"|{m_str.ljust(width)} | {str(pp.to_cunei(alter=True,stroke=True)).ljust(15)}|"
+                m_str = (
+                    m.to_cunei(onesixth=True)
+                    if args.fractions > 0
+                    else m.to_cunei(onesixth=False)
+                )
+                line = f"|{pad_cuneiform(m_str, width)} | {pad_cuneiform(str(pp.to_cunei(alter=True, stroke=True)), 15)}|"
                 if args.verbose:
-                    recip = (pp.rec()).to_cunei(alter=True,stroke=True) if pp.isreg else "𒅆𒉡"
-                    line += f" {recip.ljust(10)}|"
+                    recip = (
+                        (pp.rec()).to_cunei(alter=True, stroke=True)
+                        if pp.isreg
+                        else "𒅆𒉡"
+                    )
+                    line += f" {pad_cuneiform(recip, 11)}|"
             else:
                 # 2. Format the measurement (standard or with fractions/academic names)
                 if args.fractions < 0:
                     m_str = str(m)
                 else:
                     m_str = m.prtf(args.fractions, args.academic)
-                
+
                 # 3. Build the baseline
-                line = f"{m_str.ljust(width)} -> {str(pp).ljust(15)}"
-                
+                line = f"|{m_str.ljust(width - 1)}  | {str(pp).ljust(15)}|"
+
                 # 4. Add reciprocal in verbose mode
                 if args.verbose:
-                    recip = pp.rec() if pp.isreg else "--igi nu--"
-                    line += f" | {recip}"
-            
+                    recip = str(pp.rec()) if pp.isreg else "--igi nu--"
+                    line += f" {recip.ljust(11)}|"
+
             print(line)
-            
+
             # 5. Increased security by reinstancing
             m = met(m.dec + step_val.dec)
 
@@ -165,7 +191,7 @@ def gen_parser() -> argparse.ArgumentParser:
     # Option definitions
 
     DESC = """Prints an excerpt of a metrological table"""
-    EPIL = "jccsvq fecit, 2025. Public domain."
+    EPIL = "jccsvq dub-sar fecit, 2025. Public domain."
 
     parser = argparse.ArgumentParser(
         description=DESC,
@@ -176,7 +202,7 @@ def gen_parser() -> argparse.ArgumentParser:
         "-t",
         "--type",
         help="Type of metrological table to print (Try: -r for a remainder)",
-        choices=["L", "Lh", "S", "V", "C", "W","B", "SysG", "SysS"],
+        choices=["L", "Lh", "S", "V", "C", "W", "B", "SysG", "SysS", "SysK"],
         default=None,
     )
     parser.add_argument(
@@ -266,7 +292,7 @@ def gen_parser() -> argparse.ArgumentParser:
         help="Write table in cuneiform",
         action="store_true",
         default=False,
-    )    
+    )
 
     return parser
 
@@ -282,32 +308,35 @@ def main():
         print("\nRemainder of systems and units: Old Babylonian Period")
         print("=======================================================")
         print("System L: ", bl.title + "s")
-        print("    Units: ", *bl.scheme(bl, args.academic))
+        print("    Units: ", *bl.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bl.uname[bl.ubase])
         print("System Lh: ", bl.title + "s (Heights)")
-        print("    Units: ", *bl.scheme(bl, args.academic))
+        print("    Units: ", *bl.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bl.uname[1])
         print("System S: ", bs.title + "s")
-        print("    Units: ", *bs.scheme(bs, args.academic))
+        print("    Units: ", *bs.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bs.uname[bs.ubase])
         print("System V: ", bv.title + "s")
-        print("    Units: ", *bv.scheme(bv, args.academic))
+        print("    Units: ", *bv.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bv.uname[bv.ubase])
         print("System C: ", bc.title + "s")
-        print("    Units: ", *bc.scheme(bc, args.academic))
+        print("    Units: ", *bc.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bc.uname[bc.ubase])
         print("System W: ", bw.title + "s")
-        print("    Units: ", *bw.scheme(bw, args.academic))
+        print("    Units: ", *bw.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bw.uname[bw.ubase])
         print("System B: ", bb.title + "s")
-        print("    Units: ", *bb.scheme(bb, args.academic))
+        print("    Units: ", *bb.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bb.uname[bb.ubase])
         print("NPVN System S: ", bS.title)
-        print("    Units: ", *bS.scheme(bS, args.academic))
+        print("    Units: ", *bS.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bS.uname[bS.ubase])
         print("NPVN System G: ", bG.title)
-        print("    Units: ", *bG.scheme(bG, args.academic))
+        print("    Units: ", *bG.scheme(args.academic, args.cuneiform))
         print("    Base unit: ", bG.uname[bG.ubase])
+        print("NPVN System K: ", bK.title)
+        print("    Units: ", *bK.scheme(args.academic, args.cuneiform))
+        print("    Base unit: ", bK.uname[bK.ubase])
         exit()
 
     if (args.type is None) and (args.example is None):
@@ -365,8 +394,6 @@ def main():
         metrolist(args, met, names, ubase, minv, maxv, inc, width)
         exit()
 
-
-
     # Load values from command-line arguments
     met, u_override = SYSTEMS[args.type]
     ubase = args.force if args.force >= 0 else (u_override or met.ubase)
@@ -376,7 +403,6 @@ def main():
         names = met.aname
     else:
         names = met.uname
-
 
     # Executing
     header(args, met, names, ubase, width)

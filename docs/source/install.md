@@ -51,7 +51,7 @@ $ pip install mesomath
 
 Once installed, you can run any of the tools directly (e.g., `$ babcalc`).
 
-
+(install-font)=
 ## Font Configuration (Unicode Cuneiform)
 
 MesoMath requires a font compatible with the Unicode Cuneiform standard to correctly display the glyphs. We recommend Google's **Noto Sans Cuneiform**.

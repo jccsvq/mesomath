@@ -32,7 +32,7 @@ def gen_parser() -> argparse.ArgumentParser:
 
     DESC = """Prints abstract number corresponding to a measure or lists 
     measures having an abstract number."""
-    EPIL = "jccsvq fecit, 2025. Public domain."
+    EPIL = "jccsvq dub-sar fecit, 2025. Public domain."
 
     parser = argparse.ArgumentParser(
         description=DESC,

@@ -922,38 +922,44 @@ But you will rarely need to resort to programming, since **MesoMath** has specia
 
 *   The [`metrotable`](#metrotable-tutorial) tool, which specializes in printing segments of metrological list and tables.
 *   The [`mtlookup`](#mtlookup-tutorial) tool that simulates direct and inverse searches in metrological tables.
-*   The `.metrolist()` method that works with all metrological classes, including [those you define yourself](#advanced-topics).
+*   The [`.metrolist()`](#metrolist) method that works with all metrological classes, including [those you define yourself](#advanced-topics).
 
-For instance for horizontal distances (base unit ninda)
+For instance for horizontal distances (base unit ninda):
+
 ```pycon
 --> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True)
 
 Babylonian length measurement
 danna <-30- us <-60- ninda <-12- kus <-30- susi
-Measurement          | Sexag. (ubase=ninda)
--------------------------------------------
-1 kus None           | 5              
-2 kus None           | 10             
-3 kus None           | 15             
-4 kus None           | 20             
-5 kus None           | 25 
+|Measurement         | Sexag. (ninda)      | Reciprocal  |
+|--------------------|---------------------|-------------|
+|1 kus               | 5                   | 12          |
+|2 kus               | 10                  | 6           |
+|3 kus               | 15                  | 4           |
+|4 kus               | 20                  | 3           |
+|5 kus               | 25                  | 2:24        |
+
 ```
 
 
-For vertical distances (base unit kus)
+For vertical distances (base unit kus):
+
 ```pycon
 --> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase =1)
 
 Babylonian length measurement
 danna <-30- us <-60- ninda <-12- kus <-30- susi
-Measurement          | Sexag. (ubase=kus)
------------------------------------------
-1 kus None           | 1              
-2 kus None           | 2              
-3 kus None           | 3              
-4 kus None           | 4              
-5 kus None           | 5  
+|Measurement         | Sexag. (kus)        | Reciprocal  |
+|--------------------|---------------------|-------------|
+|1 kus               | 1                   | 1           |
+|2 kus               | 2                   | 30          |
+|3 kus               | 3                   | 20          |
+|4 kus               | 4                   | 15          |
+|5 kus               | 5                   | 12          |
+
 ```
+
+But we will explore `.metrolist()` and its sibling methods in depth [below](#metrolist).
 
 You can get also the metrological value of an object directly using the `.metval()` method:
 
@@ -962,7 +968,8 @@ You can get also the metrological value of an object directly using the `.metval
 7:30
 ```
 
-We finish this section with the `.si()` and `.SI()` methods that show us the approximate equivalence of the Babylonic measurementss in the International System of Units:
+
+We finish this section with the `.si()` and `.SI()` conversion methods that show us the approximate equivalence of the Babylonic measurementss in the International System of Units:
 
 ```pycon
 --> w = bw(' 1 mana 3 gin')
@@ -1104,7 +1111,7 @@ but only using `:` as a separator.
 
 ### Fractions
 
-There is also basic support for entering the **principal fractions**: 1/6, 1/3, 1/2, 2/3, 5/6 (and only for them), they can be entered in several ways:
+There is also support for entering the **principal fractions**: 1/6, 1/3, 1/2, 2/3, 5/6 (and only for them), they can be entered in several ways:
 
 ```pycon
 --> a=bl('0+1/3 ninda')
@@ -1129,7 +1136,7 @@ There is also basic support for entering the **principal fractions**: 1/6, 1/3, 
 ```
 
 
-For output using 1/3, 1/2, 2/3, 5/6 fractions, you can use the `.prtf()` method:
+For output using 1/3, 1/2, 2/3, 5/6 fractions, use the `.prtf()` method:
 
 ```pycon
 --> a=bl(11223344)
@@ -1247,7 +1254,11 @@ Approximate SI value: 0.3 cube meters
 
 ### Bricks
 
-Volume measurements were frequently transformed into their **"brick" equivalents**. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its "***Nalbanum***," or the number of *sar-b* of that type that fits in 1 *sar* of volume. The `.sarb()` method allows us to perform this transformation:
+Volume measurements were frequently transformed into their **"brick" equivalents**. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its *{ref}`Nalbanum <ref-robson-math>`*, or the number of *sar-b* of that type that fits in 1 *sar* of volume. 
+
+>*"The Nalbanum is a conversion coefficient. While a volume is fixed in space, the number of bricks it contains depends on their size. The Nalbanum acts as the multiplier to go from 'theoretical volume' to 'actual brick count'.*
+
+The `.bricks()` method allows us to perform this transformation:
 
 ```pycon
 --> a = bv('1 sar')
@@ -1311,14 +1322,16 @@ Sexagesimal floating value of the above: 5:47:13
 Approximate SI value: 34.721666666666664 cube meters
 ```
 
-Here is an excerpt from a table found
-[here](https://personal.us.es/cmaza/mesopotamia/edificios.htm#Tipos%20de%20ladrillos) (Spanish only, sorry):
+
+
+Here is a nalbanum table by 
+[Carlos Maza](https://personal.us.es/cmaza/mesopotamia/edificios.htm#Tipos%20de%20ladrillos) (Spanish only, sorry):
 
 |Brick type|Nalb. (dec.) |Nalb. (sex.)|
 |------|---------|-----|
-|  1   |    9.00 |9|
+|  1(*)   |    9.00 |9|
 |  1a  |     8.33| 8:20|
-|  2   |     7.20 |7:12|
+|  2(*)   |     7.20 |7:12|
 |3 |  5.40 | 5:24|
 |4 |   5.00 |5|
 |5 |  4.80 |4:48|
@@ -1327,7 +1340,279 @@ Here is an excerpt from a table found
 |9 |  2.25 |2:15|
 |10|  1.875 |1:52:30|
 |11|  1.20| 1:12|
-|12|1.00 |1  |
+|12(*)|1.00 |1  |
+
+**(*)** Notes:
+| Type | Sexagesimal | Comment |
+|:--- |:--- |:--- |
+|**1** | **9** | Standard square brick (*sig-al-ur-ra*). |
+|**2** | **7;12** | 2/3 kùš brick. |
+|**12** | **1** | The unit value, used as a reference for transportation calculations. |
+
+(metrolist)=
+### `.metrolist()` method
+
+The `.metrolist()` method generates segments of metrological lists and tables. It requires three mandatory parameters:
+
+* initial value
+* final value
+* increment
+
+which can be strings or integers:
+
+```pycon
+--> bw.metrolist('10 gin', '1 mana', '10 gin')
+
+Babylonian weight measurement
+gu <-60- mana <-60- gin <-180- se
+|Measurement         |
+|--------------------|
+|10 gin              |
+|20 gin              |
+|30 gin              |
+|40 gin              |
+|50 gin              |
+|1 mana              |
+--> bw('10 gin').dec
+1800
+--> bw('1 mana').dec
+10800
+--> bw.metrolist(1800, 10800, 1800)
+
+Babylonian weight measurement
+gu <-60- mana <-60- gin <-180- se
+|Measurement         |
+|--------------------|
+|10 gin              |
+|20 gin              |
+|30 gin              |
+|40 gin              |
+|50 gin              |
+|1 mana              |
+```
+
+and a certain number of {meth}`optional parameters<.metrolist>`. For example, if we want a metrological table instead of the metrological list above, we will use `verbose=True` or its equivalent `verbose=1`:
+
+```pycon
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True)
+
+Babylonian weight measurement
+gu <-60- mana <-60- gin <-180- se
+|Measurement         | Sexag. (gin)        | Reciprocal  |
+|--------------------|---------------------|-------------|
+|10 gin              | 10                  | 6           |
+|20 gin              | 20                  | 3           |
+|30 gin              | 30                  | 2           |
+|40 gin              | 40                  | 1:30        |
+|50 gin              | 50                  | 1:12        |
+|1 mana              | 1                   | 1           |
+```
+
+if we want to use the main fractions:
+
+```pycon
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1)
+
+Babylonian weight measurement
+gu <-60- mana <-60- gin <-180- se
+|Measurement         | Sexag. (gin)        | Reciprocal  |
+|--------------------|---------------------|-------------|
+|10 gin              | 10                  | 6           |
+|1/3 mana            | 20                  | 3           |
+|1/2 mana            | 30                  | 2           |
+|2/3 mana            | 40                  | 1:30        |
+|5/6 mana            | 50                  | 1:12        |
+|1 mana              | 1                   | 1           |
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=2)
+
+Babylonian weight measurement
+gu <-60- mana <-60- gin <-180- se
+|Measurement         | Sexag. (gin)        | Reciprocal  |
+|--------------------|---------------------|-------------|
+|1/6 mana            | 10                  | 6           |
+|1/3 mana            | 20                  | 3           |
+|1/2 mana            | 30                  | 2           |
+|2/3 mana            | 40                  | 1:30        |
+|5/6 mana            | 50                  | 1:12        |
+|1 mana              | 1                   | 1           |
+```
+
+```pycon
+--> bw.prtsex = True   # switch to sexagesimal mode
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1)
+
+Babylonian weight measurement
+gu <-60- mana <-60- gin <-180- se
+|Measurement         | Sexag. (gin)        | Reciprocal  |
+|--------------------|---------------------|-------------|
+|(1 u) gin           | 10                  | 6           |
+|1/3 mana            | 20                  | 3           |
+|1/2 mana            | 30                  | 2           |
+|2/3 mana            | 40                  | 1:30        |
+|5/6 mana            | 50                  | 1:12        |
+|(1 dis) mana        | 1                   | 1           |
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, actual=1)
+
+Babylonian weight measurement
+gu2 <-60- ma-na <-60- gin2 <-180- še
+|Measurement         | Sexag. (gin2)       | Reciprocal  |
+|--------------------|---------------------|-------------|
+|(1 u) gin2          | 10                  | 6           |
+|1/3 ma-na           | 20                  | 3           |
+|1/2 ma-na           | 30                  | 2           |
+|2/3 ma-na           | 40                  | 1:30        |
+|5/6 ma-na           | 50                  | 1:12        |
+|(1 dis) ma-na       | 1                   | 1           |
+```
+etc.
+
+>**Note**: As you can see, the previous outputs are in **Markdown table format**, so if you use Markdown for your documents, you're in luck, you just have to copy and paste the result from the terminal into your document and that's it. But you can also paste it into an intermediate `.csv` file that can be read by any spreadsheet (indicating the pipe `|` character as the column separator) and from there you can copy and paste it into your word processor or presentations.
+
+The option `echo = False` suppresses terminal output. Instead, `.metrolist()` returns a list of strings with the rows of the table. This will be useful for your scripts.
+
+```pycon
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0)
+['|(1 u) gin           | 10                  | 6           |', '|1/3 mana            | 20                  | 3           |', '|1/2 mana            | 30                  | 2           |', '|2/3 mana            | 40                  | 1:30        |', '|5/6 mana            | 50                  | 1:12        |', '|(1 dis) mana        | 1                   | 1           |']
+--> a = bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0)
+--> for _ in a:
+...     print(_)
+... 
+|(1 u) gin           | 10                  | 6           |
+|1/3 mana            | 20                  | 3           |
+|1/2 mana            | 30                  | 2           |
+|2/3 mana            | 40                  | 1:30        |
+|5/6 mana            | 50                  | 1:12        |
+|(1 dis) mana        | 1                   | 1           |
+
+```
+
+The `.metrohtml()` and `.metrolatex()` methods make use of the above to create metrological lists and tables in HTML and LaTeX format. Estos métodos aceptan las mismas opciones que `.metrolist()` junto con algunas otras que les son propias:
+
+```pycon
+--> a=bw.metrohtml('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0, file='testhtml')
+--> Exported 6 rows to 'testhtml.html' (raw style)
+```
+
+escribirá el fichero `testhtml.html`
+
+```html
+  <table>
+  <tr>
+    <th>Measurement</th>
+    <th>Sexag. (gin)</th>
+    <th>Reciprocal</th>
+  </tr>
+  <tr>
+    <td>(1 u) gin</td>
+    <td>10</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>1/3 mana</td>
+    <td>20</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>1/2 mana</td>
+    <td>30</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>2/3 mana</td>
+    <td>40</td>
+    <td>1:30</td>
+  </tr>
+  <tr>
+    <td>5/6 mana</td>
+    <td>50</td>
+    <td>1:12</td>
+  </tr>
+  <tr>
+    <td>(1 dis) mana</td>
+    <td>1</td>
+    <td>1</td>
+  </tr>
+</table>
+```
+which will be rendered on your HTML page as:
+
+<div>
+  <table>
+  <tr>
+    <th>Measurement</th>
+    <th>Sexag. (gin)</th>
+    <th>Reciprocal</th>
+  </tr>
+  <tr>
+    <td>(1 u) gin</td>
+    <td>10</td>
+    <td>6</td>
+  </tr>
+  <tr>
+    <td>1/3 mana</td>
+    <td>20</td>
+    <td>3</td>
+  </tr>
+  <tr>
+    <td>1/2 mana</td>
+    <td>30</td>
+    <td>2</td>
+  </tr>
+  <tr>
+    <td>2/3 mana</td>
+    <td>40</td>
+    <td>1:30</td>
+  </tr>
+  <tr>
+    <td>5/6 mana</td>
+    <td>50</td>
+    <td>1:12</td>
+  </tr>
+  <tr>
+    <td>(1 dis) mana</td>
+    <td>1</td>
+    <td>1</td>
+  </tr>
+</table>
+</div>
+
+De modo similar, `.metrolatex()`:
+
+```pycon
+--> a=bw.metrolatex('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0,
+ file='testlatex')
+--> Exported to 'testlatex.tex' (LaTeX HEX-Safe style)
+```
+
+will write the file `testlatex.tex`:
+
+
+```latex
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Measurement & Sexag. ({\cuneifont gin}) & Reciprocal \\
+    \midrule
+    (1 u) gin & 10 & 6 \\
+    1/3 mana & 20 & 3 \\
+    1/2 mana & 30 & 2 \\
+    2/3 mana & 40 & 1:30 \\
+    5/6 mana & 50 & 1:12 \\
+    (1 dis) mana & 1 & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+```
+
+You can also use the option `full_page = True` to create files with the complete document, HTML or LaTex that you can use as independent tests.
+
+
+The `cuneiform` option will be described [below](#metrolist-cuneiform).
+
+Please see the options for {meth}`.metrolist()<.metrolist>`, {meth}`.metrohtml()<.metrohtml>`, {meth}`.metrolatex()<.metrolatex>`.
+
+>Please note that not all combinations of options can have an effect simultaneously; for example, you will not be able to see the actual or academic names of the units if you do not activate the fractions.
 
 (scripting)=
 ## Scripting
@@ -1348,7 +1633,7 @@ Usage:
 
 The `-i` option allows you to run a script and remain in interactive mode, which is important for debugging. We show an [example](#lbp-metrology) below.
 
->**Note:** By design, `babcalc` will **NOT** import any of the MesoMath classes. This necessitates writing pure Python scripts, that can be executed directly on other systems using the Python interpreter, for the sake of compatibility and program sharing.
+**Note:** By design, `babcalc` will **NOT** import any of the MesoMath classes when called with the `-i` option. Using this option requires writing pure Python scripts that can be run on other systems directly using the Python interpreter (once the package is installed). This is done for compatibility and program sharing purposes.
 
 The `-m` option is reserved for future use. Currently, there are no modules in MesoMath that can be run this way.
 
@@ -1415,48 +1700,48 @@ Please see the options for {meth}`.metrolist()<.metrolist>` method.
 
 Babylonian Height Measurement
 danna <-30- us <-60- ninda <-12- kus <-30- susi
-Measurement          | Sexag. (ubase=kus)
------------------------------------------
-1 kus None           | 1              
-2 kus None           | 2              
-3 kus None           | 3              
-4 kus None           | 4              
-5 kus None           | 5              
+|Measurement         | Sexag. (kus)        | Reciprocal  |
+|--------------------|---------------------|-------------|
+|1 kus               | 1                   | 1           |
+|2 kus               | 2                   | 30          |
+|3 kus               | 3                   | 20          |
+|4 kus               | 4                   | 15          |
+|5 kus               | 5                   | 12          |
 --> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
 
 Babylonian Height Measurement
 danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
-Measurement                    | Sexag. (ubase=kuš3)
-----------------------------------------------------
-1/3 kuš3 None                  | 20             
-1/2 kuš3 None                  | 30             
-2/3 kuš3 None                  | 40             
-5/6 kuš3 None                  | 50             
-1 kuš3 None                    | 1              
-1 1/6 kuš3 None                | 1:10           
-1 1/3 kuš3 None                | 1:20           
-1 1/2 kuš3 None                | 1:30           
-1 2/3 kuš3 None                | 1:40           
-1 5/6 kuš3 None                | 1:50           
-1/6 ninda None                 | 2              
+|Measurement                   | Sexag. (kuš3)                 | Reciprocal  |
+|------------------------------|-------------------------------|-------------|
+|1/3 kuš3                      | 20                            | 3           |
+|1/2 kuš3                      | 30                            | 2           |
+|2/3 kuš3                      | 40                            | 1:30        |
+|5/6 kuš3                      | 50                            | 1:12        |
+|1 kuš3                        | 1                             | 1           |
+|1 1/6 kuš3                    | 1:10                          | --igi nu--  |
+|1 1/3 kuš3                    | 1:20                          | 45          |
+|1 1/2 kuš3                    | 1:30                          | 40          |
+|1 2/3 kuš3                    | 1:40                          | 36          |
+|1 5/6 kuš3                    | 1:50                          | --igi nu--  |
+|1/6 ninda                     | 2                             | 30          |
 --> bh.prtsex = 1
 --> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
 
 Babylonian Height Measurement
 danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
-Measurement                    | Sexag. (ubase=kuš3)
-----------------------------------------------------
-1/3 kuš3 None                  | 20             
-1/2 kuš3 None                  | 30             
-2/3 kuš3 None                  | 40             
-5/6 kuš3 None                  | 50             
-(1 dis) kuš3 None              | 1              
-(1 dis) 1/6 kuš3 None          | 1:10           
-(1 dis) 1/3 kuš3 None          | 1:20           
-(1 dis) 1/2 kuš3 None          | 1:30           
-(1 dis) 2/3 kuš3 None          | 1:40           
-(1 dis) 5/6 kuš3 None          | 1:50           
-1/6 ninda None                 | 2
+|Measurement                   | Sexag. (kuš3)                 | Reciprocal  |
+|------------------------------|-------------------------------|-------------|
+|1/3 kuš3                      | 20                            | 3           |
+|1/2 kuš3                      | 30                            | 2           |
+|2/3 kuš3                      | 40                            | 1:30        |
+|5/6 kuš3                      | 50                            | 1:12        |
+|(1 dis) kuš3                  | 1                             | 1           |
+|(1 dis) 1/6 kuš3              | 1:10                          | --igi nu--  |
+|(1 dis) 1/3 kuš3              | 1:20                          | 45          |
+|(1 dis) 1/2 kuš3              | 1:30                          | 40          |
+|(1 dis) 2/3 kuš3              | 1:40                          | 36          |
+|(1 dis) 5/6 kuš3              | 1:50                          | --igi nu--  |
+|1/6 ninda                     | 2                             | 30          |
 ```
 
 
@@ -1609,12 +1894,409 @@ Approximate SI value: 1000.0 litres
 etc. but we should also redefine the rest of the classes to ensure consistency in the operations with the new units.
 
 
+## 𒍻 Advanced Topic: Cuneiform Support
 
 
-## Appendix
+<div style="text-align:center;">
+<div class="tablet" >
+
+| NAM-DUB-SAR |
+|:---:|
+|<big>𒉆𒁾𒊬</big>|
+
+</div>
+</div>
+
+>*The art of writing on clay, known in Sumerian as NAM-DUB-SAR (𒉆𒁾𒊬), is in the heart of MesoMath's visual engine.*
+
+
+MesoMath goes beyond mere calculation; it allows you to represent metrological data in its original historical script. This chapter covers how to enable, display, and export cuneiform signs for academic publications and web displays.
+
+𒍻
+ 
+
+### 𒍻 1. The Cuneiform Font Requirement
+
+To prevent "tofu" (empty boxes) or broken characters, your system or document compiler must have access to a compatible font. We recommend **Noto Sans Cuneiform**, which covers the Sumero-Akkadian Unicode block.
+
+* **For Web/HTML:** MesoMath automatically links to Google Fonts.
+* **For LaTeX/PDF:** You must provide the font file (see the LaTeX section below).
+
+Consult [Font Configuration](#install-font) for more information.
+
+𒍻
+
+### 𒍻 2 BabN class
+
+```pycon
+--> a=bn('33.34.0.45.0.0')
+--> print(a.to_cunei())
+𒌍𒐗 𒌍𒐘  𒐏𒐙   
+--> print(a.to_cunei(alter=True))
+𒌍𒐗 𒌍𒐘  𒑩𒐙   
+--> print(a.to_cunei(alter=True, stroke=True))
+𒌍𒐗 𒌍𒐘 𒃵 𒑩𒐙 𒃵 𒃵 
+--> print(a.to_cunei(alter=False, stroke=True))
+𒌍𒐗 𒌍𒐘 𒃵 𒐏𒐙 𒃵 𒃵 
+```
+
+𒍻
+
+
+### 𒍻 3 Metrological classes
+
+#### 𒍻 `.scheme()` method
+
+Use the parameter `cuneiform = True` or equivalently `cuneiform = 1` to see the factor diagram in cuneiform.
+Please see the options for {meth}`.scheme()<mesomath.npvs._MesoM.scheme>`
+
+**Lengths**:
+
+```pycon
+--> print(*bl.scheme(actual=1))
+danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
+--> print(*bl.scheme(cuneiform=1))
+𒆜𒁍   ╼30╾  𒍑   ╼60╾  𒃻   ╼12╾  𒌑   ╼30╾  𒋗𒋛
+```
+**Surface**:
+
+```pycon
+--> print(*bs.scheme(actual=1))
+GAN2 <-100- sar <-60- gin2 <-180- še
+--> print(*bs.scheme(cuneiform=1))
+𒃷   ╼100╾  𒊬   ╼60╾  𒂆   ╼180╾  𒊺
+```
+**Volumes**:
+
+```pycon
+--> print(*bv.scheme(actual=1))
+GAN2 <-100- sar <-60- gin2 <-180- še
+--> print(*bv.scheme(cuneiform=1))
+𒃷   ╼100╾  𒊬   ╼60╾  𒂆   ╼180╾  𒊺
+```
+**Capacities**:
+
+```pycon
+--> print(*bc.scheme(actual=1))
+gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
+--> print(*bc.scheme(cuneiform=1))
+𒄥   ╼5╾  𒉿   ╼6╾  𒑏   ╼10╾  𒋡   ╼60╾  𒂆   ╼180╾  𒊺
+```
+**Weights**:
+
+```pycon
+--> print(*bw.scheme(actual=1))
+gu2 <-60- ma-na <-60- gin2 <-180- še
+--> print(*bw.scheme(cuneiform=1))
+𒄘   ╼60╾  𒈠𒈾   ╼60╾  𒂆   ╼180╾  𒊺
+```
+**Bricks**:
+
+```pycon
+--> print(*bb.scheme(actual=1))
+GAN2 <-100- sar <-60- gin2 <-180- še
+--> print(*bb.scheme(cuneiform=1))
+𒃷   ╼100╾  𒊬   ╼60╾  𒂆   ╼180╾  𒊺
+```
+**System S**:
+
+```pycon
+--> print(*bS.scheme(actual=1))
+šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- aš
+--> print(*bS.scheme(cuneiform=1))
+𒊹   ╼6╾  𒐬   ╼10╾  𒊬   ╼6╾  𒐞   ╼10╾  𒐕   ╼6╾  𒌋   ╼10╾  𒀸
+```
+**System G**:
+
+```pycon
+--> print(*bG.scheme(actual=1))
+šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku
+--> print(*bG.scheme(cuneiform=1))
+𒊹   ╼6╾  𒐬   ╼10╾  𒊬   ╼6╾  𒐴   ╼10╾  𒌋   ╼3╾  𒑘   ╼6╾  𒀸
+```
+**System SKL**:
+
+```pycon
+--> print(*bK.scheme(actual=1))
+šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
+--> print(*bK.scheme(cuneiform=1))
+𒊹   ╼6╾  𒐬   ╼10╾  𒊬   ╼6╾  𒐞   ╼10╾  𒐕   ╼6╾  𒌋   ╼10╾  𒁹
+```
+
+𒍻
+
+#### 𒍻 `.to_cunei()` method
+
+This method attempts, to the extent that the complexity of the code allows, to imitate the idiosyncratic way in which ancient scribes wrote physical quantities. This means the use of fractions and the additive sexagesimal systems C, S, G, and SKL. Let's look at some examples starting with a high integer:
+
+
+
+```pycon
+--> a = bS(11223344)
+--> a.prtf()
+'51 sargal 5 saru 7 sar 3 gesu 5 ges 4 u 4 as'
+--> print(a.to_cunei(onesixth=True))
+𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲 𒐬𒐬𒐬𒐬𒐬 𒐅 𒐞𒐞𒐞 𒐙 𒐏 𒐂
+--> a = bG(11223344)
+--> a.prtf()
+'173 sargal 1 saru 1 sar 5 buru 9 bur 2 iku'
+--> print(a.to_cunei(onesixth=True))
+𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲 𒐬 𒀸 𒐴𒐴𒐴𒐴𒐴 𒐔 𒐀
+--> a = bl(11223344)
+--> a.prtf()
+'17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
+--> print(a.to_cunei(onesixth=True))
+𒌋𒐌𒑡 𒆜𒁍 𒐉𒈦 𒍑 𒐊𒑜 𒃻 𒁹𒑚 𒌑 𒐉 𒋗𒋛
+--> a = bs(11223344)
+--> a.prtf()
+'10 gan 39 sar 11 5/6 gin 14 se'
+--> print(a.to_cunei(onesixth=True))
+𒌋 𒃷 𒌍𒐇𒑡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
+--> a = bv(11223344)
+--> a.prtf()
+'10 gan 39 sar 11 5/6 gin 14 se'
+--> print(a.to_cunei(onesixth=True))
+𒌋 𒃷 𒌍𒐇𒑡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
+--> a = bw(11223344)
+--> a.prtf()
+'17 gu 19 mana 11 5/6 gin 14 se'
+--> print(a.to_cunei(onesixth=True))
+𒌋𒐌𒑡 𒄘 𒐎𒑡 𒈠𒈾 𒁹𒑜 𒂆 𒌋𒐉 𒊺
+--> a = bc(11223344)
+--> a.prtf()
+'3 gur 2 bariga 1 1/2 ban 4 sila 11 5/6 gin 14 se'
+--> print(a.to_cunei(onesixth=True))
+𒐈 𒄥 𒐖𒑡 𒁹 𒈦 𒑏 𒐉𒑡 𒋡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
+--> a = bb(11223344)
+--> a.prtf()
+'10 gan 39 sar 11 5/6 gin 14 se'
+--> print(a.to_cunei(onesixth=True))
+𒌋 𒃷 𒌍𒐇𒑡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
+```
+
+and then with a small one:
+
+
+```pycon
+--> a=bK(121)
+--> print(a.to_cunei())
+𒐖 𒋢𒋛 𒁹                     # 𒋢𒋛 ("ŠU-SI") intercalated to avoid confusion (𒐖𒁹)
+```
+
+If you wish, you can add the commodity name; for instance, for silver weights:
+
+```pycon
+--> print(bw('1 mana').to_cunei(subst='ku_babbar'))
+𒁹 𒈠𒈾  𒆬𒌓
+```
+
+[Appendix C](#commodities-list) lists all the commodity names that may be used.
+
+
+Please see the options for {meth}`.to_cunei()<mesomath.npvs._MesoM.to_cunei>`
+
+𒍻
+
+(metrolist-cuneiform)=
+#### 𒍻 `.metrolist()` method and its siblings
+
+```pycon
+--> bl.metrolist('1 kus','1 ninda','2 kus', verbose=1, fractions=2,cuneiform=1,
+actual=1, width=22,full_page=1,file='caca')
+
+Babylonian length measurement
+𒆜𒁍   ╼30╾  𒍑   ╼60╾  𒃻   ╼12╾  𒌑   ╼30╾  𒋗𒋛
+|Measurement           | Sexag. (𒃻)            | Reciprocal  |
+|----------------------|-----------------------|-------------|
+|𒁹 𒌑                   |  𒐙                    | 𒌋𒐖          |
+|𒑡 𒃻 𒁹 𒌑               | 𒌋𒐙                    |  𒐘          |
+|𒑚 𒃻 𒁹 𒌑               | 𒎙𒐙                    |  𒐖 𒎙𒐘       |
+|𒈦 𒃻 𒁹 𒌑               | 𒌍𒐙                    | 𒅆𒉡          |
+|𒑛 𒃻 𒁹 𒌑               | 𒑩𒐙                    |  𒐕 𒎙        |
+|𒑜 𒃻 𒁹 𒌑               | 𒑪𒐙                    | 𒅆𒉡          |
+```
+
+The previous cuneiform output should appear correctly aligned on almost any modern terminal; but, due to the variable width of the cuneiform glyphs, it is next to impossible to get it to appear aligned in an HTML document like this using a monospaced font, so henceforth the outputs will be presented in table format.
+
+
+```pycon
+--> bl.metrolist('1 kus','1 ninda','2 kus', verbose=1, fractions=2,cuneiform=1,
+actual=1, width=22,full_page=1,file='caca')
+```
+
+output:
+
+
+<div class="tablet" >
+
+|Babylonian length measurement|
+|---|
+|𒆜𒁍   ╼30╾  𒍑   ╼60╾  𒃻   ╼12╾  𒌑   ╼30╾  |
+
+|Measurement           | Sexag. (𒃻)            | Reciprocal  |
+|----------------------|-----------------------|-------------|
+|𒁹 𒌑                   |  𒐙                    | 𒌋𒐖          |
+|𒑡 𒃻 𒁹 𒌑               | 𒌋𒐙                    |  𒐘          |
+|𒑚 𒃻 𒁹 𒌑               | 𒎙𒐙                    |  𒐖 𒎙𒐘       |
+|𒈦 𒃻 𒁹 𒌑               | 𒌍𒐙                    | 𒅆𒉡          |
+|𒑛 𒃻 𒁹 𒌑               | 𒑩𒐙                    |  𒐕 𒎙        |
+|𒑜 𒃻 𒁹 𒌑               | 𒑪𒐙                    | 𒅆𒉡          |
+
+</div>
+
+If you wish, you can add the commodity name; for instance, for silver weights:
+
+```pycon
+--> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, cuneiform=1, subst='ku_babbar')
+```
+
+output:
+
+
+<div class="tablet" >
+
+|Babylonian weight measurement|
+|---|
+|𒄘   ╼60╾  𒈠𒈾   ╼60╾  𒂆   ╼180╾  𒊺|
+
+|Measurement         | Sexag. (𒂆)          | Reciprocal  |
+|--------------------|---------------------|-------------|
+|𒌋 𒂆  𒆬𒌓             | 𒌋                   |  𒐚          |
+|𒑚 𒈠𒈾  𒆬𒌓            | 𒎙                   |  𒐗          |
+|𒈦 𒈠𒈾  𒆬𒌓            | 𒌍                   |  𒐖          |
+|𒑛 𒈠𒈾  𒆬𒌓            | 𒑩                   |  𒐕 𒌍        |
+|𒑜 𒈠𒈾  𒆬𒌓            | 𒑪                   |  𒐕 𒌋𒐖       |
+|𒁹 𒈠𒈾  𒆬𒌓            |  𒐕                  |  𒐕          |
+
+</div>
+
+
+[Appendix C](#commodities-list) lists all the commodity names that may be used.
+
+The `.metrohtml()` and `.metrolatex()` methods also work in cuneiform using the `cuneiform=True` option.
+
+When exporting to a full HTML page with cuneiform enabled, MesoMath applies a CSS class called `.tablet`. This style mimics the appearance of a Mesopotamian clay tablet, using warm tones and optimized font sizes for the complex glyphs; for instance:
+
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #f4f1ea; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .tablet { background-color: #e2c08d; border-radius: 15px; padding: 25px; 
+              box-shadow: inset 2px 2px 5px #bc9a6c, 5px 5px 15px rgba(0,0,0,0.3);
+              border: 1px solid #cdaa7d; max-width: fit-content; }
+    table { border-collapse: collapse; background: rgba(255,255,255,0.1); }
+    th, td { border: 1px solid rgba(0,0,0,0.1); padding: 8px 15px; text-align: left; }
+    th { background: rgba(0,0,0,0.05); color: #5d4037; font-variant: small-caps; }
+    td { font-family: "Noto Sans Cuneiform", sans-serif; font-size: 1.2rem; }
+    caption { margin-bottom: 10px; font-weight: bold; color: #5d4037; }
+  </style>
+</head>
+<body>
+<div class="tablet">
+  <table class="table">
+  <tr>
+    <th>Measurement</th>
+    <th>Sexag. (𒃻)</th>
+    <th>Reciprocal</th>
+  </tr>
+  <tr>
+    <td>𒁹&thinsp;𒌑</td>
+    <td>𒐙</td>
+    <td>𒌋𒐖</td>
+  </tr>
+  <tr>
+    <td>𒑡&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
+    <td>𒌋𒐙</td>
+    <td>𒐘</td>
+  </tr>
+  <tr>
+    <td>𒑚&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
+    <td>𒎙𒐙</td>
+    <td>𒐖&thinsp;𒎙𒐘</td>
+  </tr>
+  <tr>
+    <td>𒈦&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
+    <td>𒌍𒐙</td>
+    <td>𒅆𒉡</td>
+  </tr>
+  <tr>
+    <td>𒑛&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
+    <td>𒑩𒐙</td>
+    <td>𒐕&thinsp;𒎙</td>
+  </tr>
+  <tr>
+    <td>𒑜&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
+    <td>𒑪𒐙</td>
+    <td>𒅆𒉡</td>
+  </tr>
+</table>
+</div>
+</body>
+</html>
+```
+
+Exporting cuneiform to LaTeX is notoriously difficult due to encoding issues. MesoMath solves this by using **Hexadecimal Escaping**. Instead of exporting the glyphs directly (which often break in the clipboard), it exports ASCII-safe Unicode point references.
+
+**Workflow for Overleaf/XeLaTeX:**
+
+1. **Generate the file:**
+```python
+bl.metrolatex(cuneiform=True, full_page=True, file="my_table")
+
+```
+
+
+2. **Upload the Font:** Upload `NotoSansCuneiform-Regular.ttf` to your Overleaf project.
+3. **Compile with XeLaTeX:** Set the compiler to XeLaTeX in the project settings.
+4. **The Result:** MesoMath uses `\symbol{"XXXXX}` commands. This ensures that even if you can't "see" the signs in the editor, they will render perfectly in the PDF.
+
+```latex
+\documentclass{article}
+\usepackage{booktabs}
+\usepackage{fontspec}
+% Make sure to upload NotoSansCuneiform.ttf to Overleaf
+\newfontfamily\cuneifont{NotoSansCuneiform.ttf}[Path = .//]
+\begin{document}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Measurement & {\cuneifont Sexag. ({\cuneifont \symbol{"120FB}}) & Reciprocal} \\
+    \midrule
+    {\cuneifont \symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"12419}} & {\cuneifont \symbol{"1230B}\symbol{"12416}} \\
+    {\cuneifont \symbol{"12461}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"1230B}\symbol{"12419}} & {\cuneifont \symbol{"12418}} \\
+    {\cuneifont \symbol{"1245A}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"12399}\symbol{"12419}} & {\cuneifont \symbol{"12416}\,\symbol{"12399}\symbol{"12418}} \\
+    {\cuneifont \symbol{"12226}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"1230D}\symbol{"12419}} & {\cuneifont \symbol{"12146}\symbol{"12261}} \\
+    {\cuneifont \symbol{"1245B}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"12469}\symbol{"12419}} & {\cuneifont \symbol{"12415}\,\symbol{"12399}} \\
+    {\cuneifont \symbol{"1245C}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"1246A}\symbol{"12419}} & {\cuneifont \symbol{"12146}\symbol{"12261}} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\end{document}
+```
+Please see the options for {meth}`.metrolist()<.metrolist>`, {meth}`.metrohtml()<.metrohtml>`, {meth}`.metrolatex()<.metrolatex>`.
+
+𒍻
+
+
+
+### 𒍻 5. Troubleshooting "Tofu"
+
+If you see empty boxes:
+
+* **In HTML:** Ensure you have an active internet connection to load the Google Font.
+* **In LaTeX:** Check that the `.ttf` filename in your project matches exactly what is defined in the `\newfontfamily` command in your `.tex` file.
+
+
+## Appendices
 
 (systems-SGC)=
-### Use of System C, S and G in MesoMath Metrology
+### Appendix A: Use of System C, S and G in MesoMath Metrology
 
 According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneiform to Transliteration.  Table 9 <ref-Proust3>`
 
@@ -1642,7 +2324,7 @@ According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneifor
 >**(*)**: Note These are not in the reference.
 
 (catalog-of-metrological-expressions)=
-### Catalog of metrological expressions
+### Appendix B: Catalog of metrological expressions
 
 #### class: Blen  
 
@@ -1742,60 +2424,165 @@ According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneifor
     173 1/6 šar2-gal 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
     173 sargal 1 saru 1 5/6 sar 1/2 buru 4 bur 1/3 ese
 
-## Test Cuneiform (𒈗𒁕𒇻) 
+(commodities-list)=
+### Appendix C: List of Commodities
 
-<div class="tablet">
+|Category|Commodity|Glyphs|Comment|
+|---|---|---|---|
+| Metals & Value|ku_babbar|𒆬𒌓| Silver (kù-babbar)|
+||urudu|𒍏| Copper (urudu)|
+||ku3_sig17|𒆬𒄀| Gold (kù-sig17)|
+||    |||
+| Crops & Liquids|se|𒊺| Barley (še)|
+||ziz2|𒀾| Emmer wheat (zíz)|
+||i3_gis|𒉌𒄑| Sesame oil (ì-giš)|
+||kas|𒁉| Beer (kaš / bi) - Standard vessel sign|
+||    |||
+| Land & Livestock|a_sa|𒀀𒊮| Field (a-šà)|
+||kiri6|𒊬| Orchard/Garden (kiri6)|
+||gu4|𒄞| Ox (gu4)|
+||udu|𒇻| Sheep (udu)|
+||    |||
+| Textiles & Fibers|siki|𒋠| Wool (siki)|
+||gada|𒃰| Linen (gada)|
+||siki_gi|𒋠𒄀| Native/Standard wool (siki-gi)|
+||    |||
+| Fruits & Provisions|zu2_lum|𒍪𒈝| Dates (zú-lum)|
+||ges_tin|𒃾| Wine (geštin)|
+||ga_ar3|𒂵𒄯| Cheese/Curd (ga-àr)|
+||i3_nun|𒉌𒉣| Ghee/Butter (ì-nun)|
+||    |||
+| Building & Resources|esir|𒀀𒂍| Bitumen (esir2 / A.E2) - The most standard form|
+||ges|𒄑| Wood/Beam (geš)|
+||sig4|𒋞| Brick (sig4)|
+||na4|𒉌| Stone (na4)|
+||    |||
+| Personnel (Contextual)|lu2|𒇽| Man/Worker (lú)|
+||geme2|𒊩| Female worker (gemé)|
+||er3|𒀴| Slave/Servant (er3)|
+||    |||
+| Mathematical States|igi_nu|𒅆𒉡| Reciprocal not found (igi-nu)|
+||igi_nu_du8|𒅆𒉡𒂃| Reciprocal does not open (igi-nu-du8)|
 
-| Measurement | Abstract | Reciprocal |
-| :--- | :--- | :--- |
-| 𒌋 𒂆 𒆬𒌓 | 𒌋 |  Ellie |
-| 𒑚 𒈠𒈾 𒆬𒌓 | 𒎙 | 𒎙𒐘 |
 
-</div>
+### Appendix D: Custom Style Sheet (CSS)
 
-Texto
+```css
+/* 1. FONT LOADING
+   Import Noto Sans Cuneiform from Google Fonts for cross-platform glyph support.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap');
 
-<div class="tablet">
+/* 2. GLOBAL TYPOGRAPHY 
+   Ensures Cuneiform support is available globally across headers and body text.
+*/
+body, h1, h2, h3, p {
+    font-family: 'Helvetica', 'Arial', 'Noto Sans Cuneiform', sans-serif !important;
+}
 
-|Measurement          | Sexag. (ubase= 𒂆  )|
-| :--- | :--- |
-|𒌋 𒂆  𒆬𒌓           | 𒌋       |       
-|𒑚 𒈠𒈾  𒆬𒌓        | 𒎙        |      
-|𒈦 𒈠𒈾  𒆬𒌓        | 𒌍       |       
-|𒑛 𒈠𒈾  𒆬𒌓        | 𒑩      |        
-|𒑜 𒈠𒈾  𒆬𒌓        | 𒑪     |         
-|𒁹 𒈠𒈾  𒆬𒌓         |  𒐕  |
-</div>
+/* 3. CODE & TERMINAL RENDERING
+   Optimizes how cuneiform signs behave inside code blocks and REPL outputs.
+*/
+.highlight, pre, code {
+    font-variant-ligatures: none;
+    font-feature-settings: "tnum"; /* Tabular numbers for alignment */
+    white-space: pre;
+    text-rendering: optimizeLegibility;
+}
 
-Texto
+/* Prevents wide cuneiform signs from distorting code line heights */
+code span, pre span {
+    display: inline-block;
+    min-width: 1em;
+    text-align: center;
+}
 
-<div class="tablet">
+/* 4. THE CLAY TABLET CONTAINER 
+   Visual simulation of a physical Mesopotamian artifact.
+*/
+div.tablet {
+    /* Fine-grain clay texture using radial and linear gradients */
+    background-color: #e2c08d !important;
+    background-image:
+        repeating-radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 1px, transparent 1px, transparent 10px),
+        linear-gradient(135deg, #ebcd9f 0%, #d4ae7b 100%) !important;
+    
+    border: 1px solid #c59d6a !important;
+    border-radius: 16px !important;
+    padding: 25px !important;
+    margin: 20px 0;
+    
+    box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3) !important;
+    display: inline-block;
+    
+    /* Physical object "tilt" for realism */
+    transform: rotate(-0.5deg);
+}
 
-|Babylonian weight measurement|
-|---|
-|𒄘  ⟵ 60 ⟵  𒈠𒈾  ⟵ 60 ⟵  𒂆  ⟵ 180 ⟵  𒊺|
+/* Tablet Caption styling - Forced for both Light/Dark modes */
+div.tablet caption {
+    font-family: 'Helvetica', 'Arial', sans-serif !important;
+    font-weight: bold !important;
+    font-variant: small-caps !important;
+    color: #5d4037 !important; /* Fixed dark brown, even in Dark Mode */
+    margin-bottom: 10px !important;
+    caption-side: top !important;
+    text-align: left !important;
+    background: transparent !important; /* Avoids theme background blocks */
+}
 
-|Measurement          | Sexag. (ubase= 𒂆  )|
-| :--- | :--- |
-|𒌋 𒂆  𒆬𒌓           | 𒌋       |       
-|𒑚 𒈠𒈾  𒆬𒌓        | 𒎙        |      
-|𒈦 𒈠𒈾  𒆬𒌓        | 𒌍       |       
-|𒑛 𒈠𒈾  𒆬𒌓        | 𒑩      |        
-|𒑜 𒈠𒈾  𒆬𒌓        | 𒑪     |         
-|𒁹 𒈠𒈾  𒆬𒌓         |  𒐕  |
-</div>
+/* 5. TABLET CONTENT & INCISED EFFECT
+   Overrides standard theme styles to create the "incised" look on clay.
+*/
+div.tablet table,
+div.tablet tr,
+div.tablet th,
+div.tablet td {
+    background: transparent !important;
+    border: none !important;
+    color: #55361b !important; /* Dark brown "incised" color */
+    font-family: 'Noto Sans Cuneiform', serif !important;
+    font-size: 120% !important;
+    font-weight: 900 !important;
+    line-height: 0.85 !important; /* Optimized for glyph density */
+    text-align: left;
+}
 
-Texto
+/* Sculptural depth effect using dual-tone shadows (light/dark) */
+div.tablet td,
+div.tablet th {
+    padding: 10px 15px !important;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3),
+                -1px -1px 0px rgba(0, 0, 0, 0.2) !important;
+}
 
-<div class="tablet">
+/* Subtle header underline representing a scribal ruling */
+div.tablet th {
+    border-bottom: 2px solid rgba(62, 39, 19, 0.3) !important;
+    text-transform: uppercase;
+    font-size: 0.8em !important;
+    letter-spacing: 1px;
+}
 
-| Measurement | Sexag. (ubase= 𒂆 ) |
-| :--- | :--- |
-| 𒌋 𒂆 𒆬𒌓 | 𒌋 |
-| 𒑚 𒈠𒈾 𒆬𒌓 | 𒎙 |
-| 𒈦 𒈠𒈾 𒆬𒌓 | 𒌍 |
-| 𒑛 𒈠𒈾 𒆬𒌓 | 𒑩 |
-| 𒑜 𒈠𒈾 𒆬𒌓 | 𒑪 |
-| 𒁹 𒈠𒈾 𒆬𒌓 | 𒐕 |
+/* 6. COMPATIBILITY & OVERRIDES
+   Cleans up theme-specific artifacts from Sphinx or ReadTheDocs.
+*/
+div.tablet .pst-scrollable-table-container {
+    background-color: transparent !important;
+    border: none !important;
+}
 
-</div>
+div.tablet table {
+    margin: 10px auto !important;
+    border-collapse: separate !important;
+    border-spacing: 0 5px !important;
+}
+
+/* Compact version for smaller side-tables */
+.tablet.mini table,
+.tablet.mini td,
+.tablet.mini th {
+    font-size: 90% !important;
+}
+```
+

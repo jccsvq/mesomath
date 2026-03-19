@@ -1,55 +1,116 @@
-/* 1. CARGA DE FUENTE (Vital para que el 130% y el peso 900 funcionen) */
+/* 1. FONT LOADING
+   Import Noto Sans Cuneiform from Google Fonts for cross-platform glyph support.
+*/
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap');
 
-/* 2. BASE DE LA DOCUMENTACIÓN */
-/* Añade Noto Sans Cuneiform al final de la lista de fuentes del cuerpo */
-body {
+/* 2. GLOBAL TYPOGRAPHY 
+   Ensures Cuneiform support is available globally across headers and body text.
+*/
+body, h1, h2, h3, p {
     font-family: 'Helvetica', 'Arial', 'Noto Sans Cuneiform', sans-serif !important;
 }
 
-/* 3. EL CONTENEDOR DE LA TABLILLA (TABLET) */
-div.tablet {
-    background-color: #e2c08d !important;
-    /* Textura de grano fino y degradado de arcilla */
-    background-image: 
-        repeating-radial-gradient(circle at 0 0, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 1px, transparent 1px, transparent 10px),
-        linear-gradient(135deg, #ebcd9f 0%, #d4ae7b 100%) !important;
-    border-radius: 16px !important;
-    padding: 25px !important;
-    box-shadow: 6px 6px 18px rgba(0,0,0,0.3) !important;
-    border: 1px solid #c59d6a !important;
-    display: inline-block;
-    margin: 20px 0;
+/* 3. CODE & TERMINAL RENDERING
+   Optimizes how cuneiform signs behave inside code blocks and REPL outputs.
+*/
+.highlight, pre, code {
+    font-variant-ligatures: none;
+    font-feature-settings: "tnum"; /* Tabular numbers for alignment */
+    white-space: pre;
+    text-rendering: optimizeLegibility;
 }
 
-/* 4. RESET DE TABLAS DENTRO DE LA TABLET */
-/* Esto anula los estilos "zebra" o blancos del tema de Sphinx */
-div.tablet table, 
-div.tablet tr, 
-div.tablet th, 
+/* Prevents wide cuneiform signs from distorting code line heights */
+code span, pre span {
+    display: inline-block;
+    min-width: 1em;
+    text-align: center;
+}
+
+/* 4. THE CLAY TABLET CONTAINER 
+   Visual simulation of a physical Mesopotamian artifact.
+*/
+div.tablet {
+    /* Fine-grain clay texture using radial and linear gradients */
+    background-color: #e2c08d !important;
+    background-image:
+        repeating-radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 1px, transparent 1px, transparent 10px),
+        linear-gradient(135deg, #ebcd9f 0%, #d4ae7b 100%) !important;
+    
+    border: 1px solid #c59d6a !important;
+    border-radius: 16px !important;
+    padding: 25px !important;
+    margin: 20px 0;
+    
+    box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3) !important;
+    display: inline-block;
+    
+    /* Physical object "tilt" for realism */
+    transform: rotate(-0.5deg);
+}
+
+/* Tablet Caption styling - Forced for both Light/Dark modes */
+div.tablet caption {
+    font-family: 'Helvetica', 'Arial', sans-serif !important;
+    font-weight: bold !important;
+    font-variant: small-caps !important;
+    color: #5d4037 !important; /* Fixed dark brown, even in Dark Mode */
+    margin-bottom: 10px !important;
+    caption-side: top !important;
+    text-align: left !important;
+    background: transparent !important; /* Avoids theme background blocks */
+}
+
+/* 5. TABLET CONTENT & INCISED EFFECT
+   Overrides standard theme styles to create the "incised" look on clay.
+*/
+div.tablet table,
+div.tablet tr,
+div.tablet th,
 div.tablet td {
     background: transparent !important;
     border: none !important;
-    color: #55361b !important; /* Marrón oscuro incisión */
+    color: #55361b !important; /* Dark brown "incised" color */
     font-family: 'Noto Sans Cuneiform', serif !important;
     font-size: 120% !important;
     font-weight: 900 !important;
-    line-height: 0.85 !important; /* Tu ajuste sibarita */
+    line-height: 0.85 !important; /* Optimized for glyph density */
     text-align: left;
 }
 
-/* 5. EFECTO DE INCISIÓN EN EL BARRO */
-div.tablet td, div.tablet th {
+/* Sculptural depth effect using dual-tone shadows (light/dark) */
+div.tablet td,
+div.tablet th {
     padding: 10px 15px !important;
-    /* Sombras: una clara (luz) y una oscura (profundidad) */
-    text-shadow: 1px 1px 0px rgba(255,255,255,0.3), 
-                 -1px -1px 0px rgba(0,0,0,0.2) !important;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3),
+                -1px -1px 0px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Línea de cabecera sutil */
+/* Subtle header underline representing a scribal ruling */
 div.tablet th {
     border-bottom: 2px solid rgba(62, 39, 19, 0.3) !important;
     text-transform: uppercase;
     font-size: 0.8em !important;
     letter-spacing: 1px;
+}
+
+/* 6. COMPATIBILITY & OVERRIDES
+   Cleans up theme-specific artifacts from Sphinx or ReadTheDocs.
+*/
+div.tablet .pst-scrollable-table-container {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+div.tablet table {
+    margin: 10px auto !important;
+    border-collapse: separate !important;
+    border-spacing: 0 5px !important;
+}
+
+/* Compact version for smaller side-tables */
+.tablet.mini table,
+.tablet.mini td,
+.tablet.mini th {
+    font-size: 90% !important;
 }

@@ -3,6 +3,60 @@ measurements from the Old Babylonian period. You will need to have a TrueType fo
 such as Noto Sans Cuneiform or similar installed on your system for proper display.
 """
 
+from wcwidth import wcswidth
+
+
+def pad_cuneiform(text: str, width: int):
+    """Calculate the actual visual width of the cuneiform text
+    and justify to left
+
+
+    Ejemplo de uso:
+        cell = f"|{pad_cuneiform(meass, 25)}|"
+
+    :param text: input string
+    :type text: str
+    :param width: width of the output string
+    :type width: int
+    :return: padded string
+    :rtype: str
+    """
+    visual_width = wcswidth(text)
+    if visual_width == -1:  # Caracteres no imprimibles
+        visual_width = len(text)
+
+    padding = width - visual_width
+    return text + (" " * padding)
+
+def pad_cuneiform_right(text: str, width: int):
+    """Calculate the actual visual width of the cuneiform text
+    and justify to right
+
+
+    Ejemplo de uso:
+        cell = f"|{pad_cuneiform(meass, 25)}|"
+
+    :param text: input string
+    :type text: str
+    :param width: width of the output string
+    :type width: int
+    :return: padded string
+    :rtype: str
+    """
+    visual_width = wcswidth(text)
+    if visual_width == -1:  # Caracteres no imprimibles
+        visual_width = len(text)
+
+    padding = width - visual_width
+    return (" " * padding) + text
+
+
+
+
+
+# Ejemplo de uso
+# celda = f"|{pad_cuneiform(medida, 25)}|"
+
 # Arithmograms:
 
 #: aš
@@ -114,8 +168,8 @@ subsdict = {
     "geme2": "𒊩",  # Female worker (gemé)
     "er3": "𒀴",  # Slave/Servant (er3)
     # Mathematical States (for Metrotable)
-    "igi_nu": "𒅆𒉡",       # Reciprocal not found (igi-nu)
-    "igi_nu_du8": "Assistant 𒅆𒉡𒂃", # Reciprocal does not open (igi-nu-du8)
+    "igi_nu": "𒅆𒉡",  # Reciprocal not found (igi-nu)
+    "igi_nu_du8": "Assistant 𒅆𒉡𒂃",  # Reciprocal does not open (igi-nu-du8)
 }
 
 # Dictionary for quick access by unit/system name
@@ -156,7 +210,7 @@ UNIT_LOGOGRAMS = {
 # for _MesoM.schema() use
 MAP_UNIT_LOGOGRAMS = {
     "ban": "𒑏",
-    "bariga":"𒉿",
+    "bariga": "𒉿",
     "danna": "𒆜𒁍",
     "gan": "𒃷",
     "gin": "𒂆",
@@ -176,5 +230,10 @@ MAP_UNIT_LOGOGRAMS = {
     "dis": "𒁹",
     "ese": "𒑘",
     "iku": "𒀸",
-    
 } | UNIT_LOGOGRAMS
+
+
+CUNEIFORM_LABEL_GLYPHS = "𒉆𒁾𒊬"
+CUNEIFORM_LABEL_HEX = r'\symbol{"12240}\symbol{"1207E}\symbol{"122AC}'
+
+TIMES_LABEL = "𒀀𒁺"

@@ -676,7 +676,7 @@ class _MesoM(Npvs):
         units are implicit in the sign shape) and metrological systems (where
         units are explicitly marked with logograms).
 
-        :param stroke: If True, uses the '𒀹' (DIŠ-tenû) sign to mark empty units,
+        :param stroke: If True, uses the '𒃵' (GAM) sign to mark empty units,
                        acting as a positional 'zero' placeholder.
         :type stroke: bool, optional
         :param onesixth: If True, allows decomposition into 1/6 units (specific to
@@ -685,7 +685,7 @@ class _MesoM(Npvs):
         :param alter: If True, uses alternative glyphs for tens (40: '𒑩', 50: '𒑪')
                       instead of the standard additive wedges.
         :type alter: bool, optional
-        :param subst: add substance glyph to line
+        :param subst: add substance glyph to line, e.g. "ku_babbar"
         :type subst: str, optional
         :return: A string of cuneiform glyphs separated by thin spaces.
         """
@@ -791,11 +791,11 @@ class _MesoM(Npvs):
                 # Placeholder logic for empty units
                 if arithm_list:
                     # Implicit units show only the stroke
-                    out.append("𒀹")
+                    out.append("𒃵")
                 else:
                     # Explicit units show the stroke and the unit logogram
                     unit_sign = MAP_UNIT_LOGOGRAMS.get(unit, unit)
-                    out.append(f"𒀹 {unit_sign}")
+                    out.append(f"𒃵 {unit_sign}")
 
             res = " ".join(out)
         # E. Final Polish: Substance Determinant (v1.6.0)
@@ -964,6 +964,132 @@ class MesoM(_MesoM):
     sexsys: type[BsyS] | type[BsyG] = BsyS
 
     @classmethod
+    def metrolist_old(
+        cls,
+        mmin: str | int,
+        mmax: str | int,
+        step: str | int,
+        verbose: bool = False,
+        ubase: int | None = None,
+        width: int = 20,
+        fractions: int = -1,
+        actual: bool = False,
+        echo: bool = True,
+        cuneiform: bool = False,
+        subst: str = None,
+        **kwargs,
+    ):
+        """Generate a list of metrological values for the current class.
+
+        :param mmin: Initial value (e.g., '1 ninda' or integer)
+        :type mmin: str | int
+        :param mmax: Final value
+        :type mmax: str | int
+        :param step: Increment
+        :type step: str | int
+        :param verbose: If it is True, it returns the floating metrological value, defaults to False
+        :type verbose: bool, optional
+        :param ubase: force ubase unit, defaults to None
+        :type ubase: int, optional
+        :param width: output width, defaults to 20
+        :type width: int, optional
+        :param fractions: Use fractions if 1 and add 1/6 if 2, defaults to -1 (no fractions)
+        :type fractions: int, optional
+        :param actual: use academic unit names
+        :type actual: bool, optional
+        :param echo: If True, prints the table to stdout. If False, only returns the list.
+        :type echo: bool, optional
+        :param cuniform: If True, prints the table in cuneiform.
+        :type cuneiform: bool, optional
+        :param subst: add substance glyph to line
+        :type subst: str, optional
+        :return: List of formatted strings
+        :rtype: list
+        """
+        from .glyphs import MAP_UNIT_LOGOGRAMS
+        from .glyphs import pad_cuneiform as padc
+
+        start_dec = cls(mmin).dec
+        end_dec = cls(mmax).dec
+        step_dec = cls(step).dec
+
+        if ubase is None:
+            ubase = cls.ubase
+
+        results = []
+
+        # Helper function to handle output according to the switch
+        def handle_output(text):
+            if echo:
+                print(text)
+            results.append(text)
+
+        if echo:
+            print("\n" + cls.title)
+            print(*cls.scheme(actual=actual, cuneiform=cuneiform))
+            if cuneiform:
+                ubase_glyph = MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
+                ll1 = f"{'|Measurement'.ljust(width)} "
+                ll2 = f"| {f'Sexag. (ubase= {ubase_glyph} ) '}" if verbose else ""
+                line = ll1 + ll2
+            else:
+                ll1 = f"{'|Measurement'.ljust(width)} "
+                ll2 = (
+                    f"| {f'Sexag. (ubase={cls.aname[ubase] if actual else cls.uname[ubase]}) '}"
+                    if verbose
+                    else ""
+                )
+                line = ll1 + ll2
+
+            print(line + "|")
+            print(
+                "|"
+                + "-" * (len(ll1) - 1)
+                + "|"
+                + "-" * (len(ll2) - 1)
+                + ("|" if verbose else "")
+            )
+            lenh = len(line)
+        else:
+            lenh = width = 0
+
+        # Main loop
+        current = start_dec
+        while current <= end_dec + (step_dec / 10):
+            obj = cls(int(round(current)))
+            if cuneiform:
+                ln = (
+                    obj.to_cunei(onesixth=True, subst=subst)
+                    if fractions > 0
+                    else obj.to_cunei(onesixth=False, subst=subst)
+                )
+                if verbose:
+                    # line = f"|{ln.ljust(width - 1)} | {((obj.sex(r=ubase)).to_cunei(alter=True)).ljust(lenh - width - 3)}|"
+                    line = f"|{padc(ln, width - 1)} | {padc((obj.sex(r=ubase)).to_cunei(alter=True), lenh - width - 3)}|"
+                else:
+                    line = "|" + ln.ljust(width) + "|"
+            else:
+                if fractions in {1, 2}:
+                    ln = (
+                        obj.prtf(onesixth=fractions == 2, actual=actual)
+                        + f" {'' if subst is None else subst}"
+                    )
+                else:
+                    ln = str(obj) + f" {'' if subst is None else subst}"
+
+                if verbose:
+                    line = f"|{ln.ljust(width - 1)} | {str(obj.sex(r=ubase)).ljust(lenh - width - 3)}|"
+                else:
+                    line = "|" + ln.ljust(width) + "|"
+
+            handle_output(line)
+            current += step_dec
+
+        # Only return the list if echo is False (prevents duplication in REPL)
+        if not echo:
+            return results
+
+    @classmethod
     def metrolist(
         cls,
         mmin: str | int,
@@ -1007,6 +1133,7 @@ class MesoM(_MesoM):
         :rtype: list
         """
         from .glyphs import MAP_UNIT_LOGOGRAMS
+        from .glyphs import pad_cuneiform as padc
 
         start_dec = cls(mmin).dec
         end_dec = cls(mmax).dec
@@ -1017,58 +1144,344 @@ class MesoM(_MesoM):
 
         results = []
 
-        # Helper function to handle output according to the switch
         def handle_output(text):
             if echo:
                 print(text)
             results.append(text)
 
+        # --- Gestión de Encabezados ---
         if echo:
             print("\n" + cls.title)
             print(*cls.scheme(actual=actual, cuneiform=cuneiform))
-            if cuneiform:
-                ubase_glyph = MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
-                line = f"{'|Measurement'.ljust(width)} | {f'Sexag. (ubase= {ubase_glyph}  )'}|"
+
+            # Columna 1 siempre presente
+            h1 = f"|{'Measurement'.ljust(width - 1)} "
+
+            # Columnas 2 y 3 solo si verbose=True
+            if verbose:
+                if cuneiform:
+                    ubase_name = (
+                        cls.cname()[ubase]
+                        if hasattr(cls, "cname")
+                        else MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
+                    )
+                    h2 = f"| {f'Sexag. ({ubase_name})'.ljust(width - 1)} "
+                    h3 = f"| {'Reciprocal'.ljust(11)} "
+                else:
+                    u_label = cls.aname[ubase] if actual else cls.uname[ubase]
+                    h2 = f"| {f'Sexag. ({u_label})'.ljust(width - 1)} "
+                    h3 = f"| {'Reciprocal'.ljust(11)} "
+                header_line = h1 + h2 + h3 + "|"
             else:
-                line = f"{'|Measurement'.ljust(width)} | {f'Sexag. (ubase={cls.aname[ubase] if actual else cls.uname[ubase]})|'}"
+                header_line = h1 + "|"
 
-            print(line)
-            lenh = len(line)
-            print("-" * lenh)
+            handle_output(header_line)
 
+            # Separador dinámico
+            sep = "|" + "-" * (len(h1) - 1) + "|"
+            if verbose:
+                sep += "-" * (len(h2) - 1) + "|" + "-" * (len(h3) - 1) + "|"
+            if echo:
+                print(sep)
+
+        # --- Bucle Principal ---
         current = start_dec
         while current <= end_dec + (step_dec / 10):
             obj = cls(int(round(current)))
-            if cuneiform:
-                ln = (
-                    obj.to_cunei(onesixth=True, subst=subst)
-                    if fractions > 0
-                    else obj.to_cunei(onesixth=False, subst=subst)
-                )
-                if verbose:
-                    line = f"|{ln.ljust(width - 1)} | {((obj.sex(r=ubase)).to_cunei(alter=True)).ljust(lenh - width - 4)}|"
-                else:
-                    line = ln.ljust(width)
-            else:
-                if fractions in {1, 2}:
-                    ln = (
-                        obj.prtf(onesixth=fractions == 2, actual=actual)
-                        + f" {'' if subst is None else subst}"
-                    )
-                else:
-                    ln = str(obj) + f" {'' if subst is None else subst}"
 
-                if verbose:
-                    line = f"|{ln.ljust(width - 1)} | {str(obj.sex(r=ubase)).ljust(lenh - width - 4)}|"
+            # 1. Lógica de Fracciones (Aplicada a la Columna 1)
+            # fractions <= 0 -> False, False
+            # fractions == 1 -> True, False
+            # fractions == 2 -> True, True
+            use_fracs = fractions >= 1
+            use_onesixth = fractions == 2
+
+            # --- Columna 1: Measurement ---
+            if cuneiform:
+                # Pasamos la lógica de 1/6 al método to_cunei
+                val1 = obj.to_cunei(onesixth=use_onesixth, subst=subst)
+                col1 = f"|{padc(val1, width - 1)} "
+            else:
+                # prtf maneja las fracciones latinas
+                val1 = (
+                    obj.prtf(onesixth=use_onesixth, actual=actual)
+                    if use_fracs
+                    else str(obj)
+                )
+                val1 += f" {'' if subst is None else subst}"
+                col1 = f"|{val1.ljust(width - 1)} "
+
+            # --- Columnas adicionales (Solo si verbose=True) ---
+            if verbose:
+                sex_obj = obj.sex(r=ubase)
+
+                # Columna 2: Sexagesimal Value
+                if cuneiform:
+                    val2 = sex_obj.to_cunei(alter=True)
+                    col2 = f"| {padc(val2, width - 1)} "
                 else:
-                    line = ln.ljust(width)
+                    val2 = str(sex_obj)
+                    col2 = f"| {val2.ljust(width - 1)} "
+
+                # Columna 3: Reciprocal
+                if cuneiform:
+                    recip_val = (
+                        sex_obj.rec().to_cunei(alter=True, stroke=True)
+                        if sex_obj.isreg
+                        else "𒅆𒉡"
+                    )
+                    col3 = f"| {padc(recip_val, 11)} "
+                else:
+                    recip_val = str(sex_obj.rec()) if sex_obj.isreg else "--igi nu--"
+                    col3 = f"| {recip_val.ljust(11)} "
+
+                line = col1 + col2 + col3 + "|"
+            else:
+                line = col1 + "|"
 
             handle_output(line)
             current += step_dec
 
-        # Only return the list if echo is False (prevents duplication in REPL)
-        if not echo:
-            return results
+        return results if not echo else None
+
+    @classmethod
+    def metrohtml(cls, *args, **kwargs):
+        """Exports the results of `metrolist` to a basic HTML table.
+        Accepts the same arguments as `metrolist` and some that are specific to it.
+
+        :param file: output filename base, optional
+        :type file: str, optional
+        :param caption: table caption, optional
+        :type caption: str, optional
+        :param full_page: write a complete test HTML page instead of just the table, defaults to False
+        :type full_page: bool, optional
+        :return: HTML output
+        :rtype: str
+        """
+        kwargs["echo"] = False
+        metrolist = cls.metrolist(*args, **kwargs)
+        caption = kwargs.get("caption")
+        full_page = kwargs.get("full_page", False)
+        verbose = kwargs.get("verbose", False)
+
+        ubase = cls.ubase if kwargs.get("ubase") is None else kwargs["ubase"]
+        if kwargs.get("cuneiform", False):
+            ubase_glyph = cls.cname()[ubase]
+        elif kwargs.get("actual", False):
+            ubase_glyph = cls.aname[ubase]
+        else:
+            ubase_glyph = cls.uname[ubase]
+
+        # Future
+        first_row = metrolist[0].strip("|").split("|")
+        num_cols = len(first_row)
+
+        html = []
+
+        if full_page:
+            html.append("<!DOCTYPE html>\n<html>\n<head>")
+            html.append('  <meta charset="UTF-8">')
+            html.append(
+                '  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap" rel="stylesheet">'
+            )
+            html.append("  <style>")
+            html.append(
+                "    body { background-color: #f4f1ea; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }"
+            )
+            html.append(
+                "    .tablet { background-color: #e2c08d; border-radius: 15px; padding: 25px; "
+            )
+            html.append(
+                "              box-shadow: inset 2px 2px 5px #bc9a6c, 5px 5px 15px rgba(0,0,0,0.3);"
+            )
+            html.append(
+                "              border: 1px solid #cdaa7d; max-width: fit-content; }"
+            )
+            html.append(
+                "    table { border-collapse: collapse; background: rgba(255,255,255,0.1); }"
+            )
+            html.append(
+                "    th, td { border: 1px solid rgba(0,0,0,0.1); padding: 8px 15px; text-align: left; }"
+            )
+            html.append(
+                "    th { background: rgba(0,0,0,0.05); color: #5d4037; font-variant: small-caps; }"
+            )
+            html.append(
+                '    td { font-family: "Noto Sans Cuneiform", sans-serif; font-size: 1.2rem; }'
+            )
+            html.append(
+                "    caption { margin-bottom: 10px; font-weight: bold; color: #5d4037; }"
+            )
+            html.append("  </style>\n</head>\n<body>")
+
+        if kwargs.get("cuneiform", False):
+            html.append('<div class="tablet">')
+            html.append('  <table class="table">')
+            cuneiform = True
+        else:
+            html.append("  <table>")
+            cuneiform = False
+
+        # Add the caption if there is one
+        if caption:
+            html.append(f"  <caption>{caption}</caption>")
+
+        # Header
+        html.append("  <tr>")
+        html.append("    <th>Measurement</th>")
+        # Future
+        if num_cols > 2:
+            html.append(f"    <th>Sexag. ({ubase_glyph})</th>") if verbose else None
+            html.append("    <th>Reciprocal</th>")
+        html.append("  </tr>")
+
+        # Rows
+        for i, row_str in enumerate(metrolist):
+            cells = row_str.strip("|").split("|")
+
+            html.append("  <tr>")
+
+            for cell in cells:
+                clean_cell = cell.strip().replace("\u2009", "&thinsp;")
+                html.append(f"    <td>{clean_cell}</td>")
+
+            html.append("  </tr>")
+
+        # Closing
+        if cuneiform:
+            html.extend(["</table>", "</div>"])
+        else:
+            html.append("</table>")
+
+        if full_page:
+            html.append("</body>\n</html>")
+
+        final_html = "\n".join(html)
+
+        # File writing
+        if kwargs.get("file", False):
+            file = kwargs["file"]
+            if cuneiform:
+                table_class = "tablet"
+            else:
+                table_class = "raw"
+
+            with open(file + ".html", "w", encoding="utf-8") as f:
+                f.write(final_html)
+            print(
+                f"--> Exported {len(metrolist)} rows to '{file + '.html'}' ({table_class} style)"
+            )
+
+        return final_html
+
+    @classmethod
+    def metrolatex(cls, *args, **kwargs):
+        """Exports the results of `metrolist` to a basic LaTeX table.
+        Accepts the same arguments as `metrolist` and some that are specific to it.
+
+        :param file: output filename base, optional
+        :type file: str, optional
+        :param caption: table caption, optional
+        :type caption: str, optional
+        :param full_page: write a complete test LaTeX page instead of just the table, defaults to False
+        :type full_page: bool, optional
+        :return: LaTeX output
+        :rtype: str
+        """
+        kwargs["echo"] = False
+        metrolist = cls.metrolist(*args, **kwargs)
+        caption = kwargs.get("caption")
+        full_page = kwargs.get("full_page", False)
+        is_cuneiform = kwargs.get("cuneiform", False)
+
+        # 1. Internal function to convert glyphs to Hex LaTeX codes
+        def to_latex_hex(text):
+            if not text:
+                return ""
+            res = []
+            for char in text:
+                cp = ord(char)
+                if cp >= 0x12000:  # Rango del cuneiforme
+                    res.append(f'\\symbol{{"{cp:X}}}')
+                elif char == "\u2009":  # Thin space Unicode
+                    res.append(r"\,")
+                else:
+                    res.append(char)
+            return "".join(res)
+
+        # We determine columns
+        first_row = metrolist[0].strip("|").split("|")
+        num_cols = len(first_row)
+        align = "l" * num_cols
+
+        latex = []
+
+        if full_page:
+            latex.append(r"\documentclass{article}")
+            latex.append(r"\usepackage{booktabs}")
+            latex.append(r"\usepackage{fontspec}")
+            # Note for the user in the LaTeX code itself
+            latex.append(r"% Make sure to upload NotoSansCuneiform.ttf to Overleaf")
+            latex.append(r"\newfontfamily\cuneifont{NotoSansCuneiform.ttf}[Path = .//]")
+            latex.append(r"\begin{document}")
+
+        latex.append(r"\begin{table}[h]")
+        latex.append(r"  \centering")
+        if caption:
+            latex.append(f"  \\caption{{{caption}}}")
+
+        latex.append(f"  \\begin{{tabular}}{{{align}}}")
+        latex.append(r"    \toprule")
+
+        # Headings: we also apply hex conversion here in case the unit name is cuneiform
+        ubase = cls.ubase if kwargs.get("ubase") is None else kwargs["ubase"]
+        u_raw = cls.cname()[ubase] if is_cuneiform else cls.uname[ubase]
+        u_glyph = to_latex_hex(u_raw)
+
+        headers = ["Measurement"]
+        if num_cols == 2:
+            headers.append(f"Sexag. ({u_glyph})")
+        if num_cols > 2:
+            headers.append(f"Sexag. ({{\cuneifont {u_glyph}}}) & Reciprocal")
+
+        # If it is cuneiform, we wrap the headers in the font
+        if is_cuneiform:
+            headers = [
+                f"{{\\cuneifont {h}}}" if i > 0 else h for i, h in enumerate(headers)
+            ]
+
+        latex.append("    " + " & ".join(headers) + r" \\")
+        latex.append(r"    \midrule")
+
+        # 2. Row loop: conversion of each cell
+        for row_str in metrolist:
+            cells = [c.strip() for c in row_str.strip("|").split("|")]
+
+            if is_cuneiform:
+                # We convert glyphs to \symbol{"XXXXX} and wrap in the font
+                formatted_cells = [f"{{\\cuneifont {to_latex_hex(c)}}}" for c in cells]
+            else:
+                formatted_cells = cells
+
+            latex.append("    " + " & ".join(formatted_cells) + r" \\")
+
+        latex.append(r"    \bottomrule")
+        latex.append(r"  \end{tabular}")
+        latex.append(r"\end{table}")
+
+        if full_page:
+            latex.append(r"\end{document}")
+
+        final_latex = "\n".join(latex)
+
+        # 3. Writing to file forcing UTF-8
+        if kwargs.get("file"):
+            filename = kwargs["file"] + ".tex"
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(final_latex)
+            print(f"--> Exported to '{filename}' (LaTeX HEX-Safe style)")
+
+        return final_latex
 
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
         """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of

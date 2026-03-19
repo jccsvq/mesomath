@@ -5,6 +5,8 @@
 import argparse
 
 from mesomath.babn import BabN as bn
+from mesomath.glyphs import TIMES_LABEL as TIMES
+from mesomath.glyphs import pad_cuneiform_right
 
 
 # Functions
@@ -15,6 +17,7 @@ def multable(
     fill: bool = False,
     cuneiform: bool = False,
     stroke: bool = False,
+    float: bool = False,
 ) -> None:
     """Returns the n multiplication table for principal numbers or for all
 
@@ -33,6 +36,8 @@ def multable(
     :type cuneiform: bool, (default: False)
     :stroke: strike out empty space (sexagesimal digit zero), default: False
     :type stroke: bool, (default: False)
+    :float: results are floating point (default: False)
+    :type float: bool, (default: False)
     :return: None
 
     """
@@ -47,22 +52,34 @@ def multable(
         # The 'principal' numbers of the Babylonian tradition
         pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
 
-        header = f"  i   |  i * {bn(n).to_cunei(stroke=stroke)}"
-        print(f"\n{header}")
-        print("-" * len(header))
+        if cuneiform:
+            val = bn(n).to_cunei(stroke=stroke, alter=True)
+            hh = pad_cuneiform_right(f" {val} {TIMES}  𒐕  ", 15)
+            lh = len(hh)
+            hh2 = pad_cuneiform_right(f"{val}", len(val) + 4)
+            lh2 = len(hh2)
+            header = f"|{hh}|{hh2}|"
+            print(f"\n{header}")
+            print("|" + "-" * lh + "|" + "-" * lh2 + "|")
+        else:
+            ll = f" i *  {str(n)}"
+            lh = len(ll)
+            header = "|  i  |" + ll + "|"
+            print(f"\n{header}")
+            print("|-----|" + "-" * lh + "|")
 
         for i in pnum:
             # Dynamic alignment so that the table doesn't break with large numbers
+            t2 = (bn(nn * i)).f() if float else bn(nn * i)
             if cuneiform:
-                if stroke:
-                    a1 = bn(i).to_cunei(stroke=True)
-                    a2 = bn(nn * i).to_cunei(stroke=True)
-                else:
-                    a1 = bn(i).to_cunei()
-                    a2 = bn(nn * i).to_cunei()
-                print(f" {a1:4} | {a2:>12}",)
+                if i > 1:
+                    a1 = bn(i).to_cunei(stroke=stroke, alter=True)
+                    a2 = t2.to_cunei(stroke=True, alter=True)
+                    b1 = pad_cuneiform_right(TIMES + "  " + a1, lh)
+                    b2 = pad_cuneiform_right(a2, lh2)
+                    print("|" + b1 + "|" + b2 + "|")
             else:
-                print(f" {i:2d}  |  {str(bn(nn * i)):>14}")
+                print(f"| {i:2d}  |  {str(t2).rjust(lh - 2)}|")
     finally:
         # Guaranteed state restoration
         bn.sep, bn.fill = oldsep, oldfill
@@ -96,7 +113,7 @@ def listtables() -> None:
 def gen_parser() -> argparse.ArgumentParser:
     """User interface parser"""
     DESC = """Prints Babylonian multiplication tables."""
-    EPIL = "jccsvq fecit, 2025. Public domain."
+    EPIL = "jccsvq dub-sar fecit, 2025. Public domain."
 
     # Option definitions
     parser = argparse.ArgumentParser(
@@ -138,6 +155,9 @@ def gen_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-f", "--fill", help="Pad with zeros", action="store_true", default=False
     )
+    parser.add_argument(
+        "--float", help="floating results", action="store_true", default=False
+    )
 
     return parser
 
@@ -159,6 +179,7 @@ def main():
             fill=args.fill,
             cuneiform=args.cuneiform,
             stroke=args.zeros,
+            float=args.float,
         )
 
 

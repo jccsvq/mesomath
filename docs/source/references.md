@@ -37,7 +37,9 @@ This bibliography provides the academic and historical foundations for the metro
 * **Neugebauer, O., & Sachs, A.** (1945). *Mathematical Cuneiform Texts*. American Oriental Society.
 > *Note: Validation for the area and volume algorithms in `Bsur` and `Bvol`.*
 
+(ref-robson-math)=
 
+* **Robson, E. (1999).** *Mesopotamian Mathematics, 2100-1600 BC: Technical Constants in Bureaucracy and Education*. Oxford University Press.
 
 (ref-friberg)=
 
