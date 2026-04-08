@@ -1,8 +1,8 @@
 # 🏺 MesoMath v2.0.0rc0
 **The Definitive Mesopotamian Metrology & Arithmetic Engine for Python.**
 
-[![PyPI version](https://img.shields.io/pypi/v/mesomath/2.0.0rc0)](https://pypi.org/project/mesomath/)
-[![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=latest)](https://mesomath.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://img.shields.io/pypi/v/mesomath/2.0.0rc0)](https://pypi.org/project/mesomath/2.0.0rc0/)
+[![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=develop)](https://mesomath.readthedocs.io/develop/?badge=develop)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 
 MesoMath is a high-precision computational framework designed for epigraphists, historians, and mathematicians working with Sumerian and Babylonian sexagesimal systems. 
