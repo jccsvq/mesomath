@@ -46,3 +46,28 @@ mesomath.parser.interpreter module
    :members:
    :special-members:
    :show-inheritance:
+
+mesomath.utils module
+---------------------
+
+.. automodule:: mesomath.utils
+   :members:
+   :special-members:
+   :show-inheritance:
+
+mesomath.metrology_presets module
+----------------------------------
+
+.. automodule:: mesomath.metrology_presets
+   :members:
+   :special-members:
+   :show-inheritance:
+
+mesomath.glyphs
+----------------
+
+.. automodule:: mesomath.glyphs
+   :members:
+   :special-members:
+   :show-inheritance:
+

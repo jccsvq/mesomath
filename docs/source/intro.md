@@ -21,7 +21,7 @@ The project manages physical quantities through a hierarchy of Non-Place-Value S
 
 ## Why version {{ release }}?
 
-This version marks a transition from pure calculation to **simulation of administrative tasks**. With the introduction of `rations()` and `silver_payments()` in the base metrology classes, the library now supports the analysis of historical economic documents directly from their raw measurements.
+This version adds the ability to display results in cuneiform script for educational purposes.
 
 ## Project Structure
 
@@ -29,4 +29,4 @@ The ecosystem is divided into three main pillars:
 
 1. **The Core Library**: `babn.py`, `npvs.py`, and `hamming.py`.
 2. **The Toolset**: Command-line utilities (`babcalc`, `metrotable`, `mtlookup`, `bmultable`) designed for the shell-oriented researcher.
-3. **The Interactive Lab**: Jupyter Notebooks (available via Binder) for educational and exploratory use.
+3. **The Interactive Lab**: Jupyter Notebooks (available via Binder ) for educational and exploratory use. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)

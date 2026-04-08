@@ -8,7 +8,9 @@
 
 `metrotable` is a Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) for printing fragments of [**metrological tables**](https://cdli.earth/articles/cdlj/2009-1.pdf) in the style of those used by ancient Babylonian scribes and their apprentices.
 
-The metrological tables showed the correspondence between the additive values ​​of measurements of length, surface, weight, etc. and the abstract multiplicative sexagesimal numbers required by multiplicative arithmetic (calculations of areas, volumes, etc.). A modern analogy would be the following: we have a square with a side measuring one yard, two feet, and five inches (the additive measurement), and we want to calculate its area. We would need to convert the measurement to a homogeneous unit, for example, inches, with 65 inches. With this value, we can calculate the area of ​​the square as 65^2 = 4225 square inches. This value of 65 would be our abstract multiplicative number, and a modern metrological table would show us an entry for the association:
+> [IMPORTANT] This application is obsolete and will be removed in the upcoming version 2.0.0. We strongly recommend that you use method `.metrolist()` instead from now on.
+
+The metrological tables showed the correspondence between the additive values ​​of measurements of length, surface, weight, etc. and the abstract multiplicative sexagesimal numbers required by multiplicative arithmetic (calculations of areas, volumes, etc.). A modern analogy would be the following: we have a square with a side measuring one yard, two feet, and five inches (the additive measurement), and we want to calculate its area. We would need to convert the measurement to a homogeneous unit, for example, inches, with $65$ inches. With this value, we can calculate the area of ​​the square as $65^2 = 4225$ square inches. This value of $65$ would be our abstract multiplicative number, and a modern metrological table would show us an entry for the association:
 
     1 yard 2 feet 5 inches -> 65
 
@@ -44,8 +46,8 @@ to get a listing of short and long options:
 ```bash
 $ metrotable --help
 usage: metrotable [-h] [-t {L,Lh,S,V,C,W,B,SysG,SysS,SysK}] [-m MIN] [-M MAX]
-                  [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n] [-v]
-                  [-r] [-F {0,1}] [-p] [-a] [-c]
+                  [-i INCREMENT] [-w WIDTH] [-f FORCE] [-x {1,2,3,4}] [-n]
+                  [-v] [-r] [-F {0,1}] [-p] [-a] [-c]
 
 Prints an excerpt of a metrological table
 
@@ -56,34 +58,35 @@ options:
                         remainder) (default: None)
   -m MIN, --min MIN     Minimun value of variable to print, ex: "10 susi"
                         (default: 1)
-  -M MAX, --max MAX     Maximun value of variable to print, ex:"2 kus", or a comma
-                        separated list "2 kus,5 kus" (default: 10)
+  -M MAX, --max MAX     Maximun value of variable to print, ex:"2 kus", or a
+                        comma separated list "2 kus,5 kus" (default: 10)
   -i INCREMENT, --increment INCREMENT
                         Increment of the variable between table lines, ex: "5
-                        susi" or a comma separated list matching MAX in length "5
-                        susi,1 kus" (default: 1)
+                        susi" or a comma separated list matching MAX in length
+                        "5 susi,1 kus" (default: 1)
   -w WIDTH, --width WIDTH
-                        Sets the reserved width for printing measurement values
-                        ​​to WIDTH (default: 20)
+                        Sets the reserved width for printing measurement
+                        values ​​to WIDTH (default: 20)
   -f FORCE, --force FORCE
                         Force base unit to number FORCE (default: -1)
   -x {1,2,3,4}, --example {1,2,3,4}
                         Runs an example test (default: None)
-  -n, --noheader        Suppress header printing (for chaining results) (default:
-                        False)
+  -n, --noheader        Suppress header printing (for chaining results)
+                        (default: False)
   -v, --verbose         More information in the header and reciprocals if the
                         abstract numbers are regular (default: False)
-  -r, --remainder       List the available measurement systems and their units,
-                        then exits (default: False)
+  -r, --remainder       List the available measurement systems and their
+                        units, then exits (default: False)
   -F {0,1}, --fractions {0,1}
                         Use fractions, -F 1 to include 1/6 (default: -1)
-  -p, --pedantic        Write the coefficients of the units in the measurements
-                        using the S and G Systems (default: False)
+  -p, --pedantic        Write the coefficients of the units in the
+                        measurements using the S and G Systems (default:
+                        False)
   -a, --academic        With [-F|--fractions] or [-r|--remainder] uses the
                         academic names of units. (default: False)
   -c, --cuneiform       Write table in cuneiform (default: False)
 
-jccsvq fecit, 2025. Public domain.
+jccsvq dub-sar fecit, 2025. Public domain.
 ```
 
 
@@ -882,4 +885,11 @@ or:
 
 </div>
 
-𒍻
+---
+
+<center>
+
+<strong><big> 𒍻 jccsvq 𒁾𒊬  𒐞𒐞𒐞 𒐗 𒐏 𒐋 </big></strong>
+
+</center>
+

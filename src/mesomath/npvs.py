@@ -4,10 +4,13 @@ but class Npvs is of general use.
 
 * class  Npvs: Generic class inspired in Imperial Units System lengths
 
-    * class _MesoM: Specializes the Npvs class to handle Mesopotamian counting.
+    * class _MesoM: Specializes the Npvs class to handle Mesopotamian counting systems.
 
+        * class  BsyC: Babylonian System C
         * class  BsyG: Babylonian System G
         * class  BsyS: Babylonian System S
+        * class  BsyK: Babylonian System K
+
         * class MesoM: Specializes the Npvs class to handle Mesopotamian measurements.
 
             * class  Blen: Babylonian length system
@@ -225,6 +228,18 @@ class Npvs:
             x //= i
         result.append(x)
         return result
+
+    @classmethod
+    def from_si(cls, val: float)-> object:
+        """Converts SI measure into object.
+
+        :param val: SI value
+        :type val: float
+        :return: Object with corresponding SI value
+        :rtype: object
+        """        
+        return cls(int(round(val/cls.siv)))
+
 
     def __init__(self, x: int | str) -> None:
         """Class constructor
@@ -559,6 +574,7 @@ class _MesoM(Npvs):
         ll.reverse()
         return ll
 
+
     @property
     def dec(self):
         """Getter"""
@@ -569,6 +585,10 @@ class _MesoM(Npvs):
         """Getter"""
         return self.__list
 
+    @property
+    def acad(self):
+        return self.__repr__(actual=True)
+
     def sex(self, r: int = 0) -> BabN | None:
         """Return sexagesimal floating value of object
 
@@ -577,6 +597,17 @@ class _MesoM(Npvs):
         :return: sexagesimal floating value of object
         :rtype: BabN | None
         """
+        return BabN(self.dec) // self.cfact[r]
+
+    def abstract(self, r: int = None) -> BabN | None:
+        """Return sexagesimal floating value of object
+
+        :param r: index of reference unit in uname, defaults to 0
+        :type r: int, optional
+        :return: sexagesimal floating value of object
+        :rtype: BabN | None
+        """
+        r = r or self.ubase
         return BabN(self.dec) // self.cfact[r]
 
     def metval(self) -> BabN | None:
@@ -661,154 +692,120 @@ class _MesoM(Npvs):
 
         return " ".join(ss)
 
-    def to_cunei(
-        self,
-        stroke: bool = False,
-        onesixth: bool = False,
-        alter: bool = False,
-        subst: str = None,
-    ) -> str:
+    @staticmethod
+    def _to_Cunei_base(val: int, system: str = "S") -> str:
+        """MATHEMATICAL ENGINE: Converts an integer to hierarchical NPVN glyphs.
+        Does not add unit logograms or determinatives.
+
+        :param val: integer to convert
+        :type val: int
+        :param system: system to use C, S, G, K, defaults to "S"
+        :type system: str, optional
+        :return: cuneiform string representation of the integer
+        :rtype: str
         """
-        Generates a pure cuneiform autograph representation of the number/measurement.
+        from .glyphs import (
+            l_as,
+            l_dis,
+            l_u,
+            l_ges,
+            l_gesu,
+            l_sar2,
+            l_saru,
+            l_sar2_gal,
+            l_iku,
+            l_ese3,
+            l_buru,
+        )
 
-        This method converts internal numerical data into a hierarchical string of
-        Unicode cuneiform glyphs. It distinguishes between numerical systems (where
-        units are implicit in the sign shape) and metrological systems (where
-        units are explicitly marked with logograms).
+        if val == 0:
+            return ""
+        res = []
+        rem = val
 
-        :param stroke: If True, uses the '𒃵' (GAM) sign to mark empty units,
-                       acting as a positional 'zero' placeholder.
-        :type stroke: bool, optional
-        :param onesixth: If True, allows decomposition into 1/6 units (specific to
-                         certain metrological contexts).
-        :type onesixth: bool, optional
-        :param alter: If True, uses alternative glyphs for tens (40: '𒑩', 50: '𒑪')
-                      instead of the standard additive wedges.
-        :type alter: bool, optional
-        :param subst: add substance glyph to line, e.g. "ku_babbar"
-        :type subst: str, optional
-        :return: A string of cuneiform glyphs separated by thin spaces.
+        # 1. ŠAR2-GAL (216,000 / 108,000)
+        f_sgal = 216000 if system != "G" else 108000
+        if rem >= f_sgal:
+            n = rem // f_sgal
+            res.append(l_sar2_gal[0] * n)
+            rem %= f_sgal
+
+        # 2. ŠAR'U (36,000 / 18,000)
+        f_sharu = 36000 if system != "G" else 18000
+        if rem >= f_sharu:
+            n = rem // f_sharu
+            if n <= 5:
+                res.append(l_saru[n - 1])
+            rem %= f_sharu
+
+        # 3. ŠAR2 (3,600 / 1,800)
+        f_sar2 = 3600 if system != "G" else 1800
+        if rem >= f_sar2:
+            n = rem // f_sar2
+            if n <= 9:
+                res.append(l_sar2[n - 1])
+            rem %= f_sar2
+
+        if system == "G":
+            # BUR'U (180), BUR3 (18), EŠE3 (6), IKU (1)
+            factors = [(180, l_buru, 5), (18, l_u, 9), (6, l_ese3, 2), (1, l_iku, 5)]
+            for f, glyphs, limit in factors:
+                if rem >= f:
+                    n = rem // f
+                    if n <= limit:
+                        res.append(glyphs[n - 1])
+                    rem %= f
+        else:
+            # GEŠ'U (600), GEŠ (60), U (10), Unidades (1)
+            factors = [(600, l_gesu, 5), (60, l_ges, 9), (10, l_u, 9)]
+            for f, glyphs, limit in factors:
+                if rem >= f:
+                    n = rem // f
+                    if n <= limit:
+                        res.append(glyphs[n - 1])
+                    rem %= f
+            if rem >= 1:
+                u_list = l_as if system == "S" else l_dis
+                if rem <= 9:
+                    res.append(u_list[rem - 1])
+
+        return " ".join(res)
+
+    def to_cunei(self, **kwargs) -> str:
         """
-        from . import glyphs
-
-        # 1. External Logogram Mapping (For metrological units)
-        MAP_UNIT_LOGOGRAMS = {
-            "DANNA": "𒆜𒁍",
-            "US": "𒍑",
-            "NINDA": "𒃻",
-            "KUS": "𒌑",
-            "SUSI": "𒋗𒋛",
-            "GU": "𒄘",
-            "MANA": "𒈠𒈾",
-            "GIN": "𒂆",
-            "SE": "𒊺",
-            "GUR": "𒄥",
-            "BARIGA": "𒁹",
-            "BAN": "𒑏",
-            "SILA": "𒋡",
-            "GAN": "𒃷",
-            "SAR": "𒊬",
-        }
-
-        # Retrieve decomposed values and fractions
-        ll, ff, uname = self._get_decomposed_data(onesixth=onesixth)
-
-        # 2. Dynamic Tens Construction (l10)
-        l10 = [""] + glyphs.l_u
-        if alter and len(l10) > 5:
-            l10[4], l10[5] = "𒑩", "𒑪"
+        INTERFACE FOR NUMERIC CLASSES (BsyS, BsyK, BsyG, BsyC).
+        Adds historical disambiguation and determinants.
+        """
+        from .glyphs import MAP_UNIT_LOGOGRAMS, subsdict
 
         out = []
-        # Process units from largest to smallest
-        for i in reversed(range(len(ll))):
-            val, frac_str, unit = ll[i], ff[i], uname[i].upper()
-            block = ""
+        stroke = kwargs.get("stroke", False)
+        subst = kwargs.get("subst", None)
 
-            # A. Arithmogram Identification (Self-identifying unit signs)
-            unit_key = unit.lower()
-            synonyms = {
-                "sargal": "sar2_gal",
-                "saru": "saru",
-                "sar2": "sar2",
-                "sar": "as",
-                "bur": "bur3",
-                "ese": "ese3",
-                "iku": "as",
-                "as": "as",
-                "ges": "ges",
-                "gesu": "gesu",
-            }
-            search_name = synonyms.get(unit_key, unit_key).replace("-", "_")
-            arithm_list = getattr(glyphs, f"l_{search_name}", None)
-
-            # B. Numeral Construction
+        # self.list es la lista sexagesimal posicional
+        for i in reversed(range(len(self.list))):
+            val = self.list[i]
+            unit_key = self.uname[i]
             if val > 0:
-                val_int = int(val)
-                if arithm_list:
-                    # Case 1: Unit has specialized numerical signs (1-9)
-                    if len(arithm_list) >= 9:
-                        tens, unit_val = divmod(val_int, 10)
-                        # Tens handling with overflow protection
-                        if tens < len(l10):
-                            block += l10[tens]
-                        else:
-                            block += l10[-1] * (tens // 9) + l10[tens % 9]
-
-                        if unit_val > 0:
-                            block += arithm_list[unit_val - 1]
-                    else:
-                        # Case 2: Multi-sign additive units (e.g., ŠARGAL)
-                        block += arithm_list[0] * val_int
+                block = self._to_Cunei_base(int(val), system=self.system_type)
+                # D. Desambiguación Histórica: 60 su-si
+                if (
+                    unit_key == "ges"
+                    and i + 1 < len(self.list)
+                    and self.list[i - 1] == 0
+                ):
+                    out.append(f"{block} {MAP_UNIT_LOGOGRAMS['susi']}")
                 else:
-                    # Case 3: Standard decimal/sexagesimal without specific arithmograms
-                    tens, unit_val = divmod(val_int, 10)
-                    if tens < len(l10):
-                        block += l10[tens]
-                    else:
-                        block += l10[-1] * (tens // 9) + l10[tens % 9]
-                    if unit_val > 0:
-                        block += glyphs.l_dis[unit_val - 1]
-
-            # C. Fractions
-            if frac_str:
-                block += glyphs.MAP_FRACTIONS.get(frac_str, frac_str)
-
-            # D. Final Assembly and Historical Disambiguation
-            if val > 0 or frac_str:
-                if arithm_list:
-                    # Historical Clarification: Add 'šu-ši' to GEŠ (60) in King Lists
-                    # if the lower unit (U) is zero to avoid ambiguity with DIŠ (1).
-                    if unit == "GES" and self.list[1] == 0:
-                        out.append(f"{block} 𒋢𒋛")
-                    else:
-                        out.append(block)
-                else:
-                    # Append external logogram for metrological units
-                    unit_glyph = MAP_UNIT_LOGOGRAMS.get(unit, unit)
-                    out.append(f"{block} {unit_glyph}")
-
+                    out.append(block)
             elif stroke:
-                # Placeholder logic for empty units
-                if arithm_list:
-                    # Implicit units show only the stroke
-                    out.append("𒃵")
-                else:
-                    # Explicit units show the stroke and the unit logogram
-                    unit_sign = MAP_UNIT_LOGOGRAMS.get(unit, unit)
-                    out.append(f"𒃵 {unit_sign}")
+                out.append("𒃵")
 
-            res = " ".join(out)
-        # E. Final Polish: Substance Determinant (v1.6.0)
+        res = " ".join(out)
         if subst:
-            from .glyphs import subsdict
-
-            # Si subst es una clave en subsdict, usamos el logograma;
-            # de lo contrario, devolvemos el texto original o nada.
-            glyph_subst = subsdict.get(subst.lower(), "")
-            if glyph_subst:
-                res += f"  {glyph_subst}"
-
-        return res
+            glyph = subsdict.get(subst.lower(), "")
+            if glyph:
+                res += f" {glyph}"
+        return res.strip()
 
     def _get_decomposed_data(self, onesixth=False) -> tuple[list, list]:
         """Decompose the list of coefficients into two, one of them for fractional parts.
@@ -838,14 +835,21 @@ class _MesoM(Npvs):
                         break
         return ll, ff, self.uname
 
-    def __repr__(self) -> str:
-        """Returns string representation of object."""
+    def __repr__(self, actual: bool = False) -> str:
+        """Returns string representation of object.
+
+        :param actual: use academic names if True, defaults to False
+        :type actual: bool, optional
+        :return: object representation
+        :rtype: str
+        """
+        names = self.aname if actual else self.uname
         ss = []
-        for i in reversed(range(len(self.uname))):
+        for i in reversed(range(len(names))):
             if self.list[i] != 0:
                 if not self.prtsex:
                     ss.append(str(self.list[i]))
-                    ss.append(self.uname[i])
+                    ss.append(names[i])
                 else:
                     if self.list[i] >= 60:
                         ss.append(
@@ -853,7 +857,7 @@ class _MesoM(Npvs):
                         )
                     else:
                         ss.append(str(self.list[i]))
-                    ss.append(self.uname[i])
+                    ss.append(names[i])
         return " ".join(ss)
 
 
@@ -882,6 +886,7 @@ class BsyG(_MesoM):  # Babylonian System G numeration
         "saru": 10800,
         "sargal": 64800,
     }
+    system_type: str = "G"
 
 
 class BsyS(_MesoM):  # Babylonian System S numeration
@@ -909,6 +914,7 @@ class BsyS(_MesoM):  # Babylonian System S numeration
         "saru": 36000,
         "sargal": 216000,
     }
+    system_type: str = "S"
 
 
 class BsyK(_MesoM):  # Babylonian System SKL numeration
@@ -936,6 +942,7 @@ class BsyK(_MesoM):  # Babylonian System SKL numeration
         "saru": 36000,
         "sargal": 216000,
     }
+    system_type: str = "K"
 
 
 class BsyC(_MesoM):  # Babylonian System C numeration
@@ -954,6 +961,7 @@ class BsyC(_MesoM):  # Babylonian System C numeration
     siv: float = 1
     siu: str = "#"
     ubase: int = 0  # dis
+    system_type: str = "C"
 
 
 class MesoM(_MesoM):
@@ -964,148 +972,118 @@ class MesoM(_MesoM):
     sexsys: type[BsyS] | type[BsyG] = BsyS
 
     @classmethod
-    def metrolist_old(
+    def lookup(
         cls,
-        mmin: str | int,
-        mmax: str | int,
-        step: str | int,
-        verbose: bool = False,
-        ubase: int | None = None,
+        value: str | int,
+        ubase: int = None,
+        strict: bool = False,
         width: int = 20,
         fractions: int = -1,
-        actual: bool = False,
-        echo: bool = True,
+        academic: bool = False,
+        verbose: bool = False,
+        translit: bool = False,
         cuneiform: bool = False,
-        subst: str = None,
-        **kwargs,
     ):
-        """Generate a list of metrological values for the current class.
-
-        :param mmin: Initial value (e.g., '1 ninda' or integer)
-        :type mmin: str | int
-        :param mmax: Final value
-        :type mmax: str | int
-        :param step: Increment
-        :type step: str | int
-        :param verbose: If it is True, it returns the floating metrological value, defaults to False
-        :type verbose: bool, optional
-        :param ubase: force ubase unit, defaults to None
-        :type ubase: int, optional
-        :param width: output width, defaults to 20
-        :type width: int, optional
-        :param fractions: Use fractions if 1 and add 1/6 if 2, defaults to -1 (no fractions)
-        :type fractions: int, optional
-        :param actual: use academic unit names
-        :type actual: bool, optional
-        :param echo: If True, prints the table to stdout. If False, only returns the list.
-        :type echo: bool, optional
-        :param cuniform: If True, prints the table in cuneiform.
-        :type cuneiform: bool, optional
-        :param subst: add substance glyph to line
-        :type subst: str, optional
-        :return: List of formatted strings
-        :rtype: list
         """
-        from .glyphs import MAP_UNIT_LOGOGRAMS
-        from .glyphs import pad_cuneiform as padc
+        Performs a reverse metrological search. Given an abstract sexagesimal
+        number, it lists all possible physical measurements within the class
+        that correspond to that number at different orders of magnitude.
 
-        start_dec = cls(mmin).dec
-        end_dec = cls(mmax).dec
-        step_dec = cls(step).dec
+        :param value: The abstract sexagesimal value to look up (e.g., '20' or 20).
+        :type value: str | int
+        :param ubase: Index of the reference unit for the abstract value. Defaults to cls.ubase.
+        :type ubase: int, optional
+        :param strict: If True, only matches where the sexagesimal representation is identical.
+        :type strict: bool, optional
+        :param width: Character width for the measurement column in the output table.
+        :type width: int, optional
+        :param fractions: Number of fractional parts to show. -1 for default representation.
+        :type fractions: int, optional
+        :param academic: Use academic notation (e.g., using ';' for sexagesimal fractions).
+        :type academic: bool, optional
+        :param verbose: If True, provides detailed info including SI equivalents.
+        :type verbose: bool, optional
+        :param translit: If True, displays the measurement in Nippur-style transliteration.
+        :type translit: bool, optional
+        :param cuneiform: If True, displays both measurement and abstract value in Unicode cuneiform.
+        :type cuneiform: bool, optional
+        """
+        from .utils import cunei_ljust as padc
 
         if ubase is None:
             ubase = cls.ubase
 
-        results = []
+        # Convert search value to a Babylonian Number object for decimal access
+        aa = BabN(value)
+        # x is the target 'decimal footprint' in the smallest unit
+        x = aa.dec * cls.cfact[ubase]
 
-        # Helper function to handle output according to the switch
-        def handle_output(text):
-            if echo:
-                print(text)
-            results.append(text)
+        line = f"\nLooking for {cls.title} with Abstract = {aa}"
+        print(line)
+        print(f"Base reference unit: {cls.uname[ubase]}")
+        print("-" * len(line))
 
-        if echo:
-            print("\n" + cls.title)
-            print(*cls.scheme(actual=actual, cuneiform=cuneiform))
-            if cuneiform:
-                ubase_glyph = MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
-                ll1 = f"{'|Measurement'.ljust(width)} "
-                ll2 = f"| {f'Sexag. (ubase= {ubase_glyph} ) '}" if verbose else ""
-                line = ll1 + ll2
+        # Iterating through 8 orders of magnitude (from 60^-3 to 60^4)
+        for i in range(-3, 5):
+            # Calculate potential decimal value for this magnitude
+            val_dec = int(x // 60**i)
+            if val_dec < 1:
+                continue  # Skip magnitudes that result in zero
+
+            obj = cls(val_dec)
+
+            # Format the measurement string
+            if translit:
+                medida_str = obj.translit
+            elif cuneiform:
+                medida_str = obj.cuneiform
             else:
-                ll1 = f"{'|Measurement'.ljust(width)} "
-                ll2 = (
-                    f"| {f'Sexag. (ubase={cls.aname[ubase] if actual else cls.uname[ubase]}) '}"
-                    if verbose
-                    else ""
+                medida_str = (
+                    obj.prtf(fractions, academic) if fractions >= 0 else str(obj)
                 )
-                line = ll1 + ll2
 
-            print(line + "|")
-            print(
-                "|"
-                + "-" * (len(ll1) - 1)
-                + "|"
-                + "-" * (len(ll2) - 1)
-                + ("|" if verbose else "")
-            )
-            lenh = len(line)
-        else:
-            lenh = width = 0
+            # Get the abstract sexagesimal representation for the found measurement
+            abstracto = obj.sex(ubase)
 
-        # Main loop
-        current = start_dec
-        while current <= end_dec + (step_dec / 10):
-            obj = cls(int(round(current)))
+            # Strict filter: ensures the string representation matches exactly
+            if strict and str(aa) != str(abstracto):
+                continue
+
+            # Handle Cuneiform output for the abstract column
             if cuneiform:
-                ln = (
-                    obj.to_cunei(onesixth=True, subst=subst)
-                    if fractions > 0
-                    else obj.to_cunei(onesixth=False, subst=subst)
-                )
-                if verbose:
-                    # line = f"|{ln.ljust(width - 1)} | {((obj.sex(r=ubase)).to_cunei(alter=True)).ljust(lenh - width - 3)}|"
-                    line = f"|{padc(ln, width - 1)} | {padc((obj.sex(r=ubase)).to_cunei(alter=True), lenh - width - 3)}|"
-                else:
-                    line = "|" + ln.ljust(width) + "|"
+                abstracto_print = abstracto.to_cunei(alter=True)
             else:
-                if fractions in {1, 2}:
-                    ln = (
-                        obj.prtf(onesixth=fractions == 2, actual=actual)
-                        + f" {'' if subst is None else subst}"
-                    )
-                else:
-                    ln = str(obj) + f" {'' if subst is None else subst}"
+                abstracto_print = abstracto
 
-                if verbose:
-                    line = f"|{ln.ljust(width - 1)} | {str(obj.sex(r=ubase)).ljust(lenh - width - 3)}|"
-                else:
-                    line = "|" + ln.ljust(width) + "|"
-
-            handle_output(line)
-            current += step_dec
-
-        # Only return the list if echo is False (prevents duplication in REPL)
-        if not echo:
-            return results
+            if verbose:
+                print(f"Measure:   {medida_str}")
+                print(f"Equiv.:    {obj.SI()}")
+                print(f"Abstract:  {abstracto_print}\n")
+            else:
+                print(
+                    f"{padc(medida_str, width) if cuneiform else medida_str.ljust(width)} <- {abstracto_print}"
+                )
 
     @classmethod
-    def metrolist(
+    def metro_generator(
         cls,
         mmin: str | int,
-        mmax: str | int,
-        step: str | int,
+        mmax: str | int | list,
+        step: str | int | list,
         verbose: bool = False,
         ubase: int | None = None,
         width: int = 20,
         fractions: int = -1,
         actual: bool = False,
-        echo: bool = True,
+        translit: bool = False,
         cuneiform: bool = False,
-        subst: str = None,
+        subst: str = "",
+        incipit: bool = False,
         **kwargs,
     ):
-        """Generate a list of metrological values for the current class.
+        """
+        Generator that yields formatted metrological strings line by line.
+
 
         :param mmin: Initial value (e.g., '1 ninda' or integer)
         :type mmin: str | int
@@ -1125,129 +1103,153 @@ class MesoM(_MesoM):
         :type actual: bool, optional
         :param echo: If True, prints the table to stdout. If False, only returns the list.
         :type echo: bool, optional
-        :param cuniform: If True, prints the table in cuneiform.
+        :param translit: If True, prints the table in transliteration.
+        :type translit: bool, optional
+        :param cuneiform: If True, prints the table in cuneiform.
         :type cuneiform: bool, optional
         :param subst: add substance glyph to line
         :type subst: str, optional
-        :return: List of formatted strings
-        :rtype: list
+        :param incipit: write subst on first line only, defaults to False
+        :type incipit: bool, optional
+        :yields: str (Each row of the table)
         """
-        from .glyphs import MAP_UNIT_LOGOGRAMS
-        from .glyphs import pad_cuneiform as padc
+        from .glyphs import IGI_NU
+        from .utils import cunei_ljust as padc
+        from .utils import gen_multi_range
 
-        start_dec = cls(mmin).dec
-        end_dec = cls(mmax).dec
-        step_dec = cls(step).dec
+        # 1. Setup sequence (using the gen_multi_range generator)
+        decimal_sequence = gen_multi_range(cls, mmin, mmax, step)
 
         if ubase is None:
             ubase = cls.ubase
+        # First row
+        fr = True
 
-        results = []
-
-        def handle_output(text):
-            if echo:
-                print(text)
-            results.append(text)
-
-        # --- Gestión de Encabezados ---
-        if echo:
-            print("\n" + cls.title)
-            print(*cls.scheme(actual=actual, cuneiform=cuneiform))
-
-            # Columna 1 siempre presente
-            h1 = f"|{'Measurement'.ljust(width - 1)} "
-
-            # Columnas 2 y 3 solo si verbose=True
-            if verbose:
-                if cuneiform:
-                    ubase_name = (
-                        cls.cname()[ubase]
-                        if hasattr(cls, "cname")
-                        else MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
-                    )
-                    h2 = f"| {f'Sexag. ({ubase_name})'.ljust(width - 1)} "
-                    h3 = f"| {'Reciprocal'.ljust(11)} "
-                else:
-                    u_label = cls.aname[ubase] if actual else cls.uname[ubase]
-                    h2 = f"| {f'Sexag. ({u_label})'.ljust(width - 1)} "
-                    h3 = f"| {'Reciprocal'.ljust(11)} "
-                header_line = h1 + h2 + h3 + "|"
-            else:
-                header_line = h1 + "|"
-
-            handle_output(header_line)
-
-            # Separador dinámico
-            sep = "|" + "-" * (len(h1) - 1) + "|"
-            if verbose:
-                sep += "-" * (len(h2) - 1) + "|" + "-" * (len(h3) - 1) + "|"
-            if echo:
-                print(sep)
-
-        # --- Bucle Principal ---
-        current = start_dec
-        while current <= end_dec + (step_dec / 10):
-            obj = cls(int(round(current)))
-
-            # 1. Lógica de Fracciones (Aplicada a la Columna 1)
-            # fractions <= 0 -> False, False
-            # fractions == 1 -> True, False
-            # fractions == 2 -> True, True
+        # --- Main Generator Loop ---
+        for dec_val, linenumber, subtotal, is_new_section in decimal_sequence:
+            obj = cls(int(round(dec_val)))
             use_fracs = fractions >= 1
             use_onesixth = fractions == 2
 
-            # --- Columna 1: Measurement ---
+            # Column 1
             if cuneiform:
-                # Pasamos la lógica de 1/6 al método to_cunei
-                val1 = obj.to_cunei(onesixth=use_onesixth, subst=subst)
+                if incipit:
+                    val1 = (
+                        obj.cuneiform + f" {subst}" if is_new_section else obj.cuneiform
+                    )
+                else:
+                    val1 = obj.cuneiform + f" {subst}"
+                col1 = f"|{padc(val1, width - 1)} "
+            elif translit:
+                if incipit:
+                    val1 = (
+                        obj.translit + f" {subst}" if is_new_section else obj.translit
+                    )
+                else:
+                    val1 = obj.translit + f" {subst}"
                 col1 = f"|{padc(val1, width - 1)} "
             else:
-                # prtf maneja las fracciones latinas
                 val1 = (
                     obj.prtf(onesixth=use_onesixth, actual=actual)
                     if use_fracs
-                    else str(obj)
+                    else obj.__repr__(actual=actual)
                 )
-                val1 += f" {'' if subst is None else subst}"
+                if incipit:
+                    val1 += (
+                        f" {'' if subst is None else subst}" if is_new_section else ""
+                    )
+                else:
+                    val1 += f" {'' if subst is None else subst}" if fr else ""
                 col1 = f"|{val1.ljust(width - 1)} "
 
-            # --- Columnas adicionales (Solo si verbose=True) ---
+            # Additional Columns
             if verbose:
                 sex_obj = obj.sex(r=ubase)
-
-                # Columna 2: Sexagesimal Value
                 if cuneiform:
-                    val2 = sex_obj.to_cunei(alter=True)
-                    col2 = f"| {padc(val2, width - 1)} "
-                else:
-                    val2 = str(sex_obj)
-                    col2 = f"| {val2.ljust(width - 1)} "
-
-                # Columna 3: Reciprocal
-                if cuneiform:
+                    val2 = f"| {padc(sex_obj.to_cunei(alter=True), 15)} "
                     recip_val = (
                         sex_obj.rec().to_cunei(alter=True, stroke=True)
                         if sex_obj.isreg
-                        else "𒅆𒉡"
+                        else IGI_NU  # "𒅆𒉡" i.e. "--igi nu--"
                     )
                     col3 = f"| {padc(recip_val, 11)} "
                 else:
+                    val2 = f"| {str(sex_obj).ljust(15)} "
                     recip_val = str(sex_obj.rec()) if sex_obj.isreg else "--igi nu--"
                     col3 = f"| {recip_val.ljust(11)} "
-
-                line = col1 + col2 + col3 + "|"
+                line = col1 + val2 + col3 + "|"
             else:
                 line = col1 + "|"
 
-            handle_output(line)
-            current += step_dec
+            fr = False
+            yield (line, linenumber, subtotal, is_new_section)
 
-        return results if not echo else None
+    @classmethod
+    def metrolist(cls, *args, **kwargs):
+        """Generate a list of metrological values for the current class.
+        Now supports multi-range sections by passing lists to mmax and step.
+        Accepts the same arguments as `metro_generator` and some that are specific to it.
+
+        """
+        from .glyphs import MAP_UNIT_LOGOGRAMS
+
+        metrolist = cls.metro_generator(*args, **kwargs)
+
+        width = kwargs.get("width", 20)
+        actual = kwargs.get("actual", False)
+        cuneiform = kwargs.get("cuneiform", False)
+        verbose = kwargs.get("verbose", False)
+
+        ubase = cls.ubase if kwargs.get("ubase") is None else kwargs["ubase"]
+
+        # --- Header Management ---
+        print("\n" + cls.title)
+        print(*cls.scheme(actual=actual, cuneiform=cuneiform))
+
+        # Column 1: Measurement label
+        h1 = f"|{'Measurement'.ljust(width - 1)} "
+
+        if verbose:
+            # Column 2: Sexagesimal representation
+            if cuneiform:
+                ubase_name = (
+                    cls.cname()[ubase]
+                    if hasattr(cls, "cname")
+                    else MAP_UNIT_LOGOGRAMS.get(cls.uname[ubase], cls.uname[ubase])
+                )
+                h2 = f"| {f'Sexag. ({ubase_name} )'.ljust(15)} "
+                h3 = f"| {'Reciprocal'.ljust(11)} "
+            else:
+                u_label = cls.aname[ubase] if actual else cls.uname[ubase]
+                h2 = f"| {f'Sexag. ({u_label})'.ljust(15)} "
+                h3 = f"| {'Reciprocal'.ljust(11)} "
+            header_line = h1 + h2 + h3 + "|"
+        else:
+            header_line = h1 + "|"
+
+        print(header_line)
+
+        # Dynamic separator line
+        sep = "|" + "-" * (len(h1) - 1) + "|"
+        if verbose:
+            sep += "-" * (len(h2) - 1) + "|" + "-" * (len(h3) - 1) + "|"
+        print(sep)
+
+        # --- Main Loop ---
+        # Iterate through the sequence generated by gen_multi_range
+
+        # for dec_val in decimal_sequence:
+        for line, linecount, subtotal, is_new_section in metrolist:
+            print(line)
+
+        # Colophon:
+        if kwargs.get("colophon"):
+            print(cls._draw_colophon(subtotal, linecount, format="text", **kwargs))
 
     @classmethod
     def metrohtml(cls, *args, **kwargs):
         """Exports the results of `metrolist` to a basic HTML table.
-        Accepts the same arguments as `metrolist` and some that are specific to it.
+        Accepts the same arguments as `metro_generator` and some that are specific to it.
 
         :param file: output filename base, optional
         :type file: str, optional
@@ -1258,8 +1260,10 @@ class MesoM(_MesoM):
         :return: HTML output
         :rtype: str
         """
-        kwargs["echo"] = False
-        metrolist = cls.metrolist(*args, **kwargs)
+        from itertools import chain
+
+        # kwargs["echo"] = False
+        metrolist = cls.metro_generator(*args, **kwargs)
         caption = kwargs.get("caption")
         full_page = kwargs.get("full_page", False)
         verbose = kwargs.get("verbose", False)
@@ -1272,14 +1276,25 @@ class MesoM(_MesoM):
         else:
             ubase_glyph = cls.uname[ubase]
 
-        # Future
-        first_row = metrolist[0].strip("|").split("|")
+        # first row
+        # 1. Extraemos el primer elemento para calcular columnas
+        try:
+            fr_data = next(metrolist)  # Tupla: (row_str, ln, sub, is_new)
+        except StopIteration:
+            return ""
+
+        # 2. Re-unimos la primera fila con el resto del generador
+        # Usamos chain para no agotar la memoria convirtiendo a tuple
+        # full_sequence = chain([fr_data], metrolist)
+
+        first_row = fr_data[0].strip("|").split("|")
         num_cols = len(first_row)
 
         html = []
 
         if full_page:
-            html.append("<!DOCTYPE html>\n<html>\n<head>")
+            # html.append("<!DOCTYPE html>\n<html>\n<head>")
+            html.append('<!DOCTYPE html>\n<html lang="x-cuneiform">\n<head>')
             html.append('  <meta charset="UTF-8">')
             html.append(
                 '  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap" rel="stylesheet">'
@@ -1336,16 +1351,34 @@ class MesoM(_MesoM):
         html.append("  </tr>")
 
         # Rows
-        for i, row_str in enumerate(metrolist):
+        # Add the first row that we extracted for the count
+        rows_iterator = chain([fr_data], metrolist)
+        # 3. El bucle es ahora sagrado y único
+        for row_str, linecount, subtotal, is_new_section in rows_iterator:
+            # Limpiamos la fila de los separadores de la consola
             cells = row_str.strip("|").split("|")
 
-            html.append("  <tr>")
+            # Si es nueva sección, podemos añadir un estilo visual
+            # (ln es tu contador manual, linecount es el que viene del generador)
+            tr_style = (
+                ' style="border-top: 2px solid #5d4037;"'
+                if is_new_section and linecount > 0
+                else ""
+            )
 
+            html.append(f"  <tr{tr_style}>")
             for cell in cells:
                 clean_cell = cell.strip().replace("\u2009", "&thinsp;")
                 html.append(f"    <td>{clean_cell}</td>")
-
             html.append("  </tr>")
+
+        # Colophon
+        if kwargs.get("colophon"):
+            html.append(
+                cls._draw_colophon(
+                    subtotal, linecount, format="html", num_cols=num_cols, **kwargs
+                )
+            )
 
         # Closing
         if cuneiform:
@@ -1369,58 +1402,43 @@ class MesoM(_MesoM):
             with open(file + ".html", "w", encoding="utf-8") as f:
                 f.write(final_html)
             print(
-                f"--> Exported {len(metrolist)} rows to '{file + '.html'}' ({table_class} style)"
+                f"--> Exported {linecount} rows to '{file + '.html'}' ({table_class} style)"
             )
-
-        return final_html
+        else:
+            return final_html
 
     @classmethod
     def metrolatex(cls, *args, **kwargs):
-        """Exports the results of `metrolist` to a basic LaTeX table.
-        Accepts the same arguments as `metrolist` and some that are specific to it.
+        """_summary_
 
-        :param file: output filename base, optional
-        :type file: str, optional
-        :param caption: table caption, optional
-        :type caption: str, optional
-        :param full_page: write a complete test LaTeX page instead of just the table, defaults to False
-        :type full_page: bool, optional
-        :return: LaTeX output
-        :rtype: str
+        :return: _description_
+        :rtype: _type_
         """
-        kwargs["echo"] = False
-        metrolist = cls.metrolist(*args, **kwargs)
+        from itertools import chain
+        from .utils import to_latex_hex
+
+        # 1. Obtenemos el generador
+        metrolist = cls.metro_generator(*args, **kwargs)
         caption = kwargs.get("caption")
         full_page = kwargs.get("full_page", False)
         is_cuneiform = kwargs.get("cuneiform", False)
 
-        # 1. Internal function to convert glyphs to Hex LaTeX codes
-        def to_latex_hex(text):
-            if not text:
-                return ""
-            res = []
-            for char in text:
-                cp = ord(char)
-                if cp >= 0x12000:  # Rango del cuneiforme
-                    res.append(f'\\symbol{{"{cp:X}}}')
-                elif char == "\u2009":  # Thin space Unicode
-                    res.append(r"\,")
-                else:
-                    res.append(char)
-            return "".join(res)
+        # 2. Extraemos la primera fila para configurar la tabla
+        try:
+            fr_data = next(metrolist)  # (row_str, linenum, subtotal, is_new)
+        except StopIteration:
+            return ""
 
-        # We determine columns
-        first_row = metrolist[0].strip("|").split("|")
-        num_cols = len(first_row)
+        row_str_0, ln_0, sub_0, new_0 = fr_data
+        first_row_cells = row_str_0.strip("|").split("|")
+        num_cols = len(first_row_cells)
         align = "l" * num_cols
 
         latex = []
-
         if full_page:
             latex.append(r"\documentclass{article}")
             latex.append(r"\usepackage{booktabs}")
             latex.append(r"\usepackage{fontspec}")
-            # Note for the user in the LaTeX code itself
             latex.append(r"% Make sure to upload NotoSansCuneiform.ttf to Overleaf")
             latex.append(r"\newfontfamily\cuneifont{NotoSansCuneiform.ttf}[Path = .//]")
             latex.append(r"\begin{document}")
@@ -1433,39 +1451,65 @@ class MesoM(_MesoM):
         latex.append(f"  \\begin{{tabular}}{{{align}}}")
         latex.append(r"    \toprule")
 
-        # Headings: we also apply hex conversion here in case the unit name is cuneiform
+        # Headers
         ubase = cls.ubase if kwargs.get("ubase") is None else kwargs["ubase"]
         u_raw = cls.cname()[ubase] if is_cuneiform else cls.uname[ubase]
         u_glyph = to_latex_hex(u_raw)
 
+        # Lógica de headers corregida para usar num_cols
+        # 1. Definimos los textos base (sin fuentes todavía)
         headers = ["Measurement"]
         if num_cols == 2:
-            headers.append(f"Sexag. ({u_glyph})")
-        if num_cols > 2:
-            headers.append(f"Sexag. ({{\cuneifont {u_glyph}}}) & Reciprocal")
+            # Separamos el texto de la unidad: solo la unidad irá en cuneiforme
+            unit_part = (
+                f" ({{\\cuneifont {u_glyph}}})" if is_cuneiform else f" ({u_glyph})"
+            )
+            headers.append(f"Sexag.{unit_part}")
+        elif num_cols > 2:
+            unit_part = (
+                f" ({{\\cuneifont {u_glyph}}})" if is_cuneiform else f" ({u_glyph})"
+            )
+            headers.append(f"Sexag.{unit_part}")
+            headers.append("Reciprocal")
 
-        # If it is cuneiform, we wrap the headers in the font
-        if is_cuneiform:
-            headers = [
-                f"{{\\cuneifont {h}}}" if i > 0 else h for i, h in enumerate(headers)
-            ]
+        # 2. Aplicamos formato a los headers
+        # Usamos \textsf o \textbf para que los encabezados tengan peso,
+        # pero mantenemos la fuente del documento (Times/Computer Modern)
+        # formatted_headers = [f"\\textsf{{{h}}}" for h in headers]
+
+        # 3. Unimos para LaTeX
+        # latex.append("    " + " & ".join(formatted_headers) + r" \\")
 
         latex.append("    " + " & ".join(headers) + r" \\")
         latex.append(r"    \midrule")
 
-        # 2. Row loop: conversion of each cell
-        for row_str in metrolist:
+        # 3. Bucle de filas usando chain para evitar duplicados
+        rows_iterator = chain([fr_data], metrolist)
+
+        for row_str, linecount, subtotal, is_new_section in rows_iterator:
+            # Si es una nueva sección y NO es la primera línea,
+            # añadimos un pequeño separador visual en LaTeX
+            if is_new_section and linecount > 0:
+                latex.append(r"    \addlinespace[0.5em]")
+
             cells = [c.strip() for c in row_str.strip("|").split("|")]
 
             if is_cuneiform:
-                # We convert glyphs to \symbol{"XXXXX} and wrap in the font
+                # Convertimos y aplicamos la fuente a cada celda
                 formatted_cells = [f"{{\\cuneifont {to_latex_hex(c)}}}" for c in cells]
             else:
-                formatted_cells = cells
+                # En modo normal, escapamos caracteres de LaTeX si fuera necesario
+                formatted_cells = [c.replace("_", r"\_") for c in cells]
 
             latex.append("    " + " & ".join(formatted_cells) + r" \\")
 
         latex.append(r"    \bottomrule")
+        if kwargs.get("colophon"):
+            latex.append(
+                cls._draw_colophon(
+                    subtotal, linecount, format="latex", num_cols=num_cols, **kwargs
+                )
+            )
         latex.append(r"  \end{tabular}")
         latex.append(r"\end{table}")
 
@@ -1474,66 +1518,134 @@ class MesoM(_MesoM):
 
         final_latex = "\n".join(latex)
 
-        # 3. Writing to file forcing UTF-8
         if kwargs.get("file"):
             filename = kwargs["file"] + ".tex"
             with open(filename, "w", encoding="utf-8") as f:
                 f.write(final_latex)
-            print(f"--> Exported to '{filename}' (LaTeX HEX-Safe style)")
+            print(
+                f"--> Exported {linecount} rows to '{filename}' (LaTeX HEX-Safe style)"
+            )
+        else:
+            return final_latex
 
-        return final_latex
+    @classmethod
+    def metrocsv(cls, *args, **kwargs):
+        """Exports the results of `metrolist` to a CSV file.
+        Accepts the same arguments as `metro_generator` and some that are specific to it.
+
+        :param file: output filename base, defaults to 'output'
+        :type file: str, optional
+        """
+        from itertools import chain
+        import csv
+
+        file = kwargs.get("file", "output")
+
+        # Generate table
+        metrolist = cls.metro_generator(*args, **kwargs)
+
+        # ubase_glyph for header
+        ubase = cls.ubase if kwargs.get("ubase") is None else kwargs["ubase"]
+        if kwargs.get("cuneiform", False):
+            ubase_glyph = cls.cname()[ubase]
+        elif kwargs.get("actual", False):
+            ubase_glyph = cls.aname[ubase]
+        else:
+            ubase_glyph = cls.uname[ubase]
+
+        # First row
+        # We extract the first element to calculate columns
+        try:
+            fr_data = next(metrolist)  # Tuple: (row_str, ln, sub, is_new)
+        except StopIteration:
+            return ""
+        first_row = fr_data[0].strip("|").split("|")
+        num_cols = len(first_row)
+
+        # 2. Join the first row with the rest of the generator
+        # We use chain to avoid exhausting memory by converting to tuple
+        # full_sequence = chain([fr_data], metrolist)
+        rows_iterator = chain([fr_data], metrolist)
+
+        filename = file + ".csv"
+        with open(filename, "w", newline="", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            # Headers
+            if num_cols == 1:
+                writer.writerow(["Measurement"])
+            else:
+                writer.writerow(
+                    ["Measurement", f"Sexag. ({ubase_glyph})", "Reciprocal"]
+                )
+            # Rows
+            for row_str, linecount, subtotal, is_new_section in rows_iterator:
+                # Row cleaning
+                cells = [_.strip() for _ in row_str.strip("|").split("|")]
+                writer.writerow(cells)
+        print(f"--> Exported {linecount} rows to '{filename}'")
 
     def prtf(self, onesixth: bool = False, actual: bool = False) -> str:
-        """Alternative to __repr__() to use the fractions 1/3, 1/2, 2/3, 5/6 of
-        the units in the output
+        """
+        Print metrological values using fractions
+        Revised version for MesoMath v2.0.0
 
-        :onesixth: Adds 1/6 to the previous set of fractions if True
-        :type onesixth: bool, (default = False)
-        :actual: use academic unit names if True
-        :type actual: bool, (default = False)
+        :param onesixth: include 1/6 fractions, defaults to False
+        :type onesixth: bool, optional
+        :param actual: use academic unit names, defaults to False
+        :type actual: bool, optional
+        :return: output string
+        :rtype: str
+        """
+        """
+        Revised version for MesoMath v2.0.0: 
         """
         length = len(self.list)
 
-        # 1. Fraction detection logic
+        # 1. We obtain broken down data (values, fractions, and unit names)
         ll, ff, _ = self._get_decomposed_data(onesixth)
 
-        # 2. Construction of value strings
+        # 2. Threshold for the Golden Rule
         threshold = getattr(self, "sex_threshold", 0)
 
+        # 3. Construction of value strings
         for i in range(length):
             if ll[i] != 0 or ff[i] != "":
+                # CASE A: Simple Decimal Representation
                 if not self.prtsex:
                     value_str = str(ll[i]) if ll[i] != 0 else ""
+
+                # CASE B: Sexagesimal Representation (in parentheses)
                 else:
                     if ll[i] == 0:
                         value_str = ""
                     else:
-                        # REGLA DE ORO v1.4.0
-                        # Si el índice de la unidad es menor al umbral Y el valor < 60:
+                        # We determine which numeric class to use
                         if i < threshold and ll[i] < 60:
-                            value_str = f"({BsyC(ll[i])})"
+                            num_obj = BsyC(ll[i])
+                        elif hasattr(self, "sexsys"):
+                            num_obj = self.sexsys(ll[i])
                         else:
-                            # Versión final recomendada para prtf y __repr__
-                            if hasattr(self, "sexsys"):
-                                value_str = f"({self.sexsys(ll[i])})"
-                            else:
-                                # Si soy BsyS, me represento a mí mismo sin buscar un sexsys
-                                value_str = f"({self.__class__(ll[i]).__repr_base__()})"
+                            num_obj = self.__class__(ll[i])
 
-                # Unir con la fracción
+                        # We call prtf(0, actual) of the numeric object
+                        # so that it uses 'eše3' and 'diš' if actual=True
+                        value_str = f"({num_obj.__repr__(actual)})"
+
+                # Join the value (whether decimal or sexagesimal) with its fraction
                 if ff[i] != "":
                     ff[i] = (value_str + " " + ff[i]).strip()
                 else:
                     ff[i] = value_str
+
+        # 4. Final assembly (from largest to smallest)
         ss = ""
         for i in reversed(range(length)):
             if ff[i] != "":
-                if actual:
-                    ss += ff[i] + " " + self.aname[i] + " "
-                else:
-                    ss += ff[i] + " " + self.uname[i] + " "
+                # We select the name of the unit (Academic or Common)
+                unit_label = self.aname[i] if actual else self.uname[i]
+                ss += f"{ff[i]} {unit_label} "
 
-        return ss[:-1]
+        return ss.strip()
 
     def labor_cost(self, work_man: str | int) -> float:
         """Calculate the number of workdays or man-days required for the task.
@@ -1614,11 +1726,317 @@ class MesoM(_MesoM):
             # More specific error handling
             raise ValueError(f"Error in silver payment calculation: {e}")
 
-    def __repr__(self) -> str:
+    def to_cunei(self, **kwargs) -> str:
+        """
+        INTERFAZ PARA CLASES METROLÓGICAS (Bcap, Bsur, Bwei, etc.).
+        Usa descomposición por unidades y fracciones.
+        """
+        from .glyphs import MAP_UNIT_LOGOGRAMS, MAP_FRACTIONS, subsdict
+
+        # onesixth = self.__class__.__name__ in ["Bsur", "Bvol", "Bbri"]
+        onesixth = kwargs.get("onesixth", False)
+        ll, ff, uname = self._get_decomposed_data(onesixth=onesixth)
+        subst = kwargs.get("subst", None)
+        stroke = kwargs.get("stroke", False)
+        out = []
+
+        for i in reversed(range(len(ll))):
+            val, frac_str, unit = ll[i], ff[i], uname[i]
+            parts = []
+
+            if val > 0:
+                # Determinamos sistema para el coeficiente
+                target = (
+                    "G"
+                    if unit == "gan"
+                    else ("K" if self.__class__.__name__ == "BsyK" else "S")
+                )
+                parts.append(self._to_Cunei_base(int(val), system=target))
+
+            if frac_str:
+                parts.append(MAP_FRACTIONS.get(frac_str, frac_str))
+
+            block = " ".join(parts)
+            unit_glyph = MAP_UNIT_LOGOGRAMS.get(unit, unit)
+
+            if block:
+                out.append(f"{block} {unit_glyph}")
+            elif stroke:
+                out.append(f"𒃵 {unit_glyph}")
+
+        res = " ".join(out)
+        if subst:
+            glyph = subsdict.get(subst.lower(), "")
+            if glyph:
+                res += f" {glyph}"
+        return res.strip()
+
+    @classmethod
+    def _draw_colophon(cls, subtotal, linecount, **kwargs):
+        """
+        Internal helper to generate the administrative closing (Shu-nigin).
+        """
+        from datetime import datetime
+        from .utils import to_latex_hex  # Aseguramos el acceso a la utilidad
+        from .glyphs import MAP_ADMIN, subsdict
+        from .__about__ import __version__ as VERSION
+
+        # 1. Setup de datos básicos
+        subst = kwargs.get("subst", "")
+        is_cunei = kwargs.get("cuneiform", False)
+        translit = kwargs.get("translit", False)
+        fmt = kwargs.get("format", "text")
+        year = datetime.now().year
+        month = datetime.now().month
+        version = f"MesoMath {VERSION}"
+        num_cols = kwargs.get("num_cols", 2)
+
+        # 2. Construcción de etiquetas y valores
+        if is_cunei:
+            # Nota: BsyS y BsyK asumen que están disponibles o importados
+            total_str = f"{cls(int(subtotal)).to_cunei()} {subsdict.get(subst, '')}"
+            lines_str = f"{BsyS(linecount).to_cunei()}"
+            date_str = f"{MAP_ADMIN['iti']} {BsyS(month).to_cunei()} {BsyK(year).to_cunei()} {MAP_ADMIN.get('mu', '𒈬')}"
+            scribe_label = MAP_ADMIN["dub-sar"]
+            total_label = MAP_ADMIN["su_ningin_gal"]
+            lines_label = MAP_ADMIN["mu_sid_bi"]
+        else:
+            total_str = f"{cls(int(subtotal)).translit if translit else cls(int(subtotal)).prtf()} {subst}"
+            lines_str = str(linecount)
+            date_str = datetime.now().strftime("%B %Y")
+            scribe_label = "Scribe"
+            total_label = "Grand Total"
+            lines_label = "Number of lines"
+
+        # 3. Renderizado según formato con protección para LaTeX
+        res = []
+
+        if fmt == "text":
+            res.append("-" * 50)
+            res.append(f"| {total_label}: {total_str}")
+            res.append(f"| {lines_label}: {lines_str} | {scribe_label}: {version} |")
+            res.append(f"| {date_str} |")
+            res.append("-" * 50)
+
+        elif fmt == "html":
+            res.append(
+                '  <tfoot style="border-top: 2px solid #5d4037; font-style: italic;">'
+            )
+            res.append(
+                f'    <tr><td colspan="{num_cols}">{total_label}: {total_str}</td></tr>'
+            )
+            res.append(
+                f'    <tr><td colspan="{num_cols - 1}">{lines_label}: {lines_str}</td><td>{scribe_label}: {version}</td></tr>'
+            )
+            res.append(f'    <tr><td colspan="{num_cols}">{date_str}</td></tr>')
+            res.append("  </tfoot>")
+
+        elif fmt == "latex":
+            # Función auxiliar local para envolver en fuente si es cuneiforme
+            def _wrap(text):
+                if is_cunei:
+                    # Pasamos por el conversor HEX para seguridad de Overleaf
+                    return f"{{\\cuneifont {to_latex_hex(text)}}}"
+                return text.replace("_", r"\_")
+
+            # res.append(r"    \midrule")
+            # Aplicamos el envoltorio a cada línea del colofón
+            line1 = f"{_wrap(total_label)}: {_wrap(total_str)}"
+            line2 = rf"{_wrap(lines_label)}: {_wrap(lines_str)} \hfill {_wrap(scribe_label)}: {version}"
+            line3 = f"{_wrap(date_str)}"
+
+            res.append(f"    \\multicolumn{{{num_cols}}}{{l}}{{\\small {line1}}} \\\\")
+            res.append(f"    \\multicolumn{{{num_cols}}}{{l}}{{\\small {line2}}} \\\\")
+            res.append(f"    \\multicolumn{{{num_cols}}}{{l}}{{\\small {line3}}} \\\\")
+            res.append(r"    \midrule")
+
+        return "\n".join(res)
+
+    @property
+    def translit(self):
+        return self._transliterate(False)
+
+    @property
+    def cuneiform(self):
+        return self._transliterate(True)
+
+    def _transliterate(self, cuneiform: bool = False, postprocess: bool = True) -> str:
+        """
+        Return the metrological transliteration or cuneiform representation of the object.
+
+        This method performs a greedy decomposition of 'self.dec' into values corresponding
+        to graphemes present in the Old Babylonian metrological lists published by C. Proust (2009).
+        The resulting tokens are concatenated and optionally re-analyzed to regroup identical
+        units and recalculate coefficients, ensuring historical accuracy in the final string.
+
+        :param cuneiform: If True, converts the transliterated tokens into their
+                          corresponding cuneiform Unicode characters.
+        :type cuneiform: bool, optional
+        :param postprocess: If True, performs a secondary pass to aggregate repetitive
+                            minor units (e.g., 'še' grains) into single blocks.
+        :type postprocess: bool, optional
+        :raises AttributeError: Raised if the object's 'trmodel' is not a valid
+                                Proust-based metrological model (Blen, Bsur, Bwei, Bcap).
+        :return: A string containing the historical transliteration or cuneiform signs.
+        :rtype: str
+        """
+        from mesomath.utils import translit_to_cunei
+        from mesomath.data.proust import get_map_for
+        import re
+
+        # 1. Configuration & Vocabularies
+        # SAFE_VOCAB: Tokens that the MesoMath string constructor can safely parse.
+        SAFE_VOCAB = {
+            "diš",
+            "u",
+            "geš2",
+            "gešu",
+            "šar2",
+            "šar’u",
+            "1/2",
+            "1/3",
+            "2/3",
+            "5/6",
+            "n",
+            "m",
+            "var",
+        }
+
+        # PROUST_STRUCTURAL: Units that must remain atomic and should not be fragmented by post-processing.
+        PROUST_STRUCTURAL = {
+            "(eše3)",
+            "(iku)",
+            "(ubu)",
+            "(šar2)",
+            "(šar’u)",
+            "1(šargal)gal",
+            "(diš)gal2",
+        }
+
+        # METROLOGICAL UNITS: Used for splitting and cleaning repetitive unit markers.
+        UNITS = {
+            "danna",
+            "gal2",
+            "GAN2",
+            "gin2",
+            "gu2",
+            "gur",
+            "igi",
+            "kuš3",
+            "ma-na",
+            "ninda",
+            "sar",
+            "še",
+            "sila3",
+            "šu-si",
+            "UŠ",
+        }
+
+        def clean_transliteration(text: str) -> str:
+            """Removes redundant unit markers by scanning from right to left."""
+            words = text.split()
+            if not words:
+                return ""
+            cleaned = []
+            last_unit_seen = None
+            for word in reversed(words):
+                if word in UNITS:
+                    if word == last_unit_seen:
+                        continue
+                    last_unit_seen = word
+                cleaned.append(word)
+            return " ".join(reversed(cleaned))
+
+        # 2. Metrological Model Validation
+        valid_models = {"Blen", "Bsur", "Bwei", "Bcap"}
+        try:
+            model = self.trmodel
+            if model not in valid_models:
+                raise AttributeError
+        except AttributeError:
+            # Fallback to standard algorithm if no Proust model is defined
+            return self.to_cunei() if cuneiform else self.acad
+
+        # 3. Greedy Decomposition Algorithm
+        # Consumes the decimal value using the largest available pieces from the Proust map.
+        remainder = self.dec
+        tokens = []
+        proust_map = get_map_for(model)
+
+        for val in proust_map:
+            if remainder <= 0:
+                break
+            while 0 < val <= remainder:
+                tokens.append(proust_map[val])
+                remainder -= val
+                # print(f"DEBUG: {proust_map[val]} {val} {remainder}")
+
+        if remainder > 0:
+            tokens.append(f"REMANENTE({remainder})")
+
+        # 4. Preliminary Cleaning
+        raw_text = " ".join(tokens)
+        clean_text = clean_transliteration(raw_text)
+
+        # 5. Post-processing (Refinement)
+        if not postprocess:
+            return clean_text
+
+        # Use word boundaries (\b) to prevent 'še' from matching inside 'eše3'
+        pattern = f"\\b({'|'.join(UNITS)})\\b"
+        parts = re.split(pattern, clean_text)
+
+        final_blocks = []
+        # If the split didn't find units as independent words, it returns [clean_text]
+        if len(parts) > 1:
+            for i in range(0, len(parts) - 1, 2):
+                num_part = parts[i].strip()
+                unit_part = parts[i + 1].strip()
+
+                words_in_block = num_part.replace("(", " ").replace(")", " ").split()
+                is_safe = all(w.isdigit() or w in SAFE_VOCAB for w in words_in_block)
+                is_structural = any(s_unit in num_part for s_unit in PROUST_STRUCTURAL)
+                has_repetition = num_part.count("u") > 1 or num_part.count("diš") > 1
+
+                if is_safe and has_repetition and not is_structural:
+                    normalized = num_part.replace("(", " ").replace(")", "")
+                    try:
+                        temp_val = f"({normalized}) {unit_part}"
+                        temp_obj = self.__class__(temp_val)
+                        # Get refined text without unit (to avoid 'še še')
+                        refined = temp_obj._transliterate(postprocess=False)
+                        final_blocks.append(refined)
+                    except (ValueError, Exception):
+                        final_blocks.append(f"{num_part} {unit_part}")
+                else:
+                    # Add a space only if num_part is not empty (handles leading units)
+                    block = f"{num_part} {unit_part}" if num_part else unit_part
+                    final_blocks.append(block)
+
+            # Add any trailing text after the last unit
+            if parts[-1].strip():
+                final_blocks.append(parts[-1].strip())
+
+            clean_text = " ".join(final_blocks)
+
+        # Reconstruct the final string
+        clean_text = " ".join(final_blocks)
+
+        # 6. Final Output
+        return translit_to_cunei(clean_text) if cuneiform else clean_text
+
+    def __repr__(self, actual: bool = False) -> str:
         """
         Academic representation: System C for small units, System S for large
         units or overflow values (>60).
+
+        :param actual: use academic names, defaults to False
+        :type actual: bool, optional
+        :return: object representation
+        :rtype: str
         """
+        names = self.aname if actual else self.uname
+
         if not self.list or all(v == 0 for v in self.list):
             return f"0 {self.uname[0]}"
 
@@ -1626,7 +2044,7 @@ class MesoM(_MesoM):
         # We retrieve the threshold; if it does not exist, by default it is 0 (all sexagesimal)
         threshold = getattr(self, "sex_threshold", 0)
 
-        for i in reversed(range(len(self.uname))):
+        for i in reversed(range(len(names))):
             val = self.list[i]
             if val != 0:
                 if not self.prtsex:
@@ -1636,11 +2054,11 @@ class MesoM(_MesoM):
                     # Academic Output (Scholastic)
                     # If we are above the threshold OR the value is >= 60 (problem of 180)
                     if i >= threshold or val >= 60:
-                        ss.append(f"({self.sexsys(val)})")
+                        ss.append(f"({(self.sexsys(val)).__repr__(actual)})")
                     else:
-                        ss.append(f"({BsyC(val)})")
+                        ss.append(f"({(BsyC(val)).__repr__(actual)})")
 
-                ss.append(self.uname[i])
+                ss.append(names[i])
 
         return " ".join(ss)
 
@@ -1662,6 +2080,7 @@ class Blen(MesoM):  # Length
     siv: float = 0.5 / 30
     siu: str = "meters"
     ubase: int = 2  # ninda
+    trmodel: str = "Blen"  # Transliteration model
 
     def __mul__(self, other: object) -> object:
         """Overloads ``*`` operator: returns object with the operands product
@@ -1704,6 +2123,7 @@ class Bsur(MesoM):  # Surface
     siu: str = "square meters"
     ubase: int = 1  # gin
     sexsys: type[BsyS] | type[BsyG] = BsyG
+    trmodel: str = "Bsur"  # Transliteration model
 
     def __mul__(self, other: object) -> object:
         """Overloads ``*`` operator
@@ -1720,6 +2140,24 @@ class Bsur(MesoM):  # Surface
         # 2. Case: Scale (number)
         elif isinstance(other, (int, float)):
             t = self.dec * other
+            return self.__class__(int(round(t, 0)))
+        return NotImplemented
+
+    def __truediv__(self, other: object) -> object:
+        """Overloads ``/`` operator
+
+        :param other: operand
+        :type other: "Blen" or float
+        :return: quotient
+        :rtype: "Blen" | "Bsur" | None
+        """
+        # 1. Case: Area / Length (or subclasses) -> Length
+        if isinstance(other, Blen):
+            t = int(round((self.dec / other.dec) * 12.0, 0))
+            return Blen(t)
+        # 2. Case: Scale (number)
+        elif isinstance(other, (int, float)):
+            t = self.dec / other
             return self.__class__(int(round(t, 0)))
         return NotImplemented
 
@@ -1742,6 +2180,7 @@ class Bvol(MesoM):  # Volume
     siu: str = "cube meters"
     ubase: int = 1  # gin
     sexsys: type[BsyS] | type[BsyG] = BsyG
+    trmodel: str = "Bsur"  # Transliteration model
 
     def cap(self):  # noqa: F821
         """Convert volume to capacity measurement"""
@@ -1776,6 +2215,28 @@ class Bvol(MesoM):  # Volume
         """
         return Bbri(int(nalb * self.dec))
 
+    def __truediv__(self, other: object) -> object:
+        """overloads ``/`` operator
+
+        :param other: operand
+        :type other: "Blen" or float
+        :return: quotient
+        :rtype: "Blen" | "Bsur" | None
+        """
+        # 1. Case: Volume / Length (or subclasses) -> Surface
+        if isinstance(other, Blen):
+            t = int(round((self.dec / other.dec) * 30.0, 0))
+            return Bsur(t)
+        # 2. Case: VOlume / Surface -> length
+        elif isinstance(other, Bsur):
+            t = int(round((self.dec / other.dec) * 30.0, 0))
+            return Blen(t)
+        # 3. Case: Scale (number)
+        elif isinstance(other, (int, float)):
+            t = self.dec / other
+            return self.__class__(int(round(t, 0)))
+        return NotImplemented
+
 
 class Bcap(MesoM):  # Capacity
     """This class implement Non-Place-Value System arithmetic
@@ -1794,6 +2255,7 @@ class Bcap(MesoM):  # Capacity
     siv: float = 1.0 / 60 / 180
     siu: str = "litres"
     ubase: int = 1  # gin
+    trmodel: str = "Bcap"  # Transliteration model
 
     def vol(self) -> Bvol | None:
         """Convert capacity to volume measurement
@@ -1825,6 +2287,7 @@ class Bwei(MesoM):  # Weight
     siv: float = 0.5 / 60 / 180
     siu: str = "kilograms"
     ubase: int = 1  # gin
+    trmodel: str = "Bwei"  # Transliteration model
 
 
 class Bbri(MesoM):  # Counting bricks
@@ -1845,6 +2308,7 @@ class Bbri(MesoM):  # Counting bricks
     siu: str = "bricks"
     ubase: int = 1  # gin
     sexsys: type[BsyS] | type[BsyG] = BsyG
+    trmodel: str = "Bsur"  # Transliteration model
 
     def vol(self, nalb: float = 1.0) -> "Bvol":
         """Returns the volume corresponding to a number of bricks  based on their

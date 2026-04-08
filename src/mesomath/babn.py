@@ -604,6 +604,94 @@ SELECT regular
         # print(obj, out)
         return out
 
+    cuneiform = to_cunei
+
+    def multable(
+        self,
+        pral: bool = True,
+        sep: str = ":",
+        fill: bool = False,
+        cuneiform: bool = False,
+        stroke: bool = False,
+        floating: bool = False,
+    ) -> None:
+        """
+        Displays the multiplication table for the current number.
+        
+        Following Babylonian tradition, the table includes the 'principal' 
+        multipliers (1 to 20, then 30, 40, 50) or the full range (1 to 59).
+
+        :param pral: If True, prints principal numbers (1-20, 30, 40, 50). 
+                     If False, prints 1 to 59. Defaults to True.
+        :type pral: bool
+        :param sep: Separator for sexagesimal digits. Defaults to ":".
+        :type sep: str
+        :param fill: If True, adds leading zeros to sexagesimal digits <= 9.
+        :type fill: bool
+        :param cuneiform: If True, outputs the table in Unicode Cuneiform.
+        :type cuneiform: bool
+        :param stroke: If True, strikes out empty spaces (zeroes) in cuneiform.
+        :type stroke: bool
+        :param floating: If True, results are treated as sexagesimal floating point.
+        :type floating: bool
+        """
+        from mesomath.glyphs import TIMES_LABEL as TIMES
+        from mesomath.utils import cunei_rjust
+        
+        # Internal value for calculations
+        nn = self.dec
+
+        # Context manager style: Backup and restore BabN's global state
+        oldsep, oldfill = BabN.sep, BabN.fill
+        BabN.sep, BabN.fill = sep, fill
+
+        try:
+            # Traditional Babylonian multipliers
+            pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
+
+            if cuneiform:
+                val = self.to_cunei(stroke=stroke, alter=True)
+                # Header formatting for cuneiform
+                hh = cunei_rjust(f" {val} {TIMES}  𒐕  ", 15)
+                lh = len(hh)
+                hh2 = cunei_rjust(f"{val}", len(val) + 4)
+                lh2 = len(hh2)
+                header = f"\n|{hh}|{hh2}|"
+                print(header)
+                print("|" + "-" * lh + "|" + "-" * lh2 + "|")
+            else:
+                # Header formatting for ASCII
+                label_n = str(self)
+                ll = f" i * {label_n}"
+                lh = len(ll)
+                header = f"\n|  i  |{ll.center(lh)}|"
+                print(header)
+                print("|-----|" + "-" * lh + "|")
+
+            for i in pnum:
+                # Calculate the result
+                # Note: using 'floating' avoids issues with integer overflow in sexagesimal context
+                res = (BabN(nn * i)).f() if floating else BabN(nn * i)
+                
+                if cuneiform:
+                    # Cuneiform row rendering
+                    if i > 1:
+                        a1 = BabN(i).to_cunei(stroke=stroke, alter=True)
+                        a2 = res.to_cunei(stroke=True, alter=True)
+                        b1 = cunei_rjust(TIMES + "  " + a1, lh)
+                        b2 = cunei_rjust(a2, lh2)
+                        print(f"|{b1}|{b2}|")
+                    else:
+                        # Row for i=1 is often implicit or the header itself in some tablets
+                        pass
+                else:
+                    # ASCII row rendering
+                    print(f"| {i:2d}  | {str(res).rjust(lh - 2)} |")
+                    
+        finally:
+            # Ensure state is restored even if an error occurs
+            BabN.sep, BabN.fill = oldsep, oldfill
+
     def __add__(self, other: object) -> "BabN":
         """Overloads `+` operator: returns BabN object with the sum of operands
 

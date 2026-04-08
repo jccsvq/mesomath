@@ -3,6 +3,8 @@
 
 `bmultable` is a simple utility for printing sexagesimal multiplication tables in the style of those that aspiring scribes in ancient Babylon struggled to memorize.
 
+> [IMPORTANT] This application is obsolete and will be removed in the upcoming version 2.0.0. We strongly recommend that you use method `.multable()` instead from now on.
+
 ## Running `bmultable`
 
 If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you only have to issue:
@@ -43,7 +45,7 @@ options:
   -f, --fill            Pad with zeros (default: False)
   --float               floating results (default: False)
 
-jccsvq fecit, 2025. Public domain.
+jccsvq dub-sar fecit, 2025. Public domain.
 ```
 
 ### List of tables learned by the scribes
@@ -333,4 +335,12 @@ $ bmultable 33.1:12.45.48 -p --float -cz
 
 </div>
 
-𒍻
+---
+
+<center>
+
+<strong><big> 𒍻 jccsvq 𒁾𒊬  𒐞𒐞𒐞 𒐗 𒐏 𒐋 </big></strong>
+
+</center>
+
+

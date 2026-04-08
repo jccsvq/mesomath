@@ -21,6 +21,11 @@ from mesomath import BsyC as bC  # noqa: F401
 from mesomath import BsyK as bK  # noqa: F401
 from mesomath import Bbri as bb  # noqa: F401
 
+from mesomath.metrology_presets import CAPACITY_PROUST_81 as clist
+from mesomath.metrology_presets import WEIGHT_PROUST_82 as wlist
+from mesomath.metrology_presets import SURFACE_PROUST_83 as slist
+from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
+
 message = f"""\nWelcome to Babylonian Calculator {VERSION}
     ...the calculator that every scribe should have!
 
@@ -51,6 +56,10 @@ def main():
         "bC": bC,
         "bK": bK,
         "bb": bb,
+        "clist": clist,
+        "wlist": wlist,
+        "slist": slist,
+        "llist": llist,
         "VERSION": VERSION,
         "exit": exit,
         "quit": quit,
@@ -67,6 +76,7 @@ def main():
             "  babcalc -m <module>     Run a library module (Reserved for future use)"
         )
         print("  babcalc --help          Show this message")
+        print("\njccsvq dub-sar fecit, 2025. Public domain.")
         return
 
     # Case 1: babcalc (pure REPL)

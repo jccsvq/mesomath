@@ -6,7 +6,7 @@ import argparse
 
 from mesomath.babn import BabN as bn
 from mesomath.glyphs import TIMES_LABEL as TIMES
-from mesomath.glyphs import pad_cuneiform_right
+from mesomath.utils import cunei_rjust
 
 
 # Functions
@@ -54,9 +54,9 @@ def multable(
 
         if cuneiform:
             val = bn(n).to_cunei(stroke=stroke, alter=True)
-            hh = pad_cuneiform_right(f" {val} {TIMES}  𒐕  ", 15)
+            hh = cunei_rjust(f" {val} {TIMES}  𒐕  ", 15)
             lh = len(hh)
-            hh2 = pad_cuneiform_right(f"{val}", len(val) + 4)
+            hh2 = cunei_rjust(f"{val}", len(val) + 4)
             lh2 = len(hh2)
             header = f"|{hh}|{hh2}|"
             print(f"\n{header}")
@@ -75,8 +75,8 @@ def multable(
                 if i > 1:
                     a1 = bn(i).to_cunei(stroke=stroke, alter=True)
                     a2 = t2.to_cunei(stroke=True, alter=True)
-                    b1 = pad_cuneiform_right(TIMES + "  " + a1, lh)
-                    b2 = pad_cuneiform_right(a2, lh2)
+                    b1 = cunei_rjust(TIMES + "  " + a1, lh)
+                    b2 = cunei_rjust(a2, lh2)
                     print("|" + b1 + "|" + b2 + "|")
             else:
                 print(f"| {i:2d}  |  {str(t2).rjust(lh - 2)}|")

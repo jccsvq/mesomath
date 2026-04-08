@@ -5,7 +5,7 @@
 
 import argparse
 
-from mesomath.glyphs import pad_cuneiform
+from mesomath.utils import cunei_ljust
 from mesomath.npvs import Bbri as bb
 from mesomath.npvs import Bcap as bc
 from mesomath.npvs import Blen as bl
@@ -154,14 +154,14 @@ def metrolist(
                     if args.fractions > 0
                     else m.to_cunei(onesixth=False)
                 )
-                line = f"|{pad_cuneiform(m_str, width)} | {pad_cuneiform(str(pp.to_cunei(alter=True, stroke=True)), 15)}|"
+                line = f"|{cunei_ljust(m_str, width)} | {cunei_ljust(str(pp.to_cunei(alter=True, stroke=True)), 15)}|"
                 if args.verbose:
                     recip = (
                         (pp.rec()).to_cunei(alter=True, stroke=True)
                         if pp.isreg
                         else "𒅆𒉡"
                     )
-                    line += f" {pad_cuneiform(recip, 11)}|"
+                    line += f" {cunei_ljust(recip, 11)}|"
             else:
                 # 2. Format the measurement (standard or with fractions/academic names)
                 if args.fractions < 0:

@@ -103,6 +103,7 @@ exclude = [
   "tests/.pytest_cache",
   "/biblio",
   "/other",
+  "/data",
 ]
 
 [[tool.mypy.overrides]]

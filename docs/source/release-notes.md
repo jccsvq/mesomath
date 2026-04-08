@@ -1,26 +1,21 @@
 # Release Notes
 
-## [1.5.0] - 2026-03-16
+## [1.5.0] - 2026-03-25
+
+### Added
+
+* **Cuneiform Support**
+* **Class BsyK** for sexagesimal NPVS Sumerian King List counting system (years).
+* **Sibling methods of `.metrolist()`**: `.metrohtml()` and `.metrolatex()` methods for generating metrological tables in **HTML** and **LaTeX** formats with cuneiform support. 
 
 
-📜 MesoMath v1.5.0: Consolidation Summary
+### Changed
 
-1. Evolution of the Autograph (to_cunei)
-Ambiguity Intelligence: Implementation of the "Proust Patch" for the king system (BsyK). Now the logogram 𒋢𒋛 (šu-ši) only appears when the lower unit is zero, avoiding the historical confusion between 1 and 60.
+* **Refactorization of `.metrolist()` and `.scheme()` methods**, now **class** methods with cuneiform support.
+* **Class code** The content of the classes is now in a more logical order.
+* **Output listings**: now in Markdown format
 
-Handling Silent Units: The stroke=True parameter allows visualization of the positional skeleton with the wedge 𒃵 without the need for text labels, maintaining the purity of the tablet.
 
-Support for Special Fractions: Integration of onesixth and other fractional glyphs directly into the cuneiform string.
-
-2. Semantics of Measure (subsdict)
-Substance Determinants: A robust dictionary of substances (Metals, Grains, Lands, Personnel) has been created, allowing a number to be transformed into an actual administrative record (e.g., 5 silver shekels 𒆬𒌓).
-
-Mathematical Metadata: Incorporation of 𒅆𒉡 (igi-nu) to identify numbers without an exact reciprocal, a standard in Babylonian inverse tables.
-
-3. The Digital Tablet (metrotable)
-Grid Format: Transition to a structured visual design that mimics scribes' columns.
-
-Inverse Logic: Ability to detect irregular numbers and mark them with the glyph for "does not open" or "does not appear."
 
 ## [1.4.0] - 2026-03-08
 

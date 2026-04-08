@@ -13,19 +13,23 @@ body, h1, h2, h3, p {
 /* 3. CODE & TERMINAL RENDERING
    Optimizes how cuneiform signs behave inside code blocks and REPL outputs.
 */
-.highlight, pre, code {
-    font-variant-ligatures: none;
-    font-feature-settings: "tnum"; /* Tabular numbers for alignment */
-    white-space: pre;
-    text-rendering: optimizeLegibility;
+/* 1. We clean the margin of the first line in the main container */
+.highlight pre {
+    text-indent: 0 !important;
+    padding-left: 10px !important;
+    display: block !important;
 }
 
-/* Prevents wide cuneiform signs from distorting code line heights */
-code span, pre span {
-    display: inline-block;
-    min-width: 1em;
-    text-align: center;
+/* 2. CRITICAL RULE: We only apply inline-block if there is cuneiform content. 
+    For the rest of the text (like "-->"), we use 'inline' so that there are no 
+    phantom shifts. */
+code span,
+pre span {
+    display: inline !important; /* Volvemos al estándar por defecto */
+    min-width: auto !important;
 }
+
+
 
 /* 4. THE CLAY TABLET CONTAINER 
    Visual simulation of a physical Mesopotamian artifact.
@@ -114,3 +118,4 @@ div.tablet table {
 .tablet.mini th {
     font-size: 90% !important;
 }
+

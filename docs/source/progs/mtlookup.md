@@ -7,6 +7,8 @@
 
 `mtlookup` is a Python3 command line application based on [MesoMath](https://github.com/jccsvq/mesomath) to search for the abstract number that corresponds to a measure or to list measures that correspond to a given abstract number (option: `-r`).
 
+> [IMPORTANT] This application is obsolete and will be removed in the upcoming version 2.0.0. We strongly recommend that you use method `.lookup()` instead from now on.
+
 ## Running `mtlookup`
 
 If you [installed](installation)  `MesoMath` using `pip`, `pipx` or `hatch`, you only have to issue:
@@ -33,7 +35,7 @@ Use `-h` or `--help` to see the options:
 ```bash
 $ mtlookup --help
 usage: mtlookup [-h] [-t {L,Lh,S,V,C,W,B,SysG,SysS}] [-r] [-f FORCE] [-v]
-                [-F {0,1}] [-p] [-s] [-a]
+                [-w WIDTH] [-F {0,1}] [-p] [-s] [-a]
                 VALUE
 
 Prints abstract number corresponding to a measure or lists measures having an
@@ -51,6 +53,9 @@ options:
   -f FORCE, --force FORCE
                         Force base unit to number FORCE (default: -1)
   -v, --verbose         Prints more information (default: False)
+  -w WIDTH, --width WIDTH
+                        Sets the reserved width for printing measurement
+                        values ​​to WIDTH (default: 20)
   -F {0,1}, --fractions {0,1}
                         Use fractions, -F 1 to include 1/6 (default: -1)
   -p, --pedantic        Write the coefficients of the units in the
@@ -61,7 +66,7 @@ options:
   -a, --academic        With [-F|--fractions] or [-r|--remainder] uses the
                         academic names of units. (default: False)
 
-jccsvq fecit, 2025. Public domain.
+jccsvq dub-sar fecit, 2025. Public domain.
 ```
 
 ### Metrologies
