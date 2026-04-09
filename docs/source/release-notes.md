@@ -1,20 +1,38 @@
+
 # Release Notes
 
-## [1.5.0] - 2026-03-25
+## [2.0.0rc1] - 2026-04-10
+
+### Fixed
+* **Dependencies**: Added missing `wcwidth` dependency to ensure correct visual alignment of cuneiform characters in CLI environments.
+
+---
+
+## [2.0.0rc0] - 2026-04-08
 
 ### Added
-
-* **Cuneiform Support**
-* **Class BsyK** for sexagesimal NPVS Sumerian King List counting system (years).
-* **Sibling methods of `.metrolist()`**: `.metrohtml()` and `.metrolatex()` methods for generating metrological tables in **HTML** and **LaTeX** formats with cuneiform support. 
-
+* **Dimensional Arithmetic**: Full support for geometric division between magnitudes (e.g., `Bsur / Blen -> Blen`).
+* **Interoperability**: New `@classmethod .from_si()` for all metrological classes, allowing instant conversion from modern metric units to Babylonian objects.
+* **Unified API**: 
+    * `.lookup()`: New reverse metrological search engine (replaces `mtlookup.py`).
+    * `.multable()`: New scribal multiplication table generator (replaces `bmultable.py`).
+* **Epigraphic Engine**: Native support for **Old Babylonian Transliteration** and **Unicode Cuneiform** across all core classes.
+* **Historical Series**: Implementation of the **Proust Series** presets for standard Nippur metrology.
+* **New Metrologies**: 
+    * `BsyK`: New class for the **Sumerian King List** counting system (years).
+    * `Bbri`: Enhanced support for **Brick Metrology** and logistics.
+* **Export Options**: New `.metrohtml()` and `.metrolatex()` methods for generating professional tables with full cuneiform support.
 
 ### Changed
+* **Architectural Refactor**: 
+    * `.metrolist()` and `.scheme()` are now **class methods**, optimized for better performance and consistency.
+    * Source code reorganized for a more logical developer experience.
+* **Output Format**: All console listings and tables now default to **Markdown format** for better readability and easier copy-pasting into research documents.
 
-* **Refactorization of `.metrolist()` and `.scheme()` methods**, now **class** methods with cuneiform support.
-* **Class code** The content of the classes is now in a more logical order.
-* **Output listings**: now in Markdown format
+### Deprecated
+* **Legacy Apps**: `metrotable.py`, `mtlookup.py` and `bmultable.py` are now considered **obsolete**. They are maintained in this Release Candidate for backward compatibility but **will be removed** in the final v2.0.0 stable release. Use the internal class methods instead.
 
+---
 
 
 ## [1.4.0] - 2026-03-08

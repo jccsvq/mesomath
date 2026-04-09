@@ -33,6 +33,7 @@ classifiers = [
 dependencies = [
   "typing-extensions>=4.0.0",
   "parsimonious==0.11.0",
+  "wcwidth"
 ]
 dynamic = ["version"]
 

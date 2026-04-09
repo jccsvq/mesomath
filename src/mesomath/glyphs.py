@@ -113,6 +113,8 @@ subsdict = {
     # Mathematical States (for Metrotable)
     "igi_nu": "𒅆 𒉡",  # Reciprocal not found (igi-nu)
     "igi_nu_du8": "𒅆 𒉡 𒂃",  # Reciprocal does not open (igi-nu-du8)
+    "a_ra2": "𒀀 𒁺",  # Times (a-rá)
+    
     # geometry
     # 1. Main Dimensions
     "sag": "𒊕",     # Front / Width (Literally "head", used for the frontal dimension or the width of a rectangle, thickness of walls or bricks).
@@ -121,11 +123,19 @@ subsdict = {
     # 2. Other Geometric Dimensions
     "us": "𒍑",      # Length / Long (It is the companion of SAG; in a rectangle, UŠ is the long side and SAG the short side).
     "sukud": "𒊩𒆪",  # Height (Used for the height of a wall or a tower).
-    "bur": "𒌋",      # Depth (In cuneiform:  𒁓)?  (Common in texts about excavation of canals or wells).
+    "bur": "𒌋",      # Depth (bùr) (In cuneiform:  𒁓)?  (Common in texts about excavation of canals or wells).
     "da": "𒁕",      # Side / Flank (Refers to the edge or lateral line of a figure).
     "gid": "𒁍",    # Length / Extension (Means "long" or "stretch", sometimes used as a linear measure).
     "ki_la2": "𒆠 𒆷", # "Excavation area" or "Volume." It is the technical term for the hole left in the ground.
     "sahar": "𒅖",   # "Earth / Dust." It is the determinant that almost always accompanies excavation volumes.
+    "gam": "𒃵",     # Depth, curvature (GAM)
+}
+
+# Determinatives
+DETERM = {
+    "gi": "𒄀",    # Reed, Crucial for alternative length measurements (*gi* = 1/2 ninda).
+    "ku3": "𒆬",   #Precious/Pure. It precedes metals.
+    "dug": "𒂁",   #Vessel. It precedes liquids."
 }
 
 # Dictionary for quick access by unit/system name
@@ -195,13 +205,16 @@ MAP_ADMIN = {
     "dub": "𒁾",  # Clay tablet
     "mu-kux": "𒈬 𒁺",  # mu-kux(DU) Delivery. Indicates goods that enter the institution or warehouse.
     "zi-ga": " 𒍣 𒂵",  # Expense. Indicates what has been withdrawn or spent from the inventory.
-    "la-ia": " 𒇲 𒉌",  # Deficit. It was used to indicate what was missing in an account or what an official still had to deliver.
+    "la-ia": " 𒇲 𒉌",  # Deficit. (lá-ia3) It was used to indicate what was missing in an account or what an official still had to deliver.
     "nig-ka": "𒃻 𒅗",  # Balance, the general term for the "account statement" or the process of auditing a ledger.
     "iti": "𒌗",  # Date. Month / Time of creation.
     "dub-sar": "𒁾 𒊬",  # Scribe
     "nu_til": "𒉡 𒌀",  # Not finished. 
     "ba_til": "𒁀 𒌀",  # Finished.
-    "mu": "𒈬", 
+    "mu": "𒈬", # Used for "year" in administrative dating contexts.
+    "su_ti_a": "𒋗 𒋾 𒀀",  # Received (šu-ti-a)
+    "ib2_tag4": "𒅁 𒋳",  # Remainder / Balance (ib2-tag4)
+    "sa10": "𒌓",  # Price / Equivalent (sa10 / sham)"
 }
 
 #: Transliteration to cuneiform dictionary

@@ -3,7 +3,7 @@
 
 # `babcalc` {{ release }}: The Scribe's Manual
 
-> 𒎀 **Display Note**: Throughout this manual, you will see examples of cuneiform writing. If empty rectangles (▯) appear on your screen, consult the [Cuneiform Support](#cuneiform-support) section to install the necessary fonts.
+> 𒎀 **Display Note**: Throughout this manual, you will see examples of cuneiform writing. If empty rectangles (▯) appear on your screen, consult the [Cuneiform Support](#install-font) section to install the necessary fonts.
 
 ## **I. Foundations: The Sexagesimal Engine**
 
@@ -1043,6 +1043,7 @@ Since both systems measure the same physical magnitude, MesoMath provides direct
 
 ---
 
+(brick-metrology)=
 #### **6.2 Brick Metrology (`Bbri`)**
 The calculation of bricks is one of the most sophisticated applications of Babylonian mathematics. Rather than counting individual bricks, scribes used the **`sar-b`** (a unit representing a "stack" or volume of 720 bricks) and the concept of the **`Nalbanum`**.
 
@@ -1275,7 +1276,7 @@ The $\LaTeX$ output uses the `booktabs` package style for a professional, academ
 
 > **Note on Compatibility**: Some options are interdependent. For instance, `actual=True` (academic names) or `fractions` only trigger specific formatting when the system can resolve those units. Always use `help(bw.metro_generator)` to check the latest parameter overrides.
 
-
+(proust-series)=
 ### **8. Historical Presets: The Proust Series**
 
 Manually determining the start, end, and increment values to replicate an archaeological tablet can be tedious. To solve this, MesoMath includes `metrology_presets` based on the work of **Christine Proust** (e.g., *Tablettes mathématiques de Nippur*). 
@@ -1502,6 +1503,67 @@ gu <-60- mana <-60- gin <-180- se
 
 The **`colophon=True`** argument adds a summary block at the end of the table, including the total sum of the measurements, the line count, and the "scribe" (software version), mimicking the metadata found at the end of many ancient tablets.
 
+
+### **9. Reverse Metrological Search: `.lookup()`**
+
+One of the greatest challenges in Mesopotamian mathematics is the absence of an absolute "decimal point." A number like `20` could represent $20$, $20 \times 60$, or even $20/60$ depending on the context. 
+
+The `@classmethod` `.lookup()` allows you to perform a **reverse search**. Given an abstract sexagesimal value, MesoMath scans across multiple orders of magnitude to find every possible physical measurement that matches that value.
+
+#### **9.1 Basic Usage**
+By default, `.lookup()` searches for matches relative to the system's base unit.
+
+```pycon
+--> bl.lookup('20')
+
+Looking for Babylonian length measurement with Abstract = 20
+Base reference unit: ninda
+-------------------------------------------------------------
+2400 danna           <- 20
+40 danna             <- 20
+20 us                <- 20
+20 ninda             <- 20
+4 kus                <- 20
+2 susi               <- 20
+```
+
+#### **9.2 Filters and Formatting**
+You can refine your search or change the output format to match your publication requirements:
+
+* **Strict Matching (`strict=True`)**: Only returns results where the sexagesimal string matches your input exactly (useful for filtering out fractional approximations).
+* **Epigraphic Output**: Use `translit=True` or `cuneiform=True` to see the results as they would appear on a tablet.
+* **Detailed View (`verbose=True`)**: Includes the modern SI equivalent (meters, kg, etc.) for every potential match.
+
+```pycon
+--> # Looking for a capacity value in cuneiform with detailed SI info
+--> from mesomath.npvs import Bcap
+--> Bcap.lookup('1:10', cuneiform=True, verbose=True)
+
+Looking for Babylonian capacity measurement with Abstract = 1:10
+Base reference unit: sila
+-------------------------------------------------------------
+Measure:   𒐕(barig) 𒐕(ban2)
+Equiv.:    70.0 litres
+Abstract:  𒐕:𒐕
+...
+```
+
+
+
+#### **9.3 Parameter Reference**
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `value` | `str\|int` | The abstract sexagesimal value (e.g., `'1:20'` or `80`). |
+| `ubase` | `int` | The unit index to use as the "positional zero". Defaults to the class standard. |
+| `strict` | `bool` | If `True`, only matches identical sexagesimal strings. |
+| `translit` | `bool` | Displays measurements in Nippur-style transliteration. |
+| `cuneiform`| `bool` | Displays measurements and abstract values in Unicode Cuneiform. |
+| `verbose` | `bool` | Adds modern SI equivalents and detailed breakdown to each result. |
+
+> **Scribe's Tip**: Use `.lookup()` when you find an isolated number in a field of a table. It will help you narrow down the most plausible metrological category based on the physical dimensions of the object you are studying.
+
+
 ## **III. Epigraphy: From Math to Tablet**
 
 <div style="text-align:center;">
@@ -1633,7 +1695,7 @@ danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
 
 Cuneiform characters reside in the **Supplementary Multilingual Plane** of Unicode. To see them correctly, you must have a specialized font installed.
 
-> ▯ **Rendering Check**: If you see empty boxes or "tofu" instead of wedges, please refer to the [Cuneiform Support](https://www.google.com/search?q=%23cuneiform-support) section for font recommendations and installation guides.
+> ▯ **Rendering Check**: If you see empty boxes or "tofu" instead of wedges, please refer to the [Cuneiform Support](#install-font) section for font recommendations and installation guides.
 
 ### **4. Cuneiform in Tables**
 
@@ -1765,7 +1827,7 @@ While rations were the primary means of subsistence, silver served as the unit o
 
 ### **3. Construction Engineering (`Bbri`)**
 
-As discussed in Section 6, the `Bbri` class is not just for counting; it is a tool for architectural planning. By combining the `Nalbanum` coefficients with labor methods, you can estimate the entire lifecycle of a building project:
+As discussed in [Section II-6](#brick-metrology), the `Bbri` class is not just for counting; it is a tool for architectural planning. By combining the `Nalbanum` coefficients with labor methods, you can estimate the entire lifecycle of a building project:
 
 1.  **Volume**: Calculate the physical space of the walls (`Bvol`).
 2.  **Count**: Convert volume to bricks using `.bricks(nalbanum)` (`Bbri`).
@@ -1902,1348 +1964,6 @@ The metrology of the Late Babylonian period shifted significantly (e.g., the int
 ```python
 from mesomath.npvs import Bcap, Bvol
 
-class LBcap(Bcap):
-    """Late Babylonian: gur <-5- bariga <-6- ban2 <-10- sila3 <-10- GAR"""
-    title = "Late Babylonian capacity"
-    uname = "gar sila ban bariga gur".split()
-    ufact = [10, 10, 6, 5]
-    siv = 0.1 # 1 gar = 0.1 litres
-    
-    def vol(self):
-        # Specific conversion logic for LBP
-        return LBvol(int(round(self.dec / (100/6))))
-```
-
-#### **Running the Extension**
-Once defined, load your custom metrology into the calculator:
-
-```bash
-$ babcalc -i lateb.py
-```
-
-```pycon
---> a = LBcap('1000 sila')
---> a.SI()
-'100.0 litres'
---> a.vol()
-3 gin 60 se  # Converted to LBP volume standards
-```
-
-### **Why Extend MesoMath?**
-1.  **Chronological Flexibility**: Adapt the tool for Neo-Sumerian, Old Assyrian, or Seleucid data.
-2.  **Regional Variations**: Account for the different *sila* sizes used in Mari vs. Nippur.
-3.  **Automatic Tools**: Your custom classes automatically inherit `.metrolist()`, `.translit()`, and `.cuneiform()` capabilities.
-
-<center>
-
-<strong><big> 𒍻 jccsvq 𒁾𒊬  𒐞𒐞𒐞 𒐗 𒐏 𒐋 </big></strong>
-
-</center>
-
-
-
-## **VI. Reference & Appendices**
-
-(systems-SGC)=
-### Appendix A: Use of System C, S and G in MesoMath Metrology
-
-According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneiform to Transliteration.  Table 9 <ref-Proust3>`
-
-|Measurement| System | Unit   | Class            |
-|------------|--------|--------|------------------|
-| capacities | C      | gin2   | Bcap             |
-| capacities | C	  | sila3  | Bcap             |
-| capacities | C*     | ban2   | Bcap             |
-| capacities | C*     | bariga | Bcap             |
-| capacities | S      | gur	   | Bcap             |
-| weights    | C      | še     | Bwei             |
-| weights    | C	  | gin2   | Bwei             |
-| weights    | C	  | ma-na  | Bwei             |
-| weights    | S	  | gu2    | Bwei             |
-| surfaces   | C      | še     | Bsur, Bvol, Bbri |
-| surfaces   | C      | gin2   | Bsur, Bvol, Bbri |
-| surfaces   | C      | sar    | Bsur, Bvol, Bbri |
-| surfaces   | G      | GAN2   | Bsur, Bvol, Bbri |
-| lengths    | C      | šu-si  | Blen             |
-| lengths    | C      | kuš3   | Blen             |
-| lengths    | C      | ninda  | Blen             |
-| lengths    | C      | UŠ     | Blen             |
-| lengths    | C      | danna  | Blen             |
-
->**(*)**: Note These are not in the reference.
-
-### 1. **The Metrological Catalog**: Full list of units and coefficients.
-### 2. **Cuneiform Font Guide**: Solving the "Tofu" problem.
-### 3. **Commodity Lists & Conversion factors**.
-
-
-
-
-
-
-## Metrology OLD!!!
-
-### Basics
-
-As explained in the [Introduction](#babcalc-intro), `babcalc` already has the metrological classes `BabN, Blen, Bsur,`... pre-imported as `bn, bl, bs,` etc.
-
-```python
-from mesomath.babn import BabN as bn
-from mesomath.npvs import Blen as bl
-from mesomath.npvs import Bsur as bs
-from mesomath.npvs import Bvol as bv
-from mesomath.npvs import Bcap as bc
-from mesomath.npvs import Bwei as bw
-from mesomath.npvs import Bbri as bb
-from mesomath.npvs import BsyG as bG
-from mesomath.npvs import BsyS as bS
-from mesomath.npvs import BsyC as bC
-from mesomath.npvs import BsyK as bK
-
-```
-
-This is what the classes `bl`, `bs`, `bv`, `bc`, `bw`, `bG`, `bS` and `bb` represent:
-
-    class  bl: Babylonian length system:
-               danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
-
-    class  bs: Babylonian surface system:
-               GAN2 <-100- sar <-60- gin2 <-180- še
-
-    class  bv: Babylonian volume system:
-               GAN2 <-100- sar <-60- gin2 <-180- še
-
-    class  bc: Babylonian capacity system:
-               gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
-
-    class  bw: Babylonian weight system:
-               gu2 <-60- ma-na <-60- gin2 <-180- še
-
-    Class  bb: Babylonian brick counting system:
-               GAN2 <-100- sar <-60- gin2 <-180- še
-
-    class  bG: Babylonian counting System G:
-               šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku
-
-    class  bS: Babylonian counting System S:
-               šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- aš
-    
-    class  bC: Babylonian counting System C:
-               u <-10- diš
-
-    class  bK: Babylonian counting System K:
-               šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
-
-
-However, for ease of writing, the real or academic names of the units in these metrological systems have been simplified by removing capital letters, numbers, hyphens, and diacritics. Therefore, for introduction of measurements, we will use the following unit names:
-
-Class|Metrology|Units
------|---------|-----
-bl| Babylonian length system|  susi, kus, ninda, us, danna
-bs| Babylonian surface system|  se, gin, sar, gan
-bv| Babylonian volume system|  se, gin, sar, gan
-bc| Babylonian capacity system|  se, gin, sila, ban, bariga, gur
-bw| Babylonian weight system|  se, gin, mana, gu
-bG| Babylonian System G|  iku, ese, bur, buru, sar, saru, sargal
-bS| Babylonian System S|  dis, u, ges, gesu, sar, saru, sargal
-bC| Babylonian System C|  dis, u
-bb| Babylonian brick counting system|  se gin sar gan
-
->Note that scribes wrote volumes as an equivalent surface area multiplied by a standard height of 1 kus; thus, they used the same metrology for surfaces and volumes. Here, however, two different classes will be used, so that one can multiply a surface area by a length to obtain a volume, but one cannot multiply a volume by a length to obtain a four-dimensional volume, which was probably beyond the scribes' understanding.
-
-At any time, you can review the names of the units in each system and their factors through the following, e.g., for capacities:
-
-```pycon
---> bc.uname
-['se', 'gin', 'sila', 'ban', 'bariga', 'gur']
---> bc.ufact
-[180, 60, 10, 6, 5]
-```
-the cumulative factors:
-
-```pycon
---> bc.cfact
-[1, 180, 10800, 108000, 648000, 3240000]
-```
-
-and the academic names:
-
-```pycon
---> bc.aname
-['še', 'gin2', 'sila3', 'ban2', 'bariga', 'gur']
-```
-
-or, otherwise:
-
-```pycon
---> print(*bc.scheme(bc))
-gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
---> print(*bc.scheme(bc,1))
-gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
-```
-
-In a similar way to what we saw for sexagesimal numbers with the `bn` class. We can introduce measurements in two different ways:
-
-```pycon
---> a = bl(11111)
---> a
-30 ninda 10 kus 11 susi
---> b = bl('5 ninda 25 susi')
---> b
-5 ninda 25 susi
-```
-
-In the first case, `a` is defined as a certain (integer) number of times the smallest unit ("susi" in the case of lengths). In the second case, we define the value for `b` textually. Note that we can only use integer values ​​in both cases. Both input methods are available for all classes.
-
->In fact, there is a [**third input method**](#third-input-method).
-
-Once you have defined measurements, you can "explain" them:
-
-```pycon
---> a.explain()
-This is a Babylonian length measurement: 30 ninda 10 kus 11 susi
-    Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
-    Factor with unit 'susi':  1 30 360 21600 648000
-measurement in terms of the smallest unit: 11111 (susi)
-Sexagesimal floating value of the above: 3:5:11
-Approximate SI value: 185.18333333333334 meters
---> 
---> b.explain()
-This is a Babylonian length measurement: 5 ninda 25 susi
-    Metrology:  danna <-30- us <-60- ninda <-12- kus <-30- susi
-    Factor with unit 'susi':  1 30 360 21600 648000
-measurement in terms of the smallest unit: 1825 (susi)
-Sexagesimal floating value of the above: 30:25
-Approximate SI value: 30.416666666666668 meters
-```
-
-That will give us information about the nature of the measurement and the properties of the measurement system being used.
-
-Note that the value given as "Sexagesimal floating value of the above:" is generated by the `.sex()` method; however, this method accepts a numeric parameter to indicate the unit relative to which this sexagesimal floating value is calculated. This parameter defaults to zero, indicating the first unit in the list provided by `.explain()`: `Unit names: ['susi', 'kus', 'ninda', 'us', 'danna']`
-
-```pycon
---> a.sex()   # susi as the base unit
-3:5:11
---> a.sex(0)  # the same as .sex()
-3:5:11
---> a.sex(1)  # kus as the base unit
-6:10:22
---> a.sex(2)  # ninda as the base unit
-30:51:50
---> a.sex(3)  # us as the base unit
-30:51:50
---> a.sex(4)  # danna as the base unit
-1:1:43:40
-```
-
-This will be useful if you want to recreate **metrological lists** yourself. For example, code:
-
-```python
-from mesomath import Blen as bl
-
-ls = []
-for i in range(1, 10):
-    ls.append(str(i) + " susi")
-
-for i in "10 15 20 25".split():
-    ls.append(i + " susi")
-
-ls.append("1 kus")
-for i in "10 15 20 25".split():
-    ls.append("1 kus " + i + " susi")
-
-ls.append("2 kus")
-for i in ls:
-    x = bl(i)
-    print(f"{str(x).ljust(15)} -> {str(x.sex(2)).rjust(6)}")
-
-```
-
-
-will print this excerpt of the metrological table for length using ninda (x.sex(2)) as base unit:
-
-```pycon
-1 susi          ->     10
-2 susi          ->     20
-3 susi          ->     30
-4 susi          ->     40
-5 susi          ->     50
-6 susi          ->      1
-7 susi          ->   1:10
-8 susi          ->   1:20
-9 susi          ->   1:30
-10 susi         ->   1:40
-15 susi         ->   2:30
-20 susi         ->   3:20
-25 susi         ->   4:10
-1 kus           ->      5
-1 kus 10 susi   ->   6:40
-1 kus 15 susi   ->   7:30
-1 kus 20 susi   ->   8:20
-1 kus 25 susi   ->   9:10
-2 kus           ->     10
-```
-
-(See page 8 of [Floating calculation in Mesopotamia](https://hal.science/hal-01515645v2/document) by Christine Proust).
-
-But you will rarely need to resort to programming, since **MesoMath** has specialized resources for building metrological lists and tables:
-
-*   The [`metrotable`](#metrotable-tutorial) tool, which specializes in printing segments of metrological list and tables.
-*   The [`mtlookup`](#mtlookup-tutorial) tool that simulates direct and inverse searches in metrological tables.
-*   The [`.metrolist()`](#metrolist) method that works with all metrological classes, including [those you define yourself](#advanced-topics).
-
-For instance for horizontal distances (base unit ninda):
-
-```pycon
---> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True)
-
-Babylonian length measurement
-danna <-30- us <-60- ninda <-12- kus <-30- susi
-|Measurement         | Sexag. (ninda)      | Reciprocal  |
-|--------------------|---------------------|-------------|
-|1 kus               | 5                   | 12          |
-|2 kus               | 10                  | 6           |
-|3 kus               | 15                  | 4           |
-|4 kus               | 20                  | 3           |
-|5 kus               | 25                  | 2:24        |
-
-```
-
-
-For vertical distances (base unit kus):
-
-```pycon
---> bl.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase =1)
-
-Babylonian length measurement
-danna <-30- us <-60- ninda <-12- kus <-30- susi
-|Measurement         | Sexag. (kus)        | Reciprocal  |
-|--------------------|---------------------|-------------|
-|1 kus               | 1                   | 1           |
-|2 kus               | 2                   | 30          |
-|3 kus               | 3                   | 20          |
-|4 kus               | 4                   | 15          |
-|5 kus               | 5                   | 12          |
-
-```
-
-But we will explore `.metrolist()` and its sibling methods in depth [below](#metrolist).
-
-You can get also the metrological value of an object directly using the `.metval()` method:
-
-```pycon
---> bl('1 kus 15 susi').metval()
-7:30
-```
-
-
-We finish this section with the `.si()` and `.SI()` conversion methods that show us the approximate equivalence of the Babylonic measurementss in the International System of Units:
-
-```pycon
---> w = bw(' 1 mana 3 gin')
---> w.si()
-0.525
---> w.SI()
-'0.525 kilograms'
-```
-
-### Operations
-
-For objects of the **same** class, the following operations are available:
-
-* Addition
-* Subtraction (returns the absolute value of the difference)
-* Multiplication by a number
-* Division by a number
-* Logical operations
-
-Let's look at some examples:
-
-```pycon
---> a >= b
-True
---> a+b
-35 ninda 11 kus 6 susi
---> a-b
-25 ninda 9 kus 16 susi
---> b-a                   # a-b == b-a !!!
---> a-b == b-a
-True
-25 ninda 9 kus 16 susi
---> 2*a
-1 us 1 ninda 8 kus 22 susi
---> b*2
-10 ninda 1 kus 20 susi
---> b*2.5
-12 ninda 8 kus 2 susi
---> a/2
-15 ninda 5 kus 6 susi
---> (a+2*b)/5
-8 ninda 2 kus 12 susi
---> (a+2*b)/5.3
-7 ninda 8 kus 25 susi
-```
-
-Additionally, for length measurements we can multiply them together to obtain surfaces and volumes, and for surfaces we can multiply them by lengths to obtain volumes:
-
-```pycon
---> c = bl('2 kus')
---> c
-2 kus
---> s=a*b
---> s
-1 gan 56 sar 27 gin 138 se
---> s.explain()
-This is a Babylonian surface measurement: 1 gan 56 sar 27 gin 138 se
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 1689798 (se)
-Sexagesimal floating value of the above: 7:49:23:18
-Approximate SI value: 5632.66 square meters
---> v=s*c
---> v
-3 gan 12 sar 55 gin 96 se
---> v.explain()
-This is a Babylonian volume measurement: 3 gan 12 sar 55 gin 96 se
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 3379596 (se)
-Sexagesimal floating value of the above: 15:38:46:36
-Approximate SI value: 5632.66 cube meters
-
---> v2=a*b*c
---> v2 == v
-True
-```
-
-### Systems S and G
-
-Finally, in cases like this:
-
-```pycon
---> a = bv('128 gan')
---> a
-128 gan
-```
-
-we might prefer to see the coefficients of the units expressed in the sexagesimal systems C, S and G (see [Appendix](#systems-SGC) for the use of System C, S and G in MesoMath Metrology):
-
-```pycon
---> bv.prtsex=True  # switch to sexagesimal mode
---> a
-(7 bur 2 iku) gan
-```
-
-This changes the default for objects of the `bv` class and makes the output more closely mimic the way the measurements were actually inscribed on clay tablets, but it complicates things for the modern reader:
-
-```pycon
---> a = bv('128 gan 133 se')
---> a
-(7 bur 2 iku) gan (7 bur 1 ese 1 iku) se
-```
-
-If you want this to be the default for all classes, use:
-
-```python
-from mesomath.npvs import MesoM
-MesoM.prtsex = True
-```
-
-(third-input-method)=
-### Third input method
-
-
-The third input method cited above makes use of these types of strings; in fact, the parentheses have been introduced to make them easier to parse as input:
-
-```pycon
---> b = bv('460800 gan 44 sar 20 gin')
---> b
-(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin
---> c = bv('(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin')
---> c
-(7 sargal 6 sar 4 buru) gan (4 u 4 dis) sar (2 u) gin
---> bv.prtsex = False
---> c
-460800 gan 44 sar 20 gin
-```
-
-Note that we can also enter the coefficients of the units in sexagesimal form:
-
-```pycon
---> b = bv('2:8:0:0 gan 44 sar 20 gin')
---> b
-460800 gan 44 sar 20 gin
-```
-
-but only using `:` as a separator.
-
-### Fractions
-
-There is also support for entering the **principal fractions**: 1/6, 1/3, 1/2, 2/3, 5/6 (and only for them), they can be entered in several ways:
-
-```pycon
---> a=bl('0+1/3 ninda')
---> a
-4 kus
---> a=bl('+1/3 ninda')
---> a
-4 kus
---> a=bl('1/3 ninda')
---> a
-4 kus
---> a=bl('2 + 1/3 ninda')
---> a
-2 ninda 4 kus
---> a=bl('2 1/3 ninda')
---> a
-2 ninda 4 kus
---> a=bl('21/3 ninda')
---> a
-2 ninda 4 kus
-
-```
-
-
-For output using 1/3, 1/2, 2/3, 5/6 fractions, use the `.prtf()` method:
-
-```pycon
---> a=bl(11223344)
---> a
-17 danna 9 us 35 ninda 11 kus 14 susi
---> a.prtf()
-'17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
-```
-
-and if you wish also include the less frecuently used fraction `1/6`:
-
-```pycon
---> a.prtf(1)
-'17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
-```
-
-If you activate `prtsex` you get:
-
-```pycon
---> bl.prtsex=True
---> a.prtf()
-'(1 u 7 dis) danna (9 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi'
---> a.prtf(1)
-'(1 u 7 dis) 1/6 danna (4 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi'
-```
-
-These results can be used for input:
-
-```pycon
---> bl.prtsex=0
---> b=bl('(1 u 7 dis) 1/6 danna (4 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi')
---> b
-17 danna 9 us 35 ninda 11 kus 14 susi
---> b.prtf()
-'17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
---> b.prtf(1)
-'17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
---> b.dec
-11223344
---> c=bl(a.prtf(1))
---> c.dec
-11223344
-```
-
-### Academic names
-
-Since v1.1.0, the .prtf() method has a second switch that allows the academic unit names to be used in the output:
-
-```pycon
---> a=bl(11223344)
---> a.prtf()
-'17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
---> a.prtf(1)
-'17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
---> a.prtf(1,1)
-'17 1/6 danna 4 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si'
---> bl.prtsex=True
---> a.prtf(0,1)
-'(1 u 7 dis) danna (9 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
---> a.prtf(1,1)
-'(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si'
-
-```
-
-This kind of string can also be used as input:
-
-```pycon
---> b=bl('(1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si')
---> b.dec
-11223344
-```
-
-equivalent to:
-
-```pycon
---> b=bl(a.prtf(1,1))
---> b.dec
-11223344
-```
-
-### Volume vs. Capacity
-
-There were two systems for measuring volume: 
-
-* **capacities**, used to measure grain, beer, and other types of food and goods
-* **volume** proper, used to measure everything else. 
-
-Here, they are represented by the metrological classes `Bcap` (imported in `babcalc` as `bc`) and `Bvol` (imported as `bv`), respectively. Since they are two systems for measuring the same physical quantity, we can convert quantities from one system to the other with the methods `Bvol.cap()` and `Bcap.vol()`:
-
-```pycon
---> a = bv('1 gin')
---> a.explain()
-This is a Babylonian volume measurement: 1 gin
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 180 (se)
-Sexagesimal floating value of the above: 3
-Approximate SI value: 0.3 cube meters
---> b = a.cap()
---> b.explain()
-This is a Babylonian capacity measurement: 1 gur
-    Metrology:  gur <-5- bariga <-6- ban <-10- sila <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 108000 648000 3240000
-measurement in terms of the smallest unit: 3240000 (se)
-Sexagesimal floating value of the above: 15
-Approximate SI value: 300.0 litres
---> (b.vol()).explain()
-This is a Babylonian volume measurement: 1 gin
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 180 (se)
-Sexagesimal floating value of the above: 3
-Approximate SI value: 0.3 cube meters
-```
-
-### Bricks
-
-Volume measurements were frequently transformed into their **"brick" equivalents**. These were measured in "*sar-b*" (units or packages of 720 bricks), and each brick type was characterized by its *{ref}`Nalbanum <ref-robson-math>`*, or the number of *sar-b* of that type that fits in 1 *sar* of volume. 
-
->*"The Nalbanum is a conversion coefficient. While a volume is fixed in space, the number of bricks it contains depends on their size. The Nalbanum acts as the multiplier to go from 'theoretical volume' to 'actual brick count'.*
-
-The `.bricks()` method allows us to perform this transformation:
-
-```pycon
---> a = bv('1 sar')
---> a
-1 sar
---> b = a.bricks()
---> b
-1 sar
---> b.explain()
-This is a Babylonian brick counting: 1 sar
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 10800 (se)
-Sexagesimal floating value of the above: 3
-Approximate SI value: 720.0 bricks
-```
-
-This is for  *nalbanum* =1.0  type-12 bricks, for type-2 bricks with decimal *nalbanum* = 7.20:
-
-```pycon
---> b = a.bricks(7.20)
---> b
-7 sar 12 gin
---> b.SI()
-'5184.0 bricks'
-```
-
-A *sar* is equivalent to 10800 *še* and also to 720 bricks; therefore, each brick is equivalent to $10800/720=15$ *še*.
-Then, if we have 10000 type-2 bricks,  we can do:
-
-```pycon
---> c = bb(15 * 10000)  # 15 še/brick
---> c
-13 sar 53 gin 60 se
---> c.SI()
-'10000.0 bricks'
-```
-
-`c` is a `Bbri` object:
-
-```pycon
---> c.explain()
-This is a Babylonian brick counting: 13 sar 53 gin 60 se
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 150000 (se)
-Sexagesimal floating value of the above: 41:40
-Approximate SI value: 10000.0 bricks
-```
-
-that you can convert into a volume:
-
-```pycon
---> d = c.vol(7.20)  # 7.20 nalbanum of type-2 bricks
---> d.explain()
-This is a Babylonian volume measurement: 1 sar 55 gin 133 se
-    Metrology:  gan <-100- sar <-60- gin <-180- se
-    Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 20833 (se)
-Sexagesimal floating value of the above: 5:47:13
-Approximate SI value: 34.721666666666664 cube meters
-```
-
-
-
-Here is a nalbanum table by 
-[Carlos Maza](https://personal.us.es/cmaza/mesopotamia/edificios.htm#Tipos%20de%20ladrillos) (Spanish only, sorry):
-
-|Brick type|Nalb. (dec.) |Nalb. (sex.)|
-|------|---------|-----|
-|  1(*)   |    9.00 |9|
-|  1a  |     8.33| 8:20|
-|  2(*)   |     7.20 |7:12|
-|3 |  5.40 | 5:24|
-|4 |   5.00 |5|
-|5 |  4.80 |4:48|
-|7 |   3.33 |3:20|
-|8 |  2.70 |2:42|
-|9 |  2.25 |2:15|
-|10|  1.875 |1:52:30|
-|11|  1.20| 1:12|
-|12(*)|1.00 |1  |
-
-**(*)** Notes:
-| Type | Sexagesimal | Comment |
-|:--- |:--- |:--- |
-|**1** | **9** | Standard square brick (*sig-al-ur-ra*). |
-|**2** | **7;12** | 2/3 kùš brick. |
-|**12** | **1** | The unit value, used as a reference for transportation calculations. |
-
-(metrolist)=
-### `.metrolist()` method
-
-| Destination | Method | State |
-:--- |:--- |:--- |
-|**Console / MD** | `.metrolist()` | Active (User-friendly) |
-|**Web / Sphinx** | `.metrohtml()` | Active (Via `metro_generator`) |
-|**Academic** | `.metrolatex()` | Active (Via `metro_generator`) |
-|**Data Science** | `.metrocsv()` | Planned (Via `metro_generator`) |
-
-#### Basics
-
-The `.metrolist()` method generates segments of metrological lists and tables. It requires three mandatory parameters:
-
-* initial value
-* final value
-* increment
-
-which can be strings or integers:
-
-```pycon
---> bw.metrolist('10 gin', '1 mana', '10 gin')
-
-Babylonian weight measurement
-gu <-60- mana <-60- gin <-180- se
-|Measurement         |
-|--------------------|
-|10 gin              |
-|20 gin              |
-|30 gin              |
-|40 gin              |
-|50 gin              |
-|1 mana              |
---> bw('10 gin').dec
-1800
---> bw('1 mana').dec
-10800
---> bw.metrolist(1800, 10800, 1800)
-
-Babylonian weight measurement
-gu <-60- mana <-60- gin <-180- se
-|Measurement         |
-|--------------------|
-|10 gin              |
-|20 gin              |
-|30 gin              |
-|40 gin              |
-|50 gin              |
-|1 mana              |
-```
-
-and a certain number of {meth}`optional parameters<.metrolist>`. For example, if we want a metrological table instead of the metrological list above, we will use `verbose=True` or its equivalent `verbose=1`:
-
-```pycon
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True)
-
-Babylonian weight measurement
-gu <-60- mana <-60- gin <-180- se
-|Measurement         | Sexag. (gin)        | Reciprocal  |
-|--------------------|---------------------|-------------|
-|10 gin              | 10                  | 6           |
-|20 gin              | 20                  | 3           |
-|30 gin              | 30                  | 2           |
-|40 gin              | 40                  | 1:30        |
-|50 gin              | 50                  | 1:12        |
-|1 mana              | 1                   | 1           |
-```
-
-if we want to use the main fractions:
-
-```pycon
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1)
-
-Babylonian weight measurement
-gu <-60- mana <-60- gin <-180- se
-|Measurement         | Sexag. (gin)        | Reciprocal  |
-|--------------------|---------------------|-------------|
-|10 gin              | 10                  | 6           |
-|1/3 mana            | 20                  | 3           |
-|1/2 mana            | 30                  | 2           |
-|2/3 mana            | 40                  | 1:30        |
-|5/6 mana            | 50                  | 1:12        |
-|1 mana              | 1                   | 1           |
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=2)
-
-Babylonian weight measurement
-gu <-60- mana <-60- gin <-180- se
-|Measurement         | Sexag. (gin)        | Reciprocal  |
-|--------------------|---------------------|-------------|
-|1/6 mana            | 10                  | 6           |
-|1/3 mana            | 20                  | 3           |
-|1/2 mana            | 30                  | 2           |
-|2/3 mana            | 40                  | 1:30        |
-|5/6 mana            | 50                  | 1:12        |
-|1 mana              | 1                   | 1           |
-```
-
-```pycon
---> bw.prtsex = True   # switch to sexagesimal mode
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1)
-
-Babylonian weight measurement
-gu <-60- mana <-60- gin <-180- se
-|Measurement         | Sexag. (gin)        | Reciprocal  |
-|--------------------|---------------------|-------------|
-|(1 u) gin           | 10                  | 6           |
-|1/3 mana            | 20                  | 3           |
-|1/2 mana            | 30                  | 2           |
-|2/3 mana            | 40                  | 1:30        |
-|5/6 mana            | 50                  | 1:12        |
-|(1 dis) mana        | 1                   | 1           |
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, actual=1)
-
-Babylonian weight measurement
-gu2 <-60- ma-na <-60- gin2 <-180- še
-|Measurement         | Sexag. (gin2)       | Reciprocal  |
-|--------------------|---------------------|-------------|
-|(1 u) gin2          | 10                  | 6           |
-|1/3 ma-na           | 20                  | 3           |
-|1/2 ma-na           | 30                  | 2           |
-|2/3 ma-na           | 40                  | 1:30        |
-|5/6 ma-na           | 50                  | 1:12        |
-|(1 dis) ma-na       | 1                   | 1           |
-```
-etc.
-
->**Note**: As you can see, the previous outputs are in **Markdown table format**, so if you use Markdown for your documents, you're in luck, you just have to copy and paste the result from the terminal into your document and that's it. But you can also paste it into an intermediate `.csv` file that can be read by any spreadsheet (indicating the pipe `|` character as the column separator) and from there you can copy and paste it into your word processor or presentations.
-
-The option `echo = False` suppresses terminal output. Instead, `.metrolist()` returns a list of strings with the rows of the table. This will be useful for your scripts.
-
-```pycon
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0)
-['|(1 u) gin           | 10                  | 6           |', '|1/3 mana            | 20                  | 3           |', '|1/2 mana            | 30                  | 2           |', '|2/3 mana            | 40                  | 1:30        |', '|5/6 mana            | 50                  | 1:12        |', '|(1 dis) mana        | 1                   | 1           |']
---> a = bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0)
---> for _ in a:
-...     print(_)
-... 
-|(1 u) gin           | 10                  | 6           |
-|1/3 mana            | 20                  | 3           |
-|1/2 mana            | 30                  | 2           |
-|2/3 mana            | 40                  | 1:30        |
-|5/6 mana            | 50                  | 1:12        |
-|(1 dis) mana        | 1                   | 1           |
-
-```
-
-#### Segmented lists
-
-You can use lists for the `mmax` and `step` parameters to generate segmented lists with different increments, as was the case with the metrological lists and tables found in archaeological sites.
-
-```pycon
---> bl.metrolist("1 kus", ["5 kus", "1 ninda"], ["10 susi", "1 kus"],verbose=1,fractions=1)
-
-Babylonian length measurement
-danna <-30- us <-60- ninda <-12- kus <-30- susi
-|Measurement         | Sexag. (ninda)      | Reciprocal  |
-|--------------------|---------------------|-------------|
-|1 kus               | 5                   | 12          |
-|1 1/3 kus           | 6:40                | 9           |
-|1 2/3 kus           | 8:20                | 7:12        |
-|2 kus               | 10                  | 6           |
-|2 1/3 kus           | 11:40               | --igi nu--  |
-|2 2/3 kus           | 13:20               | 4:30        |
-|3 kus               | 15                  | 4           |
-|3 1/3 kus           | 16:40               | 3:36        |
-|3 2/3 kus           | 18:20               | --igi nu--  |
-|1/3 ninda           | 20                  | 3           |
-|1/3 ninda 1/3 kus   | 21:40               | --igi nu--  |
-|1/3 ninda 2/3 kus   | 23:20               | --igi nu--  |
-|1/3 ninda 1 kus     | 25                  | 2:24        |
-|1/2 ninda           | 30                  | 2           |
-|1/2 ninda 1 kus     | 35                  | --igi nu--  |
-|2/3 ninda           | 40                  | 1:30        |
-|2/3 ninda 1 kus     | 45                  | 1:20        |
-|5/6 ninda           | 50                  | 1:12        |
-|5/6 ninda 1 kus     | 55                  | --igi nu--  |
-|1 ninda             | 1                   | 1           |
-```
-
-```pycon
---> bl.metrolist("10 susi", ["2 kus", "12 kus", "5 ninda"], ["5 susi", "1 kus","6 kus"],verbose=1,fractions=1)
-
-Babylonian length measurement
-danna <-30- us <-60- ninda <-12- kus <-30- susi
-|Measurement         | Sexag. (ninda)      | Reciprocal  |
-|--------------------|---------------------|-------------|
-|1/3 kus             | 1:40                | 36          |
-|1/2 kus             | 2:30                | 24          |
-|2/3 kus             | 3:20                | 18          |
-|5/6 kus             | 4:10                | 14:24       |
-|1 kus               | 5                   | 12          |
-|1 kus 5 susi        | 5:50                | --igi nu--  |
-|1 1/3 kus           | 6:40                | 9           |
-|1 1/2 kus           | 7:30                | 8           |
-|1 2/3 kus           | 8:20                | 7:12        |
-|1 5/6 kus           | 9:10                | --igi nu--  |
-|2 kus               | 10                  | 6           |
-|3 kus               | 15                  | 4           |
-|1/3 ninda           | 20                  | 3           |
-|1/3 ninda 1 kus     | 25                  | 2:24        |
-|1/2 ninda           | 30                  | 2           |
-|1/2 ninda 1 kus     | 35                  | --igi nu--  |
-|2/3 ninda           | 40                  | 1:30        |
-|2/3 ninda 1 kus     | 45                  | 1:20        |
-|5/6 ninda           | 50                  | 1:12        |
-|5/6 ninda 1 kus     | 55                  | --igi nu--  |
-|1 ninda             | 1                   | 1           |
-|1 1/2 ninda         | 1:30                | 40          |
-|2 ninda             | 2                   | 30          |
-|2 1/2 ninda         | 2:30                | 24          |
-|3 ninda             | 3                   | 20          |
-|3 1/2 ninda         | 3:30                | --igi nu--  |
-|4 ninda             | 4                   | 15          |
-|4 1/2 ninda         | 4:30                | 13:20       |
-|5 ninda             | 5                   | 12          |
-```
-
-#### Siblings methods
-
-The `.metrohtml()` and `.metrolatex()` methods make use of the above to create metrological lists and tables in HTML and LaTeX format. Estos métodos aceptan las mismas opciones que `.metrolist()` junto con algunas otras que les son propias:
-
-```pycon
---> a=bw.metrohtml('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0, file='testhtml')
---> Exported 6 rows to 'testhtml.html' (raw style)
-```
-
-escribirá el fichero `testhtml.html`
-
-```html
-  <table>
-  <tr>
-    <th>Measurement</th>
-    <th>Sexag. (gin)</th>
-    <th>Reciprocal</th>
-  </tr>
-  <tr>
-    <td>(1 u) gin</td>
-    <td>10</td>
-    <td>6</td>
-  </tr>
-  <tr>
-    <td>1/3 mana</td>
-    <td>20</td>
-    <td>3</td>
-  </tr>
-  <tr>
-    <td>1/2 mana</td>
-    <td>30</td>
-    <td>2</td>
-  </tr>
-  <tr>
-    <td>2/3 mana</td>
-    <td>40</td>
-    <td>1:30</td>
-  </tr>
-  <tr>
-    <td>5/6 mana</td>
-    <td>50</td>
-    <td>1:12</td>
-  </tr>
-  <tr>
-    <td>(1 dis) mana</td>
-    <td>1</td>
-    <td>1</td>
-  </tr>
-</table>
-```
-which will be rendered on your HTML page as:
-
-<div>
-  <table>
-  <tr>
-    <th>Measurement</th>
-    <th>Sexag. (gin)</th>
-    <th>Reciprocal</th>
-  </tr>
-  <tr>
-    <td>(1 u) gin</td>
-    <td>10</td>
-    <td>6</td>
-  </tr>
-  <tr>
-    <td>1/3 mana</td>
-    <td>20</td>
-    <td>3</td>
-  </tr>
-  <tr>
-    <td>1/2 mana</td>
-    <td>30</td>
-    <td>2</td>
-  </tr>
-  <tr>
-    <td>2/3 mana</td>
-    <td>40</td>
-    <td>1:30</td>
-  </tr>
-  <tr>
-    <td>5/6 mana</td>
-    <td>50</td>
-    <td>1:12</td>
-  </tr>
-  <tr>
-    <td>(1 dis) mana</td>
-    <td>1</td>
-    <td>1</td>
-  </tr>
-</table>
-</div>
-
-De modo similar, `.metrolatex()`:
-
-```pycon
---> a=bw.metrolatex('10 gin', '1 mana', '10 gin', verbose=True, fractions=1, echo=0,
- file='testlatex')
---> Exported to 'testlatex.tex' (LaTeX HEX-Safe style)
-```
-
-will write the file `testlatex.tex`:
-
-
-```latex
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    Measurement & Sexag. ({\cuneifont gin}) & Reciprocal \\
-    \midrule
-    (1 u) gin & 10 & 6 \\
-    1/3 mana & 20 & 3 \\
-    1/2 mana & 30 & 2 \\
-    2/3 mana & 40 & 1:30 \\
-    5/6 mana & 50 & 1:12 \\
-    (1 dis) mana & 1 & 1 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-```
-
-You can also use the option `full_page = True` to create files with the complete document, HTML or LaTex that you can use as independent tests.
-
-
-The `cuneiform` option will be described [below](#metrolist-cuneiform).
-
-Please see the options for {meth}`.metrolist()<.metrolist>`, {meth}`.metrohtml()<.metrohtml>`, {meth}`.metrolatex()<.metrolatex>`.
-
->Please note that not all combinations of options can have an effect simultaneously; for example, you will not be able to see the actual or academic names of the units if you do not activate the fractions.
-
-## Epigraphy
-
-MesoMath is first and foremost a calculator; therefore, its primary objective is the mathematical correctness of its operations and the consistency of the ten alternative expressions provided for metrological measures. Nevertheless, significant effort has been made to include two additional representations that reflect how these quantities were actually recorded on clay: **transliteration** and **original cuneiform characters**.
-
-### Transliteration: The `.translit` property
-
-MesoMath incorporates the composite metrological tables of the Old Babylonian Period (Nippur) published by {ref}`Proust (2009) <ref-Proust3>` as the foundation for its transliteration engine. To achieve a representation faithful to ancient scribal practices, the library employs a two-step process:
-
-1.  **Greedy Decomposition**: The internal decimal value (`self.dec`) is decomposed into the largest possible values corresponding to specific graphemes present in Proust’s composite lists.
-2.  **Post-processing**: The resulting tokens are concatenated and re-analyzed to regroup identical units and recalculate coefficients (e.g., aggregating multiple `še` or `gin2` tokens), ensuring historical accuracy in the final string.
-
-
-#### Reliability Limits
-
-The `.translit` property is designed to provide reliable results within the following practical limits. Beyond these values, the historical systems often diverged or used non-standard notations, and results should be treated as experimental:
-
-| Measure | Limit (Traditional) | Limit (Decimal/SI) |
-| :--- | :--- | :--- |
-| **Capacity** | `(2 sargal) gur` (432,000 gur) | 129,600,000 litres |
-| **Weight** | `(2 sargal) gu2` (432,000 gu2) | 12,960,000 kg |
-| **Surface** | `(2 sargal) gan2` (129,600 gan2) | 466,560,000 m² |
-| **Length** | `(2 ges2) danna` (120 danna) | 1,296,000 m |
-
-> **Warning**: For values exceeding these limits, the transliteration engine may produce unpredictable results ("expect disaster").
-
-⚠️ **Note on Volume and Brick Metrology**
-
-It is crucial to note that in Babylonian mathematics, **Volumes** and **Brick counts** do not have a dedicated unit system. Instead, they are expressed using the **Surface system** (`Bsur`).
-
-* **Volumes**: A volume is conceived as a surface area with a default thickness of 1 `kuš3` (cubit). Therefore, a `1 sar` volume is actually a block of $1 \times 1$ `ninda` base and $1$ `kuš3` height.
-* **Bricks**: Bricks were standardized into volumes, allowing scribes to calculate the number of bricks needed for a wall by simply calculating its total "surface-volume".
-
-When using MesoMath for volume or brick calculations, the `.translit` property will correctly reflect the surface units (`sar`, `gan2`, etc.) used in these archaeological contexts.
-
-**Example of high-precision decomposition:**
-
-```pycon
---> a = bc('(2 sargal) gur')
---> b = bc(a.dec - 1)
---> b.translit 
-'1(šargal)gal 5(šar’u) 9(šar2) 5(geš’u) 9(geš2) 5(u) 9(aš) gur 4(barig) 5(ban2) še 9(diš) 5/6 sila3 9(diš) 5/6 gin2 2(u) 9(diš) še'
-```
-
-**Metrological list and tables**
-
-For generating metrological lists and tables with transliteration, use the `translit=True` flag in the respective generator methods.
-
-
-```pycon
---> bl.metrolist("1 kus",["5 kus","1 ninda"],["10 susi","1 kus"],verbose=1,translit=1,width=25,colophon=1)
-
-Babylonian length measurement
-danna <-30- us <-60- ninda <-12- kus <-30- susi
-|Measurement              | Sexag. (ninda)  | Reciprocal  |
-|-------------------------|-----------------|-------------|
-|1(diš) kuš3              | 5               | 12          |
-|1(diš) 1/3 kuš3          | 6:40            | 9           |
-|1(diš) 2/3 kuš3          | 8:20            | 7:12        |
-|2(diš) kuš3              | 10              | 6           |
-|2(diš) 1/3 kuš3          | 11:40           | --igi nu--  |
-|2(diš) 2/3 kuš3          | 13:20           | 4:30        |
-|3(diš) kuš3              | 15              | 4           |
-|3(diš) 1/3 kuš3          | 16:40           | 3:36        |
-|3(diš) 2/3 kuš3          | 18:20           | --igi nu--  |
-|4(diš) kuš3              | 20              | 3           |
-|4(diš) 1/3 kuš3          | 21:40           | --igi nu--  |
-|4(diš) 2/3 kuš3          | 23:20           | --igi nu--  |
-|5(diš) kuš3              | 25              | 2:24        |
-|1/2 ninda                | 30              | 2           |
-|1/2 ninda 1(diš) kuš3    | 35              | --igi nu--  |
-|1/2 ninda 2(diš) kuš3    | 40              | 1:30        |
-|1/2 ninda 3(diš) kuš3    | 45              | 1:20        |
-|1/2 ninda 4(diš) kuš3    | 50              | 1:12        |
-|1/2 ninda 5(diš) kuš3    | 55              | --igi nu--  |
-|1(diš) ninda             | 1               | 1           |
---------------------------------------------------
-| Grand Total: 8(diš) 1/2 ninda 
-| Number of lines: 20 | Scribe: MesoMath 2.0.0rc0 |
-| April 2026 |
---------------------------------------------------
-
-```
-
-
-### Cuneiform, the `.cuneiform` property.
-
-The cuneiform representation is derived directly from the `.translit` output. The engine maps each transliterated token to its corresponding Unicode glyph.
-
-**Note on Rendering**: Cuneiform characters are part of the Supplementary Multilingual Plane of Unicode. Correct on-screen rendering requires a specialized font (e.g., *Sumerian*, *Akkadian*, or *Noto Sans Cuneiform*). Without these, the system may display "tofu" (empty boxes). Please refer to the [Cuneiform Support](#cuneiform-support) section for installation instructions.
-
-(scripting)=
-## Scripting
-
-`babcalc`, in addition to serving as an interface for interactive work, can execute `.py` scripts for batch processing. Let's look at its options:
-
-```bash
-$ babcalc -h
-babcalc 1.3.0 - Command Line Interface
-
-Usage:
-  babcalc                 Launch interactive REPL
-  babcalc <script.py>     Execute a script
-  babcalc -i <script.py>  Execute a script and stay in interactive mode
-  babcalc -m <module>     Run a library module (Reserved for future use)
-  babcalc --help          Show this message
-```
-
-The `-i` option allows you to run a script and remain in interactive mode, which is important for debugging. We show an [example](#lbp-metrology) below.
-
-**Note:** By design, `babcalc` will **NOT** import any of the MesoMath classes when called with the `-i` option. Using this option requires writing pure Python scripts that can be run on other systems directly using the Python interpreter (once the package is installed). This is done for compatibility and program sharing purposes.
-
-The `-m` option is reserved for future use. Currently, there are no modules in MesoMath that can be run this way.
-
-(advanced-topics)=
-## Advanced Topic: Extending Metrology
-
-One of the core strengths of **MesoMath v{{ release }}** is its extensibility. You are not limited to the built-in Babylonian units; you can define your own metrological systems by inheriting from the base classes.
-
-(vertical-class)=
-### The "Vertical Problem": Defining Height
-
-In many Mesopotamian mathematical problems, vertical measurements (height or depth) are treated with specific units that, while sharing the same names as lengths, behave differently in calculations.
-
-Let's define a custom class `bh` (Babylonian Height) that inherits from the length system (`bl` or `Blen`) but fixes the base unit to the *kuš3* (cubit).
-
-```python
-from mesomath.npvs import Blen, Bsur, Bvol
-
-# We define our custom height class
-class bh(Blen):
-    title: str = "Babylonian Height Measurement"
-    ubase: int = 1  # Fixed to 'kus' (cubit)
-
-```
-
-### Seamless Interaction
-
-Thanks to the polymorphic design of **v{{ release }}**, your custom classes are recognized by the core engine. You can multiply a standard surface (`Bsur`) by your new height (`bh`) to obtain a volume (`Bvol`) without any type errors.
-
-```python
-# 1. Define a surface of 1 sar
-area = Bsur('1 sar')
-
-# 2. Define a height using our custom class
-height = bh('1 kus')
-
-# 3. Calculate volume (Area * Height)
-# The system recognizes 'bh' as a valid length for this operation.
-volume = area * height
-
-print(f"Volume: {volume}") 
-# Output: 1 sar
-
-```
-
-(automatic-utilities)=
-### Automatic Utilities
-
-By inheriting from `MesoM` (via `Blen`), your new class automatically gains all the new administrative and diagnostic tools of this version:
-
-1. **Metrological Lists/Tables**: Generate tables for your custom units instantly.
-
-Please see the options for {meth}`.metrolist()<.metrolist>` method.
-
-```pycon
---> from mesomath.npvs import Blen, Bsur, Bvol
---> 
---> # We define our custom height class
---> class bh(Blen):
-...     title: str = "Babylonian Height Measurement"
-...     ubase: int = 1  # Fixed to 'kus' (cubit)
-... 
---> bh.metrolist('1 kus', '5 kus', '1 kus', verbose=True, ubase=None)
-
-Babylonian Height Measurement
-danna <-30- us <-60- ninda <-12- kus <-30- susi
-|Measurement         | Sexag. (kus)        | Reciprocal  |
-|--------------------|---------------------|-------------|
-|1 kus               | 1                   | 1           |
-|2 kus               | 2                   | 30          |
-|3 kus               | 3                   | 20          |
-|4 kus               | 4                   | 15          |
-|5 kus               | 5                   | 12          |
---> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
-
-Babylonian Height Measurement
-danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
-|Measurement                   | Sexag. (kuš3)                 | Reciprocal  |
-|------------------------------|-------------------------------|-------------|
-|1/3 kuš3                      | 20                            | 3           |
-|1/2 kuš3                      | 30                            | 2           |
-|2/3 kuš3                      | 40                            | 1:30        |
-|5/6 kuš3                      | 50                            | 1:12        |
-|1 kuš3                        | 1                             | 1           |
-|1 1/6 kuš3                    | 1:10                          | --igi nu--  |
-|1 1/3 kuš3                    | 1:20                          | 45          |
-|1 1/2 kuš3                    | 1:30                          | 40          |
-|1 2/3 kuš3                    | 1:40                          | 36          |
-|1 5/6 kuš3                    | 1:50                          | --igi nu--  |
-|1/6 ninda                     | 2                             | 30          |
---> bh.prtsex = 1
---> bh.metrolist('10 susi', '2 kus', '5 susi', verbose=True, width=30,fractions=2,actual=True)
-
-Babylonian Height Measurement
-danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
-|Measurement                   | Sexag. (kuš3)                 | Reciprocal  |
-|------------------------------|-------------------------------|-------------|
-|1/3 kuš3                      | 20                            | 3           |
-|1/2 kuš3                      | 30                            | 2           |
-|2/3 kuš3                      | 40                            | 1:30        |
-|5/6 kuš3                      | 50                            | 1:12        |
-|(1 dis) kuš3                  | 1                             | 1           |
-|(1 dis) 1/6 kuš3              | 1:10                          | --igi nu--  |
-|(1 dis) 1/3 kuš3              | 1:20                          | 45          |
-|(1 dis) 1/2 kuš3              | 1:30                          | 40          |
-|(1 dis) 2/3 kuš3              | 1:40                          | 36          |
-|(1 dis) 5/6 kuš3              | 1:50                          | --igi nu--  |
-|1/6 ninda                     | 2                             | 30          |
-```
-
-
-2. **Economic Calculations**: Use the new methods for labor costs.
-
-The following three methods can help us study the economic problems commonly addressed by scribes. They offer a shortcut, saving us from having to work with metrological tables and reciprocal numbers.
-
-#### `.labor_cost()`
-
-This method calculates the cost of a project in terms of man-days to be paid or the number of workers needed to complete the project in one day, based on the work to be carried out and the work quota that each worker is expected to complete per day.
-
-Please see the options for {meth}`.labor_cost()<.labor_cost>` method.
-
-```pycon
---> canal = bv('10 sar')
---> quota = '20 gin'  # 1/3 sar per day
---> wages = canal.labor_cost(quota)
---> print(f"{wages} men required to finish in a day.")
-30.0 men required to finish in a day.
-```
-
-#### `.rations()`
-
-This method calculates the cost of a project in rations of barley, beer, oil, etc. based on the work to be carried out and the work quota that each worker is expected to complete per day.
-
-Please see the options for {meth}`.rations()<.rations>` method.
-
-
-```pycon
---> daily_ration = '2 sila'
---> total_grain = canal.rations(work_man='20 gin', wage=daily_ration)
---> print(f"Total barley: {total_grain}")
-Total barley: 1 bariga
-```
-
-
-#### `.silver_payments()`
-
-This method calculates the cost of a project in monetary terms (silver weight) based on the work to be carried out and the work quota that each worker is expected to complete per day.
-
-Please see the options for {meth}`.silver_payments()<.silver_payments>` method.
-
-
-```pycon
---> bricks = bb('2 sar')
---> silver_wage = '8 se'
---> total_silver = bricks.silver_payments(work_man='1 sar', wage=silver_wage)
---> print(f"Total silver payment: {total_silver}")
-Total silver payment: 16 se
-```
-
-
-
-(lbp-metrology)=
-### Late Babylonian Period Metrology
-
-
-**MesoMath** is designed to work with the metrology of the Old Babylonian period, but it can be extended to use the metrology of other periods. For example, for the {ref}`Late Babylonian Period <ref-Proust2>`, we can start by defining a class `LBcap` for the capacities in a file `lateb.py`:
-
-```python
-from mesomath.npvs import Bcap, Bvol
-
 
 class LBcap(Bcap):  # Capacity
     """This class implement Non-Place-Value System arithmetic
@@ -3284,11 +2004,15 @@ class LBvol(Bvol):  # Volume
         return LBcap(int(round(self.dec*(100/6))))
 ```
 
-and then:
+
+#### **Running the Extension**
+Once defined, load your custom metrology into the calculator:
 
 ```bash
 $ babcalc -i lateb.py 
 ```
+
+and use it:
 
 ```pycon
 --> a = LBcap('1000 sila')
@@ -3299,7 +2023,7 @@ $ babcalc -i lateb.py
 This is a Late Babylonian volume measurement: 3 gin 60 se
     Metrology:  gan <-100- sar <-60- gin <-180- se
     Factor with unit 'se':  1 180 10800 1080000
-measurement in terms of the smallest unit: 600 (se)
+Measurement in terms of the smallest unit: 600 (se)
 Sexagesimal floating value of the above: 10
 Approximate SI value: 0.9999999999999999 cube meters
 --> c=b.cap() 
@@ -3311,1406 +2035,345 @@ Approximate SI value: 0.9999999999999999 cube meters
 This is a Late Babylonian capacity measurement: 3 gur 1 bariga 4 ban
     Metrology:  gur <-5- bariga <-6- ban <-10- sila <-10- gar
     Factor with unit 'gar':  1 10 100 600 3000
-measurement in terms of the smallest unit: 10000 (gar)
+Measurement in terms of the smallest unit: 10000 (gar)
 Sexagesimal floating value of the above: 2:46:40
 Approximate SI value: 1000.0 litres
 -->
---> LBcap.metrolist('1 bariga','3 bariga', '1 ban',1)
-1 bariga             | 1              
-1 bariga 1 ban       | 1:10           
-1 bariga 2 ban       | 1:20           
-1 bariga 3 ban       | 1:30           
-1 bariga 4 ban       | 1:40           
-1 bariga 5 ban       | 1:50           
-2 bariga             | 2              
-2 bariga 1 ban       | 2:10           
-2 bariga 2 ban       | 2:20           
-2 bariga 3 ban       | 2:30           
-2 bariga 4 ban       | 2:40           
-2 bariga 5 ban       | 2:50           
-3 bariga             | 3              
+--> LBcap.metrolist('1 bariga','3 bariga', '1 ban',verbose=1)
+
+Late Babylonian capacity measurement
+gur <-5- bariga <-6- ban <-10- sila <-10- gar
+|Measurement         | Sexag. (bariga) | Reciprocal  |
+|--------------------|-----------------|-------------|
+|1 bariga            | 1               | 1           |
+|1 bariga 1 ban      | 1:10            | --igi nu--  |
+|1 bariga 2 ban      | 1:20            | 45          |
+|1 bariga 3 ban      | 1:30            | 40          |
+|1 bariga 4 ban      | 1:40            | 36          |
+|1 bariga 5 ban      | 1:50            | --igi nu--  |
+|2 bariga            | 2               | 30          |
+|2 bariga 1 ban      | 2:10            | --igi nu--  |
+|2 bariga 2 ban      | 2:20            | --igi nu--  |
+|2 bariga 3 ban      | 2:30            | 24          |
+|2 bariga 4 ban      | 2:40            | 22:30       |
+|2 bariga 5 ban      | 2:50            | --igi nu--  |
+|3 bariga            | 3               | 20          |
 ```
 
 etc. but we should also redefine the rest of the classes to ensure consistency in the operations with the new units.
 
-(cuneiform-support)=
-## 𒍻 Advanced Topic: Cuneiform Support
-
-
-<div style="text-align:center;">
-<div class="tablet" >
-
-| NAM-DUB-SAR |
-|:---:|
-|<big>𒉆𒁾𒊬</big>|
-
-</div>
-</div>
-
->*The art of writing on clay, known in Sumerian as NAM-DUB-SAR (𒉆𒁾𒊬), is in the heart of MesoMath's visual engine.*
-
-
-MesoMath goes beyond mere calculation; it allows you to represent metrological data in its original historical script. This chapter covers how to enable, display, and export cuneiform signs for academic publications and web displays.
-
-𒍻
- 
-
-### 𒍻 1. The Cuneiform Font Requirement
-
-To prevent "tofu" (empty boxes) or broken characters, your system or document compiler must have access to a compatible font. We recommend **Noto Sans Cuneiform**, which covers the Sumero-Akkadian Unicode block.
-
-* **For Web/HTML:** MesoMath automatically links to Google Fonts.
-* **For LaTeX/PDF:** You must provide the font file (see the LaTeX section below).
-
-Consult [Font Configuration](#install-font) for more information.
-
-𒍻
-
-### 𒍻 2 BabN class
-
-```pycon
---> a=bn('33.34.0.45.0.0')
---> print(a.to_cunei())
-𒌍𒐗 𒌍𒐘  𒐏𒐙   
---> print(a.to_cunei(alter=True))
-𒌍𒐗 𒌍𒐘  𒑩𒐙   
---> print(a.to_cunei(alter=True, stroke=True))
-𒌍𒐗 𒌍𒐘 𒃵 𒑩𒐙 𒃵 𒃵 
---> print(a.to_cunei(alter=False, stroke=True))
-𒌍𒐗 𒌍𒐘 𒃵 𒐏𒐙 𒃵 𒃵 
-```
-
-𒍻
-
-
-### 𒍻 3 Metrological classes
-
-#### 𒍻 `.scheme()` method
-
-Use the parameter `cuneiform = True` or equivalently `cuneiform = 1` to see the factor diagram in cuneiform.
-Please see the options for {meth}`.scheme()<mesomath.npvs._MesoM.scheme>`
-
-**Lengths**:
-
-```pycon
---> print(*bl.scheme(actual=1))
-danna <-30- UŠ <-60- ninda <-12- kuš3 <-30- šu-si
---> print(*bl.scheme(cuneiform=1))
-𒆜𒁍   ╼30╾  𒍑   ╼60╾  𒃻   ╼12╾  𒌑   ╼30╾  𒋗𒋛
-```
-**Surface**:
-
-```pycon
---> print(*bs.scheme(actual=1))
-GAN2 <-100- sar <-60- gin2 <-180- še
---> print(*bs.scheme(cuneiform=1))
-𒃷   ╼100╾  𒊬   ╼60╾  𒂆   ╼180╾  𒊺
-```
-**Volumes**:
-
-```pycon
---> print(*bv.scheme(actual=1))
-GAN2 <-100- sar <-60- gin2 <-180- še
---> print(*bv.scheme(cuneiform=1))
-𒃷   ╼100╾  𒊬   ╼60╾  𒂆   ╼180╾  𒊺
-```
-**Capacities**:
-
-```pycon
---> print(*bc.scheme(actual=1))
-gur <-5- bariga <-6- ban2 <-10- sila3 <-60- gin2 <-180- še
---> print(*bc.scheme(cuneiform=1))
-𒄥   ╼5╾  𒉿   ╼6╾  𒑏   ╼10╾  𒋡   ╼60╾  𒂆   ╼180╾  𒊺
-```
-**Weights**:
-
-```pycon
---> print(*bw.scheme(actual=1))
-gu2 <-60- ma-na <-60- gin2 <-180- še
---> print(*bw.scheme(cuneiform=1))
-𒄘   ╼60╾  𒈠𒈾   ╼60╾  𒂆   ╼180╾  𒊺
-```
-**Bricks**:
-
-```pycon
---> print(*bb.scheme(actual=1))
-GAN2 <-100- sar <-60- gin2 <-180- še
---> print(*bb.scheme(cuneiform=1))
-𒃷   ╼100╾  𒊬   ╼60╾  𒂆   ╼180╾  𒊺
-```
-**System S**:
-
-```pycon
---> print(*bS.scheme(actual=1))
-šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- aš
---> print(*bS.scheme(cuneiform=1))
-𒊹   ╼6╾  𒐬   ╼10╾  𒊬   ╼6╾  𒐞   ╼10╾  𒐕   ╼6╾  𒌋   ╼10╾  𒀸
-```
-**System G**:
-
-```pycon
---> print(*bG.scheme(actual=1))
-šar2-gal <-6- šar'u <-10- šar2 <-6- bur'u <-10- bur3 <-3- eše3 <-6- iku
---> print(*bG.scheme(cuneiform=1))
-𒊹   ╼6╾  𒐬   ╼10╾  𒊬   ╼6╾  𒐴   ╼10╾  𒌋   ╼3╾  𒑘   ╼6╾  𒀸
-```
-**System SKL**:
-
-```pycon
---> print(*bK.scheme(actual=1))
-šar2-gal <-6- šar'u <-10- šar2 <-6- geš'u <-10- geš <-6- u <-10- diš
---> print(*bK.scheme(cuneiform=1))
-𒊹   ╼6╾  𒐬   ╼10╾  𒊬   ╼6╾  𒐞   ╼10╾  𒐕   ╼6╾  𒌋   ╼10╾  𒁹
-```
-
-𒍻
-
-#### 𒍻 `.cuneiform` property
-
-#### 𒍻 `.to_cunei()` method
-
-This method attempts, to the extent that the complexity of the code allows, to imitate the idiosyncratic way in which ancient scribes wrote physical quantities. This means the use of fractions and the additive sexagesimal systems C, S, G, and SKL. Let's look at some examples starting with a high integer:
-
-
-
-```pycon
---> a = bS(11223344)
---> a.prtf()
-'51 sargal 5 saru 7 sar 3 gesu 5 ges 4 u 4 as'
---> print(a.to_cunei(onesixth=True))
-𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲 𒐬𒐬𒐬𒐬𒐬 𒐅 𒐞𒐞𒐞 𒐙 𒐏 𒐂
---> a = bG(11223344)
---> a.prtf()
-'173 sargal 1 saru 1 sar 5 buru 9 bur 2 iku'
---> print(a.to_cunei(onesixth=True))
-𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲𒐲 𒐬 𒀸 𒐴𒐴𒐴𒐴𒐴 𒐔 𒐀
---> a = bl(11223344)
---> a.prtf()
-'17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi'
---> print(a.to_cunei(onesixth=True))
-𒌋𒐌𒑡 𒆜𒁍 𒐉𒈦 𒍑 𒐊𒑜 𒃻 𒁹𒑚 𒌑 𒐉 𒋗𒋛
---> a = bs(11223344)
---> a.prtf()
-'10 gan 39 sar 11 5/6 gin 14 se'
---> print(a.to_cunei(onesixth=True))
-𒌋 𒃷 𒌍𒐇𒑡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
---> a = bv(11223344)
---> a.prtf()
-'10 gan 39 sar 11 5/6 gin 14 se'
---> print(a.to_cunei(onesixth=True))
-𒌋 𒃷 𒌍𒐇𒑡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
---> a = bw(11223344)
---> a.prtf()
-'17 gu 19 mana 11 5/6 gin 14 se'
---> print(a.to_cunei(onesixth=True))
-𒌋𒐌𒑡 𒄘 𒐎𒑡 𒈠𒈾 𒁹𒑜 𒂆 𒌋𒐉 𒊺
---> a = bc(11223344)
---> a.prtf()
-'3 gur 2 bariga 1 1/2 ban 4 sila 11 5/6 gin 14 se'
---> print(a.to_cunei(onesixth=True))
-𒐈 𒄥 𒐖𒑡 𒁹 𒈦 𒑏 𒐉𒑡 𒋡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
---> a = bb(11223344)
---> a.prtf()
-'10 gan 39 sar 11 5/6 gin 14 se'
---> print(a.to_cunei(onesixth=True))
-𒌋 𒃷 𒌍𒐇𒑡 𒁹𒑜 𒂆 𒌋𒐉 𒊺
-```
-
-and then with a small one:
-
-
-```pycon
---> a=bK(121)
---> print(a.to_cunei())
-𒐖 𒋢𒋛 𒁹                     # 𒋢𒋛 ("ŠU-SI") intercalated to avoid confusion (𒐖𒁹)
-```
-
-If you wish, you can add the commodity name; for instance, for silver weights:
-
-```pycon
---> print(bw('1 mana').to_cunei(subst='ku_babbar'))
-𒁹 𒈠𒈾  𒆬𒌓
-```
-
-[Appendix C](#commodities-list) lists all the commodity names that may be used.
-
-
-Please see the options for {meth}`.to_cunei()<mesomath.npvs._MesoM.to_cunei>`
-
-𒍻
-
-(metrolist-cuneiform)=
-#### 𒍻 `.metrolist()` method and its siblings
-
-```pycon
---> bl.metrolist('1 kus','1 ninda','2 kus', verbose=1, fractions=2,cuneiform=1,
-actual=1, width=22,full_page=1,file='caca')
-
-Babylonian length measurement
-𒆜𒁍   ╼30╾  𒍑   ╼60╾  𒃻   ╼12╾  𒌑   ╼30╾  𒋗𒋛
-|Measurement           | Sexag. (𒃻)            | Reciprocal  |
-|----------------------|-----------------------|-------------|
-|𒁹 𒌑                   |  𒐙                    | 𒌋𒐖          |
-|𒑡 𒃻 𒁹 𒌑               | 𒌋𒐙                    |  𒐘          |
-|𒑚 𒃻 𒁹 𒌑               | 𒎙𒐙                    |  𒐖 𒎙𒐘       |
-|𒈦 𒃻 𒁹 𒌑               | 𒌍𒐙                    | 𒅆𒉡          |
-|𒑛 𒃻 𒁹 𒌑               | 𒑩𒐙                    |  𒐕 𒎙        |
-|𒑜 𒃻 𒁹 𒌑               | 𒑪𒐙                    | 𒅆𒉡          |
-```
-
-The previous cuneiform output should appear correctly aligned on almost any modern terminal; but, due to the variable width of the cuneiform glyphs, it is next to impossible to get it to appear aligned in an HTML document like this using a monospaced font, so henceforth the outputs will be presented in table format.
-
-
-```pycon
---> bl.metrolist('1 kus','1 ninda','2 kus', verbose=1, fractions=2,cuneiform=1,
-actual=1, width=22,full_page=1,file='caca')
-```
-
-output:
-
-
-<div class="tablet" >
-
-|Babylonian length measurement|
-|---|
-|𒆜𒁍   ╼30╾  𒍑   ╼60╾  𒃻   ╼12╾  𒌑   ╼30╾  |
-
-|Measurement           | Sexag. (𒃻)            | Reciprocal  |
-|----------------------|-----------------------|-------------|
-|𒁹 𒌑                   |  𒐙                    | 𒌋𒐖          |
-|𒑡 𒃻 𒁹 𒌑               | 𒌋𒐙                    |  𒐘          |
-|𒑚 𒃻 𒁹 𒌑               | 𒎙𒐙                    |  𒐖 𒎙𒐘       |
-|𒈦 𒃻 𒁹 𒌑               | 𒌍𒐙                    | 𒅆𒉡          |
-|𒑛 𒃻 𒁹 𒌑               | 𒑩𒐙                    |  𒐕 𒎙        |
-|𒑜 𒃻 𒁹 𒌑               | 𒑪𒐙                    | 𒅆𒉡          |
-
-</div>
-
-If you wish, you can add the commodity name; for instance, for silver weights:
-
-```pycon
---> bw.metrolist('10 gin', '1 mana', '10 gin', verbose=True, cuneiform=1, subst='ku_babbar')
-```
-
-output:
-
-
-<div class="tablet" >
-
-|Babylonian weight measurement|
-|---|
-|𒄘   ╼60╾  𒈠𒈾   ╼60╾  𒂆   ╼180╾  𒊺|
-
-|Measurement         | Sexag. (𒂆)          | Reciprocal  |
-|--------------------|---------------------|-------------|
-|𒌋 𒂆  𒆬𒌓             | 𒌋                   |  𒐚          |
-|𒑚 𒈠𒈾  𒆬𒌓            | 𒎙                   |  𒐗          |
-|𒈦 𒈠𒈾  𒆬𒌓            | 𒌍                   |  𒐖          |
-|𒑛 𒈠𒈾  𒆬𒌓            | 𒑩                   |  𒐕 𒌍        |
-|𒑜 𒈠𒈾  𒆬𒌓            | 𒑪                   |  𒐕 𒌋𒐖       |
-|𒁹 𒈠𒈾  𒆬𒌓            |  𒐕                  |  𒐕          |
-
-</div>
-
-Another example:
-
-
-```pycon
---> bc.metrolist(180, 280, 20,verbose=1,fractions=1, cuneiform=1, subst="kas")
-```
-
-output:
-
-
-<div class="tablet" >
-
-
-|Babylonian capacity measurement|
-|---|
-|𒄥   ╼5╾  𒉿   ╼6╾  𒑏   ╼10╾  𒋡   ╼60╾  𒂆   ╼180╾  𒊺|
-
-
-|Measurement         | Sexag. (𒂆)          | Reciprocal  |
-|--------------------|---------------------|-------------|
-|𒁹 𒂆  𒁉              |  𒐕                  |  𒐕          |
-|𒁹 𒂆 𒎙 𒊺  𒁉          |  𒐕  𒐚 𒑩             | 𒑪𒐘          |
-|𒁹 𒂆 𒐏 𒊺  𒁉          |  𒐕 𒌋𒐗 𒎙             | 𒅆 𒉡         |
-|𒁹𒑚 𒂆  𒁉             |  𒐕 𒎙                | 𒑩𒐙          |
-|𒁹𒑚 𒂆 𒎙 𒊺  𒁉         |  𒐕 𒎙𒐚 𒑩             | 𒅆 𒉡         |
-|𒁹𒈦 𒂆 𒌋 𒊺  𒁉         |  𒐕 𒌍𒐗 𒎙             | 𒅆 𒉡         |
-
-</div>
-
-
-[Appendix C](#commodities-list) lists all the commodity names that may be used.
-
-The `.metrohtml()` and `.metrolatex()` methods also work in cuneiform using the `cuneiform=True` option.
-
-When exporting to a full HTML page with cuneiform enabled, MesoMath applies a CSS class called `.tablet`. This style mimics the appearance of a Mesopotamian clay tablet, using warm tones and optimized font sizes for the complex glyphs; for instance:
-
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap" rel="stylesheet">
-  <style>
-    body { background-color: #f4f1ea; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-    .tablet { background-color: #e2c08d; border-radius: 15px; padding: 25px; 
-              box-shadow: inset 2px 2px 5px #bc9a6c, 5px 5px 15px rgba(0,0,0,0.3);
-              border: 1px solid #cdaa7d; max-width: fit-content; }
-    table { border-collapse: collapse; background: rgba(255,255,255,0.1); }
-    th, td { border: 1px solid rgba(0,0,0,0.1); padding: 8px 15px; text-align: left; }
-    th { background: rgba(0,0,0,0.05); color: #5d4037; font-variant: small-caps; }
-    td { font-family: "Noto Sans Cuneiform", sans-serif; font-size: 1.2rem; }
-    caption { margin-bottom: 10px; font-weight: bold; color: #5d4037; }
-  </style>
-</head>
-<body>
-<div class="tablet">
-  <table class="table">
-  <tr>
-    <th>Measurement</th>
-    <th>Sexag. (𒃻)</th>
-    <th>Reciprocal</th>
-  </tr>
-  <tr>
-    <td>𒁹&thinsp;𒌑</td>
-    <td>𒐙</td>
-    <td>𒌋𒐖</td>
-  </tr>
-  <tr>
-    <td>𒑡&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
-    <td>𒌋𒐙</td>
-    <td>𒐘</td>
-  </tr>
-  <tr>
-    <td>𒑚&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
-    <td>𒎙𒐙</td>
-    <td>𒐖&thinsp;𒎙𒐘</td>
-  </tr>
-  <tr>
-    <td>𒈦&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
-    <td>𒌍𒐙</td>
-    <td>𒅆𒉡</td>
-  </tr>
-  <tr>
-    <td>𒑛&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
-    <td>𒑩𒐙</td>
-    <td>𒐕&thinsp;𒎙</td>
-  </tr>
-  <tr>
-    <td>𒑜&thinsp;𒃻&thinsp;𒁹&thinsp;𒌑</td>
-    <td>𒑪𒐙</td>
-    <td>𒅆𒉡</td>
-  </tr>
-</table>
-</div>
-</body>
-</html>
-```
-
-Exporting cuneiform to LaTeX is notoriously difficult due to encoding issues. MesoMath solves this by using **Hexadecimal Escaping**. Instead of exporting the glyphs directly (which often break in the clipboard), it exports ASCII-safe Unicode point references.
-
-**Workflow for Overleaf/XeLaTeX:**
-
-1. **Generate the file:**
-```python
-bl.metrolatex(cuneiform=True, full_page=True, file="my_table")
-
-```
-
-
-2. **Upload the Font:** Upload `NotoSansCuneiform-Regular.ttf` to your Overleaf project.
-3. **Compile with XeLaTeX:** Set the compiler to XeLaTeX in the project settings.
-4. **The Result:** MesoMath uses `\symbol{"XXXXX}` commands. This ensures that even if you can't "see" the signs in the editor, they will render perfectly in the PDF.
-
-```latex
-\documentclass{article}
-\usepackage{booktabs}
-\usepackage{fontspec}
-% Make sure to upload NotoSansCuneiform.ttf to Overleaf
-\newfontfamily\cuneifont{NotoSansCuneiform.ttf}[Path = .//]
-\begin{document}
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    Measurement & {\cuneifont Sexag. ({\cuneifont \symbol{"120FB}}) & Reciprocal} \\
-    \midrule
-    {\cuneifont \symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"12419}} & {\cuneifont \symbol{"1230B}\symbol{"12416}} \\
-    {\cuneifont \symbol{"12461}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"1230B}\symbol{"12419}} & {\cuneifont \symbol{"12418}} \\
-    {\cuneifont \symbol{"1245A}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"12399}\symbol{"12419}} & {\cuneifont \symbol{"12416}\,\symbol{"12399}\symbol{"12418}} \\
-    {\cuneifont \symbol{"12226}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"1230D}\symbol{"12419}} & {\cuneifont \symbol{"12146}\symbol{"12261}} \\
-    {\cuneifont \symbol{"1245B}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"12469}\symbol{"12419}} & {\cuneifont \symbol{"12415}\,\symbol{"12399}} \\
-    {\cuneifont \symbol{"1245C}\,\symbol{"120FB}\,\symbol{"12079}\,\symbol{"12311}} & {\cuneifont \symbol{"1246A}\symbol{"12419}} & {\cuneifont \symbol{"12146}\symbol{"12261}} \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-\end{document}
-```
-Please see the options for {meth}`.metrolist()<.metrolist>`, {meth}`.metrohtml()<.metrohtml>`, {meth}`.metrolatex()<.metrolatex>`.
-
-𒍻
-
-
-
-### 𒍻 4. Troubleshooting "Tofu"
-
-If you see empty boxes:
-
-* **In HTML:** Ensure you have an active internet connection to load the Google Font.
-* **In LaTeX:** Check that the `.ttf` filename in your project matches exactly what is defined in the `\newfontfamily` command in your `.tex` file.
 
 ---
 
+### **Why Extend MesoMath?**
+1.  **Chronological Flexibility**: Adapt the tool for Neo-Sumerian, Old Assyrian, or Seleucid data.
+2.  **Regional Variations**: Account for the different *sila* sizes used in Mari vs. Nippur.
+3.  **Automatic Tools**: Your custom classes automatically inherit `.metrolist()`, and `.lookup()` capabilities.
+
+
+### **Extending Metrology: Limitations & Compatibility**
+
+While the arithmetic engine of MesoMath is highly flexible, the epigraphic layer is deeply rooted in specific historical corpora.
+
+> [\!CAUTION]
+> **Epigraphic Compatibility Notice**
+> The epigraphic properties (`.translit`, `.cuneiform`) and the [historical presets](https://www.google.com/search?q=%23proust-series) are strictly based on the metrology and habits of scribes from the **Old Babylonian period** (specifically the Nippur tradition).
+>
+> Using these properties with custom metrologies defined by the user will predictably lead to inconsistent results, as the sign-mapping logic expects the standard Old Babylonian ratios and unit names.
+
+#### **Why this limitation?**
+
+The conversion from a decimal value to a cuneiform string is not a simple character replacement. It involves a complex mapping of:
+
+1.  **Grapheme choice**: Different signs for the same value depending on whether it is a capacity, weight, or length.
+2.  **Standard Ratios**: The automatic breakdown of units (e.g., *gur* to *bariga*) assumes the $5:6:10:10$ ratio.
+
+If you define a custom class for a different historical period, we recommend relying on the `.prtf()` (pretty print) or `.sex()` (sexagesimal) methods for output, as these are purely mathematical and remain consistent across any user-defined system.
+
+---
 <center>
 
 <strong><big> 𒍻 jccsvq 𒁾𒊬  𒐞𒐞𒐞 𒐗 𒐏 𒐋 </big></strong>
 
 </center>
 
----
-
-## Appendices
 
 
-(catalog-of-metrological-expressions)=
-### Appendix B: Catalog of metrological expressions
+## **VI. Reference & Appendices**
 
-#### class: Blen  
+(systems-SGC)=
+### **Appendix A**: Use of Systems C, S and G in MesoMath Metrology
 
-    (1 u 7 dis) danna (9 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si
-    (1 u 7 dis) danna (9 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi
-    17 danna 9 us 35 ninda 11 kus 14 susi
-    17 1/6 danna 4 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si
-    17 danna 9 1/2 UŠ 5 5/6 ninda 1 1/3 kuš3 4 šu-si
-    17 danna 9 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi
-    (1 u 7 dis) 1/6 danna (4 dis) 1/2 UŠ (5 dis) 5/6 ninda (1 dis) 1/3 kuš3 (4 dis) šu-si
-    (1 u 7 dis) danna (9 dis) us (3 u 5 dis) ninda (1 u 1 dis) kus (1 u 4 dis) susi
-    (1 u 7 dis) 1/6 danna (4 dis) 1/2 us (5 dis) 5/6 ninda (1 dis) 1/3 kus (4 dis) susi
-    17 1/6 danna 4 1/2 us 5 5/6 ninda 1 1/3 kus 4 susi
+According to {ref}`Proust's: Numerical and Metrological Graphemes: From Cuneiform to Transliteration.  Table 9 <ref-Proust3>`
 
-#### class: Bsur  
+|Measurement| System | Unit   | Class            |
+|------------|--------|--------|------------------|
+| capacities | C      | gin2   | Bcap             |
+| capacities | C	  | sila3  | Bcap             |
+| capacities | C*     | ban2   | Bcap             |
+| capacities | C*     | bariga | Bcap             |
+| capacities | S      | gur	   | Bcap             |
+| weights    | C      | še     | Bwei             |
+| weights    | C	  | gin2   | Bwei             |
+| weights    | C	  | ma-na  | Bwei             |
+| weights    | S	  | gu2    | Bwei             |
+| surfaces   | C      | še     | Bsur, Bvol, Bbri |
+| surfaces   | C      | gin2   | Bsur, Bvol, Bbri |
+| surfaces   | C      | sar    | Bsur, Bvol, Bbri |
+| surfaces   | G      | GAN2   | Bsur, Bvol, Bbri |
+| lengths    | C      | šu-si  | Blen             |
+| lengths    | C      | kuš3   | Blen             |
+| lengths    | C      | ninda  | Blen             |
+| lengths    | C      | UŠ     | Blen             |
+| lengths    | C      | danna  | Blen             |
 
-    (1 ese 4 iku) GAN2 (3 u 9 dis) sar (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
-    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) gin (9 bur 2 iku) se
-    10 gan 39 sar 11 gin 164 se
-    10 GAN2 39 sar 11 5/6 gin2 14 še
-    10 gan 39 1/6 sar 1 5/6 gin 14 se
-    (1 ese 4 iku) gan (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin (1 u 4 dis) se
-    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) 5/6 gin (1 u 4 dis) se
-    10 gan 39 sar 11 5/6 gin 14 se
-    (1 ese 4 iku) GAN2 (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin2 (1 u 4 dis) še
-    10 GAN2 39 1/6 sar 1 5/6 gin2 14 še
-
-#### class: Bvol  
-
-    (1 ese 4 iku) GAN2 (3 u 9 dis) sar (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
-    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) gin (9 bur 2 iku) se
-    10 gan 39 sar 11 gin 164 se
-    10 GAN2 39 sar 11 5/6 gin2 14 še
-    10 gan 39 1/6 sar 1 5/6 gin 14 se
-    (1 ese 4 iku) gan (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin (1 u 4 dis) se
-    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) 5/6 gin (1 u 4 dis) se
-    10 gan 39 sar 11 5/6 gin 14 se
-    (1 ese 4 iku) GAN2 (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin2 (1 u 4 dis) še
-    10 GAN2 39 1/6 sar 1 5/6 gin2 14 še
-
-#### class: Bcap  
-
-    (3 as) gur (2 as) 1/6 bariga 1/2 ban (4 dis) 1/6 sila (1 dis) 5/6 gin (1 u 4 dis) se
-    (3 as) gur (2 as) bariga (1 dis) ban (9 dis) sila (1 u 1 dis) gin (2 ges 4 u 4 as) se
-    3 gur 2 1/6 bariga 1/2 ban2 4 1/6 sila3 1 5/6 gin2 14 še
-    (3 as) gur (2 as) bariga (1 dis) 1/2 ban2 (4 dis) sila3 (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
-    (3 as) gur (2 as) bariga (1 dis) 1/2 ban (4 dis) sila (1 u 1 dis) 5/6 gin (1 u 4 dis) se
-    3 gur 2 bariga 1 ban 9 sila 11 gin 164 se
-    3 gur 2 1/6 bariga 1/2 ban 4 1/6 sila 1 5/6 gin 14 se
-    3 gur 2 bariga 1 1/2 ban2 4 sila3 11 5/6 gin2 14 še
-    (3 as) gur (2 as) 1/6 bariga 1/2 ban2 (4 dis) 1/6 sila3 (1 dis) 5/6 gin2 (1 u 4 dis) še
-    3 gur 2 bariga 1 1/2 ban 4 sila 11 5/6 gin 14 se
-
-#### class: Bwei  
-
-    (1 u 7 as) gu (1 u 9 dis) mana (1 u 1 dis) gin (2 ges 4 u 4 as) se
-    17 1/6 gu 9 1/6 mana 1 5/6 gin 14 se
-    (1 u 7 as) 1/6 gu (9 dis) 1/6 mana (1 dis) 5/6 gin (1 u 4 dis) se
-    17 gu 19 mana 11 gin 164 se
-    (1 u 7 as) gu (1 u 9 dis) mana (1 u 1 dis) 5/6 gin (1 u 4 dis) se
-    (1 u 7 as) gu2 (1 u 9 dis) ma-na (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
-    17 gu2 19 ma-na 11 5/6 gin2 14 še
-    17 gu 19 mana 11 5/6 gin 14 se
-    (1 u 7 as) 1/6 gu2 (9 dis) 1/6 ma-na (1 dis) 5/6 gin2 (1 u 4 dis) še
-    17 1/6 gu2 9 1/6 ma-na 1 5/6 gin2 14 še
-
-#### class: Bbri  
-
-    (1 ese 4 iku) GAN2 (3 u 9 dis) sar (1 u 1 dis) 5/6 gin2 (1 u 4 dis) še
-    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) gin (9 bur 2 iku) se
-    10 gan 39 sar 11 gin 164 se
-    10 GAN2 39 sar 11 5/6 gin2 14 še
-    10 gan 39 1/6 sar 1 5/6 gin 14 se
-    (1 ese 4 iku) gan (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin (1 u 4 dis) se
-    (1 ese 4 iku) gan (3 u 9 dis) sar (1 u 1 dis) 5/6 gin (1 u 4 dis) se
-    10 gan 39 sar 11 5/6 gin 14 se
-    (1 ese 4 iku) GAN2 (3 u 9 dis) 1/6 sar (1 dis) 5/6 gin2 (1 u 4 dis) še
-    10 GAN2 39 1/6 sar 1 5/6 gin2 14 še
-
-#### class: BsyS  
-
-    51 5/6 šar2-gal 1/2 šaru 2 1/2 šar2 1/2 gešu 2/3 geš 4 aš
-    51 sargal 5 saru 7 sar 3 gesu 5 ges 4 u 4 as
-    (5 u 1 dis) 5/6 šar2-gal 1/2 šaru (2 dis) 1/2 šar2 1/2 gešu 2/3 geš (4 dis) aš
-    51 5/6 sargal 1/2 saru 2 1/2 sar 1/2 gesu 2/3 ges 4 as
-
-#### class: BsyG  
-
-    (17 u 3 dis) šar2-gal (1 dis) šaru (1 dis) 5/6 šar2 1/2 buru (4 dis) bur3 1/3 eše3
-    173 šar2-gal 1 šaru 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
-    173 1/6 sargal 1 5/6 sar 1/2 buru 4 bur 1/3 ese
-    (17 u 3 dis) 1/6 šar2-gal (1 dis) 5/6 šar2 1/2 buru (4 dis) bur3 1/3 eše3
-    (17 u 3 dis) sargal (1 dis) saru (1 dis) 5/6 sar 1/2 buru (4 dis) bur 1/3 ese
-    2:53 sargal 1 saru 1 sar 5 buru 9 bur 2 iku
-    (17 u 3 dis) 1/6 sargal (1 dis) 5/6 sar 1/2 buru (4 dis) bur 1/3 ese
-    173 sargal 1 saru 1 sar 5 buru 9 bur 2 iku
-    173 1/6 šar2-gal 1 5/6 šar2 1/2 buru 4 bur3 1/3 eše3
-    173 sargal 1 saru 1 5/6 sar 1/2 buru 4 bur 1/3 ese
-
-(commodities-list)=
-### Appendix C: List of Commodities
-
-|Category|Commodity|Glyphs|Comment|
-|---|---|---|---|
-| Metals & Value|ku_babbar|𒆬𒌓| Silver (kù-babbar)|
-||urudu|𒍏| Copper (urudu)|
-||ku3_sig17|𒆬𒄀| Gold (kù-sig17)|
-||    |||
-| Crops & Liquids|se|𒊺| Barley (še)|
-||ziz2|𒀾| Emmer wheat (zíz)|
-||i3_gis|𒉌𒄑| Sesame oil (ì-giš)|
-||kas|𒁉| Beer (kaš / bi) - Standard vessel sign|
-||    |||
-| Land & Livestock|a_sa|𒀀𒊮| Field (a-šà)|
-||kiri6|𒊬| Orchard/Garden (kiri6)|
-||gu4|𒄞| Ox (gu4)|
-||udu|𒇻| Sheep (udu)|
-||    |||
-| Textiles & Fibers|siki|𒋠| Wool (siki)|
-||gada|𒃰| Linen (gada)|
-||siki_gi|𒋠𒄀| Native/Standard wool (siki-gi)|
-||    |||
-| Fruits & Provisions|zu2_lum|𒍪𒈝| Dates (zú-lum)|
-||ges_tin|𒃾| Wine (geštin)|
-||ga_ar3|𒂵𒄯| Cheese/Curd (ga-àr)|
-||i3_nun|𒉌𒉣| Ghee/Butter (ì-nun)|
-||    |||
-| Building & Resources|esir|𒀀𒂍| Bitumen (esir2 / A.E2) - The most standard form|
-||ges|𒄑| Wood/Beam (geš)|
-||sig4|𒋞| Brick (sig4)|
-||na4|𒉌| Stone (na4)|
-||    |||
-| Personnel (Contextual)|lu2|𒇽| Man/Worker (lú)|
-||geme2|𒊩| Female worker (gemé)|
-||er3|𒀴| Slave/Servant (er3)|
-||    |||
-| Mathematical States|igi_nu|𒅆𒉡| Reciprocal not found (igi-nu)|
-||igi_nu_du8|𒅆𒉡𒂃| Reciprocal does not open (igi-nu-du8)|
-
-
-### Appendix D: Custom Style Sheet (CSS)
-
-
-```css
-/* 1. FONT LOADING
-   Import Noto Sans Cuneiform from Google Fonts for cross-platform glyph support.
-*/
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap');
-
-/* 2. GLOBAL TYPOGRAPHY 
-   Ensures Cuneiform support is available globally across headers and body text.
-*/
-body, h1, h2, h3, p {
-    font-family: 'Helvetica', 'Arial', 'Noto Sans Cuneiform', sans-serif !important;
-}
-
-/* 3. CODE & TERMINAL RENDERING
-   Optimizes how cuneiform signs behave inside code blocks and REPL outputs.
-*/
-/* 1. We clean the margin of the first line in the main container */
-.highlight pre {
-    text-indent: 0 !important;
-    padding-left: 10px !important;
-    display: block !important;
-}
-
-/* 2. CRITICAL RULE: We only apply inline-block if there is cuneiform content. 
-    For the rest of the text (like "-->"), we use 'inline' so that there are no 
-    phantom shifts. */
-code span,
-pre span {
-    display: inline !important; /* Volvemos al estándar por defecto */
-    min-width: auto !important;
-}
+>**(*)**: Note These are not in the reference.
 
 
 
-/* 4. THE CLAY TABLET CONTAINER 
-   Visual simulation of a physical Mesopotamian artifact.
-*/
-div.tablet {
-    /* Fine-grain clay texture using radial and linear gradients */
-    background-color: #e2c08d !important;
-    background-image:
-        repeating-radial-gradient(circle at 0 0, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 1px, transparent 1px, transparent 10px),
-        linear-gradient(135deg, #ebcd9f 0%, #d4ae7b 100%) !important;
-    
-    border: 1px solid #c59d6a !important;
-    border-radius: 16px !important;
-    padding: 25px !important;
-    margin: 20px 0;
-    
-    box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3) !important;
-    display: inline-block;
-    
-    /* Physical object "tilt" for realism */
-    transform: rotate(-0.5deg);
-}
+### **Appendix B: The Metrological Catalog**
 
-/* Tablet Caption styling - Forced for both Light/Dark modes */
-div.tablet caption {
-    font-family: 'Helvetica', 'Arial', sans-serif !important;
-    font-weight: bold !important;
-    font-variant: small-caps !important;
-    color: #5d4037 !important; /* Fixed dark brown, even in Dark Mode */
-    margin-bottom: 10px !important;
-    caption-side: top !important;
-    text-align: left !important;
-    background: transparent !important; /* Avoids theme background blocks */
-}
+This appendix provides a complete reference of the units and conversion coefficients used in **MesoMath v2.0.0**. The systems follow the standard Old Babylonian (Nippur) tradition.
 
-/* 5. TABLET CONTENT & INCISED EFFECT
-   Overrides standard theme styles to create the "incised" look on clay.
-*/
-div.tablet table,
-div.tablet tr,
-div.tablet th,
-div.tablet td {
-    background: transparent !important;
-    border: none !important;
-    color: #55361b !important; /* Dark brown "incised" color */
-    font-family: 'Noto Sans Cuneiform', serif !important;
-    font-size: 120% !important;
-    font-weight: 900 !important;
-    line-height: 0.85 !important; /* Optimized for glyph density */
-    text-align: left;
-}
+#### **1. Overview of Metrological Chains**
 
-/* Sculptural depth effect using dual-tone shadows (light/dark) */
-div.tablet td,
-div.tablet th {
-    padding: 10px 15px !important;
-    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3),
-                -1px -1px 0px rgba(0, 0, 0, 0.2) !important;
-}
+The following diagrams illustrate the ratios between units. Each arrow `╼ n ╾` indicates how many of the smaller unit (right) are contained in the larger unit (left).
 
-/* Subtle header underline representing a scribal ruling */
-div.tablet th {
-    border-bottom: 2px solid rgba(62, 39, 19, 0.3) !important;
-    text-transform: uppercase;
-    font-size: 0.8em !important;
-    letter-spacing: 1px;
-}
+##### **Capacity (Bcap)**
+> Used for liquids and dry grains. Base unit: **sila3**.
+```text
+  gur  ╼5╾  bariga  ╼6╾  ban2  ╼10╾  sila3  ╼60╾  gin2  ╼180╾  še
+  𒄥   ╼5╾    𒉿    ╼6╾   𒑏    ╼10╾    𒋡    ╼60╾   𒂆    ╼180╾  𒊺
+```
 
-/* 6. COMPATIBILITY & OVERRIDES
-   Cleans up theme-specific artifacts from Sphinx or ReadTheDocs.
-*/
-div.tablet .pst-scrollable-table-container {
-    background-color: transparent !important;
-    border: none !important;
-}
+##### **Weight (Bwei)**
+> Used for metals (silver, copper) and wool. Base unit: **ma-na**.
+```text
+   gu2   ╼60╾   ma-na   ╼60╾   gin2   ╼180╾   še
+   𒄘    ╼60╾   𒈠 𒈾   ╼60╾   𒂆    ╼180╾   𒊺
+```
 
-div.tablet table {
-    margin: 10px auto !important;
-    border-collapse: separate !important;
-    border-spacing: 0 5px !important;
-}
+##### **Surface (Bsur)**
+> Used for land management. Base unit: **sar**.
+```text
+  GAN2   ╼100╾   sar   ╼60╾   gin2   ╼180╾   še
+   𒃷    ╼100╾   𒊬   ╼60╾    𒂆    ╼180╾   𒊺
+```
 
-/* Compact version for smaller side-tables */
-.tablet.mini table,
-.tablet.mini td,
-.tablet.mini th {
-    font-size: 90% !important;
-}
-
+##### **Length (Blen)**
+> Used for architecture and surveying. Base unit: **ninda**.
+```text
+ danna  ╼30╾  UŠ  ╼60╾  ninda  ╼12╾  kuš3  ╼30╾  šu-si
+ 𒆜 𒁍   ╼30╾  𒍑  ╼60╾    𒃻    ╼12╾   𒌑   ╼30╾  𒋗 𒋛
 ```
 
 
 
-### Test Details
+---
 
-<details>
-<summary>📋 Capacities (Proust §8.1)</summary>
+#### **2. Technical Coefficients and SI Equivalents**
 
-| §8.1 Capacities (še) | MesoMath | MesoMath (Cun.) |
-|---|---|---|
-| 1(diš) gin2 še | (1 diš) gin2 se | 𒀸 𒂆 𒊺 |
-|  | (1 diš) gin2 (3 u) še | 𒀸 𒂆 𒌍 𒊺 |
-| 1(diš) 1/3 gin2 | (1 diš) 1/3 gin2 | 𒀸 𒑚 𒂆 |
-| 1(diš) 1/2 gin2 | (1 diš) 1/2 gin2 | 𒀸 𒈦 𒂆 |
-| 1(diš) 2/3 gin2 | (1 diš) 2/3 gin2 | 𒀸 𒑛 𒂆 |
-| 1(diš) 5/6 gin2 | (1 diš) 5/6 gin2 | 𒀸 𒑜 𒂆 |
-| 2(diš) gin2 | (2 diš) gin2 | 𒐀 𒂆 |
-|  | (2 diš) gin2 (3 u) še | 𒐀 𒂆 𒌍 𒊺 |
-| 2(diš) 1/3 gin2 | (2 diš) 1/3 gin2 | 𒐀 𒑚 𒂆 |
-| 2(diš) 1/2 gin2 | (2 diš) 1/2 gin2 | 𒐀 𒈦 𒂆 |
-| 2(diš) 2/3 gin2 | (2 diš) 2/3 gin2 | 𒐀 𒑛 𒂆 |
-| 2(diš) 5/6 gin2 | (2 diš) 5/6 gin2 | 𒐀 𒑜 𒂆 |
-| 3(diš) gin2 | (3 diš) gin2 | 𒐁 𒂆 |
-| 4(diš) gin2 | (4 diš) gin2 se | 𒐂 𒂆 𒊺 |
-| 5(diš) gin2 | (5 diš) gin2 | 𒐃 𒂆 |
-| 6(diš) gin2 | (6 diš) gin2 | 𒐄 𒂆 |
-| 7(diš) gin2 | (7 diš) gin2 | 𒐅 𒂆 |
-| 8(diš) gin2 | (8 diš) gin2 | 𒐆 𒂆 |
-| 9(diš) gin2 | (9 diš) gin2 | 𒐇 𒂆 |
-| 1(u) gin2 | (1 u) gin2 | 𒌋 𒂆 |
-| 1(u) 1(diš) gin2 | (1 u 1 diš) gin2 | 𒌋 𒀸 𒂆 |
-| 1(u) 2(diš) gin2 | (1 u 2 diš) gin2 | 𒌋 𒐀 𒂆 |
-| 1(u) 3(diš) gin2 | (1 u 3 diš) gin2 | 𒌋 𒐁 𒂆 |
-| 1(u) 4(diš) gin2 | (1 u 4 diš) gin2 | 𒌋 𒐂 𒂆 |
-| 1(u) 5(diš) gin2 | (1 u 5 diš) gin2 | 𒌋 𒐃 𒂆 |
-| 1(u) 6(diš) gin2 | (1 u 6 diš) gin2 | 𒌋 𒐄 𒂆 |
-| 1(u) 7(diš) gin2 | (1 u 7 diš) gin2 | 𒌋 𒐅 𒂆 |
-| 1(u) 8(diš) gin2 | (1 u 8 diš) gin2 | 𒌋 𒐆 𒂆 |
-| 1(u) 9(diš) gin2 | (1 u 9 diš) gin2 | 𒌋 𒐇 𒂆 |
-| 1/3 sila3 | 1/3 sila3 | 𒑚 𒋡 |
-| 1/2 sila3 | 1/2 sila3 se | 𒈦 𒋡 𒊺 |
-| 2/3 sila3 | 2/3 sila3 | 𒑛 𒋡 |
-| 5/6 sila3 | 5/6 sila3 | 𒑜 𒋡 |
-| 1(diš) sila3 | (1 diš) sila3 | 𒀸 𒋡 |
-|  | (1 diš) sila3 (1 u) gin2 | 𒀸 𒋡 𒌋 𒂆 |
-| 1(diš) 1/3 sila3 | (1 diš) 1/3 sila3 | 𒀸 𒑚 𒋡 |
-| 1(diš) 1/2 sila3 | (1 diš) 1/2 sila3 | 𒀸 𒈦 𒋡 |
-| 1(diš) 2/3 sila3 | (1 diš) 2/3 sila3 | 𒀸 𒑛 𒋡 |
-| 1(diš) 5/6 sila3 | (1 diš) 5/6 sila3 | 𒀸 𒑜 𒋡 |
-| 2(diš) sila3 | (2 diš) sila3 | 𒐀 𒋡 |
-| 3(diš) sila3 | (3 diš) sila3 se | 𒐁 𒋡 𒊺 |
-| 4(diš) sila3 | (4 diš) sila3 | 𒐂 𒋡 |
-| 5(diš) sila3 | 1/2 ban2 | 𒈦 𒑏 |
-| 6(diš) sila3 | 1/2 ban2 (1 diš) sila3 | 𒈦 𒑏 𒀸 𒋡 |
-| 7(diš) sila3 | 1/2 ban2 (2 diš) sila3 | 𒈦 𒑏 𒐀 𒋡 |
-| 8(diš) sila3 | 1/2 ban2 (3 diš) sila3 | 𒈦 𒑏 𒐁 𒋡 |
-| 9(diš) sila3 | 1/2 ban2 (4 diš) sila3 | 𒈦 𒑏 𒐂 𒋡 |
-| 1(ban2) še | (1 diš) ban2 | 𒀸 𒑏 |
-| 1(ban2) 1(diš) sila3 | (1 diš) ban2 (1 diš) sila3 | 𒀸 𒑏 𒀸 𒋡 |
-| 1(ban2) 2(diš) sila3 | (1 diš) ban2 (2 diš) sila3 | 𒀸 𒑏 𒐀 𒋡 |
-| 1(ban2) 3(diš) sila3 | (1 diš) ban2 (3 diš) sila3 | 𒀸 𒑏 𒐁 𒋡 |
-| 1(ban2) 4(diš) sila3 | (1 diš) ban2 (4 diš) sila3 | 𒀸 𒑏 𒐂 𒋡 |
-| 1(ban2) 5(diš) sila3 | (1 diš) 1/2 ban2 | 𒀸 𒈦 𒑏 |
-| 1(ban2) 6(diš) sila3 | (1 diš) 1/2 ban2 (1 diš) sila3 | 𒀸 𒈦 𒑏 𒀸 𒋡 |
-| 1(ban2) 7(diš) sila3 | (1 diš) 1/2 ban2 (2 diš) sila3 | 𒀸 𒈦 𒑏 𒐀 𒋡 |
-| 1(ban2) 8(diš) sila3 | (1 diš) 1/2 ban2 (3 diš) sila3 | 𒀸 𒈦 𒑏 𒐁 𒋡 |
-| 1(ban2) 9(diš) sila3 | (1 diš) 1/2 ban2 (4 diš) sila3 | 𒀸 𒈦 𒑏 𒐂 𒋡 |
-| 2(ban2) še | 1/3 bariga | 𒑚 𒉿 |
-| 2(ban2) 5(diš) sila3 | 1/3 bariga 1/2 ban2 se | 𒑚 𒉿 𒈦 𒑏 𒊺 |
-| 3(ban2) še | 1/2 bariga | 𒈦 𒉿 |
-| 3(ban2) 5(diš) sila3 | 1/2 bariga 1/2 ban2 | 𒈦 𒉿 𒈦 𒑏 |
-| 4(ban2) še | 2/3 bariga | 𒑛 𒉿 |
-| 4(ban2) 5(diš) sila3 | 2/3 bariga 1/2 ban2 | 𒑛 𒉿 𒈦 𒑏 |
-| 5(ban2) še | 5/6 bariga | 𒑜 𒉿 |
-| 5(ban2) 5(diš) sila3 | 5/6 bariga 1/2 ban2 | 𒑜 𒉿 𒈦 𒑏 |
-| 1(barig) še | (1 aš) bariga | 𒀸 𒉿 |
-| 1(barig) 1(ban2) še | (1 aš) bariga (1 diš) ban2 se | 𒀸 𒉿 𒀸 𒑏 𒊺 |
-| 1(barig) 2(ban2) še | (1 aš) 1/3 bariga | 𒀸 𒑚 𒉿 |
-| 1(barig) 3(ban2) še | (1 aš) 1/2 bariga | 𒀸 𒈦 𒉿 |
-| 1(barig) 4(ban2) še | (1 aš) 2/3 bariga | 𒀸 𒑛 𒉿 |
-| 1(barig) 5(ban2) še | (1 aš) 5/6 bariga | 𒀸 𒑜 𒉿 |
-| 2(barig) še | (2 aš) bariga | 𒐀 𒉿 |
-| 2(barig) 1(ban2) še | (2 aš) bariga (1 diš) ban2 | 𒐀 𒉿 𒀸 𒑏 |
-| 2(barig) 2(ban2) še | (2 aš) 1/3 bariga | 𒐀 𒑚 𒉿 |
-| 2(barig) 3(ban2) še | (2 aš) 1/2 bariga | 𒐀 𒈦 𒉿 |
-| 2(barig) 4(ban2) še | (2 aš) 2/3 bariga | 𒐀 𒑛 𒉿 |
-| 2(barig) 5(ban2) še | (2 aš) 5/6 bariga | 𒐀 𒑜 𒉿 |
-| 3(barig) še | (3 aš) bariga | 𒐁 𒉿 |
-| 3(barig) 1(ban2) še | (3 aš) bariga (1 diš) ban2 | 𒐁 𒉿 𒀸 𒑏 |
-| 3(barig) 2(ban2) še | (3 aš) 1/3 bariga | 𒐁 𒑚 𒉿 |
-| 3(barig) 3(ban2) še | (3 aš) 1/2 bariga | 𒐁 𒈦 𒉿 |
-| 3(barig) 4(ban2) še | (3 aš) 2/3 bariga | 𒐁 𒑛 𒉿 |
-| 3(barig) 5(ban2) še | (3 aš) 5/6 bariga | 𒐁 𒑜 𒉿 |
-| 4(barig) še | (4 aš) bariga | 𒐂 𒉿 |
-| 4(barig) 1(ban2) še | (4 aš) bariga (1 diš) ban2 | 𒐂 𒉿 𒀸 𒑏 |
-| 4(barig) 2(ban2) še | (4 aš) 1/3 bariga | 𒐂 𒑚 𒉿 |
-| 4(barig) 3(ban2) še | (4 aš) 1/2 bariga | 𒐂 𒈦 𒉿 |
-| 4(barig) 4(ban2) še | (4 aš) 2/3 bariga | 𒐂 𒑛 𒉿 |
-| 4(barig) 5(ban2) še | (4 aš) 5/6 bariga | 𒐂 𒑜 𒉿 |
-| 1(aš) gur | (1 aš) gur | 𒀸 𒄥 |
-| 1(aš) 1(barig) gur | (1 aš) gur (1 aš) bariga se | 𒀸 𒄥 𒀸 𒉿 𒊺 |
-| 1(aš) 2(barig) gur | (1 aš) gur (2 aš) bariga | 𒀸 𒄥 𒐀 𒉿 |
-| 1(aš) 3(barig) gur | (1 aš) gur (3 aš) bariga | 𒀸 𒄥 𒐁 𒉿 |
-| 1(aš) 4(barig) gur | (1 aš) gur (4 aš) bariga | 𒀸 𒄥 𒐂 𒉿 |
-| 2(aš) gur | (2 aš) gur | 𒐀 𒄥 |
-| 3(aš) gur | (3 aš) gur se | 𒐁 𒄥 𒊺 |
-| 4(aš) gur | (4 aš) gur | 𒐂 𒄥 |
-| 5(aš) gur | (5 aš) gur | 𒐃 𒄥 |
-| 6(aš) gur | (6 aš) gur | 𒐄 𒄥 |
-| 7(diš) gur | (7 aš) gur | 𒐅 𒄥 |
-| 8(aš) gur | (8 aš) gur | 𒐆 𒄥 |
-| 9(aš) gur | (9 aš) gur | 𒐇 𒄥 |
-| 1(u) gur | (1 u) gur | 𒌋 𒄥 |
-| 1(u) 1(aš) gur | (1 u 1 aš) gur | 𒌋 𒀸 𒄥 |
-| 1(u) 2(aš) gur | (1 u 2 aš) gur | 𒌋 𒐀 𒄥 |
-| 1(u) 3(aš) gur | (1 u 3 aš) gur | 𒌋 𒐁 𒄥 |
-| 1(u) 4(aš) gur | (1 u 4 aš) gur | 𒌋 𒐂 𒄥 |
-| 1(u) 5(aš) gur | (1 u 5 aš) gur | 𒌋 𒐃 𒄥 |
-| 1(u) 6(aš) gur | (1 u 6 aš) gur | 𒌋 𒐄 𒄥 |
-| 1(u) 7(diš) gur | (1 u 7 aš) gur | 𒌋 𒐅 𒄥 |
-| 1(u) 8(aš) gur | (1 u 8 aš) gur | 𒌋 𒐆 𒄥 |
-| 1(u) 9(aš) gur | (1 u 9 aš) gur | 𒌋 𒐇 𒄥 |
-| 2(u) gur | (2 u) gur | 𒎙 𒄥 |
-| 3(u) gur | (3 u) gur se | 𒌍 𒄥 𒊺 |
-| 4(u) gur | (4 u) gur | 𒐏 𒄥 |
-| 5(u) gur | (5 u) gur | 𒐐 𒄥 |
-| 1(geš2) gur | (1 geš) gur | 𒐕 𒄥 |
-| 1(geš2) 1(u) gur | (1 geš 1 u) gur | 𒐕 𒌋 𒄥 |
-| 1(geš2) 2(u) gur | (1 geš 2 u) gur | 𒐕 𒎙 𒄥 |
-| 1(geš2) 3(u) gur | (1 geš 3 u) gur | 𒐕 𒌍 𒄥 |
-| 1(geš2) 4(u) gur | (1 geš 4 u) gur | 𒐕 𒐏 𒄥 |
-| 1(geš2) 5(u) gur | (1 geš 5 u) gur | 𒐕 𒐐 𒄥 |
-| 2(geš2) gur | (2 geš) gur | 𒐖 𒄥 |
-| 3(geš2) gur | (3 geš) gur se | 𒐗 𒄥 𒊺 |
-| 4(geš2) gur | (4 geš) gur | 𒐘 𒄥 |
-| 5(geš2) gur | (5 geš) gur | 𒐙 𒄥 |
-| 6(geš2) gur | (6 geš) gur | 𒐚 𒄥 |
-| 7(geš2) gur | (7 geš) gur | 𒐛 𒄥 |
-| 8(geš2) gur | (8 geš) gur | 𒐜 𒄥 |
-| 9(geš2) gur | (9 geš) gur | 𒐝 𒄥 |
-| 1(geš’u) gur | (1 geš'u) gur | 𒐞 𒄥 |
-| 1(geš’u) 1(geš2) gur | (1 geš'u 1 geš) gur | 𒐞 𒐕 𒄥 |
-| 1(geš’u) 2(geš2) gur | (1 geš'u 2 geš) gur | 𒐞 𒐖 𒄥 |
-| 1(geš’u) 3(geš2) gur | (1 geš'u 3 geš) gur | 𒐞 𒐗 𒄥 |
-| 1(geš’u) 4(geš2) gur | (1 geš'u 4 geš) gur | 𒐞 𒐘 𒄥 |
-| 1(geš’u) 5(geš2) gur | (1 geš'u 5 geš) gur | 𒐞 𒐙 𒄥 |
-| 1(geš’u) 6(geš2) gur | (1 geš'u 6 geš) gur | 𒐞 𒐚 𒄥 |
-| 1(geš’u) 7(geš2) gur | (1 geš'u 7 geš) gur | 𒐞 𒐛 𒄥 |
-| 1(geš’u) 8(geš2) gur | (1 geš'u 8 geš) gur | 𒐞 𒐜 𒄥 |
-| 1(geš’u) 9(geš2) gur | (1 geš'u 9 geš) gur | 𒐞 𒐝 𒄥 |
-| 2(geš’u) gur | (2 geš'u) gur | 𒐟 𒄥 |
-| 3(geš’u) gur | (3 geš'u) gur se | 𒐠 𒄥 𒊺 |
-| 4(geš’u) gur | (4 geš'u) gur | 𒐡 𒄥 |
-| 5(geš’u) gur | (5 geš'u) gur | 𒐢 𒄥 |
-| 1(šar2) gur | (1 šar2) gur | 𒊹 𒄥 |
-| 1(šar2) 1(geš’u) gur | (1 šar2 1 geš'u) gur | 𒊹 𒐞 𒄥 |
-| 1(šar2) 2(geš’u) gur | (1 šar2 2 geš'u) gur | 𒊹 𒐟 𒄥 |
-| 1(šar2) 3(geš’u) gur | (1 šar2 3 geš'u) gur | 𒊹 𒐠 𒄥 |
-| 1(šar2) 4(geš’u) gur | (1 šar2 4 geš'u) gur | 𒊹 𒐡 𒄥 |
-| 1(šar2) 5(geš’u) gur | (1 šar2 5 geš'u) gur | 𒊹 𒐢 𒄥 |
-| 2(šar2) gur | (2 šar2) gur | 𒐣 𒄥 |
-| 3(šar2) gur | (3 šar2) gur se | 𒐤 𒄥 𒊺 |
-| 4(šar2) gur | (4 šar2) gur | 𒐦 𒄥 |
-| 5(šar2) gur | (5 šar2) gur | 𒐧 𒄥 |
-| 6(šar2) gur | (6 šar2) gur | 𒐨 𒄥 |
-| 7(šar2) gur | (7 šar2) gur | 𒐩 𒄥 |
-| 8(šar2) gur | (8 šar2) gur | 𒐪 𒄥 |
-| 9(šar2) gur | (9 šar2) gur | 𒐫 𒄥 |
-| 1(šar’u) gur | (1 šar'u) gur | 𒐬 𒄥 |
-| 1(šar’u) 1(šar2) gur | (1 šar'u 1 šar2) gur | 𒐬 𒊹 𒄥 |
-| 1(šar’u) 2(šar2) gur | (1 šar'u 2 šar2) gur | 𒐬 𒐣 𒄥 |
-| 1(šar’u) 3(šar2) gur | (1 šar'u 3 šar2) gur | 𒐬 𒐤 𒄥 |
-| 1(šar’u) 4(šar2) gur | (1 šar'u 4 šar2) gur | 𒐬 𒐦 𒄥 |
-| 1(šar’u) 5(šar2) gur | (1 šar'u 5 šar2) gur | 𒐬 𒐧 𒄥 |
-| 1(šar’u) 6(šar2) gur | (1 šar'u 6 šar2) gur | 𒐬 𒐨 𒄥 |
-| 1(šar’u) 7(šar2) gur | (1 šar'u 7 šar2) gur | 𒐬 𒐩 𒄥 |
-| 1(šar’u) 8(šar2) gur | (1 šar'u 8 šar2) gur | 𒐬 𒐪 𒄥 |
-| 1(šar’u) 9(šar2) gur | (1 šar'u 9 šar2) gur | 𒐬 𒐫 𒄥 |
-| 2(šar’u) gur | (2 šar'u) gur | 𒐭 𒄥 |
-| 3(šar’u) gur | (3 šar'u) gur se | 𒐮 𒄥 𒊺 |
-| 4(šar’u) gur | (4 šar'u) gur | 𒐰 𒄥 |
-| 5(šar’u) gur | (5 šar'u) gur | 𒐱 𒄥 |
-| 1(šargal)gal gur | (1 šar2-gal) gur | 𒐲 𒄥 |
-| 1(šargal)gal šu-nu-tag gur |  |  |
+Para una consulta rápida, esta tabla resume los factores de conversión internos (`ufact`) y los valores aproximados en el Sistema Internacional (`siv`).
+
+| Category | Base Unit | Smallest Unit | Internal Ratios (`ufact`) | SI Equivalent (`siv`) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Capacity** | sila3 | še | `[180, 60, 10, 6, 5]` | 1 sila3 ≈ 1.0 Litre |
+| **Weight** | ma-na | še | `[180, 60, 60]` | 1 ma-na ≈ 0.5 kg |
+| **Surface** | sar | še | `[180, 60, 100]` | 1 sar ≈ 36.0 m² |
+| **Length** | ninda | šu-si | `[30, 12, 60, 30]` | 1 ninda ≈ 6.0 m |
+
+---
 
 
-</details>
+#### **3. Numerical and Specialized Systems (NPVS)**
 
-<details>
+Beyond standard measurements, MesoMath implements the discrete counting systems and the specialized land-area system (System G). These follow the Non-Positional Value System (NPVS) logic used for administrative and historical records.
 
-<summary>📋 Weights (Proust §8.1)</summary>
+##### **System S (BsyS): Sexagesimal Counting**
+> Used for counting discrete objects (people, animals, objects). Base unit: **aš**.
+```text
+ šar2-gal  ╼6╾  šar'u  ╼10╾  šar2  ╼6╾  geš'u  ╼10╾  geš  ╼6╾  u  ╼10╾  aš
+    𒊹      ╼6╾    𒐬    ╼10╾   𒊬    ╼6╾    𒐞    ╼10╾   𒐕   ╼6╾  𒌋  ╼10╾  𒀸
+```
 
-| §8.2. Weights (ku3-babbar) | MesoMath | cd |
-|---|---|---|
-| 1/2 še ku3-babbar |  |  |
-| 1(diš) še | (1 diš) še ku_babbar | 𒀸 𒊺 𒆬 𒌓 |
-| 1(diš) 1/2 še |  |  |
-| 2(diš) še | (2 diš) še | 𒐀 𒊺 |
-| 2(diš) 1/2 še |  |  |
-| 3(diš) še | (3 diš) še | 𒐁 𒊺 |
-| 4(diš) še | (4 diš) še | 𒐂 𒊺 |
-| 5(diš) še | (5 diš) še | 𒐃 𒊺 |
-| 6(diš) še | (6 diš) še | 𒐄 𒊺 |
-| 7(diš) še | (7 diš) še | 𒐅 𒊺 |
-| 8(diš) še | (8 diš) še | 𒐆 𒊺 |
-| 9(diš) še | (9 diš) še | 𒐇 𒊺 |
-| 1(u) še | (1 u) še | 𒌋 𒊺 |
-| 1(u) 1(diš) še | (1 u 1 diš) še | 𒌋 𒀸 𒊺 |
-| 1(u) 2(diš) še | (1 u 2 diš) še | 𒌋 𒐀 𒊺 |
-| 1(u) 3(diš) še | (1 u 3 diš) še | 𒌋 𒐁 𒊺 |
-| 1(u) 4(diš) še | (1 u 4 diš) še | 𒌋 𒐂 𒊺 |
-| 1(u) 5(diš) še | (1 u 5 diš) še | 𒌋 𒐃 𒊺 |
-| 1(u) 6(diš) še | (1 u 6 diš) še | 𒌋 𒐄 𒊺 |
-| 1(u) 7(diš) še | (1 u 7 diš) še | 𒌋 𒐅 𒊺 |
-| 1(u) 8(diš) še | (1 u 8 diš) še | 𒌋 𒐆 𒊺 |
-| 1(u) 9(diš) še | (1 u 9 diš) še | 𒌋 𒐇 𒊺 |
-| 2(u) še | (2 u) še | 𒎙 𒊺 |
-| 2(u) 1(diš) še | (2 u 1 diš) še | 𒎙 𒀸 𒊺 |
-| 2(u) 2(diš) še | (2 u 2 diš) še | 𒎙 𒐀 𒊺 |
-| 2(u) 3(diš) še | (2 u 3 diš) še | 𒎙 𒐁 𒊺 |
-| 2(u) 4(diš) še | (2 u 4 diš) še | 𒎙 𒐂 𒊺 |
-| 2(u) 5(diš) še | (2 u 5 diš) še | 𒎙 𒐃 𒊺 |
-| 2(u) 6(diš) še | (2 u 6 diš) še | 𒎙 𒐄 𒊺 |
-| 2(u) 7(diš) še | (2 u 7 diš) še | 𒎙 𒐅 𒊺 |
-| 2(u) 8(diš) še | (2 u 8 diš) še | 𒎙 𒐆 𒊺 |
-| 2(u) 9(diš) še | (2 u 9 diš) še | 𒎙 𒐇 𒊺 |
-| igi 6(diš)-gal2 gin2 | 1/6 gin2 | 𒑡 𒂆 |
-| igi 6(diš)-gal2 gin2 1(u) še | 1/6 gin2 (1 u) še ku_babbar | 𒑡 𒂆 𒌋 𒊺 𒆬 𒌓 |
-| igi 4(diš)-gal2 gin2 | 1/6 gin2 (1 u 5 diš) še ku_babbar | 𒑡 𒂆 𒌋 𒐃 𒊺 𒆬 𒌓 |
-| igi 4(diš)-gal2 gin2 5(diš) še | 1/6 gin2 (2 u) še ku_babbar | 𒑡 𒂆 𒎙 𒊺 𒆬 𒌓 |
-| 1/3 gin2 | 1/3 gin2 ku_babbar | 𒑚 𒂆 𒆬 𒌓 |
-| 1/2 gin2 | 1/2 gin2 ku_babbar | 𒈦 𒂆 𒆬 𒌓 |
-| 1/2 gin2 1(u) še | 1/2 gin2 (1 u) še ku_babbar | 𒈦 𒂆 𒌋 𒊺 𒆬 𒌓 |
-| 1/2 gin2 1(u) 5(diš) še | 1/2 gin2 (1 u 5 diš) še ku_babbar | 𒈦 𒂆 𒌋 𒐃 𒊺 𒆬 𒌓 |
-|  | 1/2 gin2 (2 u) še ku_babbar | 𒈦 𒂆 𒎙 𒊺 𒆬 𒌓 |
-| 1/2 gin2 2(u) 5(diš) še | 1/2 gin2 (2 u 5 diš) še | 𒈦 𒂆 𒎙 𒐃 𒊺 |
-| 2/3 gin2 | 2/3 gin2 ku_babbar | 𒑛 𒂆 𒆬 𒌓 |
-| 2/3 gin2 1(u) še | 2/3 gin2 (1 u) še ku_babbar | 𒑛 𒂆 𒌋 𒊺 𒆬 𒌓 |
-| 2/3 gin2 1(u) 5(diš) še | 2/3 gin2 (1 u 5 diš) še ku_babbar | 𒑛 𒂆 𒌋 𒐃 𒊺 𒆬 𒌓 |
-|  | 2/3 gin2 (2 u) še ku_babbar | 𒑛 𒂆 𒎙 𒊺 𒆬 𒌓 |
-| 2/3 gin2 2(u) 5(diš) še | 2/3 gin2 (2 u 5 diš) še | 𒑛 𒂆 𒎙 𒐃 𒊺 |
-| 5/6 gin2 | 5/6 gin2 ku_babbar | 𒑜 𒂆 𒆬 𒌓 |
-| 5/6 gin2 1(u) še | 5/6 gin2 (1 u) še ku_babbar | 𒑜 𒂆 𒌋 𒊺 𒆬 𒌓 |
-| 5/6 gin2 1(u) 5(diš) še | 5/6 gin2 (1 u 5 diš) še ku_babbar | 𒑜 𒂆 𒌋 𒐃 𒊺 𒆬 𒌓 |
-|  | 5/6 gin2 (2 u) še ku_babbar | 𒑜 𒂆 𒎙 𒊺 𒆬 𒌓 |
-| 5/6 gin2 2(u) 5(diš) še | 5/6 gin2 (2 u 5 diš) še | 𒑜 𒂆 𒎙 𒐃 𒊺 |
-| 1(diš) gin2 | (1 diš) gin2 ku_babbar | 𒀸 𒂆 𒆬 𒌓 |
-|  | (1 diš) 1/6 gin2 ku_babbar | 𒀸 𒑡 𒂆 𒆬 𒌓 |
-| 1(diš) 1/3 gin2 | (1 diš) 1/3 gin2 | 𒀸 𒑚 𒂆 |
-| 1(diš) 1/2 gin2 | (1 diš) 1/2 gin2 | 𒀸 𒈦 𒂆 |
-| 1(diš) 2/3 gin2 | (1 diš) 2/3 gin2 | 𒀸 𒑛 𒂆 |
-| 1(diš) 5/6 gin2 | (1 diš) 5/6 gin2 | 𒀸 𒑜 𒂆 |
-| 2(diš) gin2 | (2 diš) gin2 | 𒐀 𒂆 |
-| 3(diš) gin2 | (3 diš) gin2 ku_babbar | 𒐁 𒂆 𒆬 𒌓 |
-| 4(diš) gin2 | (4 diš) gin2 | 𒐂 𒂆 |
-| 5(diš) gin2 | (5 diš) gin2 | 𒐃 𒂆 |
-| 6(diš) gin2 | (6 diš) gin2 | 𒐄 𒂆 |
-| 7(diš) gin2 | (7 diš) gin2 | 𒐅 𒂆 |
-| 8(diš) gin2 | (8 diš) gin2 | 𒐆 𒂆 |
-| 9(diš) gin2 | (9 diš) gin2 | 𒐇 𒂆 |
-| 1(u) gin2 | 1/6 ma-na | 𒑡 𒈠 𒈾 |
-| 1(u) 1(diš) gin2 | 1/6 ma-na (1 diš) gin2 | 𒑡 𒈠 𒈾 𒀸 𒂆 |
-| 1(u) 2(diš) gin2 | 1/6 ma-na (2 diš) gin2 | 𒑡 𒈠 𒈾 𒐀 𒂆 |
-| 1(u) 3(diš) gin2 | 1/6 ma-na (3 diš) gin2 | 𒑡 𒈠 𒈾 𒐁 𒂆 |
-| 1(u) 4(diš) gin2 | 1/6 ma-na (4 diš) gin2 | 𒑡 𒈠 𒈾 𒐂 𒂆 |
-| 1(u) 5(diš) gin2 | 1/6 ma-na (5 diš) gin2 | 𒑡 𒈠 𒈾 𒐃 𒂆 |
-| 1(u) 6(diš) gin2 | 1/6 ma-na (6 diš) gin2 | 𒑡 𒈠 𒈾 𒐄 𒂆 |
-| 1(u) 7(diš) gin2 | 1/6 ma-na (7 diš) gin2 | 𒑡 𒈠 𒈾 𒐅 𒂆 |
-| 1(u) 8(diš) gin2 | 1/6 ma-na (8 diš) gin2 | 𒑡 𒈠 𒈾 𒐆 𒂆 |
-| 1(u) 9(diš) gin2 | 1/6 ma-na (9 diš) gin2 | 𒑡 𒈠 𒈾 𒐇 𒂆 |
-| 1/3 ma-na | 1/3 ma-na | 𒑚 𒈠 𒈾 |
-| 1/2 ma-na | 1/2 ma-na ku_babbar | 𒈦 𒈠 𒈾 𒆬 𒌓 |
-| 2/3 ma-na | 2/3 ma-na | 𒑛 𒈠 𒈾 |
-| 5/6 ma-na | 5/6 ma-na | 𒑜 𒈠 𒈾 |
-| 1(diš) ma-na | (1 diš) ma-na | 𒀸 𒈠 𒈾 |
-|  | (1 diš) 1/6 ma-na | 𒀸 𒑡 𒈠 𒈾 |
-| 1(diš) 1/3 ma-na | (1 diš) 1/3 ma-na | 𒀸 𒑚 𒈠 𒈾 |
-| 1(diš) 1/2 ma-na | (1 diš) 1/2 ma-na | 𒀸 𒈦 𒈠 𒈾 |
-| 1(diš) 2/3 ma-na | (1 diš) 2/3 ma-na | 𒀸 𒑛 𒈠 𒈾 |
-| 1(diš) 5/6 ma-na | (1 diš) 5/6 ma-na | 𒀸 𒑜 𒈠 𒈾 |
-| 2(diš) ma-na | (2 diš) ma-na | 𒐀 𒈠 𒈾 |
-| 3(diš) ma-na | (3 diš) ma-na ku_babbar | 𒐁 𒈠 𒈾 𒆬 𒌓 |
-| 4(diš) ma-na | (4 diš) ma-na | 𒐂 𒈠 𒈾 |
-| 5(diš) ma-na | (5 diš) ma-na | 𒐃 𒈠 𒈾 |
-| 6(diš) ma-na | (6 diš) ma-na | 𒐄 𒈠 𒈾 |
-| 7(diš) ma-na | (7 diš) ma-na | 𒐅 𒈠 𒈾 |
-| 8(diš) ma-na | (8 diš) ma-na | 𒐆 𒈠 𒈾 |
-| 9(diš) ma-na | (9 diš) ma-na | 𒐇 𒈠 𒈾 |
-| 1(u) ma-na | 1/6 gu2 | 𒑡 𒄘 |
-| 1(u) 1(diš) ma-na | 1/6 gu2 (1 diš) ma-na | 𒑡 𒄘 𒀸 𒈠 𒈾 |
-| 1(u) 2(diš) ma-na | 1/6 gu2 (2 diš) ma-na | 𒑡 𒄘 𒐀 𒈠 𒈾 |
-| 1(u) 3(diš) ma-na | 1/6 gu2 (3 diš) ma-na | 𒑡 𒄘 𒐁 𒈠 𒈾 |
-| 1(u) 4(diš) ma-na | 1/6 gu2 (4 diš) ma-na | 𒑡 𒄘 𒐂 𒈠 𒈾 |
-| 1(u) 5(diš) ma-na | 1/6 gu2 (5 diš) ma-na | 𒑡 𒄘 𒐃 𒈠 𒈾 |
-| 1(u) 6(diš) ma-na | 1/6 gu2 (6 diš) ma-na | 𒑡 𒄘 𒐄 𒈠 𒈾 |
-| 1(u) 7(diš) ma-na | 1/6 gu2 (7 diš) ma-na | 𒑡 𒄘 𒐅 𒈠 𒈾 |
-| 1(u) 8(diš) ma-na | 1/6 gu2 (8 diš) ma-na | 𒑡 𒄘 𒐆 𒈠 𒈾 |
-| 1(u) 9(diš) ma-na | 1/6 gu2 (9 diš) ma-na | 𒑡 𒄘 𒐇 𒈠 𒈾 |
-| 2(u) ma-na | 1/3 gu2 | 𒑚 𒄘 |
-| 2(u) 1(diš) ma-na | 1/3 gu2 (1 diš) ma-na | 𒑚 𒄘 𒀸 𒈠 𒈾 |
-| 2(u) 2(diš) ma-na | 1/3 gu2 (2 diš) ma-na | 𒑚 𒄘 𒐀 𒈠 𒈾 |
-| 2(u) 3(diš) ma-na | 1/3 gu2 (3 diš) ma-na | 𒑚 𒄘 𒐁 𒈠 𒈾 |
-| 2(u) 4(diš) ma-na | 1/3 gu2 (4 diš) ma-na | 𒑚 𒄘 𒐂 𒈠 𒈾 |
-| 2(u) 5(diš) ma-na | 1/3 gu2 (5 diš) ma-na | 𒑚 𒄘 𒐃 𒈠 𒈾 |
-| 2(u) 6(diš) ma-na | 1/3 gu2 (6 diš) ma-na | 𒑚 𒄘 𒐄 𒈠 𒈾 |
-| 2(u) 7(diš) ma-na | 1/3 gu2 (7 diš) ma-na | 𒑚 𒄘 𒐅 𒈠 𒈾 |
-| 2(u) 8(diš) ma-na | 1/3 gu2 (8 diš) ma-na | 𒑚 𒄘 𒐆 𒈠 𒈾 |
-| 2(u) 9(diš) ma-na | 1/3 gu2 (9 diš) ma-na | 𒑚 𒄘 𒐇 𒈠 𒈾 |
-| 3(u) ma-na | 1/2 gu2 | 𒈦 𒄘 |
-| 4(u) ma-na | 2/3 gu2 ku_babbar | 𒑛 𒄘 𒆬 𒌓 |
-| 5(u) ma-na | 5/6 gu2 | 𒑜 𒄘 |
-| 1(aš) gu2 ku3-babbar | (1 aš) gu2 | 𒀸 𒄘 |
-| 1(aš) gu2 1(u) ma-na | (1 aš) 1/6 gu2 | 𒀸 𒑡 𒄘 |
-| 1(aš) gu2 2(u) ma-na | (1 aš) 1/3 gu2 | 𒀸 𒑚 𒄘 |
-| 1(aš) gu2 3(u) ma-na | (1 aš) 1/2 gu2 | 𒀸 𒈦 𒄘 |
-| 1(aš) gu2 4(u) ma-na | (1 aš) 2/3 gu2 | 𒀸 𒑛 𒄘 |
-| 1(aš) gu2 5(u) ma-na | (1 aš) 5/6 gu2 | 𒀸 𒑜 𒄘 |
-| 2(aš) gu2 | (2 aš) gu2 | 𒐀 𒄘 |
-| 3(aš) gu2 | (3 aš) gu2 ku_babbar | 𒐁 𒄘 𒆬 𒌓 |
-| 4(aš) gu2 | (4 aš) gu2 | 𒐂 𒄘 |
-| 5(aš) gu2 | (5 aš) gu2 | 𒐃 𒄘 |
-| 6(aš) gu2 | (6 aš) gu2 | 𒐄 𒄘 |
-| 7(aš) gu2 | (7 aš) gu2 | 𒐅 𒄘 |
-| 8(aš) gu2 | (8 aš) gu2 | 𒐆 𒄘 |
-| 9(aš) gu2 | (9 aš) gu2 | 𒐇 𒄘 |
-| 1(u) gu2 | (1 u) gu2 | 𒌋 𒄘 |
-| 1(u) 1(aš) gu2 | (1 u 1 aš) gu2 | 𒌋 𒀸 𒄘 |
-| 1(u) 2(aš) gu2 | (1 u 2 aš) gu2 | 𒌋 𒐀 𒄘 |
-| 1(u) 3(aš) gu2 | (1 u 3 aš) gu2 | 𒌋 𒐁 𒄘 |
-| 1(u) 4(aš) gu2 | (1 u 4 aš) gu2 | 𒌋 𒐂 𒄘 |
-| 1(u) 5(aš) gu2 | (1 u 5 aš) gu2 | 𒌋 𒐃 𒄘 |
-| 1(u) 6(aš) gu2 | (1 u 6 aš) gu2 | 𒌋 𒐄 𒄘 |
-| 1(u) 7(aš) gu2 | (1 u 7 aš) gu2 | 𒌋 𒐅 𒄘 |
-| 1(u) 8(aš) gu2 | (1 u 8 aš) gu2 | 𒌋 𒐆 𒄘 |
-| 1(u) 9(aš) gu2 | (1 u 9 aš) gu2 | 𒌋 𒐇 𒄘 |
-| 2(u) gu2 | (2 u) gu2 | 𒎙 𒄘 |
-| 3(u) gu2 | (3 u) gu2 ku_babbar | 𒌍 𒄘 𒆬 𒌓 |
-| 4(u) gu2 | (4 u) gu2 | 𒐏 𒄘 |
-| 5(u) gu2 | (5 u) gu2 | 𒐐 𒄘 |
-| 1(geš2) gu2 | (1 geš) gu2 | 𒐕 𒄘 |
-|  | (1 geš 1 u) gu2 | 𒐕 𒌋 𒄘 |
-| 1(geš2) 2(u) gu2 | (1 geš 2 u) gu2 | 𒐕 𒎙 𒄘 |
-| 1(geš2) 3(u) gu2 | (1 geš 3 u) gu2 | 𒐕 𒌍 𒄘 |
-| 1(geš2) 4(u) gu2 | (1 geš 4 u) gu2 | 𒐕 𒐏 𒄘 |
-| 1(geš2) 5(u) gu2 | (1 geš 5 u) gu2 | 𒐕 𒐐 𒄘 |
-| 2(geš2) gu2 | (2 geš) gu2 | 𒐖 𒄘 |
-| 3(geš2) gu2 | (3 geš) gu2 ku_babbar | 𒐗 𒄘 𒆬 𒌓 |
-| 4(geš2) gu2 | (4 geš) gu2 | 𒐘 𒄘 |
-| 5(geš2) gu2 | (5 geš) gu2 | 𒐙 𒄘 |
-| 6(geš2) gu2 | (6 geš) gu2 | 𒐚 𒄘 |
-| 7(geš2) gu2 | (7 geš) gu2 | 𒐛 𒄘 |
-| 8(geš2) gu2 | (8 geš) gu2 | 𒐜 𒄘 |
-| 9(geš2) gu2 | (9 geš) gu2 | 𒐝 𒄘 |
-| 1(geš’u) gu2 | (1 geš'u) gu2 | 𒐞 𒄘 |
-| 2(geš’u) gu2 | (2 geš'u) gu2 ku_babbar | 𒐟 𒄘 𒆬 𒌓 |
-| 3(geš’u) gu2 | (3 geš'u) gu2 | 𒐠 𒄘 |
-| 4(geš’u) gu2 | (4 geš'u) gu2 | 𒐡 𒄘 |
-| 5(geš’u) gu2 | (5 geš'u) gu2 | 𒐢 𒄘 |
-| 1(šar2) gu2 | (1 šar2) gu2 | 𒊹 𒄘 |
-| 2(šar2) gu2 | (2 šar2) gu2 ku_babbar | 𒐣 𒄘 𒆬 𒌓 |
-| 3(šar2) gu2 | (3 šar2) gu2 | 𒐤 𒄘 |
-| 4(šar2) gu2 | (4 šar2) gu2 | 𒐦 𒄘 |
-| 5(šar2) gu2 | (5 šar2) gu2 | 𒐧 𒄘 |
-| 6(šar2) gu2 | (6 šar2) gu2 | 𒐨 𒄘 |
-| 7(šar2) gu2 | (7 šar2) gu2 | 𒐩 𒄘 |
-| 8(šar2) gu2 | (8 šar2) gu2 | 𒐪 𒄘 |
-| 9(šar2) gu2 | (9 šar2) gu2 | 𒐫 𒄘 |
-| 1(šar’u) gu2 | (1 šar'u) gu2 | 𒐬 𒄘 |
-| 2(šar’u) gu2 | (2 šar'u) gu2 ku_babbar | 𒐭 𒄘 𒆬 𒌓 |
-| 3(šar’u) gu2 | (3 šar'u) gu2 | 𒐮 𒄘 |
-| 4(šar’u) gu2 | (4 šar'u) gu2 | 𒐰 𒄘 |
-| 5(šar’u) gu2 | (5 šar'u) gu2 | 𒐱 𒄘 |
-| 1(šargal)gal gu2 | (1 šar2-gal) gu2 | 𒐲 𒄘 |
-|  | 180000 gu2 |  |
-|  | 216000 gu2 |  |
+##### **System G (BsyG): Field Area (Sumerian Tradition)**
+> Used for large scale field measurements. Base unit: **iku**.
+```text
+ šar2-gal  ╼6╾  šar'u  ╼10╾  šar2  ╼6╾  bur'u  ╼10╾  bur3  ╼3╾  eše3  ╼6╾  iku
+    𒊹      ╼6╾    𒐬    ╼10╾   𒊬    ╼6╾    𒐴    ╼10╾   𒌋     ╼3╾   𒑘    ╼6╾  𒀸
+```
+> **Historical Note**: System G is the archaic precursor to the later surface metrology (`Bsur`). While `Bsur` is optimized for mathematical calculations, `BsyG` is the standard for administrative land management and surveyor reports.
 
-</details>
+##### **System SKL (BsyK): Sumerian King List**
+> A specialized variant for astronomical time periods (years). Base unit: **diš**.
+```text
+ šar2-gal  ╼6╾  šar'u  ╼10╾  šar2  ╼6╾  geš'u  ╼10╾  geš  ╼6╾  u  ╼10╾  diš
+    𒊹      ╼6╾    𒐬    ╼10╾   𒊬    ╼6╾    𒐞    ╼10╾   𒐕   ╼6╾  𒌋  ╼10╾  𒁹
+```
 
-<details>
+---
 
-<summary>📋 Surfaces (Proust §8.3)</summary>
 
-| §8.3. Surfaces (a-ša3) | MesoMath | MesoMath (Cun.) |
-|---|---|---|
-| 1/3 sar a-ša3 | 1/3 sar ku_babbar | 𒑚 𒊬 𒀀𒊮 |
-| 1/2 sar | 1/2 sar | 𒈦 𒊬 |
-| 2/3 sar | 2/3 sar | 𒑛 𒊬 |
-| 5/6 sar | 5/6 sar | 𒑜 𒊬 |
-| 1(diš) sar | (1 diš) sar | 𒀸 𒊬 |
-|  | (1 diš) 1/6 sar | 𒀸 𒑡 𒊬 |
-| 1(diš) 1/3 sar | (1 diš) 1/3 sar | 𒀸 𒑚 𒊬 |
-| 1(diš) 1/2 sar | (1 diš) 1/2 sar | 𒀸 𒈦 𒊬 |
-| 1(diš) 2/3 sar | (1 diš) 2/3 sar | 𒀸 𒑛 𒊬 |
-| 1(diš) 5/6 sar | (1 diš) 5/6 sar | 𒀸 𒑜 𒊬 |
-| 2(diš) sar | (2 diš) sar | 𒐀 𒊬 |
-| 3(diš) sar | (3 diš) sar ku_babbar | 𒐁 𒊬 𒀀𒊮 |
-| 4(diš) sar | (4 diš) sar | 𒐂 𒊬 |
-| 5(diš) sar | (5 diš) sar | 𒐃 𒊬 |
-| 6(aš) sar | (6 diš) sar | 𒐄 𒊬 |
-| 7(diš) sar | (7 diš) sar | 𒐅 𒊬 |
-| 8(diš) sar | (8 diš) sar | 𒐆 𒊬 |
-| 9(diš) sar | (9 diš) sar | 𒐇 𒊬 |
-| 1(u) sar | (1 u) sar | 𒌋 𒊬 |
-| 1(u) 1(diš) sar | (1 u 1 diš) sar | 𒌋 𒀸 𒊬 |
-| 1(u) 2(diš) sar | (1 u 2 diš) sar | 𒌋 𒐀 𒊬 |
-| 1(u) 3(diš) sar | (1 u 3 diš) sar | 𒌋 𒐁 𒊬 |
-| 1(u) 4(diš) sar | (1 u 4 diš) sar | 𒌋 𒐂 𒊬 |
-| 1(u) 5(diš) sar | (1 u 5 diš) sar | 𒌋 𒐃 𒊬 |
-| 1(u) 6(aš) sar | (1 u 6 diš) sar | 𒌋 𒐄 𒊬 |
-| 1(u) 7(diš) sar | (1 u 7 diš) sar | 𒌋 𒐅 𒊬 |
-| 1(u) 8(diš) sar | (1 u 8 diš) sar | 𒌋 𒐆 𒊬 |
-| 1(u) 9(diš) sar | (1 u 9 diš) sar | 𒌋 𒐇 𒊬 |
-| 2(u) sar | (2 u) sar | 𒎙 𒊬 |
-| 3(u) sar | (3 u) sar ku_babbar | 𒌍 𒊬 𒀀𒊮 |
-| 4(u) sar | (4 u) sar | 𒐏 𒊬 |
-| 1(ubu) GAN2 | 1/2 GAN2 | 𒈦 𒃷 |
-| 1(ubu) GAN2 1(u) sar | 1/2 GAN2 (1 u) sar | 𒈦 𒃷 𒌋 𒊬 |
-| 1(ubu) GAN2 2(u) sar | 1/2 GAN2 (2 u) sar | 𒈦 𒃷 𒎙 𒊬 |
-| 1(ubu) GAN2 3(u) sar | 1/2 GAN2 (3 u) sar | 𒈦 𒃷 𒌍 𒊬 |
-| 1(ubu) GAN2 4(u) sar | 1/2 GAN2 (4 u) sar | 𒈦 𒃷 𒐏 𒊬 |
-| 1(iku) GAN2 | (1 iku) GAN2 | 𒀸 𒃷 |
-| 1(iku) 1(ubu) GAN2 | (1 iku) 1/2 GAN2 ku_babbar | 𒀸 𒈦 𒃷 𒀀𒊮 |
-| 2(iku) GAN2 | (2 iku) GAN2 | 𒐀 𒃷 |
-| 2(iku) 1(ubu) GAN2 | (2 iku) 1/2 GAN2 | 𒐀 𒈦 𒃷 |
-| 3(iku) GAN2 | (3 iku) GAN2 | 𒐁 𒃷 |
-| 3(iku) 1(ubu) GAN2 | (3 iku) 1/2 GAN2 | 𒐁 𒈦 𒃷 |
-| 4(iku) GAN2 | (4 iku) GAN2 | 𒐂 𒃷 |
-| 4(iku) 1(ubu) GAN2 | (4 iku) 1/2 GAN2 | 𒐂 𒈦 𒃷 |
-| 5(iku) GAN2 | (5 iku) GAN2 | 𒐃 𒃷 |
-| 5(iku) 1(ubu) GAN2 | (5 iku) 1/2 GAN2 | 𒐃 𒈦 𒃷 |
-| 1(eše3) GAN2 | (1 eše3) GAN2 | 𒑘 𒃷 |
-| 1(eše3) 1(iku) GAN2 | (1 eše3 1 iku) GAN2 ku_babbar | 𒑘 𒀸 𒃷 𒀀𒊮 |
-| 1(eše3) 2(iku) GAN2 | (1 eše3 2 iku) GAN2 | 𒑘 𒐀 𒃷 |
-| 1(eše3) 3(iku) GAN2 | (1 eše3 3 iku) GAN2 | 𒑘 𒐁 𒃷 |
-| 1(eše3) 4(iku) GAN2 | (1 eše3 4 iku) GAN2 | 𒑘 𒐂 𒃷 |
-| 1(eše3) 5(iku) GAN2 | (1 eše3 5 iku) GAN2 | 𒑘 𒐃 𒃷 |
-| 2(eše3) GAN2 | (2 eše3) GAN2 | 𒑙 𒃷 |
-| 2(eše3) 1(iku) GAN2 | (2 eše3 1 iku) GAN2 | 𒑙 𒀸 𒃷 |
-| 2(eše3) 2(iku) GAN2 | (2 eše3 2 iku) GAN2 | 𒑙 𒐀 𒃷 |
-| 2(eše3) 3(iku) GAN2 | (2 eše3 3 iku) GAN2 | 𒑙 𒐁 𒃷 |
-| 2(eše3) 4(iku) GAN2 | (2 eše3 4 iku) GAN2 | 𒑙 𒐂 𒃷 |
-| 2(eše3) 5(iku) GAN2 | (2 eše3 5 iku) GAN2 | 𒑙 𒐃 𒃷 |
-| 1(bur3) GAN2 | (1 bur3) GAN2 | 𒌋 𒃷 |
-| 1(bur3) 1(eše3) GAN2 | (1 bur3 1 eše3) GAN2 ku_babbar | 𒌋 𒑘 𒃷 𒀀𒊮 |
-| 1(bur3) 2(eše3) GAN2 | (1 bur3 2 eše3) GAN2 | 𒌋 𒑙 𒃷 |
-| 2(bur3) GAN2 | (2 bur3) GAN2 | 𒎙 𒃷 |
-| 3(bur3) GAN2 | (3 bur3) GAN2 ku_babbar | 𒌍 𒃷 𒀀𒊮 |
-| 4(bur3) GAN2 | (4 bur3) GAN2 | 𒐏 𒃷 |
-| 5(bur3) GAN2 | (5 bur3) GAN2 | 𒐐 𒃷 |
-| 6(bur3) GAN2 | (6 bur3) GAN2 | 𒐑 𒃷 |
-| 7(bur3) GAN2 | (7 bur3) GAN2 | 𒐒 𒃷 |
-| 8(bur3) GAN2 | (8 bur3) GAN2 | 𒐓 𒃷 |
-| 9(bur3) GAN2 | (9 bur3) GAN2 | 𒐔 𒃷 |
-| 1(bur’u) GAN2 | (1 bur'u) GAN2 | 𒐴 𒃷 |
-| 1(bur’u) 1(bur3) GAN2 | (1 bur'u 1 bur3) GAN2 | 𒐴 𒌋 𒃷 |
-| 1(bur’u) 2(bur3) GAN2 | (1 bur'u 2 bur3) GAN2 | 𒐴 𒎙 𒃷 |
-| 1(bur’u) 3(bur3) GAN2 | (1 bur'u 3 bur3) GAN2 | 𒐴 𒌍 𒃷 |
-| 1(bur’u) 4(bur3) GAN2 | (1 bur'u 4 bur3) GAN2 | 𒐴 𒐏 𒃷 |
-| 1(bur’u) 5(bur3) GAN2 | (1 bur'u 5 bur3) GAN2 | 𒐴 𒐐 𒃷 |
-| 1(bur’u) 6(bur3) GAN2 | (1 bur'u 6 bur3) GAN2 | 𒐴 𒐑 𒃷 |
-| 1(bur’u) 7(bur3) GAN2 | (1 bur'u 7 bur3) GAN2 | 𒐴 𒐒 𒃷 |
-| 1(bur’u) 8(bur3) GAN2 | (1 bur'u 8 bur3) GAN2 | 𒐴 𒐓 𒃷 |
-| 1(bur’u) 9(bur3) GAN2 | (1 bur'u 9 bur3) GAN2 | 𒐴 𒐔 𒃷 |
-| 2(bur’u) GAN2 | (2 bur'u) GAN2 | 𒐵 𒃷 |
-| 3(bur’u) GAN2 | (3 bur'u) GAN2 ku_babbar | 𒐶 𒃷 𒀀𒊮 |
-| 4(bur’u) GAN2 | (4 bur'u) GAN2 | 𒐸 𒃷 |
-| 5(bur’u) GAN2 | (5 bur'u) GAN2 | 𒐹 𒃷 |
-| 1(šar2) GAN2 | (1 šar2) GAN2 |  |
-| 1(šar2) 1(bur’u) GAN2 | (1 šar2 1 bur'u) GAN2 |  |
-| 1(šar2) 2(bur’u) GAN2 | (1 šar2 2 bur'u) GAN2 |  |
-| 1(šar2) 3(bur’u) GAN2 | (1 šar2 3 bur'u) GAN2 |  |
-| 1(šar2) 4(bur’u) GAN2 | (1 šar2 4 bur'u) GAN2 | 𒊹 𒃷 |
-| 1(šar2) 5(bur’u) GAN2 | (1 šar2 5 bur'u) GAN2 | 𒊹 𒐴 𒃷 |
-| 2(šar2) GAN2 | (2 šar2) GAN2 | 𒊹 𒐵 𒃷 |
-| 3(šar2) GAN2 | (3 šar2) GAN2 ku_babbar | 𒊹 𒃷 𒀀𒊮 |
-| 4(šar2) GAN2 | (4 šar2) GAN2 | 𒐣 𒐸 𒃷 |
-| 5(šar2) GAN2 | (5 šar2) GAN2 | 𒐤 𒃷 |
-| 6(šar2) GAN2 | (6 šar2) GAN2 | 𒐤 𒃷 |
-| 7(šar2) GAN2 | (7 šar2) GAN2 | 𒐦 𒐵 𒃷 |
-| 8(šar2) GAN2 | (8 šar2) GAN2 | 𒐦 𒃷 |
-| 9(šar2) GAN2 | (9 šar2) GAN2 | 𒐧 𒐸 𒃷 |
-| 1(šar’u) GAN2 | (1 šar'u) GAN2 | 𒐨 𒃷 |
-| 1(šar’u) 1(šar2) GAN2 | (1 šar'u 1 šar2) GAN2 | 𒐨 𒃷 |
-| 1(šar’u) 2(šar2) GAN2 | (1 šar'u 2 šar2) GAN2 | 𒐩 𒐵 𒃷 |
-| 1(šar’u) 3(šar2) GAN2 | (1 šar'u 3 šar2) GAN2 | 𒐩 𒃷 |
-| 1(šar’u) 4(šar2) GAN2 | (1 šar'u 4 šar2) GAN2 | 𒐪 𒐸 𒃷 |
-| 1(šar’u) 5(šar2) GAN2 | (1 šar'u 5 šar2) GAN2 | 𒐫 𒃷 |
-| 1(šar’u) 6(šar2) GAN2 | (1 šar'u 6 šar2) GAN2 | 𒐫 𒃷 |
-| 1(šar’u) 7(šar2) GAN2 | (1 šar'u 7 šar2) GAN2 | 𒐬 𒐵 𒃷 |
-| 1(šar’u) 8(šar2) GAN2 | (1 šar'u 8 šar2) GAN2 | 𒐬 𒃷 |
-| 1(šar’u) 9(šar2) GAN2 | (1 šar'u 9 šar2) GAN2 | 𒐬 𒊹 𒐸 𒃷 |
-| 2(šar’u) GAN2 | (2 šar'u) GAN2 | 𒐬 𒐣 𒃷 |
-| 3(šar’u) GAN2 | (3 šar'u) GAN2 ku_babbar | 𒐬 𒐪 𒃷 𒀀𒊮 |
-| 4(šar’u) GAN2 | (4 šar'u) GAN2 | 𒐭 𒐦 𒃷 |
-| 5(šar’u) GAN2 | (5 šar'u) GAN2 | 𒐮 𒃷 |
-| 1(šargal)gal GAN2 | (1 šar2-gal) GAN2 | 𒐮 𒐨 𒃷 |
-| 1(šargal)gal šu-nu-tag GAN2 |  |  |
+#### **4. Implementation Details**
 
-</details>
+Each of these systems is implemented as a subclass of `Npvs`. When extending these classes, remember that:
+* **Abstract Values**: All calculations are performed relative to the base unit (index defined by `ubase`).
+* **Storage**: Values are stored as integers representing the smallest unit of the chain to avoid floating-point errors.
 
-<details>
 
-<summary>📋 Lengths (Proust §8.4)</summary>
 
-| §8.4. Lengths (uš, sag,dagal) | MesoMath | MesoMath (Cun.) |
-|---|---|---|
-| 1(diš) šu-si | (1 diš) šu-si gid | 𒀸 𒋗 𒋛 𒁍 |
-| 2(diš) šu-si | (2 diš) šu-si | 𒐀 𒋗 𒋛 |
-| 3(diš) šu-si | (3 diš) šu-si | 𒐁 𒋗 𒋛 |
-| 4(diš) šu-si | (4 diš) šu-si | 𒐂 𒋗 𒋛 |
-| 5(diš) šu-si | (5 diš) šu-si | 𒐃 𒋗 𒋛 |
-| 6(aš) šu-si | (6 diš) šu-si | 𒐄 𒋗 𒋛 |
-| 7(diš) šu-si | (7 diš) šu-si | 𒐅 𒋗 𒋛 |
-| 8(diš) šu-si | (8 diš) šu-si | 𒐆 𒋗 𒋛 |
-| 9(diš) šu-si | (9 diš) šu-si | 𒐇 𒋗 𒋛 |
-| 1/3 kuš3 | 1/3 kuš3 | 𒑚 𒌑 |
-| 1/3 kuš3 1(diš) šu-si | 1/3 kuš3 (1 diš) šu-si | 𒑚 𒌑 𒀸 𒋗 𒋛 |
-| 1/3 kuš3 2(diš) šu-si | 1/3 kuš3 (2 diš) šu-si | 𒑚 𒌑 𒐀 𒋗 𒋛 |
-| 1/3 kuš3 3(diš) šu-si | 1/3 kuš3 (3 diš) šu-si | 𒑚 𒌑 𒐁 𒋗 𒋛 |
-| 1/3 kuš3 4(diš) šu-si | 1/3 kuš3 (4 diš) šu-si | 𒑚 𒌑 𒐂 𒋗 𒋛 |
-| 1/2 kuš3 | 1/2 kuš3 | 𒈦 𒌑 |
-| 1/2 kuš3 1(diš) šu-si | 1/2 kuš3 (1 diš) šu-si | 𒈦 𒌑 𒀸 𒋗 𒋛 |
-| 1/2 kuš3 2(diš) šu-si | 1/2 kuš3 (2 diš) šu-si | 𒈦 𒌑 𒐀 𒋗 𒋛 |
-| 1/2 kuš3 3(diš) šu-si | 1/2 kuš3 (3 diš) šu-si | 𒈦 𒌑 𒐁 𒋗 𒋛 |
-| 1/2 kuš3 4(diš) šu-si | 1/2 kuš3 (4 diš) šu-si | 𒈦 𒌑 𒐂 𒋗 𒋛 |
-| 2/3 kuš3 | 2/3 kuš3 | 𒑛 𒌑 |
-| 2/3 kuš3 1(diš) šu-si | 2/3 kuš3 (1 diš) šu-si | 𒑛 𒌑 𒀸 𒋗 𒋛 |
-| 2/3 kuš3 2(diš) šu-si | 2/3 kuš3 (2 diš) šu-si | 𒑛 𒌑 𒐀 𒋗 𒋛 |
-| 2/3 kuš3 3(diš) šu-si | 2/3 kuš3 (3 diš) šu-si | 𒑛 𒌑 𒐁 𒋗 𒋛 |
-| 2/3 kuš3 4(diš) šu-si | 2/3 kuš3 (4 diš) šu-si | 𒑛 𒌑 𒐂 𒋗 𒋛 |
-| 5/6 kuš3 | 5/6 kuš3 | 𒑜 𒌑 |
-| 5/6 kuš3 1(diš) šu-si | 5/6 kuš3 (1 diš) šu-si | 𒑜 𒌑 𒀸 𒋗 𒋛 |
-| 5/6 kuš3 2(diš) šu-si | 5/6 kuš3 (2 diš) šu-si | 𒑜 𒌑 𒐀 𒋗 𒋛 |
-| 5/6 kuš3 3(diš) šu-si | 5/6 kuš3 (3 diš) šu-si | 𒑜 𒌑 𒐁 𒋗 𒋛 |
-| 5/6 kuš3 4(diš) šu-si | 5/6 kuš3 (4 diš) šu-si | 𒑜 𒌑 𒐂 𒋗 𒋛 |
-| 1(diš) kuš3 | (1 diš) kuš3 | 𒀸 𒌑 |
-|  | (1 diš) kuš3 (5 diš) šu-si gid | 𒀸 𒌑 𒐃 𒋗 𒋛 𒁍 |
-| 1(diš) 1/3 kuš3 | (1 diš) 1/3 kuš3 | 𒀸 𒑚 𒌑 |
-| 1(diš) 1/2 kuš3 | (1 diš) 1/2 kuš3 | 𒀸 𒈦 𒌑 |
-| 1(diš) 2/3 kuš3 | (1 diš) 2/3 kuš3 | 𒀸 𒑛 𒌑 |
-|  | (1 diš) 5/6 kuš3 | 𒀸 𒑜 𒌑 |
-| 2(diš) kuš3 | (2 diš) kuš3 | 𒐀 𒌑 |
-| 3(diš) kuš3 | (3 diš) kuš3 gid | 𒐁 𒌑 𒁍 |
-| 4(diš) kuš3 | 1/3 ninda | 𒑚 𒃻 |
-| 5(diš) kuš3 | 1/3 ninda (1 diš) kuš3 | 𒑚 𒃻 𒀸 𒌑 |
-| 1/2 ninda | 1/2 ninda | 𒈦 𒃻 |
-| 1/2 ninda 1(diš) kuš3 | 1/2 ninda (1 diš) kuš3 | 𒈦 𒃻 𒀸 𒌑 |
-| 1/2 ninda 2(diš) kuš3 | 2/3 ninda | 𒑛 𒃻 |
-| 1/2 ninda 3(diš) kuš3 | 2/3 ninda (1 diš) kuš3 | 𒑛 𒃻 𒀸 𒌑 |
-| 1/2 ninda 4(diš) kuš3 | 5/6 ninda | 𒑜 𒃻 |
-| 1/2 ninda 5(diš) kuš3 | 5/6 ninda (1 diš) kuš3 | 𒑜 𒃻 𒀸 𒌑 |
-| 1(diš) ninda | (1 diš) ninda | 𒀸 𒃻 |
-| 1(diš) 1/2 ninda | (1 diš) 1/2 ninda gid | 𒀸 𒈦 𒃻 𒁍 |
-| 2(diš) ninda | (2 diš) ninda | 𒐀 𒃻 |
-| 2(diš) 1/2 ninda | (2 diš) 1/2 ninda | 𒐀 𒈦 𒃻 |
-| 3(diš) ninda | (3 diš) ninda | 𒐁 𒃻 |
-| 3(diš) 1/2 ninda | (3 diš) 1/2 ninda | 𒐁 𒈦 𒃻 |
-| 4(diš) ninda | (4 diš) ninda | 𒐂 𒃻 |
-| 4(diš) 1/2 ninda | (4 diš) 1/2 ninda | 𒐂 𒈦 𒃻 |
-| 5(diš) ninda | (5 diš) ninda | 𒐃 𒃻 |
-| 5(diš) 1/2 ninda | (5 diš) 1/2 ninda | 𒐃 𒈦 𒃻 |
-| 6(diš) ninda | (6 diš) ninda | 𒐄 𒃻 |
-| 6(diš) 1/2 ninda | (6 diš) 1/2 ninda | 𒐄 𒈦 𒃻 |
-| 7(diš) ninda | (7 diš) ninda | 𒐅 𒃻 |
-| 7(diš) 1/2 ninda | (7 diš) 1/2 ninda | 𒐅 𒈦 𒃻 |
-| 8(diš) ninda | (8 diš) ninda | 𒐆 𒃻 |
-| 8(diš) 1/2 ninda | (8 diš) 1/2 ninda | 𒐆 𒈦 𒃻 |
-| 9(diš) ninda | (9 diš) ninda | 𒐇 𒃻 |
-| 9(diš) 1/2 ninda | (9 diš) 1/2 ninda | 𒐇 𒈦 𒃻 |
-| 1(u) ninda | (1 u) ninda | 𒌋 𒃻 |
-| 2(u) ninda | 1/3 UŠ gid | 𒑚 𒍑 𒁍 |
-| 3(u) ninda | 1/2 UŠ | 𒈦 𒍑 |
-| 4(u) ninda | 2/3 UŠ | 𒑛 𒍑 |
-| 4(u) 5(diš) ninda | 2/3 UŠ (5 diš) ninda gid | 𒑛 𒍑 𒐃 𒃻 𒁍 |
-| 5(u) ninda | 5/6 UŠ | 𒑜 𒍑 |
-| 5(u) 5(diš) ninda | 5/6 UŠ (5 diš) ninda | 𒑜 𒍑 𒐃 𒃻 |
-| 1(diš) UŠ | (1 diš) UŠ | 𒀸 𒍑 |
-| 1(diš) UŠ 1(u) ninda | (1 diš) UŠ (1 u) ninda gid | 𒀸 𒍑 𒌋 𒃻 𒁍 |
-| 1(diš) UŠ 2(u) ninda | (1 diš) 1/3 UŠ | 𒀸 𒑚 𒍑 |
-| 1(diš) UŠ 3(u) ninda | (1 diš) 1/2 UŠ | 𒀸 𒈦 𒍑 |
-| 1(diš) UŠ 4(u) ninda | (1 diš) 2/3 UŠ | 𒀸 𒑛 𒍑 |
-| 1(diš) UŠ 5(u) ninda | (1 diš) 5/6 UŠ | 𒀸 𒑜 𒍑 |
-| 2(diš) UŠ | (2 diš) UŠ | 𒐀 𒍑 |
-| 3(diš) UŠ | (3 diš) UŠ gid | 𒐁 𒍑 𒁍 |
-| 4(diš) UŠ | (4 diš) UŠ | 𒐂 𒍑 |
-| 5(diš) UŠ | (5 diš) UŠ | 𒐃 𒍑 |
-| 6(diš) UŠ | (6 diš) UŠ | 𒐄 𒍑 |
-| 7(diš) UŠ | (7 diš) UŠ | 𒐅 𒍑 |
-| 8(diš) UŠ | (8 diš) UŠ | 𒐆 𒍑 |
-| 9(diš) UŠ | (9 diš) UŠ | 𒐇 𒍑 |
-| 1(u) UŠ | 1/3 danna | 𒑚 𒆜 𒁍 |
-| 1(u) 1(diš) UŠ | 1/3 danna (1 diš) UŠ | 𒑚 𒆜 𒁍 𒀸 𒍑 |
-| 1(u) 2(diš) UŠ | 1/3 danna (2 diš) UŠ | 𒑚 𒆜 𒁍 𒐀 𒍑 |
-| 1(u) 3(diš) UŠ | 1/3 danna (3 diš) UŠ | 𒑚 𒆜 𒁍 𒐁 𒍑 |
-| 1(u) 4(diš) UŠ | 1/3 danna (4 diš) UŠ | 𒑚 𒆜 𒁍 𒐂 𒍑 |
-| 1/2 danna | 1/2 danna | 𒈦 𒆜 𒁍 |
-| 1/2 danna 1(diš) UŠ | 1/2 danna (1 diš) UŠ | 𒈦 𒆜 𒁍 𒀸 𒍑 |
-| 1/2 danna 2(diš) UŠ | 1/2 danna (2 diš) UŠ | 𒈦 𒆜 𒁍 𒐀 𒍑 |
-| 1/2 danna 3(diš) UŠ | 1/2 danna (3 diš) UŠ | 𒈦 𒆜 𒁍 𒐁 𒍑 |
-| 1/2 danna 4(diš) UŠ | 1/2 danna (4 diš) UŠ | 𒈦 𒆜 𒁍 𒐂 𒍑 |
-| 2/3 danna | 2/3 danna | 𒑛 𒆜 𒁍 |
-| 2/3 danna 1(diš) UŠ | 2/3 danna (1 diš) UŠ | 𒑛 𒆜 𒁍 𒀸 𒍑 |
-| 2/3 danna 2(diš) UŠ | 2/3 danna (2 diš) UŠ | 𒑛 𒆜 𒁍 𒐀 𒍑 |
-| 2/3 danna 3(diš) UŠ | 2/3 danna (3 diš) UŠ | 𒑛 𒆜 𒁍 𒐁 𒍑 |
-| 2/3 danna 4(diš) UŠ | 2/3 danna (4 diš) UŠ | 𒑛 𒆜 𒁍 𒐂 𒍑 |
-| 5/6 danna | 5/6 danna | 𒑜 𒆜 𒁍 |
-| 5/6 danna 1(diš) UŠ | 5/6 danna (1 diš) UŠ | 𒑜 𒆜 𒁍 𒀸 𒍑 |
-| 5/6 danna 2(diš) UŠ | 5/6 danna (2 diš) UŠ | 𒑜 𒆜 𒁍 𒐀 𒍑 |
-| 5/6 danna 3(diš) UŠ | 5/6 danna (3 diš) UŠ | 𒑜 𒆜 𒁍 𒐁 𒍑 |
-| 5/6 danna 4(diš) UŠ | 5/6 danna (4 diš) UŠ | 𒑜 𒆜 𒁍 𒐂 𒍑 |
-| 1(diš) danna | (1 diš) danna | 𒀸 𒆜 𒁍 |
-|  | (1 diš) danna (5 diš) UŠ gid | 𒀸 𒆜 𒁍 𒐃 𒍑 𒁍 |
-|  | (1 diš) 1/3 danna | 𒀸 𒑚 𒆜 𒁍 |
-| 1(diš) 1/2 danna | (1 diš) 1/2 danna | 𒀸 𒈦 𒆜 𒁍 |
-| 1(diš) 2/3 danna | (1 diš) 2/3 danna | 𒀸 𒑛 𒆜 𒁍 |
-| 1(diš) 5/6 danna | (1 diš) 5/6 danna | 𒀸 𒑜 𒆜 𒁍 |
-| 2(diš) danna | (2 diš) danna | 𒐀 𒆜 𒁍 |
-| 2(diš) 1/2 danna | (2 diš) 1/2 danna gid | 𒐀 𒈦 𒆜 𒁍 𒁍 |
-| 3(diš) danna | (3 diš) danna | 𒐁 𒆜 𒁍 |
-| 3(diš) 1/2 danna | (3 diš) 1/2 danna | 𒐁 𒈦 𒆜 𒁍 |
-| 4(diš) danna | (4 diš) danna | 𒐂 𒆜 𒁍 |
-| 4(diš) 1/2 danna | (4 diš) 1/2 danna | 𒐂 𒈦 𒆜 𒁍 |
-| 5(diš) danna | (5 diš) danna | 𒐃 𒆜 𒁍 |
-| 5(diš) 1/2 danna | (5 diš) 1/2 danna | 𒐃 𒈦 𒆜 𒁍 |
-| 6(diš) danna | (6 diš) danna | 𒐄 𒆜 𒁍 |
-| 6(diš) 1/2 danna | (6 diš) 1/2 danna | 𒐄 𒈦 𒆜 𒁍 |
-| 7(diš) danna | (7 diš) danna | 𒐅 𒆜 𒁍 |
-| 7(diš) 1/2 danna | (7 diš) 1/2 danna | 𒐅 𒈦 𒆜 𒁍 |
-| 8(diš) danna | (8 diš) danna | 𒐆 𒆜 𒁍 |
-| 8(diš) 1/2 danna | (8 diš) 1/2 danna | 𒐆 𒈦 𒆜 𒁍 |
-| 9(diš) danna | (9 diš) danna | 𒐇 𒆜 𒁍 |
-| 9(diš) 1/2 danna | (9 diš) 1/2 danna | 𒐇 𒈦 𒆜 𒁍 |
-| 1(u) danna | (1 u) danna | 𒌋 𒆜 𒁍 |
-| 1(u) 1/2 danna | (1 u) 1/2 danna | 𒌋 𒈦 𒆜 𒁍 |
-| 1(u) 1(diš) danna | (1 u 1 diš) danna | 𒌋 𒀸 𒆜 𒁍 |
-| 1(u) 1(diš) 1/2 danna | (1 u 1 diš) 1/2 danna | 𒌋 𒀸 𒈦 𒆜 𒁍 |
-| 1(u) 2(diš) danna | (1 u 2 diš) danna | 𒌋 𒐀 𒆜 𒁍 |
-| 1(u) 2(diš) 1/2 danna | (1 u 2 diš) 1/2 danna | 𒌋 𒐀 𒈦 𒆜 𒁍 |
-| 1(u) 3(diš) danna | (1 u 3 diš) danna | 𒌋 𒐁 𒆜 𒁍 |
-| 1(u) 3(diš) 1/2 danna | (1 u 3 diš) 1/2 danna | 𒌋 𒐁 𒈦 𒆜 𒁍 |
-| 1(u) 4(diš) danna | (1 u 4 diš) danna | 𒌋 𒐂 𒆜 𒁍 |
-| 1(u) 4(diš) 1/2 danna | (1 u 4 diš) 1/2 danna | 𒌋 𒐂 𒈦 𒆜 𒁍 |
-| 1(u) 5(diš) danna | (1 u 5 diš) danna | 𒌋 𒐃 𒆜 𒁍 |
-| 1(u) 5(diš) 1/2 danna | (1 u 5 diš) 1/2 danna | 𒌋 𒐃 𒈦 𒆜 𒁍 |
-| 1(u) 6(diš) danna | (1 u 6 diš) danna | 𒌋 𒐄 𒆜 𒁍 |
-| 1(u) 6(diš) 1/2 danna | (1 u 6 diš) 1/2 danna | 𒌋 𒐄 𒈦 𒆜 𒁍 |
-| 1(u) 7(diš) danna | (1 u 7 diš) danna | 𒌋 𒐅 𒆜 𒁍 |
-| 1(u) 7(diš) 1/2 danna | (1 u 7 diš) 1/2 danna | 𒌋 𒐅 𒈦 𒆜 𒁍 |
-| 1(u) 8(diš) danna | (1 u 8 diš) danna | 𒌋 𒐆 𒆜 𒁍 |
-| 1(u) 8(diš) 1/2 danna | (1 u 8 diš) 1/2 danna | 𒌋 𒐆 𒈦 𒆜 𒁍 |
-| 1(u) 9(diš) danna | (1 u 9 diš) danna | 𒌋 𒐇 𒆜 𒁍 |
-| 1(u) 9(diš) 1/2 danna | (1 u 9 diš) 1/2 danna | 𒌋 𒐇 𒈦 𒆜 𒁍 |
-| 2(u) danna | (2 u) danna | 𒎙 𒆜 𒁍 |
-| 2(u) 1(diš) danna | (2 u 1 diš) danna gid | 𒎙 𒀸 𒆜 𒁍 𒁍 |
-| 2(u) 2(diš) danna | (2 u 2 diš) danna | 𒎙 𒐀 𒆜 𒁍 |
-| 2(u) 3(diš) danna | (2 u 3 diš) danna | 𒎙 𒐁 𒆜 𒁍 |
-| 2(u) 4(diš) danna | (2 u 4 diš) danna | 𒎙 𒐂 𒆜 𒁍 |
-| 2(u) 5(diš) danna | (2 u 5 diš) danna | 𒎙 𒐃 𒆜 𒁍 |
-| 2(u) 6(diš) danna | (2 u 6 diš) danna | 𒎙 𒐄 𒆜 𒁍 |
-| 2(u) 7(diš) danna | (2 u 7 diš) danna | 𒎙 𒐅 𒆜 𒁍 |
-| 2(u) 8(diš) danna | (2 u 8 diš) danna | 𒎙 𒐆 𒆜 𒁍 |
-| 2(u) 9(diš) danna | (2 u 9 diš) danna | 𒎙 𒐇 𒆜 𒁍 |
-| 3(u) danna | (3 u) danna | 𒌍 𒆜 𒁍 |
-| 3(u) 5(diš) danna | (3 u 5 diš) danna gid | 𒌍 𒐃 𒆜 𒁍 𒁍 |
-| 4(u) danna | (4 u) danna | 𒐏 𒆜 𒁍 |
-| 4(u) 5(diš) danna | (4 u 5 diš) danna | 𒐏 𒐃 𒆜 𒁍 |
-| 5(u) danna | (5 u) danna | 𒐐 𒆜 𒁍 |
-| 1(geš2) danna | (1 geš) danna gid | 𒐕 𒆜 𒁍 𒁍 |
 
-</details>
+
+### **Appendix C** Commodity Lists & Conversion factors.
+
+
+#### Substance Symbols and others
+
+You can access these terms. Example:
+
+```pycon
+--> from mesomath.glyphs import subsdict
+--> print(subsdict['ki_la2'])
+𒆠 𒆷
+```
+
+##### **Metals & Value**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|ku_babbar|𒆬 𒌓| Silver (kù-babbar), also weight|
+|urudu|𒍏| Copper (urudu)|
+|ku3_sig17|𒆬 𒄀| Gold (kù-sig17)|
+
+##### **Crops & Liquids**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|se|𒊺| Barley (še), also capacity|
+|ziz2|𒀾| Emmer wheat (zíz)|
+|i3_gis|𒉌 𒄑| Sesame oil (ì-giš)|
+|kas|𒁉| Beer (kaš / bi) - Standard vessel sign|
+
+##### **Land & Livestock**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|a_sa|𒀀 𒊮| Field (a-šà), also surface|
+|kiri6|𒊬| Orchard/Garden (kiri6)|
+|gu4|𒄞| Ox (gu4)|
+|udu|𒇻| Sheep (udu)|
+
+##### **Textiles & Fibers**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|siki|𒋠| Wool (siki)|
+|gada|𒃰| Linen (gada)|
+|siki_gi|𒋠 𒄀| Native/Standard wool (siki-gi)|
+
+##### **Fruits & Provisions**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|zu2_lum|𒍪 𒈝| Dates (zú-lum)|
+|ges_tin|𒃾| Wine (geštin)|
+|ga_ar3|𒂵 𒄯| Cheese/Curd (ga-àr)|
+|i3_nun|𒉌 𒉣| Ghee/Butter (ì-nun)|
+
+##### **Building & Resources**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|esir|𒀀 𒂍| Bitumen (esir2 / A.E2) - The most standard form|
+|ges|𒄑| Wood/Beam (geš)|
+|sig4|𒋞| Brick (sig4)|
+|na4|𒉌| Stone (na4)|
+
+##### **Personnel (Contextual)**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|lu2|𒇽| Man/Worker (lú)|
+|geme2|𒊩| Female worker (gemé)|
+|er3|𒀴| Slave/Servant (er3)|
+
+##### **Mathematical States** (for Metrotable)
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|igi_nu|𒅆 𒉡| Reciprocal not found (igi-nu)|
+|igi_nu_du8|𒅆 𒉡 𒂃| Reciprocal does not open (igi-nu-du8)|
+|a_ra2|𒀀 𒁺|Times (a-rá)|
+
+
+##### **Geometry**
+
+**1. Main Dimensions**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|sag|𒊕|Front / Width (Literally |head|, used for the frontal dimension or the width of a rectangle, thickness of walls or bricks).|
+|dagal|𒂼|Breadth / Width (Used for the extent of an object or surface).|
+|sag_dagal|𒊕 𒂼|
+
+**2. Other Geometric Dimensions**
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|us|𒍑| Length / Long (It is the companion of SAG; in a rectangle, UŠ is the long side and SAG the short side).|
+|sukud|𒊩𒆪| Height (Used for the height of a wall or a tower).|
+|bur|𒌋| Depth (In cuneiform:  𒁓)?  (Common in texts about excavation of canals or wells).|
+|gam|𒃵|Depth, curvature (GAM)|
+|da|𒁕| Side / Flank (Refers to the edge or lateral line of a figure).|
+|gid|𒁍|Length / Extension (Means |long| or |stretch|, sometimes used as a linear measure).|
+|ki_la2|𒆠 𒆷|Excavation area| or |Volume.| It is the technical term for the hole left in the ground.|
+|sahar|𒅖|Earth / Dust.| It is the determinant that almost always accompanies excavation volumes.
+
+
+
+
+
+
+#### **Administrative Terms**
+
+You can access these terms. Example:
+
+```pycon
+--> from mesomath.glyphs import MAP_ADMIN as admin
+--> print(admin['mu-kux'])
+𒈬 𒁺
+```
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|su_ningin_gal|𒋗 𒆸 𒃲| Total if sections|
+|mu_sid_bi|𒈬 𒋃 𒁉| Your number of lines|
+|dub|𒁾| Clay tablet|
+|mu-kux|𒈬 𒁺| mu-kux(DU) Delivery. Indicates goods that enter the institution or warehouse.|
+|zi-ga| 𒍣 𒂵| Expense. Indicates what has been withdrawn or spent from the inventory.|
+|la-ia| 𒇲 𒉌| Deficit. (lá-ia3) It was used to indicate what was missing in an account or what an official still had to deliver.|
+|nig-ka|𒃻 𒅗| Balance, the general term for the "account statement" or the process of auditing a ledger.|
+|iti|𒌗| Date. Month / Time of creation.|
+|dub-sar|𒁾 𒊬| Scribe|
+|nu_til|𒉡 𒌀| Not finished. |
+|ba_til|𒁀 𒌀| Finished.|
+|mu|𒈬|Used for "year" in administrative dating contexts.|
+|su_ti_a|𒋗 𒋾 𒀀| Received (šu-ti-a)|
+|ib2_tag4|𒅁 𒋳| Remainder / Balance (ib2-tag4)|
+|sa10|𒌓| Price / Equivalent (sa10 / sham)|
+
+#### **Determinatives**
+
+You can access these terms. Example:
+
+```pycon
+--> from mesomath.glyphs import DETERM
+--> print(DETERM['ku3'])
+𒆬
+```
+
+|Subst|Glyph|Meaning|
+|-----|:---:|-------|
+|gi|𒄀|Reed, Crucial for alternative length measurements (*gi* = 1/2 ninda).|
+|ku3|𒆬|Precious/Pure. It precedes metals.|
+|dug|𒂁|Vessel. It precedes liquids.|
