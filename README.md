@@ -1,4 +1,4 @@
-# 🏺 MesoMath v2.0.0rc0
+# 🏺 MesoMath v2.0.0rc1
 **The Definitive Mesopotamian Metrology & Arithmetic Engine for Python.**
 
 [![PyPI version](https://img.shields.io/pypi/v/mesomath/2.0.0rc1)](https://pypi.org/project/mesomath/2.0.0rc1/)
