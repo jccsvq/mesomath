@@ -131,14 +131,14 @@ subsdict = {
     "gam": "𒃵",     # Depth, curvature (GAM)
 }
 
-# Determinatives
+#: Determinatives
 DETERM = {
     "gi": "𒄀",    # Reed, Crucial for alternative length measurements (*gi* = 1/2 ninda).
     "ku3": "𒆬",   #Precious/Pure. It precedes metals.
     "dug": "𒂁",   #Vessel. It precedes liquids."
 }
 
-# Dictionary for quick access by unit/system name
+#: Dictionary for quick access by unit/system name
 MAP_ARITHMOGRAMS = {
     "ash": l_as,
     "dis": l_dis,
@@ -149,7 +149,7 @@ MAP_ARITHMOGRAMS = {
     "gesu": l_gesu,
 }
 
-# Unit dictionary
+#: Unit dictionary
 MAP_UNITS = {
     "SILA3": "𒋡",
     "GUR": "𒄥",
@@ -161,7 +161,7 @@ MAP_UNITS = {
     "MA-NA": "𒈠 𒈾",
 }
 
-# Mapping of internal names to Unicode logograms
+#: Mapping of internal names to Unicode logograms
 UNIT_LOGOGRAMS = {
     "sargal": "𒊹",
     "saru": "𒐬",
@@ -173,7 +173,7 @@ UNIT_LOGOGRAMS = {
     "kush3": "𒌑",
 }
 
-# for _MesoM.schema() use
+#: for _MesoM.schema() use
 MAP_UNIT_LOGOGRAMS = {
     "ban": "𒑏",
     "bariga": "𒉿",
@@ -268,7 +268,7 @@ translit_dict = {
     "4(bur3)": "𒐏",
     "4(bur’u)": "𒐸",
     "4(diš)": "𒐉",
-    "4(diš)gal2": "𒐉 𒅅", # ??? esto es para 1/4 con igi delante
+    "4(diš)gal2": "𒐉 𒅅", #  this is for 1/4 with igi in front
     "4(geš2)": "𒐘",
     "4(geš’u)": "𒐡",
     "4(iku)": "𒐂",
@@ -290,7 +290,7 @@ translit_dict = {
     "6(aš)": "𒐄",
     "6(bur3)": "𒐑",
     "6(diš)": "𒐋",
-    "6(diš)gal2": "𒐋 𒅅", # ??? esto es para 1/6 con igi delante
+    "6(diš)gal2": "𒐋 𒅅", # this is for 1/6 with igi in front
     "6(geš2)": "𒐚",
     "6(šar2)": "𒐨",
     "7(aš)": "𒐅",

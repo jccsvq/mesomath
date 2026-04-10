@@ -2252,7 +2252,7 @@ class Bcap(MesoM):  # Capacity
     ufact: list[int] = [180, 60, 10, 6, 5]
     cfact: list[int] = [1, 180, 10800, 108000, 648000, 3240000]
     sex_threshold = 4
-    siv: float = 1.0 / 60 / 180
+    siv: float = 1.0 / 60 / 180   # For the "cubic sila"
     siu: str = "litres"
     ubase: int = 1  # gin
     trmodel: str = "Bcap"  # Transliteration model

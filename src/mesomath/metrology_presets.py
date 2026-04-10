@@ -49,9 +49,13 @@ class MetrologySeries:
         Returns a slice of the series to feed .metrolist().
 
         :param start_step: The index of the first step (inclusive).
+        :type start_step: int
         :param end_step: The index of the last step (inclusive).
+        :type end_step: int
+        :raises IndexError: Out of bounds for nframes
         :return: A tuple (initial_value, sliced_endlist, sliced_inclist)
-        """
+        :rtype: Tuple[str, List[str], List[str]]
+        """    
         if start_step < 0 or end_step >= self.nframes or start_step > end_step:
             raise IndexError(
                 f"Selection range {start_step}-{end_step} is out of bounds for nframes={self.nframes}"

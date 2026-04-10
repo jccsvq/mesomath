@@ -19,14 +19,38 @@ The project manages physical quantities through a hierarchy of Non-Place-Value S
 * **Inheritance**: All metrological classes (length, area, volume, capacity, weight, and bricks) inherit from a generic `MesoM` class.
 * **Interoperability**: You can convert between systems—such as finding the capacity of a grain pile from its measured volume—using historically accurate factors.
 
+
 ## Why version {{ release }}?
 
-This version adds the ability to display results in cuneiform script for educational purposes.
+Version 2.0.0 represents a complete architectural overhaul of the project. While previous versions focused on standalone calculations, this release transforms MesoMath into a **unified metrological ecosystem**.
+
+Key advancements in this version include:
+
+* **Dimensional Intelligence**: The system now understands geometric relationships. It can perform dimensional descent (e.g., dividing a Volume by a Surface to find Height) while automatically managing the complex historical ratios (like the implicit *1-kuš₃* thickness in volume calculations).
+* **Epigraphic Authenticity**: A new dedicated engine renders results in professional Old Babylonian transliteration and Unicode Cuneiform, respecting the specific sign variations for different metrological contexts.
+* **Bidirectional Modern Integration**: The `@classmethod .from_si()` allows researchers to bridge the gap between 21st-century field measurements (meters, kilograms) and ancient units with a single command.
+* **Analytical Inference**: The new `.lookup()` method acts as a "metrological detective," allowing users to identify physical magnitudes from isolated abstract numbers found on broken tablets.
+
+---
 
 ## Project Structure
 
-The ecosystem is divided into three main pillars:
+The MesoMath ecosystem is now organized into a streamlined, object-oriented hierarchy that prioritizes the researcher's workflow:
 
-1. **The Core Library**: `babn.py`, `npvs.py`, and `hamming.py`.
-2. **The Toolset**: Command-line utilities (`babcalc`, `metrotable`, `mtlookup`, `bmultable`) designed for the shell-oriented researcher.
-3. **The Interactive Lab**: Jupyter Notebooks (available via Binder ) for educational and exploratory use. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+### 1. The Core Engine
+* **`babn.py`**: The arithmetic heart. Handles sexagesimal logic, floating-point ambiguity, and advanced reciprocal algorithms.
+* **`npvs.py`**: The metrological skeleton. Contains the `MesoM` base class and all dimensional subclasses (`Blen`, `Bsur`, `Bvol`, `Bcap`, `Bwei`, `Bbri`).
+* **`hamming.py`**: A high-performance database interface for managing "Regular Numbers" (Hamming numbers) used in scribal division.
+
+### 2. The Unified CLI (`babcalc`)
+Following the philosophy of "everything inside the class," the legacy standalone utilities (`mtlookup`, `bmultable`, `metrotable`) have been integrated directly into the core library as methods. 
+* **`babcalc`** remains the primary entry point—a specialized REPL environment for interactive math and metrology.
+* **Legacy utilities** are currently maintained as a compatibility layer but are officially deprecated in favor of internal methods like `Blen.lookup()` or `BabN.multable()`.
+
+### 3. The Visual & Export Layer
+* **`glyphs.py`**: Manages the mapping of substance symbols and cuneiform characters.
+* **Export Methods**: Native support for generating professional research tables in **Markdown**, **HTML**, and **LaTeX** directly from metrological objects.
+
+### 4. Interactive & Educational Labs
+* **Jupyter Notebooks**: Exploratory environments available via Binder for visual learning and complex data analysis. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+
