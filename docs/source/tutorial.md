@@ -492,6 +492,7 @@ Unlike standard calculators, MesoMath allows a `BabN` object to "reveal" its own
 The `.multable()` method is highly customizable to suit different research needs:
 
 * **Full Tables (`pral=False`)**: Generates a continuous table from 1 to 59.
+* **Indices (`indices=[2,4,17]`)**: Generates a table only for the given numbers.
 * **Floating Point (`floating=True`)**: Displays results in sexagesimal floating-point notation (useful for complex reciprocal calculations).
 * **Cuneiform Output (`cuneiform=True`)**: Renders the entire table in original characters, including the multiplication operator label.
 
@@ -1540,12 +1541,32 @@ You can refine your search or change the output format to match your publication
 --> Bcap.lookup('1:10', cuneiform=True, verbose=True)
 
 Looking for Babylonian capacity measurement with Abstract = 1:10
-Base reference unit: sila
--------------------------------------------------------------
-Measure:   𒐕(barig) 𒐕(ban2)
+Base reference unit: gin
+-----------------------------------------------------------------
+Measure:   𒐞 𒐘 𒄥
+Equiv.:    252000.0 litres
+Abstract:   𒐕 𒌋  
+
+Measure:   𒌋 𒐂 𒄥
+Equiv.:    4200.0 litres
+Abstract:   𒐕 𒌋  
+
+Measure:   𒁹 𒑏 𒊺
 Equiv.:    70.0 litres
-Abstract:  𒐕:𒐕
-...
+Abstract:   𒐕 𒌋  
+
+Measure:   𒁹 𒋡 𒌋 𒂆
+Equiv.:    1.1666666666666665 litres
+Abstract:   𒐕 𒌋  
+
+Measure:   𒁹 𒂆 𒊺 𒅆 𒐋 𒅅 𒂆
+Equiv.:    0.019444444444444445 litres
+Abstract:   𒐕 𒌋  
+
+Measure:   𒐈 𒊺
+Equiv.:    0.0002777777777777778 litres
+Abstract:   𒐕 
+
 ```
 
 

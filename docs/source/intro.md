@@ -54,3 +54,10 @@ Following the philosophy of "everything inside the class," the legacy standalone
 ### 4. Interactive & Educational Labs
 * **Jupyter Notebooks**: Exploratory environments available via Binder for visual learning and complex data analysis. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 
+## About the Author
+
+**MesoMath** is developed by a retired Professor of Astrophysics from the University of Seville (Spain), with over four decades of experience in theoretical mechanics, numerical analysis, and geostatistics. 
+
+A lifelong enthusiast of historical computing methods —from slide rules and logarithmic tables to a deep study of the Oriental abacus— the author created MesoMath to fill a gap in digital Assyriology: the need for an agile, command-line-driven environment for sexagesimal and metrological computation.
+
+What began as a personal hobby to explore the fascinating "alternative path" of Mesopotamian mathematics has evolved into this framework. MesoMath is a tribute to the scribal tradition, built with the same precision used to model celestial orbits or geostatistical maps.

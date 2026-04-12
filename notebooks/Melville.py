@@ -28,8 +28,12 @@
 
 # %%
 from mesomath.babn import BabN
+from mesomath.nb_utils import setup_scribal_environment
 
+# Initialize cuneiform support
+setup_scribal_environment()
 
+# %%
 d1 = BabN("2:5")
 r1 = d1.tail()
 r2 = r1.rec()
@@ -74,5 +78,3 @@ print(f"\nResult: {r6 = }")
 
 # %%
 print(f"\nTesting: {d1 * r6 = }")
-
-# %%

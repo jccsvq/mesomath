@@ -1,6 +1,14 @@
 
 # Release Notes
 
+## [2.0.0rc2] - 2026-04-12
+
+### Fixed
+* **.metrolist() bug**: Now the substance is written with the appropriate glyphs if `cuneiform=True`.
+* **Some Minor Fixes**
+
+---
+
 ## [2.0.0rc1] - 2026-04-10
 
 ### Fixed

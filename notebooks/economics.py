@@ -31,6 +31,10 @@ from mesomath.npvs import Bwei as bw  # Weight
 from mesomath.npvs import BsyG as bG  # Counting system G
 from mesomath.npvs import BsyS as bS  # Counting system S
 from mesomath.npvs import Bbri as bb  # Brick count
+from mesomath.nb_utils import setup_scribal_environment
+
+# Initialize cuneiform support
+setup_scribal_environment()
 
 
 # %% [markdown]

@@ -14,31 +14,41 @@
 # ---
 
 # %% [markdown]
-# # MesoMath Notebooks
+# # MesoMath: Scribal Research Laboratory (v2.0.0)
 #
-# > Please, note that all this stuff is still in an experimental stage!
+# Welcome to the interactive environment of MesoMath. This laboratory allows you to explore
+# Mesopotamian mathematics and metrology directly in your browser.
 #
-# ## Inline calculator
+#  
+# ## ⌨️ Interactive Environments
 #
-# * [`babcalc`: Interactive Babylonian calculator](babcalc.ipynb)
+# * 🧪 [**Jupyter Sandbox**: Standard Notebook environment](babcalc.ipynb) *Use this to perform quick sexagesimal arithmetic and metrological conversions.*
+# * **🚀 Pro Terminal Console**: For the best experience, we recommend using the terminal:
+#     1. Click the **[ + ]** (Launcher) button in the top left.
+#     2. Open a **Terminal**.
+#     3. Type `babcalc` and press Enter.
+#     *This environment ensures perfect table alignment and cuneiform rendering.*
 #
-# ## Tutorials
+# ## 📚 Core Tutorials
 #
-# * [`BabN` class tutorial](BabN.ipynb)
-# * [Metrological classes tutorial](Metrology.ipynb)
-# * [Extending **MesoMath**](extension.ipynb)
-# * [Economic methods](economics.ipynb)
+# * [**Sexagesimal Arithmetic (`BabN`)**: Working with floating-point logic & reciprocals](BabN.ipynb)
+# * [**Metrological Systems**: Length, Area, Volume, Capacity, and Weight](Metrology.ipynb)
+# ## 🖋️ Scribal Research Tools
 #
-# ## Application tutorials
+# These tutorials cover the core analytical methods of the MesoMath API:
 #
-# * [`bmultable` tutorial](bmultable.ipynb)
-# * [`metrotable` tutorial](metrotable.ipynb)
-# * [`mtlookup` tutorial](mtlookup.ipynb)
+# * [**Table Generation (`.multable`)**: Reconstructing scribal multiplication tables](multable.ipynb)
+# * [**System Schemas (`.metrolist`)**: Visualizing metrological chains and conversion tables](metrolist.ipynb)
+# * [**Reverse Search (`.lookup`)**: Identifying metrological units from abstract values](lookup.ipynb)
+# * [**Economic & Brick Logistics**: Practical administration methods](economics.ipynb)
 #
-# ## Others
+# ## 🔬 Advanced Studies
 #
-# * [Melville example](Melville.ipynb)
-# * [`hamming` module test](hamming.ipynb)
+# * [**Melville's Algorithms**: Reconstructing complex reciprocal techniques](Melville.ipynb)
+# * [**Extending the Framework**: Custom metrologies and the `Npvs` class](extension.ipynb)
+# * [**The Hamming Engine**: Regular numbers and technical efficiency](hamming.ipynb)
 #
+# ---
+# *Note: All notebooks are pre-configured to render Unicode Cuneiform.*
 
 # %%

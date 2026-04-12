@@ -24,8 +24,10 @@
 
 # %%
 from mesomath.babn import BabN as bn
+from mesomath.nb_utils import setup_scribal_environment
 
-
+# Initialize cuneiform support
+setup_scribal_environment()
 
 # %% [markdown]
 # There are four ways to enter sexagesimal numbers, we start with the simplest: by their decimal equivalent
@@ -387,8 +389,8 @@ print(f"{(30*bn(2).sqrt()).float()}\n")
 # %% [markdown]
 # to the one appearing in tablet [YBC 7289](https://en.wikipedia.org/wiki/YBC_7289)
 #
-# <a target = "_blank" title="Urcia, A., Yale Peabody Museum of Natural History,  http://peabody.yale.edu, http://hdl.handle.net/10079/8931zqj
-# derivative work, user:Theodor Langhorne Franklin, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:YBC-7289-OBV-labeled.jpg"><img width="256" alt="Labeled photograph of YBC 7289 identifying inscribed numbers" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/YBC-7289-OBV-labeled.jpg/256px-YBC-7289-OBV-labeled.jpg?20190204183004"></a>
+# <a target="_blank" title="Urcia, A., Yale Peabody Museum of Natural History,  https://peabody.yale.edu, http://hdl.handle.net/10079/8931zqj
+# derivative work, user:Theodor Langhorne Franklin, CC0, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:YBC-7289-OBV-labeled.jpg"><img width="330" alt="Labeled photograph of YBC 7289 identifying inscribed numbers" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/YBC-7289-OBV-labeled.jpg/330px-YBC-7289-OBV-labeled.jpg"></a>
 
 # %% [markdown]
 # #### Cube root

@@ -1114,6 +1114,7 @@ class MesoM(_MesoM):
         :yields: str (Each row of the table)
         """
         from .glyphs import IGI_NU
+        from .glyphs import subsdict
         from .utils import cunei_ljust as padc
         from .utils import gen_multi_range
 
@@ -1133,6 +1134,9 @@ class MesoM(_MesoM):
 
             # Column 1
             if cuneiform:
+                if subst:
+                    subst= subsdict.get(subst, subst)
+
                 if incipit:
                     val1 = (
                         obj.cuneiform + f" {subst}" if is_new_section else obj.cuneiform

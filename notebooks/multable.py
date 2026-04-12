@@ -1,0 +1,100 @@
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.19.1
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# %% [markdown]
+# # The Scribe's School: Multiplication Tables
+#
+# In the Old Babylonian period, students memorized multiplication tables of "regular" numbers. 
+# In **MesoMath**, the `BabN.multable()` method reconstructs these tablets following 
+# the standard scribal format.
+
+# %%
+from mesomath import BabN as bn
+from mesomath.nb_utils import setup_scribal_environment
+
+# Initialize cuneiform support
+setup_scribal_environment()
+
+# %% [markdown]
+# ## 1. Standard Output
+# By default, `.multable()` prints the multiplication table for the given number 
+# across the standard Babylonian sequence: 1 to 20, followed by 30, 40, and 50.
+
+# %%
+# Standard table for 25
+bn(25).multable()
+
+# %% [markdown]
+# ## 2. Visual Customization
+# The method allows you to toggle different visual aspects of the table to match 
+# the style of different historical periods or publications:
+#
+# * `cuneiform`: Renders the table using Unicode Cuneiform.
+# * `stroke`: Adds a horizontal separator between the multiplier and the result.
+# * `floating`: Displays results without the leading unit (1:0:0...) where applicable.
+#
+# %% [markdown]
+# Ancient tables weren't always standard. You can pass a custom list of multipliers 
+# to the method to focus on specific values.
+
+# %%
+# A custom table for 40, only for specific values
+bn(40).multable(indices=[2, 5, 10, 40])
+
+# %%
+# A "cleaner" table for 1:15 (75) with strokes and cuneiform
+bn("1:15").multable(cuneiform=True, stroke=True)
+
+# %% [markdown]
+# The above result is directly a Markdown Table:
+#
+# |  𒐕 𒌋𒐙  𒀀 𒁺  𒐕  |     𒐕 𒌋𒐙 |
+# |----------------|----------|
+# |        𒀀 𒁺   𒐖 |     𒐖 𒌍  |
+# |        𒀀 𒁺   𒐗 |     𒐗 𒑩𒐙 |
+# |        𒀀 𒁺   𒐘 |      𒐙 𒃵 |
+# |        𒀀 𒁺   𒐙 |     𒐚 𒌋𒐙 |
+# |        𒀀 𒁺   𒐚 |     𒑂 𒌍  |
+# |        𒀀 𒁺   𒑂 |     𒑄 𒑩𒐙 |
+# |        𒀀 𒁺   𒑄 |     𒌋  𒃵 |
+# |        𒀀 𒁺   𒑆 |    𒌋𒐕 𒌋𒐙 |
+# |        𒀀 𒁺  𒌋  |    𒌋𒐖 𒌍  |
+# |        𒀀 𒁺  𒌋𒐕 |    𒌋𒐗 𒑩𒐙 |
+# |        𒀀 𒁺  𒌋𒐖 |     𒌋𒐙 𒃵 |
+# |        𒀀 𒁺  𒌋𒐗 |    𒌋𒐚 𒌋𒐙 |
+# |        𒀀 𒁺  𒌋𒐘 |    𒌋𒑂 𒌍  |
+# |        𒀀 𒁺  𒌋𒐙 |    𒌋𒑄 𒑩𒐙 |
+# |        𒀀 𒁺  𒌋𒐚 |     𒎙  𒃵 |
+# |        𒀀 𒁺  𒌋𒑂 |    𒎙𒐕 𒌋𒐙 |
+# |        𒀀 𒁺  𒌋𒑄 |    𒎙𒐖 𒌍  |
+# |        𒀀 𒁺  𒌋𒑆 |    𒎙𒐗 𒑩𒐙 |
+# |        𒀀 𒁺  𒎙  |     𒎙𒐙 𒃵 |
+# |        𒀀 𒁺  𒌍  |    𒌍𒑂 𒌍  |
+# |        𒀀 𒁺  𒑩  |     𒑪  𒃵 |
+# |        𒀀 𒁺  𒑪  |  𒐕  𒐖 𒌍  |
+
+# %% [markdown]
+# ## 3. Metrological Format (`fill=True`)
+# The `fill` (Pretty Alignment) parameter ensures that the sexagesimal digits 
+# are correctly aligned in columns, emulating the structured layout of physical clay tablets.
+
+# %%
+# Using fill=True to see leading zeros in a table for 40
+bn(40).multable(fill=True)
+
+# %% [markdown]
+# > **Scribe's Tip**: When using `cuneiform=True`, the system automatically inserts the 
+# > term **a-rá** (𒀀 𒁺) between the index and the product, just as an apprentice 
+# > scribe would have done in the *Edubba* (tablet house).

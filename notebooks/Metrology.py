@@ -33,6 +33,11 @@ from mesomath.npvs import BsyS as bS  # Counting system S
 from mesomath.npvs import BsyC as bC  # Counting system C
 from mesomath.npvs import Bbri as bb  # Brick count
 
+# Initialize cuneiform support
+from mesomath.nb_utils import setup_scribal_environment
+
+setup_scribal_environment()
+
 
 # %% [markdown]
 # so that we can access the classes `BabN`, `Blen`, `Bsur`,... using the shorter aliases `bn`, `bl`, `bs`, etc. If you are using `babcalc`, this has already been done for you automatically.

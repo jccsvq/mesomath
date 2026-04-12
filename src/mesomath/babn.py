@@ -7,7 +7,7 @@ from math import log, sqrt
 from os.path import exists
 from sqlite3 import connect
 
-# from typing import Final
+from typing import List
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -614,6 +614,7 @@ SELECT regular
         cuneiform: bool = False,
         stroke: bool = False,
         floating: bool = False,
+        indices: List[int] = None,
     ) -> None:
         """
         Displays the multiplication table for the current number.
@@ -634,6 +635,8 @@ SELECT regular
         :type stroke: bool
         :param floating: If True, results are treated as sexagesimal floating point.
         :type floating: bool
+        :param indices: print table only for these values. Defaults to None.
+        :type indices: list[ints]
         """
         from mesomath.glyphs import TIMES_LABEL as TIMES
         from mesomath.utils import cunei_rjust
@@ -647,7 +650,10 @@ SELECT regular
 
         try:
             # Traditional Babylonian multipliers
-            pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
+            if indices is None:
+                pnum = [i + 1 for i in range(20)] + [30, 40, 50] if pral else range(1, 60)
+            else:
+                pnum = indices
 
             if cuneiform:
                 val = self.to_cunei(stroke=stroke, alter=True)
