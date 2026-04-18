@@ -51,6 +51,9 @@ print(*bc.scheme(cuneiform=True))
 # %%
 bc.metrolist(mmin="1 sila3", mmax="10 sila3", step="1 sila3")
 
+# %%
+bc.metronotebook(mmin="1 sila3", mmax="10 sila3", step="1 sila3", verbose=True)
+
 # %% [markdown]
 # ## 3. Epigraphic Details: Substances and Colophons
 # In administrative texts, measurements are often tied to a substance (barley, oil, etc.).
@@ -58,9 +61,9 @@ bc.metrolist(mmin="1 sila3", mmax="10 sila3", step="1 sila3")
 
 # %%
 # Capacity list for Barley (she) with a colophon summary
-bc.metrolist(
+bc.metronotebook(
     mmin="10 sila3", mmax="1 ban2 4 sila3", step="2 sila3", 
-    subst="se", colophon=True
+    subst="se", colophon=True, verbose =True
 )
 
 # %% [markdown]
@@ -70,7 +73,7 @@ bc.metrolist(
 
 # %%
 # A professional sequence in cuneiform with substance (wood/beams)
-bl.metrolist(
+bl.metronotebook(
     mmin="1 ninda", mmax="5 ninda", step="1 ninda",
     cuneiform=True, subst="ges", incipit=True,
     verbose=True
@@ -142,13 +145,14 @@ print(html_table)
 
 # %%
 # A table that grows by 10 susi up to 2 kus, then by 1 kus up to 12 kus and by 6 kus up to 5 ninda
-bl.metrolist(
+bl.metronotebook(
     mmin="10 susi", 
     mmax=["2 kus", "12 kus", "5 ninda"], 
     step=["5 susi", "1 kus", "6 kus"],
     translit=True,
     verbose=True,
     ubase=1,       # kus, for vertical measurements
+    details=True,  # to fold output
 )
 
 # %% [markdown]
@@ -162,10 +166,24 @@ from mesomath.metrology_presets import CAPACITY_PROUST_81 as C81
 C81
 
 # %%
-# Generate the complete standard Nippur series for Capacity
+# Generate the complete standard Nippur series for Capacity. Transliteration.
 # Using the preset directly in metrolist
 a,b,c = C81.select(3,5)
-bc.metrolist(a, b, c, translit=True, subst="ziz2", incipit=True)
+caption = bc.title + "<br>" + " ".join(bc.scheme(actual=True))
+
+bc.metronotebook(a, b, c, translit=True, subst="ziz2", incipit=True, 
+                 verbose=True, details=True, caption=caption, actual=True
+                )
+
+# %%
+# Generate the complete standard Nippur series for Capacity. Cuneiform.
+# Using the preset directly in metrolist
+a,b,c = C81.select(3,5)
+caption = bc.title + "<br>" + " ".join(bc.scheme(cuneiform=True))
+
+bc.metronotebook(a, b, c, cuneiform=True, subst="ziz2", incipit=True, 
+                 verbose=True, details=True, caption=caption
+                )
 
 # %% [markdown]
 # ### 8. The MetrologySeries Dataclass
@@ -188,4 +206,8 @@ my_series
 # %%
 # Now, let us use `my_series`
 a, b, c = my_series.select(0,1)
-bw.metrolist(a,b,c)
+caption = bw.title + "<br>" + " ".join(bw.scheme())
+
+bw.metronotebook(a,b,c, verbose=True, caption=caption)
+
+# %%

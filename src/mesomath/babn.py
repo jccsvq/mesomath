@@ -615,7 +615,8 @@ SELECT regular
         stroke: bool = False,
         floating: bool = False,
         indices: List[int] = None,
-    ) -> None:
+        echo: bool = True,
+    ) -> List[str] | None:
         """
         Displays the multiplication table for the current number.
         
@@ -637,10 +638,23 @@ SELECT regular
         :type floating: bool
         :param indices: print table only for these values. Defaults to None.
         :type indices: list[ints]
+        :param echo: if False return list of marldown lines instead of printing them. Defaults to True.
+        :type echo: bool
+        :returns: List of strings with markdown table
+        :rtype: List[str] | None
         """
         from mesomath.glyphs import TIMES_LABEL as TIMES
         from mesomath.utils import cunei_rjust
         
+        outlist=[]
+
+        def print_to(text):
+            if echo:
+                print(text)
+            else:
+                outlist.append(text)
+
+
         # Internal value for calculations
         nn = self.dec
 
@@ -663,16 +677,16 @@ SELECT regular
                 hh2 = cunei_rjust(f"{val}", len(val) + 4)
                 lh2 = len(hh2)
                 header = f"\n|{hh}|{hh2}|"
-                print(header)
-                print("|" + "-" * lh + "|" + "-" * lh2 + "|")
+                print_to(header)
+                print_to("|" + "-" * lh + "|" + "-" * (lh2-1) + ":|")
             else:
                 # Header formatting for ASCII
                 label_n = str(self)
                 ll = f" i * {label_n}"
                 lh = len(ll)
                 header = f"\n|  i  |{ll.center(lh)}|"
-                print(header)
-                print("|-----|" + "-" * lh + "|")
+                print_to(header)
+                print_to("|-----|" + "-" * (lh-1) + ":|")
 
             for i in pnum:
                 # Calculate the result
@@ -686,17 +700,35 @@ SELECT regular
                         a2 = res.to_cunei(stroke=True, alter=True)
                         b1 = cunei_rjust(TIMES + "  " + a1, lh)
                         b2 = cunei_rjust(a2, lh2)
-                        print(f"|{b1}|{b2}|")
+                        print_to(f"|{b1}|{b2}|")
                     else:
                         # Row for i=1 is often implicit or the header itself in some tablets
                         pass
                 else:
                     # ASCII row rendering
-                    print(f"| {i:2d}  | {str(res).rjust(lh - 2)} |")
+                    print_to(f"| {i:2d}  | {str(res).rjust(lh - 2)} |")
                     
         finally:
             # Ensure state is restored even if an error occurs
             BabN.sep, BabN.fill = oldsep, oldfill
+            
+            if not echo: 
+                return outlist
+
+    def multable_nb(self, *arg, **kwargs):
+        """
+        Displays the multiplication table in a Jupyter Notebook using Markdown.
+
+        :param arg: Positional arguments for multable.
+        :param kwargs: Keyword arguments for multable.
+        """
+        from IPython.display import display_markdown
+
+        kwargs["echo"] = False
+        lines = self.multable(*arg, **kwargs)
+        md = "\n".join(lines)
+        display_markdown(md, raw=True)
+
 
     def __add__(self, other: object) -> "BabN":
         """Overloads `+` operator: returns BabN object with the sum of operands

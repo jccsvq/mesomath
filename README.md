@@ -2,7 +2,8 @@
 **The Definitive Mesopotamian Metrology & Arithmetic Engine for Python.**
 
 [![PyPI version](https://img.shields.io/pypi/v/mesomath/2.0.0rc1)](https://pypi.org/project/mesomath/2.0.0rc1/)
-[![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=develop)](https://mesomath.readthedocs.io/develop/?badge=develop)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=stable)](https://mesomath.readthedocs.io/stable/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 
 MesoMath is a high-precision computational framework designed for epigraphists, historians, and mathematicians working with Sumerian and Babylonian sexagesimal systems. 
@@ -12,24 +13,32 @@ From the Old Babylonian period (Nippur) to Late Babylonian administrative record
 ---
 
 ## ✨ What's New in v2.0.0?
-This  update transforms MesoMath from a set of utilities into a fully integrated Metrological Ecosystem.
+This major release transforms MesoMath from a set of utilities into a fully integrated Metrological Ecosystem.
 
-* **🧮 Dimensional Awareness:** Perform complex calculations like `Surface / Length = Length` or `Volume / Surface = Height` directly with metrological objects.
-* **🛠️ Versatile Integrated Design of Metrological Lists and Tables:** from the simplest to the most complex compatible with the scribal tradition.
-* **🔍 Integrated Lookup:** The new `MesoM.lookup()` method allows for reverse metrological searches—identify physical measures from abstract sexagesimal values.
-* **🔄 Bidirectional Conversion** between SI values and OBP metrology.
+* **Enhanced `ibabcalc` Console:** New **IPython 9**-based interactive environment providing a clean, "Scribal Console" workspace for power users.
+* **Jupyter Integration:** New `nb_utils` module for high-fidelity rendering of cuneiform tables and academic documentation within notebooks.
+* **🧮 Dimensional Awareness:** Perform complex geometric calculations (e.g., `Volume / Surface = Height`) directly with metrological objects.
+* **🔍 Integrated Lookup:** The new `MesoM.lookup()` engine allows for reverse metrological searches—identify physical measures from abstract sexagesimal values.
+* **🔄 Bidirectional Conversion:** seamless translation between SI units and Old Babylonian metrology.
 * **📜 Epigraphic Engine:** Native support for professional transliteration and Unicode Cuneiform rendering.
-* **🏗️ Construction Metrology:** Dedicated support for Brick Metrology (`Bbri`) and labor/ration logistics.
-* **🛠️ Unified CLI:** Access all features from the enhanced `babcalc` REPL.
+* **🏗️ Construction Metrology:** Dedicated support for Brick Metrology (`Bbri`) and logistics.
+
 
 ---
 
 ## 🚀 Quick Start
 
 ### Installation
+
 ```bash
-pip install mesomath==2.0.0rc1
+$ pipx install mesomath
 ````
+### The Scribal Console
+Launch the advanced interactive environment:
+
+```bash
+$ ibabcalc
+```
 
 ### Basic Interaction
 
@@ -40,7 +49,7 @@ from mesomath.npvs import Blen, Bsur
 width = Blen('3 ninda')
 area = Bsur('1 sar')
 
-# The new division engine
+# The division engine
 length = area / width
 print(length.prtf())  # Output: '1/3 ninda'
 ```

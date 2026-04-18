@@ -1,63 +1,60 @@
 
-# Introduction to MesoMath
+# Introduction to MesoMath (v2.0.0)
 
-**MesoMath** is not just a calculator; it is a digital bridge to the mathematical mind of the ancient Mesopotamian scribe. While modern mathematics relies on abstract decimal notation, the Old Babylonian period (c. 1900–1600 BCE) developed a sophisticated sexagesimal (base-60) system that combined floating-point arithmetic with a complex web of metrological units.
+**MesoMath** is more than just a calculator; it is a digital bridge to the mathematical mind of the ancient Mesopotamian scribe. While modern mathematics relies on abstract decimal notation, the Old Babylonian period (c. 1900–1600 BCE) developed a sophisticated sexagesimal (base-60) system that combined floating-point arithmetic with a complex web of metrological units.
+
+## The MesoMath Ecosystem
+
+MesoMath 2.0.0 introduces a unified workflow tailored to the needs of every researcher, from quick calculations to reproducible academic analysis:
+
+### 1\. Command-Line Environments (CLI)
+
+  * **`babcalc`**: The standard toolkit. A lightweight, dedicated REPL (Read–Eval–Print Loop) environment. It is architected for speed and efficiency, making it the ideal choice for rapid calculations and script automation without complex dependency overhead.
+  * **`ibabcalc`**: The "Scribal Console." Built upon **IPython 9**, this advanced environment is designed for power users. It offers a refined, distraction-free workspace featuring object introspection, robust command history, and a pre-configured metrological namespace.
+
+### 2\. Research & Educational Environments (Jupyter & Cloud)
+
+  * **Jupyter Notebooks**: The gold standard for reproducible research. MesoMath includes specialized utilities (`nb_utils`) that allow for high-fidelity rendering of cuneiform tables, statistical analysis, and rigorous documentation of the calculation process.
+  * **Zero-Install Experience (Binder)**: Launch a fully functional MesoMath instance directly in your browser. Our Binder integration provides immediate access to interactive tutorials, curated case studies (such as the *Plimpton 322* analysis), and live terminal sessions.
+
+[](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+
+-----
 
 ## Core Concepts
 
-### 1. Sexagesimal Arithmetic (`babn.py`)
+### Sexagesimal Arithmetic and Metrology
 
-Unlike modern calculators, MesoMath treats numbers in their "floating" aspect. In the Babylonian context, the absolute value of a number often depended on its metrological context rather than a fixed decimal point. The `BabN` class implements this logic, allowing for:
+  * **Dimensional Intelligence**: MesoMath understands geometric relationships. It performs "dimensional descent"—such as dividing volume by area to derive height—by automatically managing historical metrological ratios.
+  * **Bidirectional Conversion**: Utilizing the `@classmethod .from_si()`, researchers can bridge the gap between 21st-century metrics (meters, kilograms) and Babylonian units instantly.
+  * **Analytical Inference**: The new `.lookup()` engine serves as a metrological detective, helping to identify physical magnitudes even from fragmented numerical data found on damaged tablets.
 
-* **Reciprocal-based division**: Traditional Babylonian division was performed by multiplying by the reciprocal of "regular" numbers.
-* **Hamming Numbers**: Integration with a SQLite database to handle regular numbers up to 20 sexagesimal digits.
+### Epigraphic Authenticity
 
-### 2. Metrological Systems (`npvs.py`)
+The MesoMath engine does not merely compute; it documents. All results can be exported into **Old Babylonian Transliteration** or **Unicode Cuneiform**, respecting the variations of sign usage inherent to different metrological contexts.
 
-The project manages physical quantities through a hierarchy of Non-Place-Value Systems (NPVS).
+-----
 
-* **Inheritance**: All metrological classes (length, area, volume, capacity, weight, and bricks) inherit from a generic `MesoM` class.
-* **Interoperability**: You can convert between systems—such as finding the capacity of a grain pile from its measured volume—using historically accurate factors.
+## Project Architecture
 
+The MesoMath framework has been refactored for clarity and performance:
 
-## Why version {{ release }}?
+1.  **The Core Engine**:
 
-Version 2.0.0 represents a complete architectural overhaul of the project. While previous versions focused on standalone calculations, this release transforms MesoMath into a **unified metrological ecosystem**.
+      - `babn.py`: Arithmetic foundation (sexagesimal logic, reciprocal algorithms).
+      - `npvs.py`: Metrological backbone (`MesoM` base class and magnitude-specific subclasses).
+      - `hamming.py`: High-performance interface for regular numbers.
 
-Key advancements in this version include:
+2.  **Unified API**: Legacy utilities (formerly `mtlookup`, `bmultable`) have been integrated directly into core classes, streamlining the developer experience. Methods like `Blen.lookup()` or `BabN.multable()` are now standard.
 
-* **Dimensional Intelligence**: The system now understands geometric relationships. It can perform dimensional descent (e.g., dividing a Volume by a Surface to find Height) while automatically managing the complex historical ratios (like the implicit *1-kuš₃* thickness in volume calculations).
-* **Epigraphic Authenticity**: A new dedicated engine renders results in professional Old Babylonian transliteration and Unicode Cuneiform, respecting the specific sign variations for different metrological contexts.
-* **Bidirectional Modern Integration**: The `@classmethod .from_si()` allows researchers to bridge the gap between 21st-century field measurements (meters, kilograms) and ancient units with a single command.
-* **Analytical Inference**: The new `.lookup()` method acts as a "metrological detective," allowing users to identify physical magnitudes from isolated abstract numbers found on broken tablets.
+3.  **Export Layer**: Native support for professional-grade tables in **Markdown**, **HTML**, and **LaTeX**.
 
----
-
-## Project Structure
-
-The MesoMath ecosystem is now organized into a streamlined, object-oriented hierarchy that prioritizes the researcher's workflow:
-
-### 1. The Core Engine
-* **`babn.py`**: The arithmetic heart. Handles sexagesimal logic, floating-point ambiguity, and advanced reciprocal algorithms.
-* **`npvs.py`**: The metrological skeleton. Contains the `MesoM` base class and all dimensional subclasses (`Blen`, `Bsur`, `Bvol`, `Bcap`, `Bwei`, `Bbri`).
-* **`hamming.py`**: A high-performance database interface for managing "Regular Numbers" (Hamming numbers) used in scribal division.
-
-### 2. The Unified CLI (`babcalc`)
-Following the philosophy of "everything inside the class," the legacy standalone utilities (`mtlookup`, `bmultable`, `metrotable`) have been integrated directly into the core library as methods. 
-* **`babcalc`** remains the primary entry point—a specialized REPL environment for interactive math and metrology.
-* **Legacy utilities** are currently maintained as a compatibility layer but are officially deprecated in favor of internal methods like `Blen.lookup()` or `BabN.multable()`.
-
-### 3. The Visual & Export Layer
-* **`glyphs.py`**: Manages the mapping of substance symbols and cuneiform characters.
-* **Export Methods**: Native support for generating professional research tables in **Markdown**, **HTML**, and **LaTeX** directly from metrological objects.
-
-### 4. Interactive & Educational Labs
-* **Jupyter Notebooks**: Exploratory environments available via Binder for visual learning and complex data analysis. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+-----
 
 ## About the Author
 
-**MesoMath** is developed by a retired Professor of Astrophysics from the University of Seville (Spain), with over four decades of experience in theoretical mechanics, numerical analysis, and geostatistics. 
+**MesoMath** is developed by a retired Professor of Astrophysics from the University of Seville, with over four decades of experience in theoretical mechanics, numerical analysis, and geostatistics.
 
-A lifelong enthusiast of historical computing methods —from slide rules and logarithmic tables to a deep study of the Oriental abacus— the author created MesoMath to fill a gap in digital Assyriology: the need for an agile, command-line-driven environment for sexagesimal and metrological computation.
+A lifelong enthusiast of historical computing methods—from slide rules and logarithmic tables to the study of the Oriental abacus—the author created MesoMath to fill a gap in digital Assyriology: the need for an agile, command-line-driven environment for sexagesimal and metrological computation.
 
-What began as a personal hobby to explore the fascinating "alternative path" of Mesopotamian mathematics has evolved into this framework. MesoMath is a tribute to the scribal tradition, built with the same precision used to model celestial orbits or geostatistical maps.
+What began as a personal hobby to explore the "alternative path" of Mesopotamian mathematics has evolved into this framework. MesoMath is a tribute to the scribal tradition, built with the same precision used to model celestial orbits.

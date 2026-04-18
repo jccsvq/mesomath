@@ -14,13 +14,10 @@
 # ---
 
 # %% [markdown]
-# # BabN testing
+# # BabN Tutorial
 #
-# ## Entering sexagesimal numbers
-#
-# ### Decimal input
-#
-# First of all, we import the `BabN` class under the name `bn` to shorten keyboard input
+# First of all, we import the `BabN` class under the name `bn` to shorten keyboard input.
+# We also initialize the cuneiform support:
 
 # %%
 from mesomath.babn import BabN as bn
@@ -30,6 +27,10 @@ from mesomath.nb_utils import setup_scribal_environment
 setup_scribal_environment()
 
 # %% [markdown]
+# ## Entering sexagesimal numbers
+#
+# ### Decimal input
+#
 # There are four ways to enter sexagesimal numbers, we start with the simplest: by their decimal equivalent
 
 # %%
@@ -98,7 +99,7 @@ strange_input
 # %% [markdown]
 # ### Tuple input
 #
-# Any natural number n can be writen as `n = 2^i × 3^j × 5^k × l` where  `i, j, k, l  ≥ 0`, `i, j, k` are the powers of `2, 3` and `5`, and `l` is a "remainder" that should not be divisible by `2, 3` or `5`. The tuple  `(i,j,k,l)` is what `a.factors` returned above. This is interesting because we can generate regular numbers simply by adopting `l = 1`, entering the number as a tuple
+# Any natural number n can be writen as $n = 2^i × 3^j × 5^k × l$ where  $i, j, k, l  ≥ 0$, these $i, j, k$ are the powers of $2, 3$ and $5$, and $l$ is a *"remainder"* that should not be divisible by $2, 3$ or $5$. The tuple  $(i,j,k,l)$ is what `a.factors` returned above. This is interesting because we can generate regular numbers simply by adopting $l = 1$, entering the number as a tuple
 
 # %%
 e = bn((10, 17, 5, 1))
@@ -549,4 +550,29 @@ print(f"{c.searchreg('01', '59', 19) = }\n")
 
 bn(7).searchreg('06:40', '07:40', 4, True)
 
+# %% [markdown]
+# ## Cuneiform Support
+#
+# For any `BabN` number:
+
 # %%
+n = bn("15:52:00:34")
+n
+
+# %% [markdown]
+# you can have its cuneiform representation in two styles:
+
+# %%
+print(n.cuneiform())
+
+# %% [markdown]
+# and the alternate form:
+
+# %%
+print(n.cuneiform(alter=True))
+
+# %% [markdown]
+# You can also choose between leaving null digits as blanks or writing **𒃵** (GAM) instead:
+
+# %%
+print(n.cuneiform(alter=True, stroke=True))

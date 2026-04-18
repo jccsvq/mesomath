@@ -7,23 +7,13 @@ babcalc app.
    :members:
    :undoc-members:
 
-metrotable app.
----------------
-.. automodule:: mesomath.metrotable
+ibabcalc app.
+-------------
+.. automodule:: mesomath.ibabcalc
    :members:
    :undoc-members:
 
-mtlookup app.
----------------
-.. automodule:: mesomath.mtlookup
-   :members:
-   :undoc-members:
 
-bmultable app.
----------------
-.. automodule:: mesomath.multable
-   :members:
-   :undoc-members:
 
 
 

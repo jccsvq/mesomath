@@ -1203,6 +1203,9 @@ class MesoM(_MesoM):
         actual = kwargs.get("actual", False)
         cuneiform = kwargs.get("cuneiform", False)
         verbose = kwargs.get("verbose", False)
+        
+        if kwargs.get("translit"):
+            actual = True
 
         ubase = cls.ubase if kwargs.get("ubase") is None else kwargs["ubase"]
 
@@ -1410,6 +1413,37 @@ class MesoM(_MesoM):
             )
         else:
             return final_html
+
+    @classmethod
+    def metronotebook(cls, *args, **kwargs):
+        """
+        Wrapper for .metrohtml() to use in notebook environments. 
+        Uses the same options plus a special one of its own.
+
+        :param details: collapse the output in <details> tag, 
+            usefull for long tables, defaults to False
+        :type details: bool, optional
+        """        
+        from mesomath.nb_utils import print_to_notebook
+
+        kwargs["file"] = None
+        kwargs["full_page"] = False
+        kwargs["echo"] = False
+        details = kwargs.get("details", False)
+
+        text = cls.metrohtml(*args, **kwargs)
+
+        if details:
+            wrapped_text = f"""<details>
+                <summary><b>Click to unfold the output</b></summary>
+                <br>
+                {text}
+                </details>
+                    """
+            print_to_notebook(wrapped_text)
+        else:
+            print_to_notebook(text)
+
 
     @classmethod
     def metrolatex(cls, *args, **kwargs):

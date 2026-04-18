@@ -1,4 +1,4 @@
-"""Customized Python REPL for babcalc-Kriger"""
+"""Customized Python REPL for MesoMath"""
 
 import code
 import os
@@ -26,12 +26,12 @@ from mesomath.metrology_presets import WEIGHT_PROUST_82 as wlist
 from mesomath.metrology_presets import SURFACE_PROUST_83 as slist
 from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
 
-message = f"""\nWelcome to Babylonian Calculator {VERSION}
-    ...the calculator that every scribe should have!
-
-Use: bn(number) for sexagesimal calculations
-Metrological classes: bl, bs, bv, bc, bw, bG, bS, bC, bK and bb loaded.
-Use exit() or Ctrl-D (i.e. EOF) to exit
+# Welcome message
+message = f"\n--- MesoMath Interactive Scribal Console {VERSION} ---\n\n"
+message += """Use: bn(number) for sexagesimal calculations
+    Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
+    Metrological presets: clist, wlist, slist, llist loaded.
+    Use exit() or Ctrl-D (i.e. EOF) to exit
 """
 
 sys.ps1 = "--> "

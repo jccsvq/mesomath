@@ -3,46 +3,21 @@ Utility functions for Jupyter Notebook environments.
 """
 from IPython.display import HTML, display
 
-def setup_scribal_environment_old(font_size="1.1em"):
+
+def setup_scribal_environment(font_size="1.1em"):
     """
     Injects CSS into the Jupyter/Binder environment to correctly render 
     Noto Sans Cuneiform in both Markdown and Code outputs.
-    """
+
+    :param font_size: Font size of the text in the output, defaults to "1.1em"
+    :type font_size: str, optional
+    """    
     style = f"""
     <style>
+    /* 1. Font load */
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap');
     
-    /* Global notebook and markdown font */
-    .rendered_html, .jp-RenderedHTMLCommon, .jp-RenderedText {{
-        font-family: 'Noto Sans Cuneiform', 'DejaVu Sans', sans-serif !important;
-    }}
-
-    /* Python print() and stdout output (crucial for tables) */
-    .jp-OutputArea-output pre, 
-    .jp-RenderedText pre, 
-    .output_subarea pre, 
-    .output_text pre,
-    .jp-OutputArea-output code {{
-        font-family: 'Noto Sans Cuneiform', 'Courier New', monospace !important;
-        font-size: {font_size};
-    }}
-
-    /* Editor cuneiform support */
-    .jp-Editor .CodeMirror, .CodeMirror-code {{
-        font-family: 'Noto Sans Cuneiform', monospace !important;
-    }}
-    </style>
-    """
-    display(HTML(style))
-    print("--- MesoMath Scribal Environment Ready ---")
-
-def setup_scribal_environment(font_size="1.1em"):
-    style = f"""
-    <style>
-    /* 1. Carga de la fuente */
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap');
-    
-    /* 2. Forzar MONOESPACIADO en los outputs de Python */
+    /* 2. Force MONOSPACED in Python outputs */
     .jp-OutputArea-output pre, 
     .output_subarea pre, 
     .output_text pre,
@@ -53,10 +28,31 @@ def setup_scribal_environment(font_size="1.1em"):
         white-space: pre !important; /* Mantiene espacios y saltos de línea */
     }}
 
-    /* 3. Ajuste para celdas Markdown (proporcional está bien aquí) */
+    /* 3. Adjustment for Markdown cells (proportional is fine here) */
     .rendered_html, .jp-RenderedHTMLCommon {{
         font-family: 'Noto Sans Cuneiform', sans-serif !important;
     }}
     </style>
     """
     display(HTML(style))
+
+def print_to_notebook(text:str):
+    """
+    Print text ensuring monospaced font and cuneiform support in Notebook 
+    environments, avoiding misalignment.
+
+    :param text: Text to print
+    :type text: str
+    """    
+    html_output = f"""
+    <div style="
+        font-family: 'Noto Sans Cuneiform', 'Courier New', monospace !important;
+        white-space: pre;
+        line-height: 1.2em;
+        font-size: 1.1em;
+        padding: 10px;
+        border-left: 3px solid #ccc;
+        display: block;
+    ">{text}</div>
+    """
+    display(HTML(html_output))

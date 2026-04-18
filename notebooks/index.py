@@ -24,9 +24,9 @@
 #
 # * 🧪 [**Jupyter Sandbox**: Standard Notebook environment](babcalc.ipynb) *Use this to perform quick sexagesimal arithmetic and metrological conversions.*
 # * **🚀 Pro Terminal Console**: For the best experience, we recommend using the terminal:
-#     1. Click the **[ + ]** (Launcher) button in the top left.
+#     1. Click the folder icon on the left sidebar and then click the **[ + ]** (Launcher) button in the top left.
 #     2. Open a **Terminal**.
-#     3. Type `babcalc` and press Enter.
+#     3. Type `babcalc` or `ibabcalc` and press Enter.
 #     *This environment ensures perfect table alignment and cuneiform rendering.*
 #
 # ## 📚 Core Tutorials
@@ -45,10 +45,10 @@
 # ## 🔬 Advanced Studies
 #
 # * [**Melville's Algorithms**: Reconstructing complex reciprocal techniques](Melville.ipynb)
+# * [**Table of Square Areas as a Function of Side Length.**](squares.ipynb)
+# * [**Plimpton 322**: Analysis](Plimpton322.ipynb)
 # * [**Extending the Framework**: Custom metrologies and the `Npvs` class](extension.ipynb)
 # * [**The Hamming Engine**: Regular numbers and technical efficiency](hamming.ipynb)
 #
 # ---
 # *Note: All notebooks are pre-configured to render Unicode Cuneiform.*
-
-# %%

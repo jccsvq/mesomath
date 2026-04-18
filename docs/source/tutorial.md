@@ -1,7 +1,7 @@
 ![mesomath](_static/mesomath.png)
 
 
-# `babcalc` {{ release }}: The Scribe's Manual
+# The Scribe's Manual {{ release }} 
 
 > 𒎀 **Display Note**: Throughout this manual, you will see examples of cuneiform writing. If empty rectangles (▯) appear on your screen, consult the [Cuneiform Support](#install-font) section to install the necessary fonts.
 
@@ -11,12 +11,24 @@
 
 ### 1\. **Introduction & Quickstart**
 
+#### **`babcalc` Environment**
+
 `babcalc` is the heart of the **MesoMath** ecosystem. It is a specialized [REPL (Read–Eval–Print Loop)](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) environment built upon Python 3, specifically architected to function as a seamless interactive calculator for Assyriological and mathematical research.
 
 The `babcalc` interface serves two primary purposes:
 
   * **Interactive Computation**: It provides a pre-configured shell where all metrological and sexagesimal classes are pre-loaded and aliased for high-speed calculation.
   * **Workflow Automation**: It streamlines the execution of [scripts](https://www.google.com/search?q=%23scripting) by automatically resolving environment dependencies and paths, ensuring a consistent execution context regardless of your local [installation](#installation) method (e.g., `pipx` or virtual environments).
+
+#### **Extending the Environment: `ibabcalc` & Jupyter**
+
+While `babcalc` is the standard tool for quick calculations and automation, **MesoMath** offers advanced interfaces for researchers requiring more robust environments:
+
+* **`ibabcalc` (Interactive Poweruser Console)**: Built on **IPython 9**, this console provides an enhanced experience with syntax highlighting, advanced command history, and object introspection. It is the recommended choice for complex, multi-step session work where a clean, dedicated scribal workspace is desired.
+* **Jupyter Integration**: For those performing data analysis or creating reproducible research (like the study of *Plimpton 322*), **MesoMath** includes specialized utilities for **Jupyter Notebooks**. This allows for rich-text documentation, embedded tables, and high-fidelity rendering of cuneiform glyphs using the `mesomath.nb_utils` module.
+
+> **Note for this Tutorial**: To ensure consistency and focus on core concepts, all examples and exercises in this manual will be demonstrated using the standard **`babcalc`** environment. Once you master the basics here, the same logic applies seamlessly to `ibabcalc` and Jupyter.
+
 
 #### **Core Concepts: Classes and Objects**
 
@@ -51,17 +63,37 @@ $ babcalc
 The terminal will display the initialization banner, confirming that the historical metrological models are ready for use:
 
 ```text
-Welcome to Babylonian Calculator 2.0.0
-    ...the calculator every scribe should have!
+--- MesoMath Interactive Scribal Console 2.0.0 ---
 
 Use: bn(number) for sexagesimal calculations
-Metrological classes: bl, bs, bv, bc, bw, bG, bS, bC, bK and bb loaded.
-Use exit() or Ctrl-D to exit
+    Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
+    Metrological presets: clist, wlist, slist, llist loaded.
+    Use exit() or Ctrl-D (i.e. EOF) to exit
 
 --> 
 ```
 
 > **Note**: The `-->` symbol represents the primary MesoMath prompt, indicating the system is ready for sexagesimal or metrological input.
+
+Alternatively, you can launch `ibabcalc` if you prefer an environment based on **IPython**:
+
+```text
+$ ibabcalc 
+
+--- MesoMath Interactive Scribal Console 2.0.0 ---
+
+Use: bn(number) for sexagesimal calculations
+    Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
+    Metrological presets: clist, wlist, slist, llist loaded.
+    Use exit() or Ctrl-D (i.e. EOF) to exit
+        
+
+In [1]: 
+```
+
+you will know in which environment you are by the prompt: `-->` / `In [1]:`.
+
+
 
 #### **Manual Execution**
 
@@ -71,12 +103,23 @@ In the event that the command-line shortcut is not directly accessible, you may 
 $ python3 -m mesomath.babcalc
 ```
 
-#### **Cloud Integration**
+---
 
-For a zero-install experience, a [Jupyter Notebook](https://jupyter.org/) version of this manual is available. You can launch a live, interactive instance of `babcalc` in the cloud by clicking the Binder badge below. (The notebooks may be outdated for a while)
+#### **Cloud Access**: The Zero-Install Experience
+
+For an immediate start without local configuration, you can launch a live, interactive **MesoMath** environment directly in your browser via [MyBinder](https://jupyter.org/binder).
+
+By clicking the badge below, you will gain access to a pre-configured cloud instance containing:
+
+  * **Interactive Notebooks**: A collection of tutorials and curated examples (including the *Plimpton 322* analysis) ready to run in [Jupyter](https://jupyter.org/).
+  * **Cloud Shell**: A fully functional terminal to execute `babcalc` or `ibabcalc` sessions in real-time.
+
+[](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
+
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 
+---
 
 
 ### 2. **The `BabN` Class: Creating Babylonian Numbers**
@@ -1957,6 +2000,151 @@ Testing: d1 * r6 = 1:0:0:0
 ```
 > **Expert Insight**: The result `1:0:0:0` represents the sexagesimal unit. Since Babylonian math used a **floating-place system**, this confirms that $2;5 \times 0;28,48 = 1$.
 ---
+
+Another example of a script: Write a markdown table of the area of ​​squares based on their edge. Copy and paste the following code into a file named `squares.py`:
+
+
+```python
+"""Write a markdown table of the area of ​​squares as a function of their edge.
+"""
+# Required imports
+from mesomath import Blen as bl
+from mesomath.utils import gen_multi_range as gmr
+from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
+
+
+# Selecting range from Proust's presets
+a,b,c = llist.select(4,6)
+
+# Table header
+output = "| Side | Surface |\n|:---|---:|\n"
+# Table body
+for _ in gmr(bl,a,b,c):
+    ll = bl(_[0])
+    ll2 = ll * ll
+    
+    output += f"| {ll.cuneiform:<20} | {ll2.cuneiform:<37} |\n"
+
+# Printing
+print(output)
+```
+
+**Execution**:
+
+```bash
+$ babcalc squares.py
+| Side | Surface |
+|:---|---:|
+| 𒌋 𒃻                  | 𒀸 𒃷                                   |
+| 𒎙 𒃻                  | 𒐂 𒃷                                   |
+| 𒌍 𒃻                  | 𒑘 𒐁 𒃷                                 |
+| 𒐏 𒃻                  | 𒑙 𒐂 𒃷                                 |
+| 𒐏 𒐊 𒃻                | 𒌋 𒐀 𒃷 𒎙 𒐊 𒊬                           |
+| 𒐐 𒃻                  | 𒌋 𒑘 𒀸 𒃷                               |
+| 𒐐 𒐊 𒃻                | 𒌋 𒑙 𒃷 𒎙 𒐊 𒊬                           |
+| 𒁹 𒍑                  | 𒎙 𒃷                                   |
+| 𒁹 𒍑 𒌋 𒃻              | 𒎙 𒑙 𒀸 𒃷                               |
+| 𒁹 𒍑 𒎙 𒃻              | 𒌍 𒑘 𒐂 𒃷                               |
+| 𒁹 𒍑 𒌍 𒃻              | 𒐏 𒑘 𒐁 𒃷                               |
+| 𒁹 𒍑 𒐏 𒃻              | 𒐐 𒑘 𒐂 𒃷                               |
+| 𒁹 𒍑 𒐐 𒃻              | 𒐑 𒑙 𒀸 𒃷                               |
+| 𒐖 𒍑                  | 𒐓 𒃷                                   |
+```
+
+or:
+
+| Side | Surface |
+|:---|---:|
+| 𒌋 𒃻                  | 𒀸 𒃷                                   |
+| 𒎙 𒃻                  | 𒐂 𒃷                                   |
+| 𒌍 𒃻                  | 𒑘 𒐁 𒃷                                 |
+| 𒐏 𒃻                  | 𒑙 𒐂 𒃷                                 |
+| 𒐏 𒐊 𒃻                | 𒌋 𒐀 𒃷 𒎙 𒐊 𒊬                           |
+| 𒐐 𒃻                  | 𒌋 𒑘 𒀸 𒃷                               |
+| 𒐐 𒐊 𒃻                | 𒌋 𒑙 𒃷 𒎙 𒐊 𒊬                           |
+| 𒁹 𒍑                  | 𒎙 𒃷                                   |
+| 𒁹 𒍑 𒌋 𒃻              | 𒎙 𒑙 𒀸 𒃷                               |
+| 𒁹 𒍑 𒎙 𒃻              | 𒌍 𒑘 𒐂 𒃷                               |
+| 𒁹 𒍑 𒌍 𒃻              | 𒐏 𒑘 𒐁 𒃷                               |
+| 𒁹 𒍑 𒐏 𒃻              | 𒐐 𒑘 𒐂 𒃷                               |
+| 𒁹 𒍑 𒐐 𒃻              | 𒐑 𒑙 𒀸 𒃷                               |
+| 𒐖 𒍑                  | 𒐓 𒃷                                   |
+
+---
+
+**Remastering Plimpton 322**
+
+```python
+from mesomath import BabN as bn
+
+PLIMPTON_322 = [
+    ["1:59:00:15", "1:59", "2:49", "1"],
+    ["1:56:56:58:14:50:06:15", "56:07", "1:20:25", "2"],
+    ["1:55:07:41:15:33:45", "1:16:41", "1:50:49", "3"],
+    ["1:53:10:29:32:52:16", "3:31:49", "5:09:01", "4"],
+    ["1:48:54:01:40", "1:05", "1:37", "5"],
+    ["1:47:06:41:40", "5:19", "8:01", "6"],
+    ["1:43:11:56:28:26:40", "38:11", "59:01", "7"],
+    ["1:41:33:45:14:03:45", "13:19", "20:49", "8"],
+    ["1:38:33:36:36", "8:01", "12:49", "9"],
+    ["1:35:10:02:28:27:24:26:40", "1:22:41", "2:16:01", "10"],
+    ["1:33:45", "45", "1:15", "11"],
+    ["1:29:21:54:02:15", "27:59", "48:49", "12"],
+    ["1:27:00:03:45", "2:41", "4:49", "13"],
+    ["1:25:48:51:35:06:40", "29:31", "53:49", "14"],
+    ["1:23:13:46:40", "56", "53", "15"],
+    ]
+
+KI_GLYPH = "\N{CUNEIFORM SIGN KI}"
+
+# Pad with zeros if necesary
+bn.fill = True
+
+# Extrapolated "1" switch
+use_ones = False
+# Use e1 = 0 to use extrapolated "1", e1 = 2 to do not use it
+e1 = 0 if use_ones else 2
+
+output = "|Plimpton 322 Content|||||\n|:---|:---|:---|:---|:---|\n"
+for line in PLIMPTON_322:
+    clin = [bn(_).cuneiform(stroke=1, alter=1) for _ in line]
+    output += f"| {clin[0][e1:]} | {clin[1]} | {clin[2]} | {KI_GLYPH} |{clin[3]} |\n"
+
+
+print(output)
+```
+
+[Plimpton 322](../../notebooks/Plimpton322.py)
+
+<div class="tablet mini">
+
+
+
+|Plimpton 322 Content|||||
+|:---|:---|:---|:---|:---|
+|  𒑪𒑆 𒃵 𒌋𒐙  |  𒐕 𒑪𒑆  |  𒐖 𒑩𒑆  | 𒆠 | 𒐕  |
+|  𒑪𒐚 𒑪𒐚 𒑪𒑄 𒌋𒐘 𒑪   𒐚 𒌋𒐙  | 𒑪𒐚  𒑂  |  𒐕 𒎙  𒎙𒐙  | 𒆠 | 𒐖  |
+|  𒑪𒐙  𒑂 𒑩𒐕 𒌋𒐙 𒌍𒐗 𒑩𒐙  |  𒐕 𒌋𒐚 𒑩𒐕  |  𒐕 𒑪  𒑩𒑆  | 𒆠 | 𒐗  |
+|  𒑪𒐗 𒌋  𒎙𒑆 𒌍𒐖 𒑪𒐖 𒌋𒐚  |  𒐗 𒌍𒐕 𒑩𒑆  |  𒐙  𒑆  𒐕  | 𒆠 | 𒐘  |
+|  𒑩𒑄 𒑪𒐘  𒐕 𒑩   |  𒐕  𒐙  |  𒐕 𒌍𒑂  | 𒆠 | 𒐙  |
+|  𒑩𒑂  𒐚 𒑩𒐕 𒑩   |  𒐙 𒌋𒑆  |  𒑄  𒐕  | 𒆠 | 𒐚  |
+|  𒑩𒐗 𒌋𒐕 𒑪𒐚 𒎙𒑄 𒎙𒐚 𒑩   | 𒌍𒑄 𒌋𒐕  | 𒑪𒑆  𒐕  | 𒆠 | 𒑂  |
+|  𒑩𒐕 𒌍𒐗 𒑩𒐙 𒌋𒐘  𒐗 𒑩𒐙  | 𒌋𒐗 𒌋𒑆  | 𒎙  𒑩𒑆  | 𒆠 | 𒑄  |
+|  𒌍𒑄 𒌍𒐗 𒌍𒐚 𒌍𒐚  |  𒑄  𒐕  | 𒌋𒐖 𒑩𒑆  | 𒆠 | 𒑆  |
+|  𒌍𒐙 𒌋   𒐖 𒎙𒑄 𒎙𒑂 𒎙𒐘 𒎙𒐚 𒑩   |  𒐕 𒎙𒐖 𒑩𒐕  |  𒐖 𒌋𒐚  𒐕  | 𒆠 |𒌋   |
+|  𒌍𒐗 𒑩𒐙  | 𒑩𒐙  |  𒐕 𒌋𒐙  | 𒆠 |𒌋𒐕  |
+|  𒎙𒑆 𒎙𒐕 𒑪𒐘  𒐖 𒌋𒐙  | 𒎙𒑂 𒑪𒑆  | 𒑩𒑄 𒑩𒑆  | 𒆠 |𒌋𒐖  |
+|  𒎙𒑂 𒃵  𒐗 𒑩𒐙  |  𒐖 𒑩𒐕  |  𒐘 𒑩𒑆  | 𒆠 |𒌋𒐗  |
+|  𒎙𒐙 𒑩𒑄 𒑪𒐕 𒌍𒐙  𒐚 𒑩   | 𒎙𒑆 𒌍𒐕  | 𒑪𒐗 𒑩𒑆  | 𒆠 |𒌋𒐘  |
+|  𒎙𒐗 𒌋𒐗 𒑩𒐚 𒑩   | 𒑪𒐚  | 𒑪𒐗  | 𒆠 |𒌋𒐙  |
+
+
+
+</div>
+
+---
+
+
 
 ### **2. Advanced Topic: Extending Metrology**
 

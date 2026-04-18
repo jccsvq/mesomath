@@ -3,7 +3,7 @@
 ***Mesopotamian Calculator and Metrology Tools***
 
 > [!IMPORTANT]
-> We are actively working on the documentation for the upcoming version 2.0.0. 
+> We are actively working on this documentation. The `develop` branch may be more up-to-date. 
 > We apologize for the inconvenience.
 
 ```{toctree}
@@ -11,12 +11,9 @@
 :caption: "Contents:"
 
 intro.md
-release-notes.md
+changelog.md
 install.md
 tutorial.md
-progs/metrotable.md
-progs/mtlookup.md
-progs/multable.md
 references.md
 mesomath
 progs/apps

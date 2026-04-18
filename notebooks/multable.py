@@ -31,10 +31,17 @@ setup_scribal_environment()
 # ## 1. Standard Output
 # By default, `.multable()` prints the multiplication table for the given number 
 # across the standard Babylonian sequence: 1 to 20, followed by 30, 40, and 50.
+# The output of `.multable()` is in `markdown` format and should be properly aligned 
+# in a terminal, but not in Jupyter notebooks. The alternative method `.multable_nb` 
+# is specific to notebooks.
 
 # %%
 # Standard table for 25
 bn(25).multable()
+
+# %%
+# Standard table for 25
+bn(25).multable_nb()
 
 # %% [markdown]
 # ## 2. Visual Customization
@@ -51,39 +58,11 @@ bn(25).multable()
 
 # %%
 # A custom table for 40, only for specific values
-bn(40).multable(indices=[2, 5, 10, 40])
+bn(40).multable_nb(indices=[2, 5, 10, 40])
 
 # %%
 # A "cleaner" table for 1:15 (75) with strokes and cuneiform
-bn("1:15").multable(cuneiform=True, stroke=True)
-
-# %% [markdown]
-# The above result is directly a Markdown Table:
-#
-# |  𒐕 𒌋𒐙  𒀀 𒁺  𒐕  |     𒐕 𒌋𒐙 |
-# |----------------|----------|
-# |        𒀀 𒁺   𒐖 |     𒐖 𒌍  |
-# |        𒀀 𒁺   𒐗 |     𒐗 𒑩𒐙 |
-# |        𒀀 𒁺   𒐘 |      𒐙 𒃵 |
-# |        𒀀 𒁺   𒐙 |     𒐚 𒌋𒐙 |
-# |        𒀀 𒁺   𒐚 |     𒑂 𒌍  |
-# |        𒀀 𒁺   𒑂 |     𒑄 𒑩𒐙 |
-# |        𒀀 𒁺   𒑄 |     𒌋  𒃵 |
-# |        𒀀 𒁺   𒑆 |    𒌋𒐕 𒌋𒐙 |
-# |        𒀀 𒁺  𒌋  |    𒌋𒐖 𒌍  |
-# |        𒀀 𒁺  𒌋𒐕 |    𒌋𒐗 𒑩𒐙 |
-# |        𒀀 𒁺  𒌋𒐖 |     𒌋𒐙 𒃵 |
-# |        𒀀 𒁺  𒌋𒐗 |    𒌋𒐚 𒌋𒐙 |
-# |        𒀀 𒁺  𒌋𒐘 |    𒌋𒑂 𒌍  |
-# |        𒀀 𒁺  𒌋𒐙 |    𒌋𒑄 𒑩𒐙 |
-# |        𒀀 𒁺  𒌋𒐚 |     𒎙  𒃵 |
-# |        𒀀 𒁺  𒌋𒑂 |    𒎙𒐕 𒌋𒐙 |
-# |        𒀀 𒁺  𒌋𒑄 |    𒎙𒐖 𒌍  |
-# |        𒀀 𒁺  𒌋𒑆 |    𒎙𒐗 𒑩𒐙 |
-# |        𒀀 𒁺  𒎙  |     𒎙𒐙 𒃵 |
-# |        𒀀 𒁺  𒌍  |    𒌍𒑂 𒌍  |
-# |        𒀀 𒁺  𒑩  |     𒑪  𒃵 |
-# |        𒀀 𒁺  𒑪  |  𒐕  𒐖 𒌍  |
+bn("1:15").multable_nb(cuneiform=True, stroke=True)
 
 # %% [markdown]
 # ## 3. Metrological Format (`fill=True`)
@@ -92,9 +71,13 @@ bn("1:15").multable(cuneiform=True, stroke=True)
 
 # %%
 # Using fill=True to see leading zeros in a table for 40
-bn(40).multable(fill=True)
+bn(40).multable_nb(fill=True)
 
 # %% [markdown]
 # > **Scribe's Tip**: When using `cuneiform=True`, the system automatically inserts the 
 # > term **a-rá** (𒀀 𒁺) between the index and the product, just as an apprentice 
 # > scribe would have done in the *Edubba* (tablet house).
+
+# %%
+# Let's abuse the method...
+bn('11.22.00.00.44.54').multable_nb(indices=[2, 5, 10, 40],cuneiform=True,stroke=True)

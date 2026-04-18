@@ -26,7 +26,13 @@
 
 # %%
 from mesomath.npvs import Blen, Bsur, Bvol, Bcap
+from mesomath.nb_utils import setup_scribal_environment
 
+# Initialize cuneiform support
+setup_scribal_environment()
+
+
+# %%
 # We define our custom height class
 class bh(Blen):
     title: str = "Babylonian Height Measurement"

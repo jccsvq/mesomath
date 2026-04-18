@@ -1,6 +1,6 @@
 [project]
 name = "mesomath"
-description = "Mesopotamian Calculator and Metrology Tools"
+description = "A robust sexagesimal and metrological engine for Babylonian mathematics. From the Eduba to the Jupyter Notebook."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "CC0-1.0"
@@ -9,44 +9,57 @@ authors = [
   { name = "Jesús Cabrera", email = "jccsvq@gmail.com" },
 ]
 keywords = [
-  "arithmetic",
+  "asiriology",
+  "babylonian-mathematics",
   "calculator",
-  "command-line",
+  "cuneiform",
+  "history-of-science",
+  "ipython-shell",
   "mesopotamia",
   "metrology",
   "sexagesimal",
+  "sumerian"
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
+  "Environment :: Web Environment",  # Notebooks/Binder
   "Intended Audience :: Education",
+  "Intended Audience :: Other Audience",  # Para los aficionados a la historia
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
-  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Scientific/Engineering :: Physics",  # Por tu pasado astronómico y las unidades de tiempo
+  "Topic :: Sociology :: History",  # Archaeology"
+  "Typing :: Typed",
 ]
 dependencies = [
-  "typing-extensions>=4.0.0",
+  "ipython>=9.0.0",
   "parsimonious==0.11.0",
-  "wcwidth"
+  "traitlets>=5.0.0",
+  "typing-extensions>=4.0.0",
+  "wcwidth",
 ]
 dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://mesomath.readthedocs.io"
+Changelog = "https://github.com/jccsvq/mesomath/blob/main/CHANGELOG.md"
+Documentation = "https://mesomath.readthedocs.io/"
+Homepage = "https://github.com/jccsvq/mesomath"
 Issues = "https://github.com/jccsvq/mesomath/issues"
-Source = "https://github.com/jccsvq/mesomath"
+Repository = "https://github.com/jccsvq/mesomath.git"
 
 [project.scripts]
 babcalc = "mesomath.babcalc:main"
-bmultable = "mesomath.multable:main"
-metrotable = "mesomath.metrotable:main"
-mtlookup = "mesomath.mtlookup:main"
+ibabcalc = "mesomath.ibabcalc:start_ibabcalc"
+# bmultable = "mesomath.multable:main"
+# metrotable = "mesomath.metrotable:main"
+# mtlookup = "mesomath.mtlookup:main"
 
 [build-system]
 requires = ["hatchling"]

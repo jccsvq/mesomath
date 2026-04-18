@@ -71,3 +71,11 @@ mesomath.glyphs
    :special-members:
    :show-inheritance:
 
+mesomath.nb_utils
+-----------------
+
+.. automodule:: mesomath.nb_utils
+   :members:
+   :special-members:
+   :show-inheritance:
+

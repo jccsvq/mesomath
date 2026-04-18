@@ -1,5 +1,46 @@
 
-# Release Notes
+## [2.0.0] - 2026-04-20
+
+### Added
+* **New Interactive Environments**: 
+    * **`ibabcalc`**: Advanced **IPython 9** based interactive shell for power users, featuring a clean "Scribal Console" with pre-configured metrological namespaces.
+    * **Jupyter Support**: New `nb_utils` module and special rendering methods (`BabN.multable_nb` and `MesoM.metronotebook`) for high-fidelity research in notebooks.
+* **Cloud Experience**: Official **Binder** integration with live, zero-install notebooks for *Plimpton 322* and *Surface of Squares*.
+* **Dimensional Arithmetic**: Full support for geometric division between magnitudes (e.g., `Bsur / Blen -> Blen`).
+* **Interoperability**: Added `.from_si()` methods for all metrological classes, allowing instant conversion from metric units to Babylonian systems.
+* **Unified API**: 
+    * `.lookup()`: New reverse metrological search engine (replaces `mtlookup.py`).
+    * `.multable()`: New scribal multiplication table generator (replaces `bmultable.py`).
+* **Epigraphic Engine**: Native support for **Old Babylonian Transliteration** and **Unicode Cuneiform** across all core classes.
+* **New Systems**: 
+    * Implementation of **Proust Series** presets for standard Nippur metrology.
+    * `BsyK`: New class for the **Sumerian King List** counting system.
+    * `Bbri`: Enhanced support for **Brick Metrology** and logistics.
+* **Export Options**: Added `.metrohtml()` and `.metrolatex()` for professional table generation.
+
+### Changed
+* **Architectural Refactor**: 
+    * `.metrolist()` and `.scheme()` promoted to **class methods** for better performance and consistency.
+    * All console output and tables now default to **Markdown format** for better legibility.
+* **Documentation**: Major restructuring of the Tutorial and Reference sections to include `ibabcalc` and Jupyter workflows.
+* **Dependencies**: Minimum requirements updated to `ipython>=9.0.0`, `traitlets>=5.0.0`, and `wcwidth` (for character alignment).
+
+### Fixed
+* **.metrolist()**: Fixed a bug where substances were not rendered with cuneiform glyphs when `cuneiform=True`.
+* **Visual Alignment**: Improved Cuneiform character spacing in CLI environments via `wcwidth`.
+* Several minor bugfixes identified during the RC cycle (v2.0.0rc0 - v2.0.0rc2).
+
+### Removed
+* **Legacy Apps**: The standalone scripts `metrotable.py`, `mtlookup.py`, and `bmultable.py` have been removed. Their functionality is now integrated into the core class methods.
+
+---
+
+### *Historical Note (Release Candidates)*
+* **v2.0.0rc2** (2026-04-12): Fixes to metrological glyph rendering.
+* **v2.0.0rc1** (2026-04-10): Alignment fixes for terminal output.
+* **v2.0.0rc0** (2026-04-08): Initial architectural refactor and new API.
+
+---
 
 ## [2.0.0rc2] - 2026-04-12
 
