@@ -4,7 +4,7 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/mesomath)
 ![PyPI - Status](https://img.shields.io/pypi/status/mesomath)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=stable)](https://mesomath.readthedocs.io/stable/)
+[![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=latest)](https://mesomath.readthedocs.io)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 
 MesoMath is a high-precision computational framework designed for epigraphists, historians, and mathematicians working with Sumerian and Babylonian sexagesimal systems. 
