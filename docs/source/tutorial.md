@@ -1,4 +1,4 @@
-![mesomath](_static/mesomath.png)
+![mesomath](_static/mesomath2.png)
 
 
 # The Scribe's Manual {{ release }} 
@@ -63,35 +63,35 @@ $ babcalc
 The terminal will display the initialization banner, confirming that the historical metrological models are ready for use:
 
 ```text
---- MesoMath Interactive Scribal Console 2.0.0 ---
 
-Use: bn(number) for sexagesimal calculations
+--- MesoMath Standard Console 2.0.0 ---
+
+    Engine: Python 3.12.8
     Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
     Metrological presets: clist, wlist, slist, llist loaded.
-    Use exit() or Ctrl-D (i.e. EOF) to exit
+    Use exit() or Ctrl-D (i.e. EOF) to close.
 
 --> 
 ```
 
-> **Note**: The `-->` symbol represents the primary MesoMath prompt, indicating the system is ready for sexagesimal or metrological input.
+> **Note**: The `-->` symbol represents the primary `babcalc` prompt, indicating the system is ready for sexagesimal or metrological input.
+> The Python version shown may vary reflecting your installation.
 
 Alternatively, you can launch `ibabcalc` if you prefer an environment based on **IPython**:
 
 ```text
-$ ibabcalc 
+$ ibabcalc
 
---- MesoMath Interactive Scribal Console 2.0.0 ---
+--- MesoMath Scribal Research Lab 2.0.0 ---
 
-Use: bn(number) for sexagesimal calculations
-    Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
-    Metrological presets: clist, wlist, slist, llist loaded.
-    Use exit() or Ctrl-D (i.e. EOF) to exit
+Powered by: IPython 9.7.0 | Python 3.12.8
+Interactive environment loaded: Jupyter/IPython integration enabled.
+Metrological presets (clist, wlist, etc.) ready for analysis
+--------------------------------------------------------------------
         
 
 In [1]: 
 ```
-
-you will know in which environment you are by the prompt: `-->` / `In [1]:`.
 
 
 
@@ -1667,6 +1667,8 @@ The `.translit` property is optimized for the standard ranges found in archaeolo
 | **Length** | `(2 ges2) danna` (120 danna) | 1,296,000 m |
 
 > ⚠️ **Warning**: For values exceeding these limits, the transliteration engine enters experimental territory where results may become unpredictable.
+
+> ⚠️ **Note on Attested Models**: MesoMath adheres strictly to the metrological structures attested in the Nippur corpus (Proust 2009). When a value lacks an attested model within these lists, the engine purposefully returns `(?)` rather than attempting a synthetic extrapolation. This design choice prioritizes philological integrity, ensuring the user is explicitly notified when a calculation enters non-attested territory.
 
 #### **Note on Volume and Brick Metrology**
 

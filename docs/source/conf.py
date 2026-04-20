@@ -74,7 +74,7 @@ autoclass_content = "both"
 
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
-html_logo = "_static/mesomath.png"
+html_logo = "_static/mesomath.svg"
 html_favicon = "_static/favicon.svg"
 
 rst_epilog = f"""

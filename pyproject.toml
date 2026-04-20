@@ -2,7 +2,7 @@
 name = "mesomath"
 description = "A robust sexagesimal and metrological engine for Babylonian mathematics. From the Eduba to the Jupyter Notebook."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = "CC0-1.0"
 license-files = ["LICEN[CS]E*"]
 authors = [
@@ -29,7 +29,6 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -107,8 +106,9 @@ build = "make -C docs html"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
+  ".fslckout",
   "/.github",
-  "/.ipynb_checkpoints",
+  ".ipynb_checkpoints",
   "/docs/build",
   "tempo.py",
   "*.db3",

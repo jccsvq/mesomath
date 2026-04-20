@@ -27,11 +27,12 @@ from mesomath.metrology_presets import SURFACE_PROUST_83 as slist
 from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
 
 # Welcome message
-message = f"\n--- MesoMath Interactive Scribal Console {VERSION} ---\n\n"
-message += """Use: bn(number) for sexagesimal calculations
+message = f"\n--- MesoMath Standard Console {VERSION} ---\n"
+message += f"""
+    Engine: Python {sys.version.split()[0]}
     Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
     Metrological presets: clist, wlist, slist, llist loaded.
-    Use exit() or Ctrl-D (i.e. EOF) to exit
+    Use exit() or Ctrl-D (i.e. EOF) to close.
 """
 
 sys.ps1 = "--> "
