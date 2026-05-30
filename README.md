@@ -4,6 +4,7 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/mesomath)
 ![PyPI - Status](https://img.shields.io/pypi/status/mesomath)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Hatch project](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/pypa/hatch/master/docs/assets/badge/v0.json)](https://github.com/pypa/hatch)
 [![Documentation Status](https://readthedocs.org/projects/mesomath/badge/?version=latest)](https://mesomath.readthedocs.io)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jccsvq/mesomath-nb/main?urlpath=%2Fdoc%2Ftree%2Fnotebooks%2Findex.ipynb)
 

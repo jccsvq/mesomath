@@ -44,7 +44,7 @@ class BabN:
     Instance attributes:
     --------------------
 
-    :dec: decimal versión of number (ex: 405 for sexagesimal "6:45")
+    :dec: decimal version of number (ex: 405 for sexagesimal "6:45")
     :type dec: int
     :list: list of sexagesimal digits of number (ex: [6, 45] for 405 or "6:45")
     :type list: list
@@ -854,7 +854,7 @@ SELECT regular
 
     def __floordiv__(self, other: object) -> "BabN":
         """Overloads `//` operator: Returns BabN object with the result of
-        "Babylonian división" of operands, i.e., if b is regular then a//b
+        "Babylonian division" of operands, i.e., if b is regular then a//b
         returns a times the reciprocal of b. Result is floating. Returns None
         if b is not regular.
 
@@ -875,7 +875,7 @@ SELECT regular
 
     def __rfloordiv__(self, other: object) -> "BabN":
         """Overloads `//` operator: Returns BabN object with the result of
-        "Babylonian división" of operands, i.e., if b is regular then a//b
+        "Babylonian division" of operands, i.e., if b is regular then a//b
         returns a times the reciprocal of b. Returns None if b is not regular.
 
         :param other: operand

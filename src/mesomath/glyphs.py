@@ -1,4 +1,8 @@
-"""This module contains the cuneiform glyphs necessary for writing metrological
+"""
+Cuneiform Glyphs
+================
+
+This module contains the cuneiform glyphs necessary for writing metrological
 measurements from the Old Babylonian period. You will need to have a TrueType font
 such as Noto Sans Cuneiform or similar installed on your system for proper display.
 """

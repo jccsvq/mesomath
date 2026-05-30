@@ -10,6 +10,7 @@ import sys
 from mesomath.__about__ import __version__ as VERSION
 
 from mesomath import BabN as bn  # noqa: F401
+from mesomath import BabF as bf  # noqa: F401
 from mesomath import Blen as bl  # noqa: F401
 from mesomath import Bsur as bs  # noqa: F401
 from mesomath import Bvol as bv  # noqa: F401
@@ -26,12 +27,17 @@ from mesomath.metrology_presets import WEIGHT_PROUST_82 as wlist
 from mesomath.metrology_presets import SURFACE_PROUST_83 as slist
 from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
 
+from mesotimes import ChronDate as Date
+
+
 # Welcome message
 message = f"\n--- MesoMath Standard Console {VERSION} ---\n"
 message += f"""
     Engine: Python {sys.version.split()[0]}
     Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
     Metrological presets: clist, wlist, slist, llist loaded.
+    Chronological class Date loaded.
+    
     Use exit() or Ctrl-D (i.e. EOF) to close.
 """
 
@@ -47,6 +53,7 @@ def main():
     # Clean base context
     context = {
         "bn": bn,
+        "bf": bf,
         "bl": bl,
         "bs": bs,
         "bv": bv,
@@ -61,6 +68,7 @@ def main():
         "wlist": wlist,
         "slist": slist,
         "llist": llist,
+        "Date": Date,
         "VERSION": VERSION,
         "exit": exit,
         "quit": quit,
@@ -87,7 +95,7 @@ def main():
     # Case 4: babcalc -m module
     elif args[0] == "-m" and len(args) > 1:
         module_name = args[1]
-        sys.argv = args[1:]  # Ajustar para el módulo
+        sys.argv = args[1:]  # Adjust for the module
         runpy.run_module(module_name, run_name="__main__", alter_sys=True)
 
     # Case 3: babcalc -i script.py
@@ -157,7 +165,7 @@ def start_interactive_repl(local_vars: dict = None, banner: str = ""):
     import atexit
 
     atexit.register(readline.write_history_file, history_file)
-    
+
     # 4. Launch the REPL
     if not sys.stdin.isatty() or len(sys.argv) > 1:
         # Silent mode

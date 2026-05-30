@@ -15,6 +15,7 @@ def start_ibabcalc():
         import IPython
 
         from mesomath import BabN as bn  # noqa: F401
+        from mesomath import BabF as bf  # noqa: F401
         from mesomath import Bbri as bb  # noqa: F401
         from mesomath import Bcap as bc  # noqa: F401
         from mesomath import Blen as bl  # noqa: F401
@@ -30,6 +31,7 @@ def start_ibabcalc():
         from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
         from mesomath.metrology_presets import SURFACE_PROUST_83 as slist
         from mesomath.metrology_presets import WEIGHT_PROUST_82 as wlist
+        from mesotimes import ChronDate as Date
 
         # Welcome message
         message = f"\n--- MesoMath Scribal Research Lab {VERSION} ---\n\n"
@@ -43,6 +45,7 @@ Metrological presets (clist, wlist, etc.) ready for analysis
         # Here we define what we want the user to already have loaded
         namespace = {
             "bn": bn,
+            "bf": bf,
             "bl": bl,
             "bs": bs,
             "bv": bv,
@@ -58,6 +61,7 @@ Metrological presets (clist, wlist, etc.) ready for analysis
             "slist": slist,
             "llist": llist,
             "VERSION": VERSION,
+            "Date": Date,
             "exit": exit,
             "quit": quit,
             "message": message,

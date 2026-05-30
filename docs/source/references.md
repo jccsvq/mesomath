@@ -92,3 +92,14 @@ This bibliography provides the academic and historical foundations for the metro
 (ref-Proust2)=
 
 * **Proust, C.** (2019). *A mathematical collection found in the "House of the āšipus"*. In Scholars and Scholarship in Late Babylonian Uruk, eds. Proust and Steele: 89-146. Springer.
+
+## Astronomy and Chronology
+
+(ref-PD71)=
+
+* **Parker, R. and Dubberstein, W.** (1971). *Babylonian Chronology: 626 B.C.–A.D. 75 (2nd Edition)*. Providence: Brown University Press.
+> *Note: Primary source for the chronological database used in the `CheonDate` class.*
+
+(ref-Goldstein)=
+
+* **Goldstein, B. R.** (2003) *Ancient and Medieval Values for the Mean Synodic Month*. Journal for the History of Astronomy, 34, 65 - 74

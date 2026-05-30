@@ -650,8 +650,184 @@ The previous cuneiform output should appear correctly aligned on almost any mode
 | `sep` | `str` | `":"` | Custom separator for sexagesimal digits in ASCII mode. |
 | `stroke` | `bool` | `False` | In cuneiform mode, uses a specific stroke for empty positional values (zeroes). |
 
+---
+
+### **7. Sexagesimal Fractions (`BabF`)**
+
+The `BabF` class provides a robust implementation for the sexagesimal representation of non-negative rational fractions and their basic arithmetic operations. To preserve absolute mathematical precision throughout cuneiform data analysis, `BabF` performs exact fraction arithmetic internally, avoiding the floating-point rounding errors inherent to the IEEE 754 standard.
+
+#### **7.1. Instantiation and Representation Methods**
+
+A `BabF` object can be instantiated using three distinct semantic patterns depending on the nature of the historical source material.
+
+##### **Pattern 1: Explicit Numerator and Denominator**
+
+The most basic constructor accepts two arguments: `BabF(p, q)`. Both the numerator (`p`) and the denominator (`q`) can be loose integers, decimal strings, positional sexagesimal strings, or native `BabN` objects.
+
+Inside the standard interactive console (`babcalc`), the class is pre-loaded via the short alias `bf`:
+
+```pycon
+--> f = bf(74, 28)
+--> g = bf(5, 8)
+--> f
+1:14/28
+--> g
+5/8
+
+```
+
+Alternatively, structured strings containing a forward slash (`/`) are parsed automatically into their respective components:
+
+```pycon
+--> p = bn('32:54')
+--> q = bn('43:18')
+--> f2 = bf(p, q)
+--> f3 = bf('32:54 / 43:18')
+--> f2 == f3
+True
+
+```
+
+##### **Pattern 2: Positional Sexagesimal Expansion**
+
+Fractions can be defined via a single positional string using the character `@` as the "sexagesimal radix point" (defined by the class constant `BabF.SEP`). In this mode, the denominator is dynamically computed as an exact power of sixty ($60^n$), where $n$ represents the number of fractional sexagesimal places.
+
+This pattern is highly effective for importing historical astronomical parameters, such as the mean synodic months compiled by ancient and medieval scholars:
+
+```pycon
+--> synodic = {
+...     "Banu_Musa": bf('29@31:50:5:43:23'),
+...     "Brahmagupta": bf('29@31:50:5:43:24'),    
+...     "al_Hashimi": bf('29@31:50:5:43:33'),        
+...     "Ibn_al_Muthanna": bf('29@31:50:5:44:33'),        
+...     "Alfonsine_Tables": bf('29@31:50:7:37:27:8:25'),   
+...     "Bonjorn": bf('29@31:50:7:53:39:49'),     
+...     "Levi_ben_Gerson": bf('29@31:50:7:54:25:3:32'),   
+...     "al_Hajjaj": bf('29@31:50:8:9:20'),
+...     "al_Biruni": bf('29@31:50:8:9:20:13'),      
+...     "Ibn_Yunus": bf('29@31:50:8:9:24'),         
+...     "Ptolemy": bf('29@31:50:8:48'),      
+...     "Geminus": bf('29@31:50:18'),         
+... }
+
+```
+(Values taken from {ref}`Goldstein's: *Ancient and Medieval Values for the Mean Synodic Month* <ref-Goldstein>`)
+
+Iterating through these objects highlights how `BabF` maintains the exact fractional structure while offering decimal evaluation capabilities:
+
+```pycon
+--> for author, period in synodic.items():
+...     print(f"{author:>16} -> {period.__str__():37} ({period.as_float})")
+... 
+       Banu_Musa -> 29:31:50:5:43:23/1:0:0:0:0:0          (29.530582051183128)
+     Brahmagupta -> 29:31:50:5:43:24/1:0:0:0:0:0          (29.530582052469136)
+      al_Hashimi -> 29:31:50:5:43:33/1:0:0:0:0:0          (29.53058206404321)
+ Ibn_al_Muthanna -> 29:31:50:5:44:33/1:0:0:0:0:0          (29.530582141203702)
+Alfonsine_Tables -> 29:31:50:7:37:27:8:25/1:0:0:0:0:0:0:0 (29.530590852803854)
+         Bonjorn -> 29:31:50:7:53:39:49/1:0:0:0:0:0:0     (29.530592103673698)
+ Levi_ben_Gerson -> 29:31:50:7:54:25:3:32/1:0:0:0:0:0:0:0 (29.530592161855566)
+       al_Hajjaj -> 29:31:50:8:9:20/1:0:0:0:0:0           (29.5305933127572)
+       al_Biruni -> 29:31:50:8:9:20:13/1:0:0:0:0:0:0      (29.530593313035837)
+       Ibn_Yunus -> 29:31:50:8:9:24/1:0:0:0:0:0           (29.530593317901236)
+         Ptolemy -> 29:31:50:8:48/1:0:0:0:0               (29.530596296296295)
+         Geminus -> 29:31:50:18/1:0:0:0                   (29.530638888888888)
+
+```
+
+##### **Pattern 3: Repeating Sexagesimal Digits**
+
+The class method `BabF.repeated()` allows the instantiation of purely repeating fractional digits. This corresponds to the mathematical expression $\frac{p}{60^n - 1}$, mapping periodic sexagesimal expansions into exact rational fractions:
+
+```pycon
+--> h = bf.repeated('8:34:17')
+--> h
+8:34:17/59:59:59
+--> h.expand(9)
+'0@8:34:17:8:34:17:8:34:17'
+--> h.simplified 
+1/7
+
+```
+
+*Note: In the example above, the repeating sequence `8:34:17` resolves exactly to $\frac{1}{7}$, providing an elegant tool to handle non-regular sexagesimal denominators.*
+
+More complex, mixed repeating fractions can be built by combining standard instances with scaled periodic parts:
+
+```pycon
+--> h2 = bf('2@37') + bf.repeated('8:34:17') / 60
+--> h2.expand(10)
+'2@37:8:34:17:8:34:17:8:34:17'
+--> h2
+2:37:8:31:40:0/59:59:59:0:0
+--> h2.simplified 
+55/21
+
+```
 
 ---
+
+#### **7.2. Introspection and Internal Properties**
+
+Each `BabF` instance exposes specialized properties to query its internal state, convert to decimal formats, or obtain numerical variations:
+
+```pycon
+--> f = bf(74, 28)
+--> f.p, f.q               # Returns the numerator and denominator as BabN objects
+(1:14, 28)
+--> f.as_dec_fraction      # Returns a string formatted as standard decimal integers
+'74/28'
+--> f.as_float             # Computes the lossy floating-point representation
+2.642857142857143
+--> f.simplified           # Returns a new BabF object reduced to lowest terms
+37/14
+--> f.rec                  # Returns the exact reciprocal fraction (inverse)
+28/1:14
+
+```
+
+To visualize the precise fractional representation back into a manageable cuneiform string, the `.expand(max_digits)` method divides the internal parameters up to the specified limit of sexagesimal digits:
+
+```pycon
+--> f.expand(8)            # Forces expansion to 8 fractional places
+'2@38:34:17:8:34:17:8:34'
+
+```
+
+---
+
+#### **7.3. Arithmetic and Relational Operations**
+
+`BabF` implements total ordering and full operator overloading. Operations are evaluated using cross-multiplication formulas to ensure absolute mathematical fidelity. Mixed operations between `BabF`, `int`, and `BabN` are fully supported out of the box.
+
+```pycon
+--> g = bf(5, 8)
+--> g < f                  # Total ordering relational comparison
+True
+--> f - g                  # Fraction subtraction
+7:32/3:44
+--> f**2                   # Integer power exponentiation
+1:31:16/13:4
+--> f / g                  # Fraction division
+9:52/2:20
+--> (f / g).simplified     # Reduction of the division quotient
+2:28/35
+
+```
+
+> **Safety Guardrails:** To protect the integrity of historical metrological and astronomical calculations, `MesoMath` strictly forbids direct operations between `BabF` and Python `float` types. Attempting mixed floating-point arithmetic will trigger a explicit `TypeError`. Users must explicitly declare a conversion using the `BabF` constructor patterns or fallback to the `.as_float` property.
+
+#### **7.4. Cuneiform Convergence (Interoperability with `BabN`)**
+
+Since historical cuneiform notation lacked an explicit radix point or separator to isolate the fractional part, advanced tablet reproduction can be achieved by feeding the result of a `BabF.expand()` directly back into a `BabN` positional instance after replacing the `@` sign with `:`. This is automatically done by the `to_cunei()` method.
+
+This layout replicates the precise, seamless visual reading flow of ancient Mesopotamian mathematical texts:
+
+```pycon
+--> h2 = bf('2@37') + bf.repeated('8:34:17')/60
+--> print(h2.to_cunei())
+ 𒐖 𒌍𒑂  𒑄 𒌍𒐘 𒌋𒑂  𒑄 𒌍𒐘  
+
+```
 
 ## **II. Metrology: The Weight of Tradition**
 
@@ -2309,8 +2485,786 @@ If you define a custom class for a different historical period, we recommend rel
 </center>
 
 
+## **VI. MesoTimes: Chronology and Astronomy Reference**
 
-## **VI. Reference & Appendices**
+### **1. Introduction**
+
+Starting from version `2.1.0`, the `MesoMath` ecosystem incorporates **`MesoTimes`**, a specialized package dedicated to the computation of historical Mesopotamian astronomy and chronology.
+
+`MesoTimes` possesses a level of algorithmic complexity and mathematical depth equivalent to the core metrological modules of `MesoMath`. However, in its current architectural state, it operates as an **independent package**.
+
+To provide a clean and unified user experience, the package encapsulates its internal astronomical engines (solar, lunar, and planetary core solvers) and exposes a single, comprehensive facade class as the primary user interface: **`ChronDate`** (aliased simply as **`Date`** within the standard `babcalc` and `ibabcalc` interactive consoles).
+
+```{warning}
+**Alpha Software Status**
+The `MesoTimes` package and the `ChronDate` class are currently in an **alpha development stage**. The internal API, database schemas, and method signatures are experimental and subject to change in future releases. Production scripts relying on this package should lock the dependency explicitly to version `2.1.0`.
+
+```
+
+---
+
+### **2. Chronological Paradigms: Astronomical vs. Babylonian Days**
+
+When dealing with ancient Near Eastern dates, computing timeline intersections requires precise management of day-boundary definitions. `MesoTimes` reconciles two distinct chronological paradigms:
+
+1. **The Astronomical / Civil Day (UT):** Follows the modern international standard. It is defined as a continuous period of 24 hours that begins strictly at **00:00 UT (Midnight)**.
+2. **The Babylonian Day:** Follows historical Mesopotamian practice, where the calendar day is tied directly to local visual horizons. A Babylonian day begins officially at **Sunset** and lasts until the following Sunset.
+
+#### **The Alignment Rule**
+
+To maintain mathematical harmony between both systems, `MesoTimes` establishes a strict alignment convention: **A Babylonian day is defined as the evening-to-evening period that contains the 00:00 UT (midnight) marker of the corresponding Astronomical day.**
+
+Therefore, while the core architecture of `ChronDate` is anchor-centered around the absolute precision of Astronomical Julian Days (UT), the interface provides native property pipelines to shift perspectives, isolate local horizons, and perform seamless validation of true Babylonian civil dates.
+
+---
+
+### **3. Instantiation API (The Four Pathways)**
+
+A `ChronDate` instance can be constructed using four distinct chronological pathways, depending on the format of your source data:
+
+#### **Path 1: Julian Day Number (Absolute UT)**
+
+Instantiates a date directly from a standard floating-point Julian Day (JD) number. This is the core native format of the engine.
+
+```python
+# Instantiation via raw Julian Day
+from mesomath import ChronDate
+
+date = ChronDate(1748872.5)
+
+```
+
+#### **Path 2: Julian Calendar Date**
+
+Constructs an instance from a historical Julian year, month, and day. It automatically handles proleptic or standard configurations depending on the period.
+
+```python
+# Instantiation from Julian Calendar (-378-05-17)
+date = ChronDate.from_julian(-378, 5, 17)
+
+```
+
+#### **Path 3: Gregorian Calendar Date**
+
+Constructs an instance using the modern Gregorian calendar rules, fully supporting proleptic extensions for deep historical retro-calculations.
+
+```python
+date = ChronDate.from_gregorian(2026, 5, 28)
+
+```
+
+#### **Path 4: Babylonian King Date (Historical Chronology)**
+
+The most advanced entry point. It resolves a canonical Babylonian date into an absolute astronomical point by querying the internal {ref}`Parker-Dubberstein database <ref-PD71>`. It requires the king code, the regnal year, the historical lunar month, and the tablet day.
+
+
+
+```pycon
+# Query king codes
+>>> from mesomath import ChronDate
+>>> date = ChronDate.kings()
+
+Code       | King Name                 | Start Date (J)
+------------------------------------------------------------
+k001       | Nabopolassar              | -625/04/05
+k002       | Nebuchadnezzar            | -603/04/02
+k003       | Amel_Marduk               | -560/04/06
+k004       | Nergal-Shar-Usur          | -558/04/14
+k005       | Nabunaid                  | -554/03/31
+k006       | Cyrus                     | -537/03/24
+k007       | Cambyses                  | -528/04/12
+k008       | Darius I                  | -520/04/14
+k009       | Xerxes                    | -484/04/06
+k010       | Artaxerxes I              | -463/04/13
+k011       | Darius II                 | -422/04/11
+k012       | Artaxerxes II             | -403/04/10
+k013       | Artaxerxes III            | -357/04/12
+k014       | Arses                     | -336/04/19
+k015       | Darius III                | -334/03/29
+k016       | Alexander III             | -329/04/03
+k017       | Philip Arrahidaeus        | -321/04/04
+k018       | Alexander IV              | -314/04/16
+k019       | Seleucid Era              | -310/04/03
+
+```
+> `Start Date (J)` above correspond to King's regnal year 1, month 1, day 1.
+
+
+```python
+# Year 26 of Artaxerxes II, Month 2 (Aiaru), Day 14
+date = ChronDate.from_babylonian(king="k012", year=26, month=2, day=14)
+
+```
+
+### **4. Core Operations & Timeline Arithmetic**
+
+
+Once instantiated, a `ChronDate` object operates as an immutable point on the timeline. Internally, all operations are calculated using absolute precision floating-point Julian Days (UT). However, the class exposes a fluid API to extract representations across modern and ancient calendars, query dynastic contexts, and perform timeline arithmetic.
+
+In the standard interactive terminal (`babcalc`), the class is available under the clean alias `Date`. Let us instantiate two anchors to explore these operations: an ancient tablet date from the Seleucid Era and a modern contemporary date.
+
+```pycon
+--> date = Date.from_babylonian("k019", 45, 5, 19)
+--> today = Date.from_gregorian(2026, 5, 29)
+--> date
+ChronDate(jd=1624122.5)
+
+```
+
+#### **4.1. Calendar Conversions & Introspection**
+
+`ChronDate` objects decouple the internal astronomical time placement from its civil expressions. Five core properties allow the inspection of any timeline node:
+
+* **`__call__()`:** Invoking the instance directly (`date()`) returns its raw, continuous Julian Day number as a standard Python `float`.
+* **`.julian`:** Returns a 7-element tuple representing `(year, month, day, hour, minute, second, microsecond)` in the Julian Calendar. It operates as a proleptic calendar for dates preceding its historical implementation.
+* **`.gregorian`:** Returns a 7-element tuple in the standard modern Gregorian Calendar (proleptic for deep historical retro-calculations).
+* **`.babylonian`:** Resolves the exact local Mesopotamian calendar parameters (Regnal Year, Lunar Month, and Tablet Day).
+* **`.context`:** Queries the internal historical database to extract political, dynastic, or co-regency details matching the active date.
+
+```pycon
+--> date()
+1624122.5
+
+--> date.julian
+(-266, 8, 10, 0, 0, 0, 0)
+
+--> date.gregorian        # Proleptic Gregorian representation
+(-266, 8, 6, 0, 0, 0, 0)
+ 
+--> date.babylonian
+'Year 45 of Seleucid Era, month: 5 (Abu), day: 19'
+
+--> date.context
+(Dynasty): Year 46 of Seleucid Era (Continuous count starting 312/311 BC))
+(Regnal): Year 15 of Antiochus I Soter (Co-regent from -291))
+
+```
+
+#### **4.2. The Proleptic Babylonian Calendar**
+
+When calculating dates outside the strict limits of surviving historical records (such as modern dates), `MesoTimes` projects a **Proleptic Babylonian Calendar**.
+
+```pycon
+--> today.julian          # Proleptic Julian representation
+(2026, 5, 16, 0, 0, 0, 0)
+
+--> today.gregorian 
+(2026, 5, 29, 0, 0, 0, 0)
+
+--> today.babylonian    # Proleptic Babylonian computation
+'Year 2026 of Proleptic Babylonian Calendar, month: Simanu, day: 13'
+
+--> today.context 
+No historical context available for proleptic dates.
+
+```
+
+```{note}
+**Mathematical Grounding of the Proleptic Engine**
+The proleptic Babylonian calendar is structurally mapped using the year-and-month distribution schema of the **Metonic Cycle** (the 19-year intercalation cycle stabilized during the late Babylonian/Seleucid era). 
+
+However, a strict mathematical Metonic mapping introduces a systematic drift of approximately **two hours per cycle**. To prevent this chronological desynchronization, `MesoTimes` does not rely on a rigid cycle; instead, it delegates the start and duration of every proleptic month to the **true astronomical neomenia calculated at Babylon's local visual horizon**. This hybrid approach guarantees that the projected calendar remains perfectly in phase with actual lunar physics over thousands of years.
+
+```
+
+#### **4.3. Timeline Arithmetic and Ordering**
+
+`ChronDate` instances support standard arithmetic operators and total ordering comparisons. Because instances are immutable, shifting a date returns a completely new `ChronDate` node.
+
+* **Interval Derivation (`date1 - date2`):** Subtracting one instance from another yields a `float` representing the absolute distance between both nodes in elapsed days.
+* **Timeline Shifting (`date + int` / `date - int`):** Adding or subtracting loose integers steps the timeline forward or backward by that exact number of days.
+* **Relational Operators:** Relational checks (`>`, `<`, `>=`, `<=`, `==`, `!=`) evaluate chronological positioning by comparing the absolute underlying Julian Day values.
+
+```pycon
+--> today - date
+837067.0
+
+--> (date + 17).babylonian
+'Year 45 of Seleucid Era, month: 6 (Ululu), day: 7'
+
+--> today > date
+True
+
+```
+
+#### **4.4. Hashing and Collection Persistence**
+
+`ChronDate` implements secure hashing (`__hash__`). This enables instances to be safely stored within standard Python hashed collections, such as sets or as keys in dictionaries, preventing mutable side effects when managing large sets of archaeological text dates.
+
+```pycon
+--> day_set = {date, (date + 17), today}
+--> for historical_date in day_set:
+...     print(historical_date.babylonian)
+... 
+Year 45 of Seleucid Era, month: 5 (Abu), day: 19
+Year 45 of Seleucid Era, month: 6 (Ululu), day: 7
+Year 2026 of Proleptic Babylonian Calendar, month: Simanu, day: 13
+
+```
+
+
+#### **4.5. Macro-Calendrical Matrix Dispatchers (`bab_year_calendar`)**
+
+To visualize the overarching lunisolar grid of any given historical or theoretical boundary, `ChronDate` exposes the `bab_year_calendar()` method. This engine acts as a dynamic dispatcher that decides, based on localized archaeological and algorithmic dataset availability, whether to render a strict empirical record or a cyclical astronomical projection.
+
+The structural grid outputs a terminal report tracking the localized nomenclature of months (*Nisānu* through *Addaru*), their calculated mathematical duration (29 to 31 days based on lunar horizon visibility), and their alignment with historical Julian dates.
+
+##### **Case A: The Regnal Era Matrix (Historical Empirical)**
+
+When initialized inside well-documented historical intervals, the header dynamically updates to display the formal regnal years of the localized rulers or global overarching eras:
+
+```pycon
+--> date = Date.from_julian(74, 10, 15)
+--> date.bab_year_calendar()
+
+--- HISTORIC BABYLONIAN CALENDAR: ARTAXERXES II YEAR 26 ---
+#  Month Name      Start Date (Y/M/D)    JDE Start      Length
+------------------------------------------------------------------------
+1  Nisanu          -378/04/05            1583087.5      29 days
+2  Aiaru           -378/05/04            1583116.5      30 days
+3  Simanu          -378/06/03            1583146.5      29 days
+4  Duzu            -378/07/02            1583175.5      29 days
+5  Abu             -378/07/31            1583204.5      30 days
+6  Ululu           -378/08/30            1583234.5      30 days
+7  Tashritu        -378/09/29            1583264.5      29 days
+8  Arahsamnu       -378/10/28            1583293.5      30 days
+9  Kislimu         -378/11/27            1583323.5      29 days
+10 Tebetu          -378/12/26            1583352.5      29 days
+11 Shabatu         -377/01/24            1583381.5      30 days
+12 Addaru          -377/02/23            1583411.5      30 days
+13 Addaru II       -377/03/25            1583441.5      29 days
+------------------------------------------------------------------------
+Year ends on: -377/04/23 (JDE 1583470.5)
+Total year duration: 383 days (Leap year)
+
+```
+
+##### **Case B: The Imperial Era Matrix (Historical Seleucid)**
+
+As the historical timeline advances, the underlying engine automatically switches its anchoring references to trace long-form continuous reporting frameworks such as the Seleucid accounting loops:
+
+```pycon
+--> date = Date.from_julian(75, 10, 15)
+--> date.bab_year_calendar()
+
+--- HISTORIC BABYLONIAN CALENDAR: SELEUCID ERA YEAR 386 ---
+#  Month Name     Start Date (Y/M/D)    JDE Start      Length
+------------------------------------------------------------------------
+1  Nisanu         75/04/06              1748546.5      29 days
+2  Aiaru          75/05/05              1748575.5      30 days
+3  Simanu         75/06/04              1748605.5      30 days
+4  Duzu           75/07/04              1748635.5      30 days
+5  Abu            75/08/03              1748665.5      30 days
+6  Ululu          75/09/02              1748695.5      29 days
+7  Tashritu       75/10/01              1748724.5      30 days
+8  Arahsamnu      75/10/31              1748754.5      29 days
+9  Kislimu        75/11/29              1748783.5      29 days
+10 Tebetu         75/12/28              1748812.5      29 days
+11 Shabatu        76/01/26              1748841.5      30 days
+------------------------------------------------------------------------
+Year ends on: 76/02/25 (JDE 1748871.5)
+Total year duration: 325 days (Regular year)
+
+```
+
+##### **Case C: The Proleptic Fallback Grid**
+
+If a target date falls into a structural chronological gap where the empirical cuneiform database (`kingdates`) does not contain verified data points, the method down-grades gracefully. It switches to a proleptic calculation model to simulate astronomical ideal cycles based on the neomenia as contemplated from `city`/`ziggurat` (if such parameters are included in the invocation, or from Babylon/0.0 by default), [See :Observatories bellow](observatories):
+
+```pycon
+--> date = Date.from_julian(76, 10, 15)
+--> date.bab_year_calendar(city="Babylon", ziggurat=0.0)
+
+--- PROLEPTIC BABYLONIAN CALENDAR: YEAR 76 ---
+#   Month Name   Start Date (Y/M/D)   JDE Start       Length
+---------------------------------------------------------------------
+1   Nisanu       76/03/24             1748899.5       30     days
+2   Aiaru        76/04/23             1748929.5       29     days
+3   Simanu       76/05/22             1748958.5       30     days
+4   Duzu         76/06/21             1748988.5       31     days
+5   Abu          76/07/22             1749019.5       30     days
+6   Ululu        76/08/21             1749049.5       29     days
+7   Tashritu     76/09/19             1749078.5       29     days
+8   Arahsamnu    76/10/18             1749107.5       29     days
+9   Kislimu      76/11/16             1749136.5       30     days
+10  Tebetu       76/12/16             1749166.5       29     days
+11  Shabatu      77/01/14             1749195.5       29     days
+12  Addaru       77/02/12             1749224.5       30     days
+13  Addaru II    77/03/14             1749254.5       29     days
+---------------------------------------------------------------------
+Year ends on: 77/04/12 (JDE 1749283.5)
+Total year duration: 384 days (Leap year)
+
+```
+
+```{important}
+**Intercalary Recognition (`Addaru II` / `Ululu II`)**
+The historical grid reports empirical leap intercalations manually declared by the administration of the *Esagila* temple or royal decrees, while the proleptic framework applies mathematical cycle distributions. Intercalary months are explicitly tracked and logged in the terminal with an explicit suffix (e.g., `Addaru II`).
+
+```
+
+
+### **5. Solar & Lunar Horizon Dynamics**
+
+(observatories)=
+#### **5.1 Geo-Astronomical Observatories (`ChronDate.sites`)**
+
+Every atmospheric and horizontal calculation in `MesoTimes` (such as twilight phases, moonrise, or heliacal events) depends strictly on local geographic parameters: **Latitude, Longitude, and Elevation**.
+
+To facilitate fluid context switching during computational sessions, `MesoTimes` embeds a static registry of ancient core observation sites and historical sanctuaries within `mesotimes.astronomy.core.mesopotamian_cities`.
+
+|City         | Latitude  | Longitude | Elevation | Modern Location / Description|
+|-------------|-----------|-----------|-----------|------------------------------|
+|Babylon      | 32.5430°N | 44.4244°E |   26 m    | Al Hillah, Iraq|
+|             |           |           |           | Main center of the astronomical diaries (Esagila).|
+|Uruk         | 31.3222°N | 45.6361°E |   21 m    | Warka, Iraq|
+|             |           |           |           | Important center of observation and late mathematical/astronomical texts.|
+|Nineveh      | 36.3583°N | 43.1517°E |  223 m    | Mosul, Iraq|
+|             |           |           |           | Seat of the library of Ashurbanipal, rich in texts of celestial omens (Enuma Anu Enlil).|
+|Ur           | 30.9625°N | 46.1031°E |    5 m    | Tell el-Muqayyar, Iraq|
+|             |           |           |           | Key Sumerian city with an astronomically aligned ziggurat.|
+|Nippur       | 32.1264°N | 45.2319°E |   25 m    | Afak, Iraq|
+|             |           |           |           | Religious center and lunar calendar calibration center.|
+|Sippar       | 33.0594°N | 44.2525°E |   32 m    | Tell Abu Habbah, Iraq|
+|             |           |           |           | City of the sun god (Utu/Shamash), relevant for solstice calculations.|
+|Assur        | 35.4567°N | 43.2625°E |  165 m    | Qal'at Sherqat, Iraq|
+|             |           |           |           | Assyrian religious capital with early observations.|
+|Kish         | 32.5453°N | 44.6033°E |   29 m    | Tell al-Uhaymir, Iraq|
+|             |           |           |           | A site of great antiquity, mentioned in royal lists and eclipse records.|
+|Borsippa     | 32.3917°N | 44.3417°E |   30 m    | Birs Nimrud, Iraq|
+|             |           |           |           | Sister city of Babylon with an important ziggurat (associated with Nabu).|
+|Susa         | 32.1892°N | 48.2436°E |   78 m    | Shush, Iran|
+|             |           |           |           | Capital of Elam; seat of administrative and astronomical archives shared with Mesopotamia.|
+|Harran       | 36.8625°N | 39.0250°E |  377 m    | Harran, Turkey|
+|             |           |           |           | Main center of worship of the god Sin (the Moon). Fundamental for lunar observations in the north.|
+|Eridu        | 30.8158°N | 45.9961°E |    6 m    | Tell Abu Shahrein, Iraq|
+|             |           |           |           | Considered the oldest city; relevant to the cosmogony associated with the sea horizon.|
+|Larsa        | 31.2858°N | 45.8533°E |   20 m    | Tell as-Senkereh, Iraq|
+|             |           |           |           | Ancient solar center relevant for astronomical observations.|
+|Sevilla      | 37.4000°N | -6.0000°E |   20 m    | Seville, Spain|
+|             |           |           |           | Non-Mesopotamian test node (internal verification).|
+
+This metadata can be printed directly in the interactive REPL by invoking the static helper method `ChronDate.sites()` (aliased as `Date.sites()` or accessible from any instance):
+
+```pycon
+--> Date.sites()
+```
+
+```{warning}
+**Observatory Scope Hardcoding**
+At present, the astronomical engine pipelines are hardcoded to match the historical coordinates present in this native registry. Passing a string identifier not compiled within the internal `mesopotamian_cities` catalog will result in a validation error. Custom user coordinates cannot be dynamically injected without fully refactoring the underlying spatial calculation wrappers.
+
+```
+
+
+
+### **6. Master Almanacs & Structural Reporting**
+
+For macro-historical analysis, `ChronDate` exposes reporting engines that compile complex mathematical calculations into comprehensive, production-grade CLI dashboards.
+
+```{note}
+**Historical Delta T ($\Delta T$) and Mathematical Uncertainty**
+To maintain absolute alignment with established canon research, `MesoTimes` utilizes the identical polynomial expressions and uncertainty tables compiled by **Fred Espenak and Jean Meeus** for the *Five Millennium Canon of Eclipses*. At present, these parameters are hardcoded into the internal ephemeris clock loops; users cannot inject custom terrestrial rotation values or alternate $\Delta T$ tables.
+
+```
+
+#### **6.1. The Daily Ephemeris View (`day_ephemeris`)**
+
+The `day_ephemeris()` method prints an instant diagnostic profile of the chosen date, combining civil timelines, localized solar positions, lunar table intervals, and planetary visibilities evaluated against their critical Arc of Vision (`Av`).
+
+```pycon
+--> date.day_ephemeris(city='Susa', ziggurat=50.0)
+
+=================================================================
+                MESOPOTAMIAN DAILY EPHEMERIS: SUSA                
+=================================================================
+  Julian Day:  1583129.58611   | Civil Calendar: Julian (-378/5/17)
+  Chronology:  Year 26 of Artaxerxes II, month: 2 (Aiaru), day: 14
+-----------------------------------------------------------------
+  SOLAR CONTEXT:
+    Sunrise : 01:45 UT | Sunset : 15:32 UT
+    Transit : 08:39 UT | Season : Day: 52 of spring
+-----------------------------------------------------------------
+  LUNAR INTERVALS (Phenomena in current lunation):
+    [Neomenia] NA Interval: -67.43 min (Time from Sunset to Moonset)
+    [Mid-Month] MI-MUSH:    20.68 min (Simultaneous visibility)
+    [End-Month] KUR:        -894.29 min (Dawn crescent disappearance)
+-----------------------------------------------------------------
+  PLANETARY VISIBILITY ( Twilight vs. Arc of Vision ):
+    * Mercury    -> Invisible / Glare                   (Required Av: 12.0°)
+    * Venus      -> VISIBLE (Morning Star)     (Required Av: 6.0°)
+    * Mars       -> VISIBLE (Morning Star)     (Required Av: 14.0°)
+    * Jupiter    -> VISIBLE (Evening Star)     (Required Av: 9.0°)
+    * Saturn     -> VISIBLE (Evening Star)     (Required Av: 11.0°)
+=================================================================
+
+```
+
+#### **6.2. The Annual Historical Almanac (`year_almanac`)**
+
+To study long-term chronological drifts, `year_almanac()` tracks the physical rotation variables of the Earth ($\Delta T$, geographic longitude shifts, and sigma error margins), maps solar equinoxes/solstices, finds planetary oppositions (*Sarsu*), and references verified historical eclipse records.
+
+```pycon
+--> date.year_almanac(city="Babylon", ziggurat=15.5)
+
+=================================================================
+              BABYLONIAN YEAR ALMANAC FOR YEAR -378              
+=================================================================
+  CHRONOLOGICAL ROOT & EARTH ROTATION CONTEXT:
+    Delta T (ΔT) approx. : 15116.00 seconds (4:11:56)
+    Longitude Shift      : 62° 59' 0"
+    Uncertainty (σ)      : 386.00 seconds (0:06:26)
+    Uncertainty in Arc   : 1° 36' 30"
+-----------------------------------------------------------------
+  CARDINAL SOLAR POINTS:
+    Vernal Equinox   : -378-03-26.10
+    Summer Solstice  : -378-06-28.20
+    Autumnal Equinox : -378-09-28.35
+    Winter Solstice  : -378-12-25.91
+-----------------------------------------------------------------
+  CRITICAL PLANETARY PHENOMENA (Sarsu - UT Clock):
+    * Mars   Opposition: -378-10-08.10 | Station 1: -378-08-31.88
+    * Jupiter Opposition: -378-04-12.94 | Station 1: -378-02-11.06
+    * Saturn  Opposition: -378-01-28.56 | Station 1: -379-11-22.56
+    * Venus   Inf. Conj. : -378-05-08.93
+    * Mercury Inf. Conj. : -378-04-26.43
+-----------------------------------------------------------------
+  ECLIPSES VISIBLE FROM KISH (Historical Database):
+    * Date: -378-05-02 | Type: Solar Partial Eclipse | Observed Mag: 0.805
+=================================================================
+
+```
+
+```{seealso}
+**Local Eclipse Circumstances & External Tooling**
+The eclipse data printed by `year_almanac()` is pulled from a historical global visibility database. `MesoTimes` **does not compute localized eclipse circumstances** (such as exact contact times $P_1/U_1$, internal path limits, or dynamic local magnitudes). For high-precision mapping of local eclipse tracks, users are highly encouraged to consult the following dedicated astronomical computing services:
+
+* **NASA JavaScript Lunar Eclipse Explorer:** [https://eclipse.gsfc.nasa.gov/JLEX/JLEX-AS.html](https://eclipse.gsfc.nasa.gov/JLEX/JLEX-AS.html)
+* **NASA JavaScript Solar Eclipse Explorer:** [https://eclipse.gsfc.nasa.gov/JSEX/JSEX-AS.html](https://eclipse.gsfc.nasa.gov/JSEX/JSEX-AS.html)
+* **IMCCE Lunar Eclipses Forms:** [https://ssp.imcce.fr/forms/lunar-eclipses](https://ssp.imcce.fr/forms/lunar-eclipses)
+* **IMCCE Solar Eclipses Forms:** [https://ssp.imcce.fr/forms/solar-eclipses](https://ssp.imcce.fr/forms/solar-eclipses)
+
+```
+
+
+#### **6.3. The Monthly Lunar Phase Almanac (`month_almanac`)**
+
+When `full=True` is provided, `month_almanac()` tracks standard syzygies and triggers a full mathematical reconstruction of a Babylonian diary month, measuring intervals in exact cuneiform *UŠ* units.
+
+```pycon
+--> date.month_almanac(city="Babylon", AoV=12.0, uncertainty=0.833, full=True)
+
+=======================================================
+         LUNAR PHASES FOR JULIAN MONTH: 5/-378         
+=======================================================
+    * -378-05-02.34 -> New Moon
+    * -378-05-09.79 -> First Quarter
+    * -378-05-16.44 -> Full Moon
+    * -378-05-23.82 -> Last Quarter
+    * -378-05-31.88 -> New Moon
+=======================================================
+
+Launching tablet reconstruction for Babylonian month context...
+
+--- ASTRONOMICAL DIARY: YEAR -378, MONTH 5 ---
+City: Babylon  | Coordinates: (Lat: 32.543)
+----------------------------------------------
+[Day 01]  NA:  9.07 UŠ | Date: -378/4/3 (VISIBLE)
+[Full ]  GE₆:  7.35 UŠ | Date: -378/4/16
+[Full ]   ME:  0.93 UŠ | Date: -378/4/17
+[Full ]   ME:  9.59 UŠ | Date: -378/4/18
+[Day 28] KUR:  2.06 UŠ | Date: -378/5/2 (Last Vis.)
+----------------------------------------------
+Month Duration: 30 days (Full)
+
+```
+
+
+
+### **7. Planetary Engines & Heliacal Scanners**
+
+'MesoTimes' analytically bifurcates the calculation of the "wandering gods" (*bibbū*) according to the geometric orbital mechanics of the Earth's position. The engine natively calculates anomalies of time and space (maximum elongation angles) and mechanical stationarities in planetary longitude (retrogradation).
+
+#### **7.1. Inferior Planets Dispatchers (`mercury_almanac`, `venus_almanac`)**
+
+For planets closer to the Sun than Earth, the API tracks inner geometric configurations: Inferior and Superior Conjunctions, Maximum Spatial Elongations (measured in absolute degrees), and the critical turning points where the planet stalls in longitude (Station 1 and Station 2) before changing direction.
+
+```pycon
+--> date = Date(1583129.58611)
+--> date.mercury_almanac()
+
+==========================================================
+             ASTRONOMICAL EVENTS FOR MERCURY              
+==========================================================
+ Reference Date: 5/-378 (JD 1583129.58611)
+----------------------------------------------------------
+  [Time] Inferior Conjunction      -> -378/04/26  (10h UT)
+  [Time] Superior Conjunction      -> -378/06/19  (23h UT)
+  [Time] Western Elongation        -> -378/05/21  (16h UT)
+  [Space] Western Elongation       -> 22.598°
+  [Time] Eastern Elongation        -> -378/04/03  (05h UT)
+  [Space] Eastern Elongation       -> 21.042°
+  [Time] Station Longitude 1       -> -378/04/14  (21h UT)
+  [Time] Station Longitude 2       -> -378/05/08  (18h UT)
+==========================================================
+
+--> date.venus_almanac()
+
+==========================================================
+              ASTRONOMICAL EVENTS FOR VENUS               
+==========================================================
+ Reference Date: 5/-378 (JD 1583129.58611)
+----------------------------------------------------------
+  [Time] Inferior Conjunction      -> -378/05/08  (22h UT)
+  [Time] Superior Conjunction      -> -377/03/01  (12h UT)
+  [Time] Western Elongation        -> -378/07/18  (12h UT)
+  [Space] Western Elongation       -> 45.894°
+  [Time] Eastern Elongation        -> -378/02/27  (10h UT)
+  [Space] Eastern Elongation       -> 45.836°
+  [Time] Station Longitude 1       -> -378/04/17  (11h UT)
+  [Time] Station Longitude 2       -> -378/05/30  (15h UT)
+==========================================================
+
+```
+
+#### **7.2. Superior Planets Dispatchers (`mars_almanac`, `jupiter_almanac`, `saturn_almanac`)**
+
+For outer bodies, the geometric loops omit interior conjunctions and switch to tracking clean absolute Oppositions (*Sarsu* markers) and their surrounding stationary retrogradations.
+
+```pycon
+--> date.mars_almanac()
+
+==========================================================
+               ASTRONOMICAL EVENTS FOR MARS               
+==========================================================
+ Reference Date: 5/-378 (JD 1583129.58611)
+----------------------------------------------------------
+  [Time] Conjunction               -> -379/08/13  (18h UT)
+  [Time] Opposition                -> -378/10/08  (02h UT)
+  [Time] Station Longitude 1       -> -378/08/31  (21h UT)
+  [Time] Station Longitude 2       -> -378/11/10  (19h UT)
+==========================================================
+
+--> date.jupiter_almanac()
+
+==========================================================
+             ASTRONOMICAL EVENTS FOR JUPITER              
+==========================================================
+ Reference Date: 5/-378 (JD 1583129.58611)
+----------------------------------------------------------
+  [Time] Conjunction               -> -378/10/31  (01h UT)
+  [Time] Opposition                -> -378/04/12  (23h UT)
+  [Time] Station Longitude 1       -> -378/02/11  (01h UT)
+  [Time] Station Longitude 2       -> -378/06/14  (11h UT)
+==========================================================
+
+--> date.saturn_almanac()
+
+==========================================================
+              ASTRONOMICAL EVENTS FOR SATURN              
+==========================================================
+ Reference Date: 5/-378 (JD 1583129.58611)
+----------------------------------------------------------
+  [Time] Conjunction               -> -378/08/09  (15h UT)
+  [Time] Opposition                -> -378/01/28  (13h UT)
+  [Time] Station Longitude 1       -> -379/11/22  (13h UT)
+  [Time] Station Longitude 2       -> -378/04/07  (16h UT)
+==========================================================
+
+
+```
+
+#### **7.3. Heliacal Station Scan (`heliacal_phases`)**
+
+The most critical astronomical tool for matching historical clay diaries is the `heliacal_phases(planet, city)` scanner. It evaluates local horizon glares, atmospheric dust extinction models, and specific arcs of vision to determine the exact civil calendar day when a planet breaks out of or vanishes into the solar glare.
+
+It identifies the classical heliacal milestones:
+
+* **$\Gamma$ (Gamma) / $\Xi$ (Xi):** First Morning Appearance (East).
+* **$\Omega$ (Omega) / $\Sigma$ (Sigma):** Last Evening Appearance (West).
+* **$\Delta$ (Delta):** Heliacal Setting (Morning/East).
+* **$\mathrm{E}$ (Epsilon):** Heliacal Setting (Evening/West).
+
+```pycon
+--> date.heliacal_phases("Mercury", city="Babylon")
+
+=======================================================
+          HELIACAL STATIONS SCAN FOR MERCURY           
+=======================================================
+ Start Baseline: 5/-378 (JD 1583129.58611)
+ Observatory   : Babylon at 0.0m over ground level
+-------------------------------------------------------
+  [*] First Appearance (Morning/East - Γ/Ξ)
+      -> Calendar (Julian): -378/5/25 at 00:00 UT
+      -> Chronology  : Year 26 of Artaxerxes II, month: 2 (Aiaru), day: 22
+-------------------------------------------------------
+  [*] Last Appearance (Evening/West - Ω/Σ)
+      -> Calendar (Julian): -378/7/4 at 00:00 UT
+      -> Chronology  : Year 26 of Artaxerxes II, month: 4 (Duzu), day: 4
+-------------------------------------------------------
+  [*] Heliacal Setting (Morning/East - Δ) 
+      -> Calendar (Julian): -378/5/30 at 00:00 UT
+      -> Chronology  : Year 26 of Artaxerxes II, month: 2 (Aiaru), day: 27
+-------------------------------------------------------
+  [x] Heliacal Setting (Evening/West - Ε) 
+      -> Not found in window (60 days limit)
+-------------------------------------------------------
+=======================================================
+
+```
+
+```{note}
+**Scan Windows Limits**
+The internal search loops of `heliacal_phases()` use a standard bounded optimization bracket of **60 days** from the reference baseline date. If a specific heliacal phenomenon falls outside this window, the CLI report logs it as `Not found in window`.
+
+```
+
+
+### **8. Visual CLI Rendering (Terminal Charts)**
+
+To provide a rapid, intuitive diagnostic of the night sky without forcing the user to interpret raw ephemeris tables, `ChronDate` includes an interactive ASCII-art visualization engine.
+
+#### **8.1. Celestial Overview (`night_at_a_glance`)**
+
+The `night_at_a_glance(city)` method aggregates the computed horizontal visibility curves of the Sun, Moon, and all five naked-eye planets into a continuous 24-hour horizontal bar chart plotted directly onto the terminal.
+
+It maps standard universal time (UT) against computed localized solar time, rendering twilight densities and horizon transitions according to classical structural boundaries:
+
+```pycon
+--> date = Date(1583129.58611)
+--> date.night_at_a_glance(city="Susa")
+
+===================================================================
+   Night View at a Glance: SUSA (-378-05-17)
+===================================================================
+UT Hours:  09  11  13  15  17  19  21  23  01  03  05  07  09  
+Local H.:  12  14  16  18  20  22  00  02  04  06  08  10  12  
+-------------------------------------------------------------------
+ Sky/Sun :  #############::.               .::###############
+-------------------------------------------------------------------
+ Moon    :                       =====================        
+-------------------------------------------------------------------
+ Mercury :  ----------                       -----------------
+ Venus   :  ------------                     ----------------
+ Mars    :  -                                --------------------- 
+ Jupiter :           -----------------------                  
+ Saturn  :  ------------------------                     -----
+===================================================================
+Legend:  # Day  : Civ/Nav Twilight  . Ast Twilight    Night
+         - Planet above horizon     = Moon above horizon
+
+```
+
+#### **Interpreting the Chart Patterns**
+
+* **The Sky/Sun Strip:** Blocks of `#` mark full daylight hours. The transitions `::` and `.` trace the rapid progression of Civil, Navigational, and Astronomical Twilights, mapping the physical window of true observation darkness (empty spaces).
+* **The Planetary/Lunar Tracks:** A continuous line of dashes (`-`) or equality markers (`=`) indicates that the specific celestial body is physically **above the local horizon**.
+* **Historical Diagnostics:** In the example above, one can instantly notice that while Mercury and Venus are above the horizon during twilight boundaries, they are trapped inside the intense solar glare curve (as corroborated by the `day_ephemeris()` output), whereas Jupiter and Saturn act as prominent *Evening Stars* during the first watch of the night.
+
+
+### **9. Babylonian Timekeeping & Elastic Day Metrics (`BabylonianDay`)**
+
+A standard civil day begins abstractly at midnight. In contrast, a historical **Babylonian Day** is fundamentally *elastic*: it begins officially at visual **Sunset** and lasts until the following sunset, shifting its raw duration and boundaries daily based on localized solar physics.
+
+The `ChronDate.bab_day_instance()` factory method unifies these two worlds, generating an isolated `BabylonianDay` instance. This class acts as a bi-directional metrological translator between continuous Julian Days (UT) and native Mesopotamian temporal frameworks.
+
+```pycon
+--> date = Date(1583129.58611)
+--> b_day = date.bab_day_instance(city="Babylon", ziggurat=50.0)
+
+```
+
+#### **9.1. Day Anatomy and Horizon Boundaries (`.info`)**
+
+The `.info` property prints a structural dashboard of the active elastic day. It calculates the raw lengths of total darkness vs. daylight hours and exposes the microsecond-precise boundary limits in both Universal Time clocks and Julian Day metrics.
+
+```pycon
+--> b_day.info
+
+Babylonian day in Babylon
+Year 26 of Artaxerxes II, month: 2 (Aiaru), day: 14
+==============================================================
+Babylonian day duration: 24:00:40
+       Diurnal duration: 13:46:33
+     Nocturnal duration: 10:14:06
+   Start (previous day): 15:46:38 (UT) 1583129.157394896 (JD)
+                Sunrise: 02:00:45 (UT) 1583129.5838633014 (JD)
+                Transit: 08:54:02 (UT)
+                    End: 15:47:19 (UT) 1583130.1578598886 (JD)
+
+```
+
+```pycon
+--> b_day
+<BabylonianDay at Babylon: Start(UT)=15.7775, End(UT)=15.7886, Duration=24.0112h>
+
+```
+
+#### **9.2. Night Vigils and Cuneiform Metrology (`get_time_units`, `get_vigil`)**
+
+`BabylonianDay` automatically divides the spatial and temporal flow of a day into traditional cuneiform increments:
+
+* **`UŠ` (Time Degrees):** The complete elastic day length is mapped uniformly to a $360^{\circ}$ rotational scale.
+* **`bēru` (Double-Hours):** The ultimate unit of Mesopotamian day-measurement ($1 \text{ bēru} = 30 \text{ UŠ}$), dividing the active day length into 12 proportional blocks.
+* **`maṣṣarātu` (Night Watches / Vigils):** The nocturnal phase is dynamically trisected into *barārītu* (First Vigil), *enmaššītu* (Middle Vigil), and *šadduru* (Morning Vigil).
+
+```pycon
+--> # At the exact moment of the initial Sunset (Day Start)
+--> b_day.get_time_units(b_day.start_jd)
+{'ush': 0.0, 'beru': 0.0, 'vigil': 'First Vigil (barārītu)'}
+
+--> # Shifting deep into the night timeline
+--> b_day.get_time_units(b_day.start_jd + 0.15)
+{'ush': 53.97, 'beru': 1.8, 'vigil': 'Middle Vigil (enmaššītu)'}
+
+--> # High up into the morning daylight phase
+--> b_day.get_time_units(b_day.sunrise_jd + 0.2)
+{'ush': 225.42, 'beru': 7.51, 'vigil': 'Daytime'}
+
+```
+
+#### **9.3. Automated Multi-Day Boundary Resolvers (`ut_to_ush`, `ush_to_ut`)**
+
+Because a Babylonian day starts in the afternoon of a standard modern calendar day and finishes in the afternoon of the next, mapping a standard decimal UT hour can be contextually ambiguous.
+
+Methods like `ut_to_ush()` internally build and test parallel matrix options (Option A: afternoon of yesterday vs Option B: morning of today) to match the correct historical cuneiform degree without manual user evaluation.
+
+```pycon
+--> # Mapping an evening hour (17:30 UT belonging to the start boundary)
+--> ush_evening = b_day.ut_to_ush(17.5)
+--> print(f"{ush_evening:.2f}° UŠ")
+25.83° UŠ
+
+--> # Inverting the computation back to decimal hours
+--> b_day.ush_to_ut(ush_evening)
+17.5
+
+```
+
+#### **9.4. Chronological Offsets and Title Tracking**
+
+`BabylonianDay` instances override relational and arithmetic operators. Shifting days using addition or subtraction automatically scales the geographical and astronomical variables, while recursively parsing the underlying document `title` strings to update historical context counters.
+
+```pycon
+--> b_day.title = "Tablet Esagila Anchor"
+
+--> # Stepping forward into future horizons
+--> future_bday = b_day + 3
+--> future_bday.title
+'Tablet Esagila Anchor + 3 days'
+
+--> # Calculating relative retro-steps (Consolidating the net offsets string)
+--> past_bday = future_bday - 5
+--> past_bday.title
+'Tablet Esagila Anchor - 2 days'
+
+```
+
+
+---
+
+
+## **VII. Reference & Appendices**
 
 (systems-SGC)=
 ### **Appendix A**: Use of Systems C, S and G in MesoMath Metrology
@@ -2384,7 +3338,7 @@ The following diagrams illustrate the ratios between units. Each arrow `╼ n �
 
 #### **2. Technical Coefficients and SI Equivalents**
 
-Para una consulta rápida, esta tabla resume los factores de conversión internos (`ufact`) y los valores aproximados en el Sistema Internacional (`siv`).
+For a quick reference, this table summarizes the internal conversion factors (`ufact`) and the approximate values in the International System (`siv`).
 
 | Category | Base Unit | Smallest Unit | Internal Ratios (`ufact`) | SI Equivalent (`siv`) |
 | :--- | :--- | :--- | :--- | :--- |

@@ -1,4 +1,8 @@
-"""This module implements the Babylonian metrological expression interpreter based on **PEG** grammars.
+"""
+Metrological Expresion Parser
+=============================
+
+`parser/interpreter.py` This module implements the Babylonian metrological expression interpreter based on **PEG** grammars.
 
 The interpreter must be able to accept all 75 types of **MesoMath** output
 expressions so that they can be fed back as inputs.

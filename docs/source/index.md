@@ -12,10 +12,19 @@ changelog.md
 install.md
 tutorial.md
 references.md
-mesomath
 progs/apps
 
 ```
+
+```{toctree}
+:maxdepth: 2
+:caption: "API Reference:"
+
+api_mesomath
+api_mesotimes
+
+```
+
 
 ## Indices and tables
 

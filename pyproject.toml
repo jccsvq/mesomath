@@ -1,6 +1,6 @@
 [project]
 name = "mesomath"
-description = "A robust sexagesimal and metrological engine for Babylonian mathematics. From the Eduba to the Jupyter Notebook."
+description = "A robust sexagesimal, metrological, and astronomical engine for Babylonian mathematics. From the Eduba to the Jupyter Notebook."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "CC0-1.0"
@@ -9,7 +9,8 @@ authors = [
   { name = "Jesús Cabrera", email = "jccsvq@gmail.com" },
 ]
 keywords = [
-  "asiriology",
+  "assyriology",
+  "astronomy",
   "babylonian-mathematics",
   "calculator",
   "cuneiform",
@@ -25,7 +26,7 @@ classifiers = [
   "Environment :: Console",
   "Environment :: Web Environment",  # Notebooks/Binder
   "Intended Audience :: Education",
-  "Intended Audience :: Other Audience",  # Para los aficionados a la historia
+  "Intended Audience :: Other Audience",  # Historiadores y aficionados
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
@@ -33,8 +34,8 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Mathematics",
-  "Topic :: Scientific/Engineering :: Physics",  # Por tu pasado astronómico y las unidades de tiempo
-  "Topic :: Sociology :: History",  # Archaeology"
+  "Topic :: Scientific/Engineering :: Physics",  # Unidades de tiempo y constantes astronómicas
+  "Topic :: Sociology :: History",  # Arqueología e historia del mundo antiguo
   "Typing :: Typed",
 ]
 dependencies = [
@@ -43,6 +44,8 @@ dependencies = [
   "traitlets>=5.0.0",
   "typing-extensions>=4.0.0",
   "wcwidth",
+  "pymeeus>=0.5.12", 
+  "juliandate",
 ]
 dynamic = ["version"]
 
@@ -56,53 +59,19 @@ Repository = "https://github.com/jccsvq/mesomath.git"
 [project.scripts]
 babcalc = "mesomath.babcalc:main"
 ibabcalc = "mesomath.ibabcalc:start_ibabcalc"
-# bmultable = "mesomath.multable:main"
-# metrotable = "mesomath.metrotable:main"
-# mtlookup = "mesomath.mtlookup:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.coverage.run]
-source_pkgs = ["mesomath", "tests"]
-branch = true
-parallel = true
-omit = [
-  "src/mesomath/__about__.py",
+# =========================================================================
+# HATCH BUILD TARGETS (Monorepo Parallel Packages Package Mapping)
+# =========================================================================
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/mesomath",
+    "src/mesotimes"
 ]
-
-[tool.coverage.paths]
-mesomath = ["src/mesomath", "*/mesomath/src/mesomath"]
-tests = ["tests", "*/mesomath/tests"]
-
-[tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
-
-[tool.hatch.version]
-path = "src/mesomath/__about__.py"
-
-[tool.hatch.envs.types]
-extra-dependencies = [
-  "mypy>=1.0.0",
-]
-
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/mesomath tests}"
-
-[tool.hatch.envs.docs]
-dependencies = [
-  "sphinx>=8.0",
-  "myst-parser",
-  "sphinx-copybutton",
-]
-
-[tool.hatch.envs.docs.scripts]
-build = "make -C docs html"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -118,7 +87,63 @@ exclude = [
   "/biblio",
   "/other",
   "/data",
+  "/db_data/PD71/processed/",
+  "/db_data/PD71/sql/",
+  "/db_data/PD71/pdchron71.csv",
 ]
+
+[tool.hatch.version]
+path = "src/mesomath/__about__.py"
+
+# =========================================================================
+# TESTING & COVERAGE CONFIGURATION (Expanded for mesotimes)
+# =========================================================================
+[tool.coverage.run]
+source_pkgs = ["mesomath", "mesotimes", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/mesomath/__about__.py",
+  "src/mesotimes/__about__.py",
+]
+
+[tool.coverage.paths]
+mesomath = ["src/mesomath", "*/mesomath/src/mesomath"]
+mesotimes = ["src/mesotimes", "*/mesomath/src/mesotimes"]
+tests = ["tests", "*/mesomath/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+# =========================================================================
+# DEVELOPMENT ENVIRONMENT SUITES (Static Typing & Docs)
+# =========================================================================
+[tool.hatch.envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+
+[tool.hatch.envs.types.scripts]
+# Añadimos src/mesotimes al escaneo estático de tipos
+check = "mypy --install-types --non-interactive {args:src/mesomath src/mesotimes tests}"
+
+[tool.hatch.envs.docs]
+dependencies = [
+  "sphinx>=8.0",
+  "myst-parser",
+  "sphinx-copybutton",
+]
+
+[tool.hatch.envs.docs.scripts]
+build = "make -C docs html"
+
+[[tool.mypy.overrides]]
+module = ["pymeeus.*", "parsimonious.*"]
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["untyped_package.*"]

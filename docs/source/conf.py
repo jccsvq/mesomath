@@ -99,4 +99,7 @@ html_css_files = [
     'https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap',
     'custom.css',
 ]
-
+html_theme_options = {
+    # ... otras opciones ...
+    "show_toc_level": 2,  # Fuerza a mostrar hasta el nivel de sub-secciones (h3/h4) en la derecha
+}

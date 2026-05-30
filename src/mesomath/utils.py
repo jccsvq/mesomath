@@ -70,7 +70,7 @@ def gen_multi_range(met: type, minv, limits, increments):
     inc_list = to_list(increments)
     subtotal = linenumber = 0
 
-    # Valor inicial
+    # Initial value
     current_dec = met(minv).dec
     linenumber += 1
     subtotal += current_dec
@@ -80,8 +80,8 @@ def gen_multi_range(met: type, minv, limits, increments):
         target_dec = met(limit_list[i]).dec
         step_dec = met(inc_list[i]).dec
 
-        # OJO AQUÍ: Solo marcamos 'True' si NO es el primer tramo
-        # o si hay un salto real por alineación.
+        # NOTE HERE: We only mark 'True' if it is NOT the first segment
+        # or if there is a real jump due to alignment.
         is_new_section = i > 0
 
         # --- ALIGNMENT LOGIC ---
@@ -92,7 +92,7 @@ def gen_multi_range(met: type, minv, limits, increments):
 
             linenumber += 1
             subtotal += current_dec
-            yield (current_dec, linenumber, subtotal, True)  # Salto = Nueva sección
+            yield (current_dec, linenumber, subtotal, True)  # Jump = New section
             is_new_section = False
 
         while current_dec < target_dec:
