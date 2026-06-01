@@ -18,12 +18,11 @@ $ pipx install mesomath
 
 ```
 
-This will install the four MesoMath commands in your system's PATH:
+This will install the following MesoMath commands in your system's PATH:
 
 * **`babcalc`**: The interactive Mesopotamian calculator.
-* **`mtlookup`**: Tool for consulting metrological tables.
-* **`metrotable`**: Tool for printing metrological tables.
-* **`bmultable`**: Sexagesimal multiplication table generator.
+* **`ibabcalc`**: The advanced Mesopotamian interactive calculator.
+
 
 If you cannot run the commands after installation, try:
 

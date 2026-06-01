@@ -1,4 +1,19 @@
 
+## [2.1.0] - 2026-06-XX
+
+### Added
+* **`mesotimes` package**: A specialized engine integrated into the codebase dedicated to historical chronological and astronomical calculations.
+* **Class `BabF` (`mesomath`)**: Native implementation of sexagesimal fraction arithmetic, enabling precise representation and manipulation of base-60 fractional values.
+* **Dynamic Timekeeping Controllers (`BabylonianDay`)**: Comprehensive support for localized Mesopotamian elastic time tracking, managing dynamic boundaries (Sunset-to-Sunset), night watch watched zones (*maṣṣarātu*), and reciprocal time conversions (`ut_to_ush` / `ush_to_ut`).
+* **Calendrical Dispatch Engine (``ChronDate``)**: A multi-mode macro-chronological reporting matrix that dynamically routes inquiries to empirical cuneiform datasets (**Parker, R. and Dubberstein, W.** (1971). *Babylonian Chronology: 626 B.C.–A.D. 75 2nd Edition*), or a cyclical astronomical proleptic calendar baseline depending on chronological record availability. This engine leads to extensive astronomical information about the ephemeris of the day, month, and year of the date.
+
+### Changed
+* **Metapackage Architecture**: **MesoMath** has shifted into a structural metapackage architecture, decouplig core scribal metrologies (`mesomath`) from chronological timelines and ephemeris tracking subsystems (`mesotimes`).
+
+
+---
+
+
 ## [2.0.0] - 2026-04-20
 
 ### Added

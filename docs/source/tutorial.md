@@ -2767,6 +2767,14 @@ Total year duration: 325 days (Regular year)
 
 ```
 
+```{warning}
+   **Chronological Boundary Artifact**
+   The year 386 of the Seleucid Era (75/76 CE) marks the absolute terminal boundary of the empirical data compiled in {ref}`Parker-Dubberstein (1971) <ref-PD71>`. Because the underlying database lacks any subsequent historical records beyond JDE 1748871.5, the engine cannot fetch the start date of the following year's *Nisānu*. 
+
+   Consequently, the 12th month (*Addaru*) is omitted from the tabular grid, and both the reported **Year ends on** boundary and the **Total year duration** (325 days) are historically incomplete and mathematically truncated.
+```
+
+
 ##### **Case C: The Proleptic Fallback Grid**
 
 If a target date falls into a structural chronological gap where the empirical cuneiform database (`kingdates`) does not contain verified data points, the method down-grades gracefully. It switches to a proleptic calculation model to simulate astronomical ideal cycles based on the neomenia as contemplated from `city`/`ziggurat` (if such parameters are included in the invocation, or from Babylon/0.0 by default), [See :Observatories bellow](observatories):

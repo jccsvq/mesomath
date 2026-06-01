@@ -98,7 +98,7 @@ This bibliography provides the academic and historical foundations for the metro
 (ref-PD71)=
 
 * **Parker, R. and Dubberstein, W.** (1971). *Babylonian Chronology: 626 B.C.–A.D. 75 (2nd Edition)*. Providence: Brown University Press.
-> *Note: Primary source for the chronological database used in the `CheonDate` class.*
+> *Note: Primary source for the chronological database used by `mesotimes`.*
 
 (ref-Goldstein)=
 
