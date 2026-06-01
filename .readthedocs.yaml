@@ -12,7 +12,7 @@ build:
       - fc-cache -f -v
 
 sphinx:
-  configuration: docs/source/conf_rtd.py
+  configuration: docs/source/conf.py
 
 formats:
   - epub
