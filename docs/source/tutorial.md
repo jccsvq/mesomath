@@ -2592,7 +2592,7 @@ k019       | Seleucid Era              | -310/04/03
 
 ```python
 # Year 26 of Artaxerxes II, Month 2 (Aiaru), Day 14
-date = ChronDate.from_babylonian(king="k012", year=26, month=2, day=14)
+date = ChronDate.from_babylonian(king_code="k012", year=26, month=2, day=14)
 
 ```
 
@@ -2717,25 +2717,24 @@ When initialized inside well-documented historical intervals, the header dynamic
 --> date = Date.from_julian(74, 10, 15)
 --> date.bab_year_calendar()
 
---- HISTORIC BABYLONIAN CALENDAR: ARTAXERXES II YEAR 26 ---
-#  Month Name      Start Date (Y/M/D)    JDE Start      Length
+--- HISTORIC BABYLONIAN CALENDAR: SELEUCID ERA YEAR 385 ---
+#  Month Name     Start Date (Y/M/D)    JDE Start      Length
 ------------------------------------------------------------------------
-1  Nisanu          -378/04/05            1583087.5      29 days
-2  Aiaru           -378/05/04            1583116.5      30 days
-3  Simanu          -378/06/03            1583146.5      29 days
-4  Duzu            -378/07/02            1583175.5      29 days
-5  Abu             -378/07/31            1583204.5      30 days
-6  Ululu           -378/08/30            1583234.5      30 days
-7  Tashritu        -378/09/29            1583264.5      29 days
-8  Arahsamnu       -378/10/28            1583293.5      30 days
-9  Kislimu         -378/11/27            1583323.5      29 days
-10 Tebetu          -378/12/26            1583352.5      29 days
-11 Shabatu         -377/01/24            1583381.5      30 days
-12 Addaru          -377/02/23            1583411.5      30 days
-13 Addaru II       -377/03/25            1583441.5      29 days
+1  Nisanu         74/04/17              1748192.5      30 days
+2  Aiaru          74/05/17              1748222.5      29 days
+3  Simanu         74/06/15              1748251.5      30 days
+4  Duzu           74/07/15              1748281.5      30 days
+5  Abu            74/08/14              1748311.5      29 days
+6  Ululu          74/09/12              1748340.5      29 days
+7  Tashritu       74/10/11              1748369.5      30 days
+8  Arahsamnu      74/11/10              1748399.5      29 days
+9  Kislimu        74/12/09              1748428.5      29 days
+10 Tebetu         75/01/07              1748457.5      30 days
+11 Shabatu        75/02/06              1748487.5      29 days
+12 Addaru         75/03/07              1748516.5      30 days
 ------------------------------------------------------------------------
-Year ends on: -377/04/23 (JDE 1583470.5)
-Total year duration: 383 days (Leap year)
+Year ends on: 75/04/06 (JDE 1748546.5)
+Total year duration: 354 days (Regular year)
 
 ```
 
@@ -3143,23 +3142,24 @@ It maps standard universal time (UT) against computed localized solar time, rend
 --> date.night_at_a_glance(city="Susa")
 
 ===================================================================
-   Night View at a Glance: SUSA (-378-05-17)
+          NIGHT AT A GLANCE: SUSA (-378-05-17)
 ===================================================================
 UT Hours:  09  11  13  15  17  19  21  23  01  03  05  07  09  
 Local H.:  12  14  16  18  20  22  00  02  04  06  08  10  12  
 -------------------------------------------------------------------
  Sky/Sun :  #############::.               .::###############
 -------------------------------------------------------------------
- Moon    :                       =====================        
+ Moon    :              =====================                
 -------------------------------------------------------------------
- Mercury :  ----------                       -----------------
+ Mercury :  ----------                      -----------------
  Venus   :  ------------                     ----------------
- Mars    :  -                                --------------------- 
- Jupiter :           -----------------------                  
- Saturn  :  ------------------------                     -----
+ Mars    :  -                          --------------------- 
+ Jupiter :          -----------------------                  
+ Saturn  :  ------------------------                    -----
 ===================================================================
 Legend:  # Day  : Civ/Nav Twilight  . Ast Twilight    Night
          - Planet above horizon     = Moon above horizon
+
 
 ```
 

@@ -163,7 +163,7 @@ To verify the installation, check the version of the calculator:
 
 ```bash
 $ babcalc --help
-babcalc 1.3.0 - Command Line Interface
+babcalc 2.1.0 - Command Line Interface
 
 Usage:
   babcalc                 Launch interactive REPL
@@ -171,6 +171,8 @@ Usage:
   babcalc -i <script.py>  Execute a script and stay in interactive mode
   babcalc -m <module>     Run a library module (Reserved for future use)
   babcalc --help          Show this message
+
+jccsvq dub-sar fecit, 2025. Public domain.
 
 ```
 
