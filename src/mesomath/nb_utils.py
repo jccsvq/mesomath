@@ -25,7 +25,7 @@ def setup_scribal_environment(font_size="1.1em"):
         font-family: 'Noto Sans Cuneiform', 'Courier New', 'Lucida Console', monospace !important;
         font-size: {font_size};
         line-height: 1.2;
-        white-space: pre !important; /* Mantiene espacios y saltos de línea */
+        white-space: pre !important; /* Keeps spaces and line breaks */
     }}
 
     /* 3. Adjustment for Markdown cells (proportional is fine here) */

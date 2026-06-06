@@ -1,6 +1,9 @@
 # Minimal makefile for Sphinx documentation
 #
 
+# Add this at the top of your Makefile if you want to silence interpreter warnings that do not belong to your code:
+#export PYTHONWARNINGS=ignore::SyntaxWarning
+
 # You can set these variables from the command line, and also
 # from the environment for the first two.
 SPHINXOPTS    ?=

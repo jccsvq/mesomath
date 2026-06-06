@@ -7,7 +7,7 @@ import mesomath as mm
 
 
 def test_parser_consistency(value=11223344):
-    # Lista de clases a testear
+    # List of classes to test
     classes = [
         mm.Blen,
         mm.Bsur,
@@ -25,37 +25,37 @@ def test_parser_consistency(value=11223344):
     for cls in classes:
         print(f"\n--- Testing class: {cls.__name__} ---")
 
-        # 1. Crear objeto base
+        # 1. Create base object
         try:
             obj_ref = cls(value)
         except Exception as e:
             print(f"Error instantiating {cls.__name__}: {e}")
             continue
 
-        # 2. Generar pool de strings con diferentes formatos
+        # 2. Generate a pool of strings with different formats
         test_strings = []
 
-        # Guardar estado original de prtsex para restaurarlo
+        # Save original state of prtsex to restore it
         original_prtsex = getattr(obj_ref, "prtsex", 0)
 
         for ps in [0, 1]:
             obj_ref.prtsex = ps
             test_strings.append(str(obj_ref))
-            # Probar las combinaciones de prtf(frac, dot)
+            # Test the combinations of prtf(frac, dot)
             for frac in [0, 1]:
                 for dot in [0, 1]:
                     test_strings.append(obj_ref.prtf(frac, dot))
 
-        # Restaurar
+        # Restore
         obj_ref.prtsex = original_prtsex
 
-        # 3. Eliminar duplicados para no repetir tests
+        # 3. Remove duplicates to avoid repeating tests
         unique_strings = list(set(test_strings))
 
-        # 4. Fase de Assertions
+        # 4. Assertions Phase
         for s in unique_strings:
             try:
-                # Intentamos recrear el objeto desde el string
+                # We try to recreate the object from the string
                 obj_new = cls(s)
 
                 if obj_new.dec == value:

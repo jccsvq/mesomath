@@ -9,11 +9,31 @@ The Facade of Times
 -------------------
 
 Date (ChronDate)
-~~~~~~~~~~~~~~~~
+................
 .. autoclass:: mesomath.ChronDate
    :members:
    :special-members: __init__
    :undoc-members:
+
+Calendars
+---------
+
+.. automodule:: mesotimes.calendars
+   :members:
+   :undoc-members:
+
+.. automodule:: mesotimes.proleptic
+   :members:
+   :undoc-members:
+
+.. automodule:: mesotimes.almanac
+   :members:
+   :undoc-members:
+
+.. automodule:: mesotimes.babday
+   :members:
+   :undoc-members:
+
 
 Planetary and Heliacal Calculations
 -----------------------------------
@@ -31,11 +51,21 @@ Core
 .. automodule:: mesotimes.astronomy.core
    :members:
 
+Sun
+...
+
+
 .. automodule:: mesotimes.astronomy.sun
    :members:
 
+Moon
+....
+
 .. automodule:: mesotimes.astronomy.moon
    :members:
+
+Planets
+.......
 
 .. automodule:: mesotimes.astronomy.planets.base
    :members:

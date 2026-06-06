@@ -1,6 +1,6 @@
 # MesoMath v{{ release }} Documentation
 
-***Mesopotamian Calculator and Metrology Tools***
+***Mesopotamian Mathematics, Metrology, and Archaeoastronomy***
 
 
 ```{toctree}

@@ -67,7 +67,7 @@ class CalendarConverter:
         :rtype: float
         """
         if calendar == "julian":
-            # P&D usan Juliano Proléptico
+            # R&D use Julian Proleptic
             return jd.from_julian(year, month, day, hh, mm, ss)
         elif calendar == "gregorian":
             return jd.from_gregorian(year, month, day, hh, mm, ss)
@@ -200,7 +200,7 @@ class BabylonianConverter:
             row = cursor.fetchone()
 
         if not row:
-            return None  # O lanzar error si el JD está fuera de rango
+            return None  # Or throw an error if the JD is out of range
 
         king_code, year, month, jdat00h = row
 

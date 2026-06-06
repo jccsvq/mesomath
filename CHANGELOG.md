@@ -1,5 +1,5 @@
 
-## [2.1.0] - 2026-06-XX
+## [2.1.0] - 2026-06-06
 
 ### Added
 * **`mesotimes` package**: A specialized engine integrated into the codebase dedicated to historical chronological and astronomical calculations.

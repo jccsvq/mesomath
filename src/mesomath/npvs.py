@@ -782,13 +782,13 @@ class _MesoM(Npvs):
         stroke = kwargs.get("stroke", False)
         subst = kwargs.get("subst", None)
 
-        # self.list es la lista sexagesimal posicional
+        # self.list is the positional sexagesimal list
         for i in reversed(range(len(self.list))):
             val = self.list[i]
             unit_key = self.uname[i]
             if val > 0:
                 block = self._to_Cunei_base(int(val), system=self.system_type)
-                # D. Desambiguación Histórica: 60 su-si
+                # D. Historical Disambiguation: 60 su-si
                 if (
                     unit_key == "ges"
                     and i + 1 < len(self.list)
@@ -1284,14 +1284,14 @@ class MesoM(_MesoM):
             ubase_glyph = cls.uname[ubase]
 
         # first row
-        # 1. Extraemos el primer elemento para calcular columnas
+        # 1. We extract the first element to calculate columns
         try:
             fr_data = next(metrolist)  # Tupla: (row_str, ln, sub, is_new)
         except StopIteration:
             return ""
 
-        # 2. Re-unimos la primera fila con el resto del generador
-        # Usamos chain para no agotar la memoria convirtiendo a tuple
+        # 2. We join the first row with the rest of the generator
+        # We use chain to avoid exhausting memory by converting to tuple
         # full_sequence = chain([fr_data], metrolist)
 
         first_row = fr_data[0].strip("|").split("|")
@@ -1360,13 +1360,13 @@ class MesoM(_MesoM):
         # Rows
         # Add the first row that we extracted for the count
         rows_iterator = chain([fr_data], metrolist)
-        # 3. El bucle es ahora sagrado y único
+        # 3. The loop is now sacred and unique
         for row_str, linecount, subtotal, is_new_section in rows_iterator:
-            # Limpiamos la fila de los separadores de la consola
+            # We clean the console separator row
             cells = row_str.strip("|").split("|")
 
-            # Si es nueva sección, podemos añadir un estilo visual
-            # (ln es tu contador manual, linecount es el que viene del generador)
+            # If it is a new section, we can add a visual style
+            # (ln is your manual counter, linecount is the one that comes from the generator)
             tr_style = (
                 ' style="border-top: 2px solid #5d4037;"'
                 if is_new_section and linecount > 0
@@ -1455,13 +1455,13 @@ class MesoM(_MesoM):
         from itertools import chain
         from .utils import to_latex_hex
 
-        # 1. Obtenemos el generador
+        # 1. We get the generator
         metrolist = cls.metro_generator(*args, **kwargs)
         caption = kwargs.get("caption")
         full_page = kwargs.get("full_page", False)
         is_cuneiform = kwargs.get("cuneiform", False)
 
-        # 2. Extraemos la primera fila para configurar la tabla
+        # 2. We extract the first row to set up the table
         try:
             fr_data = next(metrolist)  # (row_str, linenum, subtotal, is_new)
         except StopIteration:
@@ -1494,11 +1494,11 @@ class MesoM(_MesoM):
         u_raw = cls.cname()[ubase] if is_cuneiform else cls.uname[ubase]
         u_glyph = to_latex_hex(u_raw)
 
-        # Lógica de headers corregida para usar num_cols
-        # 1. Definimos los textos base (sin fuentes todavía)
+        # Header logic corrected to use num_cols
+        # 1. We define the base texts (without fonts yet)
         headers = ["Measurement"]
         if num_cols == 2:
-            # Separamos el texto de la unidad: solo la unidad irá en cuneiforme
+            # We separate the text of the unit: only the unit will go in cuneiform
             unit_part = (
                 f" ({{\\cuneifont {u_glyph}}})" if is_cuneiform else f" ({u_glyph})"
             )
@@ -1510,33 +1510,33 @@ class MesoM(_MesoM):
             headers.append(f"Sexag.{unit_part}")
             headers.append("Reciprocal")
 
-        # 2. Aplicamos formato a los headers
-        # Usamos \textsf o \textbf para que los encabezados tengan peso,
-        # pero mantenemos la fuente del documento (Times/Computer Modern)
+        # 2. We apply formatting to the headers
+        # We use \textsf or \textbf so that the headers have weight,
+        # but we maintain the document's font (Times/Computer Modern)
         # formatted_headers = [f"\\textsf{{{h}}}" for h in headers]
 
-        # 3. Unimos para LaTeX
+        # 3. We join for LaTeX
         # latex.append("    " + " & ".join(formatted_headers) + r" \\")
 
         latex.append("    " + " & ".join(headers) + r" \\")
         latex.append(r"    \midrule")
 
-        # 3. Bucle de filas usando chain para evitar duplicados
+        # 3. Row loop using chain to avoid duplicates
         rows_iterator = chain([fr_data], metrolist)
 
         for row_str, linecount, subtotal, is_new_section in rows_iterator:
-            # Si es una nueva sección y NO es la primera línea,
-            # añadimos un pequeño separador visual en LaTeX
+            # If it is a new section and it is NOT the first line,
+            # we add a small visual separator in LaTeX
             if is_new_section and linecount > 0:
                 latex.append(r"    \addlinespace[0.5em]")
 
             cells = [c.strip() for c in row_str.strip("|").split("|")]
 
             if is_cuneiform:
-                # Convertimos y aplicamos la fuente a cada celda
+                # We convert and apply the font to each cell
                 formatted_cells = [f"{{\\cuneifont {to_latex_hex(c)}}}" for c in cells]
             else:
-                # En modo normal, escapamos caracteres de LaTeX si fuera necesario
+                # In normal mode, we escape LaTeX characters if necessary
                 formatted_cells = [c.replace("_", r"\_") for c in cells]
 
             latex.append("    " + " & ".join(formatted_cells) + r" \\")
@@ -1766,8 +1766,7 @@ class MesoM(_MesoM):
 
     def to_cunei(self, **kwargs) -> str:
         """
-        INTERFAZ PARA CLASES METROLÓGICAS (Bcap, Bsur, Bwei, etc.).
-        Usa descomposición por unidades y fracciones.
+        INTERFACE FOR METROLOGICAL CLASSES (Bcap, Bsur, Bwei, etc.). Uses decomposition by units and fractions.
         """
         from .glyphs import MAP_UNIT_LOGOGRAMS, MAP_FRACTIONS, subsdict
 
@@ -1783,7 +1782,7 @@ class MesoM(_MesoM):
             parts = []
 
             if val > 0:
-                # Determinamos sistema para el coeficiente
+                # We determine system for the coefficient
                 target = (
                     "G"
                     if unit == "gan"
@@ -1815,11 +1814,11 @@ class MesoM(_MesoM):
         Internal helper to generate the administrative closing (Shu-nigin).
         """
         from datetime import datetime
-        from .utils import to_latex_hex  # Aseguramos el acceso a la utilidad
+        from .utils import to_latex_hex  # We ensure access to the utility
         from .glyphs import MAP_ADMIN, subsdict
         from .__about__ import __version__ as VERSION
 
-        # 1. Setup de datos básicos
+        # 1. Basic data setup
         subst = kwargs.get("subst", "")
         is_cunei = kwargs.get("cuneiform", False)
         translit = kwargs.get("translit", False)
@@ -1829,9 +1828,9 @@ class MesoM(_MesoM):
         version = f"MesoMath {VERSION}"
         num_cols = kwargs.get("num_cols", 2)
 
-        # 2. Construcción de etiquetas y valores
+        # 2. Construction of labels and values
         if is_cunei:
-            # Nota: BsyS y BsyK asumen que están disponibles o importados
+            # Note: BsyS and BsyK assume that they are available or imported
             total_str = f"{cls(int(subtotal)).to_cunei()} {subsdict.get(subst, '')}"
             lines_str = f"{BsyS(linecount).to_cunei()}"
             date_str = f"{MAP_ADMIN['iti']} {BsyS(month).to_cunei()} {BsyK(year).to_cunei()} {MAP_ADMIN.get('mu', '𒈬')}"
@@ -1846,7 +1845,7 @@ class MesoM(_MesoM):
             total_label = "Grand Total"
             lines_label = "Number of lines"
 
-        # 3. Renderizado según formato con protección para LaTeX
+        # 3. Rendered according to format with protection for LaTeX
         res = []
 
         if fmt == "text":
@@ -1870,15 +1869,15 @@ class MesoM(_MesoM):
             res.append("  </tfoot>")
 
         elif fmt == "latex":
-            # Función auxiliar local para envolver en fuente si es cuneiforme
+            # Local helper function to wrap in font if it is cuneiform
             def _wrap(text):
                 if is_cunei:
-                    # Pasamos por el conversor HEX para seguridad de Overleaf
+                    # We went through the HEX converter for Overleaf security
                     return f"{{\\cuneifont {to_latex_hex(text)}}}"
                 return text.replace("_", r"\_")
 
             # res.append(r"    \midrule")
-            # Aplicamos el envoltorio a cada línea del colofón
+            # We apply the wrapping to each line of the colophon
             line1 = f"{_wrap(total_label)}: {_wrap(total_str)}"
             line2 = rf"{_wrap(lines_label)}: {_wrap(lines_str)} \hfill {_wrap(scribe_label)}: {version}"
             line3 = f"{_wrap(date_str)}"

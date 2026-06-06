@@ -35,8 +35,8 @@ message = f"\n--- MesoMath Standard Console {VERSION} ---\n"
 message += f"""
     Engine: Python {sys.version.split()[0]}
     Metrological classes: bl, bs, bv, bc, bw, bb, bG, bS, bC and bK loaded.
-    Metrological presets: clist, wlist, slist, llist loaded.
-    Chronological class Date loaded.
+    Metrological presets: clist, wlist, slist and llist loaded.
+    Chronological class: Date loaded.
     
     Use exit() or Ctrl-D (i.e. EOF) to close.
 """

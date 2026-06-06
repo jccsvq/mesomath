@@ -1,4 +1,4 @@
-"""
+r"""
 Generation of Hamming numbers (Regular numbers).
 ================================================
 

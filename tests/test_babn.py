@@ -66,11 +66,11 @@ def test_babn():
 
 
 def test_normalization_and_protection():
-    # 1. Test de Normalización (La "habilidad")
+    # 1. Normalization Test (The "ability")
     assert bn([1, 125]).list == [3, 5]
 
-    # 2. Test de Blindaje (La "aduana")
-    # Intentar meter algo que NO sea int, str o BabN puro
+    # 2. Shielding Test (The "customs")
+    # Try to put something that is NOT int, str, or pure BabN
     class FakeUnit:
         def __int__(self):
             return 10
@@ -84,7 +84,7 @@ def test_normalization_and_protection():
 def test_metrological_blocking():
     from mesomath.npvs import Blen as bl
     
-    # 1. Este debería fallar (Intento de mezclar longitud con número puro)
+    # 1. This should fail (Attempt to mix length with pure number)
     #with pytest.raises(TypeError) as excinfo:
     try:
         bn([1, bl(10)])
@@ -92,7 +92,7 @@ def test_metrological_blocking():
         print("Success: Metrological unit blocked!")
     #assert "Prohibited element:" in str(excinfo.value)
 
-    # 2. Este debería funcionar (Conversión explícita por el usuario)
-    # El usuario "asume la responsabilidad" al usar int()
+    # 2. This should work (Explicit conversion by the user)
+    # The user "assumes responsibility" when using int()
     a = bn([1, int(bl(10))]) 
     assert isinstance(a, bn)

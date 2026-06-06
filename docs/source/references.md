@@ -103,3 +103,15 @@ This bibliography provides the academic and historical foundations for the metro
 (ref-Goldstein)=
 
 * **Goldstein, B. R.** (2003) *Ancient and Medieval Values for the Mean Synodic Month*. Journal for the History of Astronomy, 34, 65 - 74
+
+(ref-Meeus)=
+* **Meeus, J.** (1998). *Astronomical Algorithms (2nd Edition)*. Richmond: Willmann-Bell.
+> *Note: Implementation baseline for planetary orbital mechanics, coordinates, and horizontal visibility systems.*
+
+(ref-Espenak)=
+* **Espenak, F. and Meeus, J.** (2009). *Five Millennium Canon of Eclipses: -1999 to +3000 (2000 BCE to 3000 CE)*. NASA Technical Publication TP-2009-214174. NASA Goddard Space Flight Center.
+> *Note: Core authority for the delta_t ($\Delta T$) polynomial regressions and terrestrial rotation uncertainty matrices used in long-term retro-calculations.*
+
+(ref-PyMeeus)=
+* **Arribas, J. L.** (2020). *PyMeeus: Astronomical Algorithms in Python*. Python Software Foundation. Available at: https://github.com/leasw/pymeeus
+> *Note: Python implementation of Meeus' algorithms used as a validation layer for specific internal ephemeris loops.*

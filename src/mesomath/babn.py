@@ -116,7 +116,7 @@ class BabN:
 
             try:
                 i, j, k, x = [int(v) for v in value]
-                # Los exponentes i, j, k sí deberían ser positivos para ser Hamming
+                # The exponents i, j, k should indeed be positive to be Hamming
                 if i < 0 or j < 0 or k < 0:
                     raise ValueError(
                         "Exponents i, j, k in factor tuple must be non-negative."
@@ -273,7 +273,7 @@ class BabN:
             digits.append(rem)
         return digits[
             ::-1
-        ]  # Invertimos para que el más significativo esté al principio
+        ]  # We reverse it so that the most significant is at the beginning
 
     @classmethod
     def create_new(

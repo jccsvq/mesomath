@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-# Conversores e importaciones de base indexados
+# Indexed base converters and imports
 from juliandate import to_gregorian, to_julian
 
 from mesotimes.almanac import LunarAlmanac
@@ -18,7 +18,7 @@ from mesotimes.astronomy.moon import (
     check_neomenia,
 )
 
-# Importaciones de los motores de cálculo (Cálculo puro, devuelven datos)
+# Imports of calculation engines (Pure calculation, return data)
 from mesotimes.astronomy.sun import (
     bab_day_duration,
     get_season_day_str,
@@ -47,11 +47,6 @@ class ChronDate:
     MIN_JD: float = 1492870.5
     MAX_JD: float = 1748872.5
     GREGORIAN_REFORM: float = 2299161.5
-
-    @classmethod
-    def kings(cls) -> list[str]:
-        """Lists King codes, names and peripd start."""
-        return cls._bab_conv.list_kings()
 
 
     def __init__(self, jd: float) -> None:
@@ -151,6 +146,14 @@ class ChronDate:
             year, month, day, hour, minute, second, calendar="gregorian"
         )
         return cls(jd)
+
+    # --------------------------------------------------------
+
+    @classmethod
+    def kings(cls) -> list[str]:
+        """Lists King codes, names and period start date."""
+        return cls._bab_conv.list_kings()
+
 
     # --- Calendar Properties & Cache Management ---
 

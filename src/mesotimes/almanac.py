@@ -117,7 +117,7 @@ class LunarAlmanac:
                 # Relevance filter: we only save what an observer would report
                 current_day_data = {"date": f"{y}/{m}/{int(d)}"}
 
-                if abs(mush) < 150:  # Menos de 2.5 horas
+                if abs(mush) < 150:  # Less than 2.5 hours
                     current_day_data["mi_mush"] = mush
                 if abs(shu) < 150:
                     current_day_data["shu"] = shu
