@@ -879,7 +879,7 @@ class ChronDate:
             f"    Sunrise : {self._format_hours(sun['sunrise_ut'])} UT | Sunset : {self._format_hours(sun['sunset_ut'])} UT"
         )
         print(
-            f"    Transit : {self._format_hours(sun['transit_ut'])} UT | Season : {get_season_day_str(y, m, d)}"
+            f"    Transit : {self._format_hours(sun['transit_ut'])} UT | Season : {get_season_day_str(y, m, d, calendar.lower())}"
         )
         print("-" * 65)
         print("  LUNAR INTERVALS (Phenomena in current lunation):")
