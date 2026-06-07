@@ -1,3 +1,17 @@
+## [2.1.2] - 2026-06-07
+
+### Fixed
+* **Bug in mesotimes/date.py** Chrondate.day ephemeris() returned the day of the season based only on the Julian calendar. Fixed. 
+
+---
+
+## [2.1.1] - 2026-06-06
+
+### Fixed
+* **README.md**: Incorrect badges.
+
+---
+
 
 ## [2.1.0] - 2026-06-06
 
