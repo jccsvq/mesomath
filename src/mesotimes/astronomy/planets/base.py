@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 import math
 from pymeeus.Epoch import Epoch
 from pymeeus import Coordinates
-from mesotimes.astronomy.core import mesopotamian_cities, get_horizon_dip
+from mesotimes.astronomy.core import resolve_city_coordinates, get_horizon_dip
 
 
 class Planet(ABC):
@@ -25,8 +25,8 @@ class Planet(ABC):
         """
         pass
 
-    def calculate_apparent_altitude(
-        self, epoch: Epoch, city: str = "Babylon", ziggurat: float = 0.0
+    def calculate_effective_visibility_altitude(
+        self, epoch: Epoch, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> float:
         """
         SHARED CODE: Converts equatorial geocentric coordinates to horizontal altitude.
@@ -34,9 +34,9 @@ class Planet(ABC):
         incorporating refraction and ziggurat horizon dip corrections.
         """
         # 1. Geographic parameters and horizon dip correction
-        lat = float(mesopotamian_cities[city]["latitude"])
-        lon = float(mesopotamian_cities[city]["longitude"])
-        alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+        lat = float(resolve_city_coordinates(city)["latitude"])
+        lon = float(resolve_city_coordinates(city)["longitude"])
+        alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
         
         # Horizon dip lowers the reference plane (making the threshold angle more negative)
         horizon_correction = -0.833 - get_horizon_dip(alt)
@@ -91,7 +91,7 @@ class Planet(ABC):
         return apparent_alt_deg
 
     def is_visible_at_twilight(
-        self, epoch_sunset_or_sunrise: Epoch, city: str = "Babylon", ziggurat: float = 0.0
+        self, epoch_sunset_or_sunrise: Epoch, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> bool:
         """
         Determines if the planet is optically visible during the critical historical twilight.
@@ -105,7 +105,7 @@ class Planet(ABC):
         :return: True if the planet breaks through the solar glare, False otherwise.
         """
         # 1. Calculate the planet's current altitude at this twilight epoch
-        planet_alt = self.calculate_apparent_altitude(
+        planet_alt = self.calculate_effective_visibility_altitude(
             epoch=epoch_sunset_or_sunrise, city=city, ziggurat=ziggurat
         )
         

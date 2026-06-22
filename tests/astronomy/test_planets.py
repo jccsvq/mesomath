@@ -24,7 +24,7 @@ def test_planet_altitude_calculation_with_sevilla() -> None:
     
     # Calculate geometric altitude (ignoring refraction/dip for structural matching)
     # XEphem returns ~26.68° geometric altitude for Mars under these parameters
-    apparent_alt = mars.calculate_apparent_altitude(epoch=epoch, city="Sevilla")
+    apparent_alt = mars.calculate_effective_visibility_altitude(epoch=epoch, city="_Sevilla")
     
     # The output should sit close to ~27.87° when incorporating the full horizon_correction
     assert math.isclose(apparent_alt, 27.87, abs_tol=0.2)
@@ -73,7 +73,7 @@ def test_finder_loop_safety_exception(monkeypatch: pytest.MonkeyPatch) -> None:
             start_epoch=epoch,
             horizon="sunset",
             search_type="appearance",
-            city="Sevilla",
+            city="_Sevilla",
             max_days=5  # It will fail regardless of how many days it scans
         )
         

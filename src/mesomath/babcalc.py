@@ -28,6 +28,9 @@ from mesomath.metrology_presets import SURFACE_PROUST_83 as slist
 from mesomath.metrology_presets import LENGTH_PROUST_84 as llist
 
 from mesotimes import ChronDate as Date
+from mesotimes import BabStar as Star
+
+
 
 
 # Welcome message
@@ -69,6 +72,7 @@ def main():
         "slist": slist,
         "llist": llist,
         "Date": Date,
+        "Star": Star,
         "VERSION": VERSION,
         "exit": exit,
         "quit": quit,

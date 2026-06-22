@@ -29,6 +29,9 @@ from mesotimes.astronomy.sun import (
     bab_day_duration,
 )
 
+from mesotimes.astronomy.stars import BabStar
+
+
 __all__ = [
     "delta_t",
     "delta_t_sigma",
@@ -53,4 +56,6 @@ __all__ = [
     "calculate_kur",
     "calculate_shu_interval",
     "calculate_full_moon_na",
+    "BabStar",
+
 ]

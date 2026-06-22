@@ -44,7 +44,7 @@ dependencies = [
   "traitlets>=5.0.0",
   "typing-extensions>=4.0.0",
   "wcwidth",
-  "pymeeus>=0.5.12", 
+  "pymeeus==0.5.12", 
   "juliandate",
 ]
 dynamic = ["version"]
@@ -144,6 +144,9 @@ build = "make -C docs html"
 [[tool.mypy.overrides]]
 module = ["pymeeus.*", "parsimonious.*"]
 ignore_missing_imports = true
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
 
 [[tool.mypy.overrides]]
 module = ["untyped_package.*"]

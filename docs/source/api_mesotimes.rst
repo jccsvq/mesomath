@@ -54,7 +54,6 @@ Core
 Sun
 ...
 
-
 .. automodule:: mesotimes.astronomy.sun
    :members:
 
@@ -78,3 +77,14 @@ Planets
 .. automodule:: mesotimes.astronomy.planets.superiors
    :members:
    :show-inheritance:
+
+Stars (BabStar)
+...............
+
+.. autoclass:: mesotimes.BabStar
+   :members:
+   :special-members: __init__
+   :undoc-members:
+
+.. automodule:: mesotimes.astronomy.visibility
+   :members:

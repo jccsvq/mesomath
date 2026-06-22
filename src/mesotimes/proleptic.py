@@ -61,7 +61,7 @@ class ProlepticBabylonianCalendar:
     def __init__(
         self,
         year: int,
-        city: str = "Babylon",
+        city: str | dict = "Babylon",
         ziggurat: float = 0.0,
         AoV: float = 12.0,
         uncertainty: float = 0.833,
@@ -72,7 +72,7 @@ class ProlepticBabylonianCalendar:
         :param year: Astronomical year
         :type year: int
         :param city: Observation site, defaults to "Babylon"
-        :type city: str, optional
+        :type city: str | dict, optional
         :param ziggutat: Observer height above terrain in meters, defaults to 0.0
         :type ziggurat: float, optional
         :param AoV: Arc of Vision in degrees, defaults to 12.0

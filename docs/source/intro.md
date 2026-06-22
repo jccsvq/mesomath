@@ -1,5 +1,5 @@
 
-# Introduction to MesoMath (v2.1.0)
+# Introduction to MesoMath ({{ release }})
 
 **MesoMath** is more than just a calculator; it is a digital bridge to the mathematical and astronomical mind of the ancient Mesopotamian scribe. While modern mathematics relies on abstract decimal notation, the Old Babylonian period (c. 1900–1600 BCE) developed a sophisticated sexagesimal (base-60) system that combined floating-point arithmetic with a complex web of metrological units and elastic, horizon-based timekeeping frameworks.
 
@@ -44,6 +44,7 @@ The MesoMath engine does not merely compute; it documents. All results can be ex
 
 * **Precise Event Ephemeris**: Calculated directly with the [`pymeeus` library](https://github.com/architest/pymeeus) (VSOP87, ELP85) up to the current limit of knowledge of the parameter `Delta T`.
 * **Internal Database of Historical Eclipses**: Solar and Lunar eclipses visible at Kish (total and partial) based on the [*Five Millennium Canon of Eclipses* by Fred Espenak and Jean Meeus](https://eclipse.gsfc.nasa.gov/SEpubs/5MCSE.html).
+* **Search of Heliacal and Acronychal Rising of Stars**: Precise dating and dissection/tomography of the twilight lights to reveal the temporal evolution of the star/twilight-background contrast.
 
 -----
 
@@ -59,6 +60,7 @@ MesoMath has shifted into a structural metapackage architecture, decoupling core
 
 2. **The `mesotimes` Package Core Engine**:
    * `date.py`: Chronological, calendrical, and astronomical dispatchers (`ChronDate`).
+   * `stars.py` and `visibility.py`: Search and analysis of heliacal/acronychal star phenomena.
 
 3. **Unified API**: Legacy standalone utilities (formerly `mtlookup`, `bmultable`) are integrated directly into the core classes, streamlining the developer experience. Methods like `Blen.lookup()` or `BabN.multable()` are now standard.
 

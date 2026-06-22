@@ -98,6 +98,6 @@ def test_calculate_full_moon_na_value() -> None:
 
 
 def test_invalid_city_raises_key_error() -> None:
-    """Ensure that passing a non-existent city raises a KeyError due to final dict lookup."""
-    with pytest.raises(KeyError):
+    """Ensure that passing a non-existent city raises a ValueError due to final dict lookup."""
+    with pytest.raises(ValueError):
         moon_rise_transit_set(-567, 5, 1, city="Atlantis")

@@ -2848,8 +2848,26 @@ To facilitate fluid context switching during computational sessions, `MesoTimes`
 |             |           |           |           | Considered the oldest city; relevant to the cosmogony associated with the sea horizon.|
 |Larsa        | 31.2858°N | 45.8533°E |   20 m    | Tell as-Senkereh, Iraq|
 |             |           |           |           | Ancient solar center relevant for astronomical observations.|
-|Sevilla      | 37.4000°N | -6.0000°E |   20 m    | Seville, Spain|
-|             |           |           |           | Non-Mesopotamian test node (internal verification).|
+
+Three cities of Ancient Egypt are also included for comparative purposes (Essentials for the rise of Sirius / Sothis):
+
+|City         | Latitude  | Longitude | Elevation | Modern Location / Description|
+|-------------|-----------|-----------|-----------|------------------------------|
+|Memphis      | 29.8460°N | 31.2530°E |   20 m    | Mit Rahina, Egypt|
+|             |           |           |           | Ancient capital of the Old Kingdom, Lower Egypt.|
+|Thebes       | 25.7200°N | 32.6100°E |    78 m    | Luxor, Egypt|
+|             |           |           |           | Religious capital of the New Kingdom, Upper Egypt.|
+|Elephantine  | 24.0850°N | 32.8870°E |    92 m    | Aswan, Egypt|
+|             |           |           |           | Southern frontier island fortress near the First Cataract.|
+
+and a test site:
+
+|City         | Latitude  | Longitude | Elevation | Modern Location / Description|
+|-------------|-----------|-----------|-----------|------------------------------|
+|_Sevilla     | 37.4085°N | -5.9232°E |   20 m    | Seville, Spain|
+|             |           |           |           | Non-Mesopotamian alien test node (internal verification).|
+
+
 
 This metadata can be printed directly in the interactive REPL by invoking the static helper method `ChronDate.sites()` (aliased as `Date.sites()` or accessible from any instance):
 
@@ -2857,11 +2875,23 @@ This metadata can be printed directly in the interactive REPL by invoking the st
 --> Date.sites()
 ```
 
-```{warning}
-**Observatory Scope Hardcoding**
-At present, the astronomical engine pipelines are hardcoded to match the historical coordinates present in this native registry. Passing a string identifier not compiled within the internal `mesopotamian_cities` catalog will result in a validation error. Custom user coordinates cannot be dynamically injected without fully refactoring the underlying spatial calculation wrappers.
+But the user can define their own observatories as a dictionary, respecting the four mandatory terms, for instance:
+
+```python
+ebla = {
+    "name": "Ebla",        # REQUIRED !!
+    "latitude": 35.7986,   # REQUIRED !!
+    "longitude": 36.7889,  # REQUIRED !!
+    "altitude": 390,       # REQUIRED !!
+    "country": "Syria",
+    "description": "Important ancient city in Syria.",
+    "modern_name": "Tell Mardikh, Syria",
+}
 
 ```
+
+and from now on, `city = ebla` can be used in any function or method call.
+
 
 
 
@@ -2930,11 +2960,13 @@ To study long-term chronological drifts, `year_almanac()` tracks the physical ro
     Winter Solstice  : -378-12-25.91
 -----------------------------------------------------------------
   CRITICAL PLANETARY PHENOMENA (Sarsu - UT Clock):
-    * Mars   Opposition: -378-10-08.10 | Station 1: -378-08-31.88
-    * Jupiter Opposition: -378-04-12.94 | Station 1: -378-02-11.06
-    * Saturn  Opposition: -378-01-28.56 | Station 1: -379-11-22.56
-    * Venus   Inf. Conj. : -378-05-08.93
-    * Mercury Inf. Conj. : -378-04-26.43
+    * Mars     Opposition: -378-10-08.10 | Station 1: -378-08-31.88
+    * Jupiter  Opposition: -378-04-12.94 | Station 1: -378-02-11.06
+    * Saturn   Opposition: -378-01-28.56 | Station 1: -379-11-22.56
+    * Venus    Inf. Conj. : -378-05-08.93
+    * Mercury  Inf. Conj. : -378-04-26.43
+-----------------------------------------------------------------
+  HELIACAL RISING OF SIRIUS (The Arrow):  -378-07-23.08 at Babylon
 -----------------------------------------------------------------
   ECLIPSES VISIBLE FROM KISH (Historical Database):
     * Date: -378-05-02 | Type: Solar Partial Eclipse | Observed Mag: 0.805
@@ -2952,6 +2984,8 @@ The eclipse data printed by `year_almanac()` is pulled from a historical global 
 * **IMCCE Solar Eclipses Forms:** [https://ssp.imcce.fr/forms/solar-eclipses](https://ssp.imcce.fr/forms/solar-eclipses)
 
 ```
+
+> About the line **"HELIACAL RISING OF SIRIUS"** see below: [Star Phenomena](star-phenomena).
 
 
 #### **6.3. The Monthly Lunar Phase Almanac (`month_almanac`)**
@@ -3268,9 +3302,408 @@ Methods like `ut_to_ush()` internally build and test parallel matrix options (Op
 
 ```
 
-
 ---
 
+(star-phenomena)=
+### 10. Star Phenomena & Visibility Models
+
+This section covers the observation and mathematical modeling of stellar phenomena in ancient Mesopotamia, specifically focusing on heliacal and acronychal events. `mesotimes` provides a dual-layer approach: a classical geometric search layer and a physical atmospheric visibility engine.
+
+#### 10.1 Mathematical Framework
+
+Stellar visibility during twilight is governed by the contrast between the star's apparent brightness (after atmospheric extinction) and the background sky luminance. 
+
+##### Atmospheric Extinction
+The apparent magnitude of a star changes as it approaches the horizon due to the increasing air mass ($X$). The real observed magnitude ($m_{\text{real}}$) is modeled using the extinction coefficient $k$:
+
+$$m_{\text{real}} = V + k \cdot X$$
+
+Mesotimes incorporates two functions for the air mass in `mesotimes.astronomy.visibility`: 
+
+* `air_mass_KY` implementing **Kasten & Young (1989)** model:
+
+$$ X={\frac {1}{\cos \,z+0.50572\,(6.07995^{\circ }+90^{\circ }-z)^{-1.6364}}}$$
+
+where $z$ is the zenith distance.
+
+* `air_mass_Pickering` implementing **Pickering (2002)** model:
+
+$${\displaystyle X={\frac {1}{\sin(h+{244}/(165+47h^{1.1}))}}\,}$$
+
+where $h$ is the apparent altitude $(90^{\circ }-z)$ in degrees.
+
+
+
+For high-precision photometry involving stars with distinct color indices, researchers can manually apply a second-order correction to the monochromatic extinction coefficient ($k_0$) before running the simulation:
+
+$$k = k_0 + k' \cdot (B-V)$$
+
+*Where $k'$ represents the second-order visual extinction parameter, typically valued around $-0.02$ for the Johnson $V$ filter.*
+
+##### Visibility Models
+
+`mesotimes` bridges ancient empirical traditions with modern atmospheric physics by supporting three distinct visibility paradigms to determine the detection threshold ($m_{\text{lim}}$).
+
+###### 1. Classical *Arcus Visionis* (Geometric Model)
+This is the traditional, purely geometric method utilized in Babylonian astronomy and later adopted by historical chronologists (e.g., Carl Schoch, Richard Anthony Parker). It bypasses atmospheric physics entirely.
+
+The model evaluates the *Arcus Visionis* ($O$), defined as the difference between the altitude of the star ($h_{\star}$) and the altitude of the Sun ($h_{\odot}$) at the moment of the star's rising or setting:
+
+$$O = h_{\star} - h_{\odot}$$
+
+Visibility is determined by a static lookup table where each star or magnitude class requires a specific minimum angular separation ($O_{\text{min}}$) to be visible to the naked eye. While computationally trivial, it fails to account for local atmospheric conditions ($k$) or seasonal variations in twilight duration.
+
+###### 2. Zenith-Based Ramp Model (1D Semi-Empirical)
+The Ramp Model acts as a transition layer between geometry and physics. Instead of calculating complex light scattering, it approximates the crepuscular sky brightness as a one-dimensional function (a "ramp") dependent solely on the Sun's zenith distance or elevation below the horizon ($h_{\odot}$).
+
+The limiting magnitude ($m_{\text{lim}}$) of the human eye is modeled as a functional curve that drops sharply as the Sun approaches the horizon:
+
+$$m_{\text{lim}} = f(h_{\odot})$$
+
+When `ramp_model=True` is passed to the execution loop, `mesotimes` disables horizontal azimuthal variations. The background sky brightness is assumed to be uniform across the entire horizon for a given solar depth, providing a stable, average-case baseline that correlates well with classical empirical observations.
+
+###### 3. 3D Atmospheric Scattering Model (Physical)
+The default and most advanced engine in `mesotimes`. It implements a physical model of the twilight sky based on modern atmospheric optics (drawing from Schaefer's and Garstang's scattering frameworks). 
+
+Instead of an isotropic sky, it computes the background luminance at the exact patch of sky where the star resides. It evaluates three-dimensional geometry via the scattering angle ($\phi$), which measures the true angular separation between the Sun's sub-horizon position and the star's coordinate:
+
+$$\cos \phi = \sin h_{\odot} \sin h_{\star} + \cos h_{\odot} \cos h_{\star} \cos(\Delta A)$$
+
+*Where $\Delta A$ is the difference in azimuth between the Sun and the star.*
+
+The model accounts for:
+* **Rayleigh Scattering:** Molecular scattering of light, which dominates at higher solar depressions.
+* **Aerosol Forward/Backscattering:** Modulated via the phase function $\phi$, capturing the dramatic brightness increase (forward scattering) when looking near the solar glow versus looking towards the opposite horizon (backscattering).
+
+This model allows `mesotimes` to dynamically evaluate how a star's visibility changes not just day by day, but minute by minute during the twilight progression under varying atmospheric extinction coefficients ($k$).
+
+
+#### 10.2 The `BabStar` Class
+
+The `BabStar` object represents a target star mapped to historical and archaeological contexts. It anchors catalog data (such as J2000 coordinates, proper motions, and photometric magnitudes) and provides methods to compute exact ancient astronomical positions and visibility epochs.
+
+##### Instantiating BabStar Objects
+
+Within the environment modules (`babcalc` and `ibabcalc`), the `BabStar` class is conveniently exposed via the alias `Star`.
+
+###### From Internal Catalog
+
+```pycon
+--> sirius = Star.from_catalog("Sirius")
+--> sirius
+Sirius as Babylonian star
+```
+
+To explore the integrated historical database, use `Star.stars()` or `Star.catalog()`. By default, it prints the first screen containing basic J2000 equatorial coordinates and proper motions:
+
+
+```pycon
+--> Star.stars() # Or Star.catalog()
+
+----------------------------------------------------------------------------
+| Star Name       |    RA(J2000) |   DEC(J2000) |   pm_ra |  pm_dec | Type |
+|-----------------|--------------|--------------|---------|---------|------|
+| Sirius          |    6:45:8.92 |  -16:42:58.0 |  -0.546 |  -1.223 |   B  |
+| Regulus         |   10:8:22.31 |   11:58:1.95 |  -0.248 |   0.005 |   B  |
+| Spica           |  13:25:11.58 |  -11:9:40.76 |  -0.042 |  -0.028 |   B  |
+| Aldebaran       |   4:35:55.24 |  16:30:33.49 |   0.063 |  -0.189 |   B  |
+| Antares         |  16:29:24.46 | -26:25:55.21 |  -0.010 |  -0.023 |   B  |
+| Pollux          |   7:45:18.95 |   28:1:34.31 |  -0.626 |  -0.046 |   B  |
+| Procyon         |   7:39:18.12 |   5:13:29.95 |  -0.717 |  -1.035 |   B  |
+| Capella         |   5:16:41.36 |  45:59:52.77 |   0.441 |  -0.433 |   B  |
+| Arcturus        |  14:15:39.67 |  19:10:56.67 |  -1.093 |  -1.999 |   B  |
+| Beta_Librae     |   15:17:0.45 |  -9:22:58.33 |  -0.101 |  -0.068 |   N  |
+| Alpha_Librae    |  14:50:41.26 |   -16:2:29.8 |  -0.104 |  -0.070 |   N  |
+| Alcyone         |   3:47:29.08 |   24:6:18.49 |   0.019 |  -0.043 |   B  |
+| Castor          |    7:34:36.0 |  31:53:17.82 |  -0.191 |  -0.144 |   B  |
+| Eta_Piscium     |   1:31:29.01 |  15:20:45.02 |   0.026 |  -0.012 |   N  |
+| Alhena          |   6:37:42.71 |  16:23:57.41 |  -0.005 |  -0.066 |   N  |
+| Mekbuda         |     7:4:6.53 |  20:34:13.07 |  -0.007 |  -0.010 |   N  |
+| Epsilon_Leonis  |   9:45:51.07 |  23:46:27.27 |  -0.053 |  -0.025 |   N  |
+| Hamal           |     2:7:10.4 |   23:27:44.7 |   0.231 |  -0.147 |   N  |
+| Vega            |  18:36:56.34 |   38:47:1.28 |   0.201 |   0.287 |   M  |
+| Altair          |   19:50:47.0 |    8:52:5.96 |   0.536 |   0.386 |   M  |
+| Arneb           |   5:32:43.82 | -17:49:20.24 |   0.003 |  -0.001 |   M  |
+| Betelgeuse      |   5:55:10.31 |   7:24:25.43 |   0.027 |   0.011 |   M  |
+| Fomalhaut       |  22:57:39.05 | -29:37:20.05 |   0.329 |  -0.165 |   M  |
+| Menkar          |    3:2:16.77 |    4:5:23.06 |  -0.012 |  -0.078 |   M  |
+| Dubhe           |   11:3:43.67 |   61:45:3.72 |  -0.136 |  -0.035 |   M  |
+| Polaris         |   2:31:49.09 |   89:15:50.8 |   0.044 |  -0.012 |   M  |
+| Canopus         |   6:23:57.11 | -52:41:44.38 |   0.020 |   0.024 |   M  |
+| Deneb           |  20:41:25.91 |  45:16:49.22 |   0.002 |   0.002 |   M  |
+| Rigel           |   5:14:32.27 |   -8:12:5.89 |   0.001 |  -0.001 |   M  |
+| Alphecca        |  15:34:41.27 |  26:42:52.89 |   0.120 |  -0.089 |   M  |
+============================================================================
+* pm_ra, pm_dec in mas/yr | Types -> N: Normal Star | M: MUL.APIN | B: Both
+```
+
+The catalog database tracks extensive physical and historical attributes split into five thematic screens. Passing an invalid screen number yields an informative prompt:
+
+```pycon
+--> Star.stars(-1)
+You asked for screen: -1, but it has not (yet) been implemented.
+Currently available screens are:
+    Screen 1: Astronomical data.
+    Screen 2: Angle of vision and transliterations.
+    Screen 3: Name meaning and cuneiform glyphs.
+    Screen 4: Photometry.
+    Screen 5: Astrophysics and modern comments.
+```
+
+The database output can be filtered dynamically using `filter_type` constraints (`normal_star`, `mul_apin`, or `both`):
+
+```pycon
+--> Star.stars(4, filter_type="mul_apin")
+
+-------------------------------------------------------------------------------
+| Star name      | Arc Vision | V magnitude | (B-V) Color Index |
+|----------------|------------|-------------|-------------------|
+| Vega           | 11.0°      | +0.03       | +0.00             |
+| Altair         | 11.5°      | +0.76       | +0.22             |
+| Arneb          | 13.0°      | +2.58       | +0.21             |
+| Betelgeuse     | 12.0°      | +0.50       | +1.85             |
+| Fomalhaut      | 12.5°      | +1.16       | +0.09             |
+| Menkar         | 13.0°      | +2.54       | +1.64             |
+| Dubhe          | 10.0°      | +0.00       | +1.07             |
+| Polaris        | 9.0°       | +1.97       | +0.60             |
+| Canopus        | 13.5°      | -0.74       | +0.15             |
+| Deneb          | 11.5°      | +1.25       | +0.09             |
+| Rigel          | 12.0°      | +0.13       | -0.03             |
+| Alphecca       | 12.0°      | +2.22       | +0.00             |
+===============================================================================
+```
+
+###### User defined stars.
+
+Researchers can instantiate arbitrary stars missing from the canonical catalog by passing raw astronomical coordinates and magnitudes.
+
+*Note: Right Ascension (`ra`) must be supplied in decimal hours, while Declination (`dec`) and the Arcus Visionis are supplied in decimal degrees.*
+
+```pycon
+# Arguments: name, ra_hours, dec_deg, pm_ra, pm_dec, arc_of_vision, V_mag
+--> star = Star("FakeStar", 6.75, 16.42, 0.50, -0.50, 12.6, 1.73)
+--> star.name
+'FakeStar'
+--> star.ra0() 
+101.25
+--> star.dec0() 
+16.42
+--> star.pm_ra() 
+0.0001388888888888889
+--> star.pm_dec()
+-0.0001388888888888889
+--> star.arc_of_vision 
+12.6
+--> star.V
+1.73
+```
+
+Once defined, custom objects inherit the exact same algorithmic interface as cataloged stars. Proper motions can be projected forward or backward to compute historical equatorial and ecliptical matrices using `PyMeeus` Epochs:
+
+```pycon
+
+--> from pymeeus.Epoch import Epoch
+--> epoch = Epoch(-378,5,17)    # -378-05-17
+--> star.get_equatorial(epoch)
+(Angle(66.76764565448941), Angle(15.319106613584298))
+--> star.get_ecliptical(epoch)
+(Angle(67.48118983512337), Angle(-6.604096276868847))
+```
+
+They are fully compatible with both the geometric and physical phenomenon engines (see bellow):
+
+```pycon 
+--> star.search_phenomena(-378,city="Susa")
+
+Search for FakeStar Heliacal Appearance in the East before sunrise:
+======================================================================
+Search starting at Susa:  -378-01-1.0
+   First sight found at:  -378-06-27.06 (JD= 1583170.564288)
+           Rising angle:  56.472d
+----------------------------------------------------------------------
+--> star.search_phenomena(-378,city="Susa", phenomenon="acronychal")
+
+Search for FakeStar Acronychal Appearance in the East before sunset:
+======================================================================
+  Search starting at Susa: -378-01-1.0
+Acronychal sight found at: -378-12-22.58 (JD= 1583349.075736)
+             Rising angle: 56.472d
+----------------------------------------------------------------------
+
+```
+
+#### 10.3 Search for *Phenomena* Based on the *Arcus Visionis*.
+
+The geometric search engine determines the theoretical observation date by evaluating the traditional *Arcus Visionis* threshold defined for each star.
+
+##### Heliacal Rising.
+
+```pycon 
+--> star.search_phenomena(-378,city="Susa")
+
+Search for FakeStar Heliacal Appearance in the East before sunrise:
+======================================================================
+Search starting at Susa:  -378-01-1.0
+   First sight found at:  -378-06-27.06 (JD= 1583170.564288)
+           Rising angle:  56.472d
+----------------------------------------------------------------------
+```
+
+##### Acronychal Rising.
+
+```pycon
+--> star.search_phenomena(-378,city="Susa", phenomenon="acronychal")
+
+Search for FakeStar Acronychal Appearance in the East before sunset:
+======================================================================
+  Search starting at Susa: -378-01-1.0
+Acronychal sight found at: -378-12-22.58 (JD= 1583349.075736)
+             Rising angle: 56.472d
+----------------------------------------------------------------------
+
+```
+
+The precise instances returned by these methods (e.g., the calculated Julian Dates) occur very close to the corresponding local sunrise or sunset. Consequently, these epochs are utilized as the initial temporal seeds for the physical atmospheric analysis detailed in the next section.
+
+#### 10.4 Twilight Tomography
+
+Instead of relying solely on static geometric criteria, `mesotimes` allows a dynamic evaluation of the twilight sky over multiple days. This approach acts as a **spatial-temporal tomography**, slicing the crepuscular atmosphere every few minutes to map the exact boundary where a star breaches the human visual contrast threshold ($m_{\text{lim}}$).
+
+In a heliacal rising report (computed backwards from sunrise), reading the matrix from bottom to top allows the researcher to trace the physical ascent of the star as it fights against the fading dawn glare. Conversely, an acronychal report captures the twilight decay after sunset.
+
+##### Example 1: Heliacal Rising (Canonical Star)
+
+To execute a multi-day tomography sequence for the heliacal appearance of Sirius in Babylon during -378 BCE, use the `.twilight_tomography()` method:
+
+```pycon
+--> # Generates a 3-day contrast time-series report at 6-minute intervals
+--> sirius.twilight_tomography(
+...     year=-378,
+...     phenomena="heliacal",
+...     city="Babylon",
+...     k=0.20,
+...     day_offset=(0, 1, 2,)
+...     )
+
+Search for Sirius Heliacal Appearance in the East before sunrise:
+======================================================================
+Search starting at Babylon:  -378-01-1.0
+   First sight found at:  -378-07-23.08 (JD= 1583196.582765)
+           Rising angle:  55.912d
+----------------------------------------------------------------------
+Scanning Sirius visibility in Babylon ( -378-07-23.0)
+at 6 sidereal minutes interval (backward)
+Day Offset: 0
+Current Extinction Coefficient value: k = 0.2
+|sun_ele |star_ele |     phi |Vis. |m_real | m_lim | Contrast
+|--------|---------|---------|-----|-------|-------|---------------------
+| -0.041 |  10.885 |  54.736 | No  | -0.43 | -5.78 | 
+| -2.014 |   9.766 |  54.943 | No  | -0.32 | -3.69 | 
+| -3.131 |   8.641 |  54.949 | No  | -0.18 | -2.52 | 
+| -4.239 |   7.510 |  54.956 | No  | -0.00 | -1.35 | 
+| -5.338 |   6.376 |  54.965 | No  |  0.23 | -0.19 | 
+| -6.428 |   5.242 |  54.975 | Yes |  0.54 |  0.96 | ###
+| -7.507 |   4.112 |  54.988 | Yes |  0.99 |  2.08 | ########
+| -8.576 |   2.995 |  55.006 | Yes |  1.65 |  3.15 | ############
+| -9.635 |   1.910 |  55.033 | Yes |  2.68 |  4.14 | ###########
+|-10.681 |   0.897 |  55.081 | Yes |  4.33 |  4.94 | ####
+-------------------------------------------------------------------------
+Scanning Sirius visibility in Babylon ( -378-07-22.0)
+at 6 sidereal minutes interval (backward)
+Day Offset: 1
+Current Extinction Coefficient value: k = 0.2
+|sun_ele |star_ele |     phi |Vis. |m_real | m_lim | Contrast
+|--------|---------|---------|-----|-------|-------|---------------------
+| -1.888 |   9.028 |  54.332 | No  | -0.23 | -3.84 | 
+| -3.004 |   7.899 |  54.339 | No  | -0.07 | -2.66 | 
+| -4.111 |   6.765 |  54.347 | No  |  0.14 | -1.49 | 
+| -5.209 |   5.631 |  54.356 | No  |  0.42 | -0.33 | 
+| -6.298 |   4.498 |  54.367 | No  |  0.81 |  0.81 | 
+| -7.376 |   3.376 |  54.382 | Yes |  1.39 |  1.93 | ####
+| -8.444 |   2.277 |  54.404 | Yes |  2.27 |  3.01 | #####
+| -9.501 |   1.232 |  54.441 | Yes |  3.68 |  4.01 | ##
+|-10.546 |   0.297 |  54.506 | No  |  5.89 |  4.85 | 
+-------------------------------------------------------------------------
+Scanning Sirius visibility in Babylon ( -378-07-21.0)
+at 6 sidereal minutes interval (backward)
+Day Offset: 2
+Current Extinction Coefficient value: k = 0.2
+|sun_ele |star_ele |     phi |Vis. |m_real | m_lim | Contrast
+|--------|---------|---------|-----|-------|-------|---------------------
+| -0.840 |   8.286 |  53.548 | No  | -0.13 | -4.95 | 
+| -2.880 |   7.154 |  53.736 | No  |  0.06 | -2.80 | 
+| -3.986 |   6.020 |  53.744 | No  |  0.32 | -1.63 | 
+| -5.083 |   4.886 |  53.754 | No  |  0.66 | -0.47 | 
+| -6.170 |   3.759 |  53.767 | No  |  1.16 |  0.67 | 
+| -7.247 |   2.649 |  53.785 | No  |  1.92 |  1.79 | 
+| -8.314 |   1.581 |  53.814 | No  |  3.12 |  2.88 | 
+| -9.369 |   0.603 |  53.864 | No  |  5.01 |  3.89 | 
+-------------------------------------------------------------------------
+
+```
+
+##### Example 2: Acronychal Rising (User-Defined Object)
+
+Tomography can also be performed on custom stars to analyze evening phenomena. Below is the actual acronychal rising profile for `FakeStar` at the archaeological site of Susa (the star rising in the East as the Sun sets in the West). 
+
+Notice that the time loop automatically executes **forward** as the twilight deepens, and the star's elevation increases over time:
+
+```pycon
+--> # Evaluating twilight profiles post-sunset for a custom star
+--> star = Star("FakeStar", 6.75, 16.42, 0.50, -0.50, 12.6, 1.73)
+--> star.twilight_tomography(
+...     year=-378, 
+...     phenomena="acronychal", 
+...     city="Susa", 
+...     k=0.20, 
+...     day_offset=(0, 1)
+...     )
+
+
+Search for FakeStar Acronychal Appearance in the East before sunset:
+======================================================================
+  Search starting at Susa: -378-01-1.0
+Acronychal sight found at: -378-12-22.58 (JD= 1583349.075736)
+             Rising angle: 56.472d
+----------------------------------------------------------------------
+Scanning FakeStar visibility in Susa ( -378-12-23.0)
+at 6 sidereal minutes interval (forward)
+Day Offset: 0
+Current Extinction Coefficient value: k = 0.2
+|sun_ele |star_ele |     phi |Vis. |m_real | m_lim | Contrast
+|--------|---------|---------|-----|-------|-------|---------------------
+| -0.710 |  13.346 | 159.042 | No  | -0.61 | -5.43 | 
+| -2.770 |  14.591 | 159.596 | No  | -0.68 | -3.26 | 
+| -3.913 |  15.840 | 159.595 | No  | -0.74 | -2.05 | 
+| -5.063 |  17.092 | 159.595 | No  | -0.79 | -0.84 | 
+| -6.220 |  18.347 | 159.594 | Yes | -0.83 |  0.37 | #########
+| -7.383 |  19.604 | 159.593 | Yes | -0.87 |  1.59 | ###################
+| -8.553 |  20.863 | 159.592 | Yes | -0.90 |  2.79 | ####################
+| -9.729 |  22.125 | 159.591 | Yes | -0.93 |  3.91 | ####################
+|-10.911 |  23.388 | 159.590 | Yes | -0.96 |  4.86 | ####################
+-------------------------------------------------------------------------
+Scanning FakeStar visibility in Susa ( -378-12-22.0)
+at 6 sidereal minutes interval (forward)
+Day Offset: 1
+Current Extinction Coefficient value: k = 0.2
+|sun_ele |star_ele |     phi |Vis. |m_real | m_lim | Contrast
+|--------|---------|---------|-----|-------|-------|---------------------
+| -1.712 |  12.530 | 160.563 | No  | -0.56 | -4.38 | 
+| -2.848 |  13.773 | 160.562 | No  | -0.63 | -3.18 | 
+| -3.992 |  15.019 | 160.562 | No  | -0.70 | -1.98 | 
+| -5.143 |  16.269 | 160.561 | No  | -0.75 | -0.76 | 
+| -6.300 |  17.522 | 160.560 | Yes | -0.80 |  0.45 | ##########
+| -7.464 |  18.777 | 160.559 | Yes | -0.84 |  1.67 | ####################
+| -8.635 |  20.035 | 160.558 | Yes | -0.88 |  2.86 | ####################
+| -9.812 |  21.296 | 160.557 | Yes | -0.91 |  3.98 | ####################
+|-10.994 |  22.558 | 160.556 | Yes | -0.94 |  4.92 | ####################
+-------------------------------------------------------------------------
+```
+
+The output highlights a key astrophysical contrast: because the acronychal event tracks an evening rising, the time-series progresses **forward** as the sun sinks. Furthermore, as the star climbs higher into the sky (`star_ele` increases from $\sim 13^\circ$ to $\sim 23^\circ$), atmospheric extinction drops significantly, causing the star's real magnitude (`m_real`) to brighten from $-0.61$ to $-0.96$. This allows the object to flare into maximum visual contrast (`#`) as the background twilight sky luminance drops.
+
+
+---
 
 ## **VII. Reference & Appendices**
 

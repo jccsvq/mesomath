@@ -7,15 +7,16 @@ time corrections (Delta T), and geodetic properties for ancient Mesopotamian sit
 
 import math
 from typing import Final
-from pymeeus.Epoch import Epoch
-from pymeeus.Angle import Angle
+
 from pymeeus import Coordinates
+from pymeeus.Angle import Angle
+from pymeeus.Epoch import Epoch
 from pymeeus.Moon import Moon
 from pymeeus.Sun import Sun
 
-
 # Strict type hinting for the geographic metadata structure
-mesopotamian_cities: Final[dict[str, dict[str, str | float | int]]] = {
+NEAR_EAST_CITIES: Final[dict[str, dict[str, str | float | int]]] = {
+    # Mesopotamian Cities
     "Babylon": {
         "description": "Main center of the astronomical diaries (Esagila).",
         "latitude": 32.5430,
@@ -107,24 +108,141 @@ mesopotamian_cities: Final[dict[str, dict[str, str | float | int]]] = {
         "altitude": 20,
         "modern_name": "Tell as-Senkereh, Iraq",
     },
-    "Sevilla": {
-        "description": "Non-Mesopotamian test node (internal verification).",
+    # --- Ancient Egypt (Essentials for the rise of Sirius / Sothis) ---
+    "Memphis": {
+        "description": "Ancient capital of the Old Kingdom, Lower Egypt.",
+        "latitude": 29.846,
+        "longitude": 31.253,
+        "altitude": 20.0,
+        "modern_name": "Mit Rahina, Egypt",
+    },
+    "Thebes": {
+        "description": "Religious capital of the New Kingdom, Upper Egypt.",
+        "latitude": 25.720,
+        "longitude": 32.610,
+        "altitude": 78.0,
+        "modern_name": "Luxor, Egypt",
+    },
+    "Elephantine": {
+        "description": "Southern frontier island fortress near the First Cataract.",
+        "latitude": 24.085,
+        "longitude": 32.887,
+        "altitude": 92.0,
+        "modern_name": "Aswan, Egypt",
+    },
+    # --- Testing Places ---
+    "_Sevilla": {
+        "description": "Non-Mesopotamian alien test node (internal verification).",
         "latitude": 37.40855,
         "longitude": -5.92328,
-        "altitude": 20,
+        "altitude": 20.0,
         "modern_name": "Seville, Spain",
     },
 }
 
-# User can add cities, for instance:
-#
-#   mesopotamian_cities["Ebla"] = {
-#      "description": "Important ancient city in Syria.",
-#       "latitude": 35.7986,
-#       "longitude": 36.7889,
-#       "altitude": 390,
-#       "modern_name": "Tell Mardikh, Syria",
-#   }
+# Alias to preserve legacy compatibility (Backward Compatibility)
+mesopotamian_cities = NEAR_EAST_CITIES
+
+
+def resolve_city_coordinates(city_input: str | dict) -> dict:
+    """Resolves city metadata from a registered string key or a custom user dictionary.
+
+    Validates that user-defined coordinates are physically possible and ensures the
+    returned dictionary always includes a uniform "name" key for downstream formatting.
+
+    For instance:
+        >>> ebla = {
+        ...     "name": "Ebla",
+        ...     "description": "Important ancient city in Syria.",
+        ...     "latitude": 35.7986,
+        ...     "longitude": 36.7889,
+        ...     "altitude": 390.0,
+        ...     "modern_name": "Tell Mardikh, Syria",
+        ... }
+        >>> resolve_city_coordinates(ebla)
+
+    Args:
+        city_input (str | dict): A registered historical city name string or a
+            user-defined dictionary containing geographic parameters.
+
+    Raises:
+        ValueError: If a string key is provided but it is not registered in
+            NEAR_EAST_CITIES.
+        KeyError: If a custom dictionary lacks any of the mandatory keys
+            ('name', 'latitude', 'longitude', 'altitude').
+        TypeError: If the custom coordinates cannot be cast to floating-point numbers.
+        ValueError: If latitude falls outside the physical range of [-90.0, 90.0] degrees.
+        ValueError: If longitude falls outside the physical range of [-180.0, 180.0] degrees.
+        ValueError: If altitude is outside realistic terrestrial boundaries (-430m to 8848m).
+        TypeError: If city_input is neither a string nor a dictionary.
+
+    Returns:
+        dict: A deep or superficial copied dictionary containing sanitized geographical parameters
+            ('name', 'latitude', 'longitude', 'altitude', 'description', 'modern_name').
+    """
+    if isinstance(city_input, str):
+        if city_input in NEAR_EAST_CITIES:
+            d = NEAR_EAST_CITIES[city_input].copy()
+            d["name"] = city_input
+            return d
+
+        raise ValueError(f"City '{city_input}' is not registered in NEAR_EAST_CITIES.")
+
+    if isinstance(city_input, dict):
+        required = {"name", "latitude", "longitude", "altitude"}
+        if not required.issubset(city_input.keys()):
+            raise KeyError(f"Custom city dict must contain at least: {required}")
+
+        try:
+            # Forzamos la conversión a float para capturar strings numéricos ("35.5")
+            lat = float(city_input["latitude"])
+            lon = float(city_input["longitude"])
+            alt = float(city_input["altitude"])
+        except (ValueError, TypeError) as err:
+            raise TypeError(
+                "Coordinates (latitude, longitude, altitude) must be numeric values."
+            ) from err
+
+        # --- VALIDACIÓN DE RANGOS GEOFÍSICOS ---
+        if not (-90.0 <= lat <= 90.0):
+            raise ValueError(f"Latitude must be between -90 and 90 degrees. Got: {lat}")
+
+        if not (-180.0 <= lon <= 180.0):
+            raise ValueError(
+                f"Longitude must be between -180 and 180 degrees. Got: {lon}"
+            )
+
+        if (
+            alt < -430.0 or alt > 8848.0
+        ):  # Límites físicos de la Tierra (Mar Muerto - Everest)
+            raise ValueError(
+                f"Altitude out of terrestrial bounds (-430m to 8848m). Got: {alt}"
+            )
+        # ----------------------------------------
+
+        return {
+            "name": str(city_input["name"]),
+            "description": city_input.get("description", "Custom user location."),
+            "latitude": lat,
+            "longitude": lon,
+            "altitude": alt,
+            "modern_name": city_input.get("modern_name", "Unknown"),
+        }
+
+    raise TypeError("City must be a string key or a dictionary with coordinates.")
+
+
+def resolve_city_name(city_input: str | dict) -> str:
+    """Resolves city name from a registered string key or a custom user dictionary.
+
+    Args:
+        city_input (str | dict): City name or user-defined dictionary.
+
+    Returns:
+        str: City name.
+    """
+    return city_input if isinstance(city_input, str) else city_input["name"]
+
 
 def _horner(x: float, a: list[float]) -> float:
     """
@@ -358,7 +476,8 @@ def delta_t_sigma(year: int, month: int = 7) -> float:
     else:
         return float(round(dts_huber(y, 2005)))
 
-def epsilon(year: int|float)-> float:
+
+def epsilon(year: int | float) -> float:
     """
     Calculates the historical obliquity in decimal degrees. From Laskar (1986),
     Bibcode:1986A&A...157...59L
@@ -367,12 +486,25 @@ def epsilon(year: int|float)-> float:
     :type year: int|float
     :return: Obliquity in decimal degrees
     :rtype: float
-    """    
+    """
     # Polynomial coefficients in arcseconds:
-    coef = [84381.448, -4680.93, -1.55, 1999.25, -51.38, -249.67,  -39.05, 7.12, 27.87, 5.79, 2.45]
+    coef = [
+        84381.448,
+        -4680.93,
+        -1.55,
+        1999.25,
+        -51.38,
+        -249.67,
+        -39.05,
+        7.12,
+        27.87,
+        5.79,
+        2.45,
+    ]
 
-    t= (year-2000.0)/10000.
-    return _horner(t, coef)/3600.0
+    t = (year - 2000.0) / 10000.0
+    return _horner(t, coef) / 3600.0
+
 
 def equatorial_to_horizontal_at_instant(
     jd_ut: float, ra_hours: float, dec_deg: Angle, city_lon: float, city_lat: float
@@ -425,7 +557,9 @@ def equatorial_to_horizontal_at_instant(
     return azi, ele
 
 
-def get_body_equatorial_at_midnight(jd_ut: float, body_id: str, city: str = "Babylon")->tuple[Angle, Angle]:
+def get_body_equatorial_at_midnight(
+    jd_ut: float, body_id: str, city: str | dict = "Babylon"
+) -> tuple[Angle, Angle]:
     """Computes fixed equatorial positions using the safe math.floor approach.
 
     :param jd_ut: Julian Day (UT)
@@ -433,10 +567,10 @@ def get_body_equatorial_at_midnight(jd_ut: float, body_id: str, city: str = "Bab
     :param body_id: Body name
     :type body_id: str
     :param city: Observatory city name, defaults to "Babylon"
-    :type city: str, optional
-    :return: Right Ascension and Declination 
+    :type city: str | dict, optional
+    :return: Right Ascension and Declination
     :rtype: tuple[Angle, Angle]
-    """    
+    """
     jd_midnight = math.floor(jd_ut - 0.5) + 0.5
 
     epoch_base = Epoch(jd_midnight)
@@ -447,10 +581,56 @@ def get_body_equatorial_at_midnight(jd_ut: float, body_id: str, city: str = "Bab
 
     if body_id == "sun":
         ra, dec, _ = Sun.apparent_rightascension_declination_coarse(epoch_tt)
-        return ra / 15.0, dec 
+        return ra / 15.0, dec
     elif body_id == "moon":
         ra, dec, _, _ = Moon.apparent_equatorial_pos(epoch_tt)
         return ra / 15.0, dec
     else:
         ra, dec, _ = body_id.get_geocentric_position(epoch_tt)
         return ra / 15.0, dec
+
+
+def air_mass_pickering(
+    altitude: Angle, k: float = 0.10, m0: float = -1.46
+) -> tuple[float, float, float]:
+    """Air mass and extinction calculated using Pickering (2002) approximation.
+    Safeguarded against negative altitudes below the horizon.
+
+    Args:
+        altitude (Angle): Object altitude over horizon.
+        k (float, optional): Extinction coefficient. Defaults to 0.10 (ridiculously clear sky).
+        m0 (float, optional): Magnitud out of atmosphere. Defaults to -1.46 (Sirius).
+    Returns:
+        tuple[float, float, float]: Air mass, extinction and magnitude at ground level.
+    """
+    # If the object is below the horizon, we limit it to 0 to avoid complex errors
+    h = max(0.0, altitude())
+
+    x = 1 / (math.sin((math.pi / 180.0) * (h + 224.0 / (165.0 + 47.0 * h**1.1))))
+    return x, x * k, m0 + x * k
+
+
+def air_mass_KY(
+    altitude: Angle, k: float = 0.10, m0: float = -1.46
+) -> tuple[float, float, float]:
+    """Air mass and extinction calculated using Kasten & Young (1989) approximation.
+    Safeguarded against deep zenith angles.
+
+    Args:
+        altitude (Angle): Object altitude over horizon.
+        k (float, optional): Extinction coefficient. Defaults to 0.10 (ridiculously clear sky).
+        m0 (float, optional): Magnitud out of atmosphere. Defaults to -1.46 (Sirius).
+    Returns:
+        tuple[float, float, float]: Air mass, extinction and magnitude at ground level.
+    """
+    h = max(0.0, altitude())
+    # Zenith distance.
+    z = 90.0 - h
+    zr = math.pi * z / 180
+
+    x = math.cos(zr) + 0.50572 * (96.07995 - z) ** -1.6364
+    x = 1 / x
+    return x, x * k, m0 + x * k
+
+
+

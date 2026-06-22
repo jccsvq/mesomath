@@ -13,7 +13,7 @@ class BabylonianDay:
     """
 
     def __init__(
-        self, jd: float, city: str = "Babylon", ziggurat: float = 0.0, title=None
+        self, jd: float, city: str | dict = "Babylon", ziggurat: float = 0.0, title=None
     ):
         """
         Initializes the Babylonian day for a given Julian Date.

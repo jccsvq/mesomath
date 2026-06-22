@@ -8,9 +8,16 @@ from typing import Any
 
 # Indexed base converters and imports
 from juliandate import to_gregorian, to_julian
+from pymeeus.Epoch import Epoch
 
 from mesotimes.almanac import LunarAlmanac
-from mesotimes.astronomy.core import delta_t, delta_t_sigma, mesopotamian_cities
+from mesotimes.astronomy.core import (
+    delta_t,
+    delta_t_sigma,
+    mesopotamian_cities,
+    resolve_city_coordinates,
+    resolve_city_name,
+)
 from mesotimes.astronomy.moon import (
     calculate_full_moon_na,
     calculate_kur,
@@ -30,7 +37,6 @@ from mesotimes.calendars import BabylonianConverter, CalendarConverter
 # Constantes del proyecto
 from mesotimes.constants import KING_DICT, MONTH_DICT
 from mesotimes.proleptic import ProlepticBabylonianCalendar
-from pymeeus.Epoch import Epoch
 
 
 class ChronDate:
@@ -273,12 +279,12 @@ class ChronDate:
 
 
     def get_lunar_intervals(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, float]:
         """Calculates and returns the classical Neo-Babylonian lunar intervals for the lunation.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -334,12 +340,12 @@ class ChronDate:
         return events
 
     def get_sun_data(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, float]:
         """Computes exact solar ephemerides in Universal Time (UT) for the instance date.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -352,12 +358,12 @@ class ChronDate:
         return {"sunrise_ut": rise_ut, "transit_ut": transit_ut, "sunset_ut": set_ut}
 
     def get_bab_day_data(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, float]:
         """Computes exact durations and boundaries of the Babylonian civil day (sunset-to-sunset).
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -384,12 +390,12 @@ class ChronDate:
         }
 
     def get_lunar_horizon_data(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, float]:
         """Computes the exact decimal Universal Time (UT) hours for lunar horizon events.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -402,7 +408,7 @@ class ChronDate:
         return {"moonrise_ut": ut_rise, "transit_ut": ut_transit, "moonset_ut": ut_set}
 
     def get_mi_mush_data(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, Any]:
         """Computes the MI-MUSH lunar interval in both standard minutes and Babylonian UŠ units.
 
@@ -410,7 +416,7 @@ class ChronDate:
         on the night of the full moon.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -432,12 +438,12 @@ class ChronDate:
         }
 
     def get_kur_data(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, Any]:
         """Computes the KUR lunar interval for the last visible wane before conjunction.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -463,7 +469,7 @@ class ChronDate:
         }
 
     def get_day_planetary_visibility(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> dict[str, dict[str, Any]]:
         """Evaluates true heliacal visibility statuses for the 5 classical planets.
 
@@ -471,7 +477,7 @@ class ChronDate:
         both at local astronomical dawn (Morning Star) and dusk (Evening Star).
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
 
         Returns:
@@ -767,7 +773,7 @@ class ChronDate:
 
     def get_babylonian_month_data(
         self,
-        city: str = "Babylon",
+        city: str | dict = "Babylon",
         ziggurat: float = 0.0,
         db_filename: str = "mesotimes.sqlite",
         AoV: float = 12.0,
@@ -779,7 +785,7 @@ class ChronDate:
         first crescent visibility (neomenia) has drifted into adjacent lunations.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
             db_filename (str, optional): SQLite database filename path. Defaults to "mesotimes.sqlite".
             AoV (float, optional): Empirical Arc of Vision in degrees for neomenia. Defaults to 12.0.
@@ -834,12 +840,12 @@ class ChronDate:
         return alm
 
     def bab_day_instance(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> BabylonianDay:
         """Instantiates a localized BabylonianDay framework matching this instance's Julian Day.
 
         Args:
-            city (str, optional): Ancient observation site registry name. Defaults to "Babylon".
+            city (str | dict, optional): Ancient observation site registry name. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above terrain in meters. Defaults to 0.0.
 
         Returns:
@@ -851,14 +857,14 @@ class ChronDate:
     # INFORMATIVE METHODS / REPORTS (Interactive REPL User Interfaces)
     # =========================================================================
 
-    def day_ephemeris(self, city: str = "Babylon", ziggurat: float = 0.0) -> None:
+    def day_ephemeris(self, city: str | dict = "Babylon", ziggurat: float = 0.0) -> None:
         """Prints a comprehensive astronomical profile for the local Mesopotamian sky.
 
         Outputs solar context, lunar intervals, and twilight planetary visibilities
         for this specific Julian Day to the standard output.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
         """
         y, m, d, calendar = self._civil_components
@@ -920,13 +926,13 @@ class ChronDate:
             )
         print("=" * 65 + "\n")
 
-    def year_almanac(self, city: str = "Babylon", ziggurat: float = 0.0) -> None:
+    def year_almanac(self, city: str | dict = "Babylon", ziggurat: float = 0.0) -> None:
         """Assembles and prints global solstices, equinoxes, planetary nodes, and annual eclipses.
 
         Preceded by a critical diagnosis of Earth's rotational deceleration parameter Delta T (ΔT).
 
         Args:
-            city (str, optional): Ancient observation site registry name. Defaults to "Babylon".
+            city (str | dict, optional): Ancient observation site registry name. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above terrain in meters. Defaults to 0.0.
         """
         from mesotimes.astronomy.sun import (
@@ -1025,7 +1031,23 @@ class ChronDate:
                 print(f"    * {name:<8} Inf. Conj. : {conj_ut_str}")
         print("-" * 65)
 
-        # 3. Historical Eclipse Database Catalogue
+        # 3. Heliacal Rising of Sirius (The Arrow).
+        try:
+            from mesotimes.astronomy.stars import BabStar
+            sirius = BabStar.from_catalog("Sirius")
+            # We use January 1 of the current year as a seed
+            epoch_seed = Epoch(self._civil_components[0], 1, 1) 
+            sirius_event = sirius.heliacal_rising(epoch_seed, city=city, ziggurat=ziggurat, max_days=366)
+            y, m, d = sirius_event.get_date()
+            s =f" {y:04d}-{m:02d}-{round(d, 2):05.2f}"
+
+            print(f"  HELIACAL RISING OF SIRIUS (The Arrow): {s} at {resolve_city_name(city)}")
+            print("-" * 65)
+        except Exception:
+            # Safety net if the city is beyond astronomical limits
+            pass
+
+        # 4. Historical Eclipse Database Catalogue
         print("  ECLIPSES VISIBLE FROM KISH (Historical Database):")
         if len(eclipses) > 0:
             for eco in eclipses:
@@ -1039,7 +1061,7 @@ class ChronDate:
 
     def month_almanac(
         self,
-        city: str = "Babylon",
+        city: str | dict = "Babylon",
         ziggurat: float = 0.0,
         db_filename: str = "mesotimes.sqlite",
         AoV: float = 12.0,
@@ -1051,7 +1073,7 @@ class ChronDate:
         Triggers an automated virtual tablet matrix reconstruction on the terminal.
 
         Args:
-            city (str, optional): Target ancient observation city. Defaults to "Babylon".
+            city (str | dict, optional): Target ancient observation city. Defaults to "Babylon".
             ziggurat (float, optional): Observer height in meters. Defaults to 0.0.
             db_filename (str, optional): Internal SQLite filename database. Defaults to "mesotimes.sqlite".
             AoV (float, optional): Empirical Arc of Vision constraint. Defaults to 12.0.
@@ -1089,7 +1111,7 @@ class ChronDate:
 
     def lunar_info(
         self,
-        city: str = "Babylon",
+        city: str | dict = "Babylon",
         ziggurat: float = 0.0,
         AoV: float = 12.0,
         uncertainty: float = 0.833,
@@ -1097,7 +1119,7 @@ class ChronDate:
         """Generates a monthly analytical report structured as a Babylonian cuneiform tablet.
 
         Args:
-            city (str, optional): Target ancient observation city. Defaults to "Babylon".
+            city (str | dict, optional): Target ancient observation city. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
             AoV (float, optional): Empirical Arc of Vision constraint. Defaults to 12.0.
             uncertainty (float, optional): Marginal visibility filtering factor. Defaults to 0.833.
@@ -1108,7 +1130,7 @@ class ChronDate:
         alm.to_tablet()
 
     def sun_rise_transit_set(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> None:
         """Prints the specific solar transit metrics alongside the three ancient Night Watches.
 
@@ -1116,17 +1138,17 @@ class ChronDate:
         nocturnal arcs.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
         """
         y, m, d, calendar = self._civil_components
         sun = self.get_sun_data(city, ziggurat)
 
         # Retrieve structural station altitude
-        alt_base = mesopotamian_cities[city]["altitude"] + ziggurat
+        alt_base = resolve_city_coordinates(city)["altitude"] + ziggurat
 
         print("\n--- Sunrise, Transit and Sunset ---")
-        print(f"  City: {city} at {alt_base:.1f} meters above sea level")
+        print(f"  City: {resolve_city_name(city)} at {alt_base:.1f} meters above sea level")
         print(f"  Date    ({calendar}): {y}/{m}/{d}")
         print(f"  Chronology: {self.babylonian}")
         print(
@@ -1163,16 +1185,16 @@ class ChronDate:
             f"    Last Watch (namārītu):  {self._format_hours(w2_end)} to {self._format_hours(w3_end)}"
         )
 
-    def bab_day_info(self, city: str = "Babylon", ziggurat: float = 0.0) -> None:
+    def bab_day_info(self, city: str | dict = "Babylon", ziggurat: float = 0.0) -> None:
         """Prints a comprehensive dashboard for the localized sunset-to-sunset Babylonian day.
 
         Args:
-            city (str, optional): Target ancient observation city. Defaults to "Babylon".
+            city (str | dict, optional): Target ancient observation city. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above terrain in meters. Defaults to 0.0.
         """
         bd = self.get_bab_day_data(city, ziggurat)
 
-        print(f"\nBabylonian day in {city}")
+        print(f"\nBabylonian day in {resolve_city_name(city)}")
         print(self.babylonian)
         print(self.season_day)
         print(f"{'=' * 60}")
@@ -1189,21 +1211,21 @@ class ChronDate:
         )
 
     def moon_rise_transit_set(
-        self, city: str = "Babylon", ziggurat: float = 0.0
+        self, city: str | dict = "Babylon", ziggurat: float = 0.0
     ) -> None:
         """Dumps local lunar horizon ephemerides directly to the REPL pipeline.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
         """
         y, m, d, calendar = self._civil_components
         lunar = self.get_lunar_horizon_data(city, ziggurat)
-        alt_base = mesopotamian_cities[city]["altitude"] + ziggurat
+        alt_base = resolve_city_coordinates(city)["altitude"] + ziggurat
 
         print("\n--- Lunar Horizon & Meridian Events ---")
         print(
-            f"  Site: {city} ({alt_base:.1f} m.a.s.l.) | Date ({calendar}): {y}/{m}/{d}"
+            f"  Site: {resolve_city_name(city)} ({alt_base:.1f} m.a.s.l.) | Date ({calendar}): {y}/{m}/{d}"
         )
         print(
             f"     UT Time:   Moonrise {self._format_hours(lunar['moonrise_ut'])}, "
@@ -1211,17 +1233,17 @@ class ChronDate:
             f"Moonset {self._format_hours(lunar['moonset_ut'])}"
         )
 
-    def mi_mush(self, city: str = "Babylon", ziggurat: float = 0.0) -> None:
+    def mi_mush(self, city: str | dict = "Babylon", ziggurat: float = 0.0) -> None:
         """Prints a detailed mathematical audit of the lunar opposition interval 'MI-MUSH'.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
         """
         y, m, d, _ = self._civil_components
         mm = self.get_mi_mush_data(city, ziggurat)
 
-        print(f"\n--- Mi-Mush Analysis: {city} {y}/{m}/{d} ---")
+        print(f"\n--- Mi-Mush Analysis: {resolve_city_name(city)} {y}/{m}/{d} ---")
         print(f"  Sun Rise (UT):  {self._format_hours(mm['sun_rise_ut'])}")
         print(f"  Moon Set (UT):  {self._format_hours(mm['moon_set_ut'])}")
         print(
@@ -1233,17 +1255,17 @@ class ChronDate:
         else:
             print("  Status: Moon set before Sunrise.")
 
-    def kur(self, city: str = "Babylon", ziggurat: float = 0.0) -> None:
+    def kur(self, city: str | dict = "Babylon", ziggurat: float = 0.0) -> None:
         """Prints a mathematical audit of the late-lunation disappearance interval 'KUR'.
 
         Args:
-            city (str, optional): Target Mesopotamian city registry. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian city registry. Defaults to "Babylon".
             ziggurat (float, optional): Observer height above ground level in meters. Defaults to 0.0.
         """
         y, m, d, _ = self._civil_components
         k = self.get_kur_data(city, ziggurat)
 
-        print(f"\n--- KUR Analysis (Last Visibility): {city} {y}/{m}/{d} ---")
+        print(f"\n--- KUR Analysis (Last Visibility): {resolve_city_name(city)} {y}/{m}/{d} ---")
         print(f"  Moon Rise (UT): {self._format_hours(k['moon_rise_ut'])}")
         print(f"  Sun Rise (UT):  {self._format_hours(k['sun_rise_ut'])}")
         print(
@@ -1259,7 +1281,7 @@ class ChronDate:
 
     def neomenia(
         self,
-        city: str = "Babylon",
+        city: str | dict = "Babylon",
         ziggurat: float = 0.0,
         AoV: float = 12.0,
         uncertainty: float = 0.833,
@@ -1267,7 +1289,7 @@ class ChronDate:
         """Executes and renders standard visibility criteria matrices for the primary Neomenia.
 
         Args:
-            city (str, optional): Target ancient observation city. Defaults to "Babylon".
+            city (str | dict, optional): Target ancient observation city. Defaults to "Babylon".
             ziggurat (float, optional): Observer height in meters. Defaults to 0.0.
             AoV (float, optional): Empirical Arc of Vision constraint. Defaults to 12.0.
             uncertainty (float, optional): Marginal parsing threshold index. Defaults to 0.833.
@@ -1378,15 +1400,17 @@ class ChronDate:
             m = 0
         return f"{h:02d}:{m:02d}"
 
-    def night_at_a_glance(self, city: str = "Babylon") -> None:
+    def night_at_a_glance(self, city: str | dict = "Babylon") -> None:
         """Draws a visual ASCII horizontal timeline visibility chart of the Mesopotamian planets.
 
         Optimizes calculation performance across the diurnal/nocturnal transition by
         caching body equatorial positions (RA/Dec) once per execution frame.
 
         Args:
-            city (str, optional): Target Mesopotamian observation site. Defaults to "Babylon".
+            city (str | dict, optional): Target Mesopotamian observation site. Defaults to "Babylon".
         """
+        from pymeeus.Epoch import Epoch
+
         from mesotimes.astronomy.core import (
             equatorial_to_horizontal_at_instant,
             get_body_equatorial_at_midnight,
@@ -1400,7 +1424,6 @@ class ChronDate:
             MesopotamianMars,
             MesopotamianSaturn,
         )
-        from pymeeus.Epoch import Epoch
 
         # Instantiate structural celestial planet objects
         mercury_obj = MesopotamianMercury()
@@ -1410,8 +1433,8 @@ class ChronDate:
         saturn_obj = MesopotamianSaturn()
 
         # 1. Coordinate spatial georeferencing
-        city_lon = float(mesopotamian_cities[city]["longitude"])
-        city_lat = float(mesopotamian_cities[city]["latitude"])
+        city_lon = float(resolve_city_coordinates(city)["longitude"])
+        city_lat = float(resolve_city_coordinates(city)["latitude"])
         local_tz_hours = round(city_lon / 15.0)
 
         # 2. Sync frame limits with internal localized day coordinates
@@ -1508,24 +1531,32 @@ class ChronDate:
             "         - Planet above horizon     = Moon above horizon\n"
         )
 
-    def heliacal_phases(self, planet_name: str, city: str = "Babylon", ziggurat: float = 0.0) -> None:
+    def heliacal_phases(self, planet_name: str, city: str | dict = "Babylon", ziggurat: float = 0.0) -> None:
         """Scans forward from the current date to resolve and print the next four heliacal phases
 
         of a given planet. Translates raw Epoch results into both Julian and Babylonian calendars.
 
         Args:
             planet_name (str): Name of the planet (mercury, venus, mars, jupiter, saturn).
-            city (str, optional): Target ancient observation site. Defaults to "Babylon".
+            city (str | dict, optional): Target ancient observation site. Defaults to "Babylon".
             ziggurat (float, optional): Observer height in meters. Defaults to 0.0.
         """
         from pymeeus.Epoch import Epoch
-        from mesotimes.astronomy.planets.inferiors import MesopotamianMercury, MesopotamianVenus
-        from mesotimes.astronomy.planets.superiors import MesopotamianMars, MesopotamianJupiter, MesopotamianSaturn
+
         from mesotimes.astronomy.planets.finder import (
             find_first_appearance_morning,
             find_last_appearance_evening,
-            find_setting_heliacal_morning,
             find_setting_heliacal_evening,
+            find_setting_heliacal_morning,
+        )
+        from mesotimes.astronomy.planets.inferiors import (
+            MesopotamianMercury,
+            MesopotamianVenus,
+        )
+        from mesotimes.astronomy.planets.superiors import (
+            MesopotamianJupiter,
+            MesopotamianMars,
+            MesopotamianSaturn,
         )
 
         # 1. Resolver la instancia del planeta
@@ -1548,7 +1579,7 @@ class ChronDate:
         print(f"{f'HELIACAL STATIONS SCAN FOR {planet_instance.name.upper()}':^55}")
         print("=======================================================")
         print(f" Start Baseline: {self._civil_components[1]}/{self._civil_components[0]} (JD {self.jd})")
-        print(f" Observatory   : {city} at {ziggurat:.1f}m over ground level")
+        print(f" Observatory   : {resolve_city_name(city)} at {ziggurat:.1f}m over ground level")
         print("-------------------------------------------------------")
 
         # 2. Scan pipeline of the 4 fundamental phenomena
@@ -1574,19 +1605,29 @@ class ChronDate:
                 print(f"      -> Chronology  : {event_date.babylonian}")
                 print("-------------------------------------------------------")
                 
-            except RuntimeError:
+            except (ValueError, RuntimeError) as err:
                 # We capture the 60-day safety limit if the planet is stationary or in long retrograde
-                print(f"  [x] {label:<36}\n      -> Not found in window (60 days limit)")
+                # Si el error contiene el mensaje de inicialización, es un estado invisible previo
+                err_msg = str(err)
+                if "ALREADY INVISIBLE" in err_msg:
+                    reason = "Object is ALREADY INVISIBLE on the start date (out of visibility period)"
+                elif "ALREADY VISIBLE" in err_msg:
+                    reason = "Object is ALREADY VISIBLE on the start date (out of invisibility period)"
+                else:
+                    reason = "Not found in window (60 days limit)"
+                
+                print(f"  [x] {label:<36}")
+                print(f"      -> {reason}")
                 print("-------------------------------------------------------")
 
         print("=======================================================\n")
 
-    def bab_year_calendar(self, city: str = "Babylon", ziggurat: float = 0.0):
+    def bab_year_calendar(self, city: str | dict = "Babylon", ziggurat: float = 0.0):
         """
         Prints a human-readable table of the Babylonian year structure.
 
         :param city: Observatory location, defaults to "Babylon"
-        :type city: str, optional
+        :type city: str | dict, optional
         :param ziggurat: Altitude above the ground level in meters, defaults to 0.0
         :type ziggurat: float, optional
         """        

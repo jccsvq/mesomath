@@ -1,14 +1,25 @@
+## [2.2.0] - 2026-07-??
+
+### Added
+* **User-defined locations**: Added support for custom archaeological sites and observation platforms by allowing user-defined coordinate overrides (latitude, longitude, and altitude) in core astronomical functions.
+* **`mesotimes.astronomy.stars` module**: Introduced the `BabStar` class, enabling high-precision tracking of ancient stars. Includes native catalog parsing (`from_catalog`), automatic extraction of photometric magnitudes ($V$, $B-V$), and geometric event finders (`search_phenomena`).
+* **`mesotimes.astronomy.visibility` module**: Implemented a comprehensive twilight visibility simulation framework. Features 3D scattering models for crepuscular sky brightness, customizable air-mass functions (Pickering, Kasten-Young), and atmospheric extinction profiling (`scan_twilight_visibility`).
+* **Object-Oriented Analysis Interface**: Integrated `twilight_tomography` directly into `BabStar`, allowing researchers to generate multi-day visual contrast time-series reports with a single method call.
+
+---
+
 ## [2.1.2] - 2026-06-07
 
 ### Fixed
-* **Bug in mesotimes/date.py** Chrondate.day ephemeris() returned the day of the season based only on the Julian calendar. Fixed. 
+* **Bug in date.py**: Chrondate.day_ephemeris() returned the day of the season based only on the Julian calendar. Fixed.
 
 ---
+
 
 ## [2.1.1] - 2026-06-06
 
 ### Fixed
-* **README.md**: Incorrect badges.
+* **README.md**: Incorrect badges. Fixed.
 
 ---
 

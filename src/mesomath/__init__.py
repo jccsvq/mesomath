@@ -62,8 +62,11 @@ try:
     
     ChronDate = mesotimes.ChronDate
     ChronDate.__module__ = "mesomath"
+    BabStar = mesotimes.BabStar
+    BabStar.__module__ = "mesomath"
     
     __all__.append("ChronDate")
+    __all__.append("BabStar")
     
 except ImportError:
     pass

@@ -6,9 +6,12 @@
 
 from mesotimes.__about__ import __version__
 from mesotimes.date import ChronDate
+from mesotimes.astronomy import BabStar
+
 
 # We define the strict public contract of the root package
 __all__ = [
     "__version__",
     "ChronDate",
+    "BabStar",
 ]

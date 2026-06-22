@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 from importlib.resources import files
 
-from mesotimes.astronomy.core import jde2date, mesopotamian_cities
+from mesotimes.astronomy.core import jde2date, resolve_city_coordinates
 from mesotimes.astronomy.moon import (
     calculate_kur,
     calculate_mi_mush,
@@ -22,7 +22,7 @@ class LunarAlmanac:
         self,
         year: int,
         month: int,
-        city: str = "Babylon",
+        city: str | dict = "Babylon",
         ziggurat: float = 0.0,
         db_filename: str = "mesotimes.sqlite",
         AoV: float = 12.0,
@@ -35,7 +35,7 @@ class LunarAlmanac:
         :param month: Month (julian/gregorian)
         :type month: int
         :param city: City name, defaults to "Babylon"
-        :type city: str, optional
+        :type city: str | dict, optional
         :param ziggurat: Height above the ground, defaults to 0.0
         :type ziggurat: float, optional
         :param db_filename: mesotimes SQLite database filename, defaults to "mesotimes.sqlite"
@@ -166,7 +166,7 @@ class LunarAlmanac:
         header = f"--- ASTRONOMICAL DIARY: YEAR {self.year}, MONTH {self.month} ---"
         print(f"\n{header}")
         print(
-            f"City: {self.city}  | Coordinates: (Lat: {mesopotamian_cities[self.city]['latitude']})"
+            f"City: {self.city}  | Coordinates: (Lat: {resolve_city_coordinates(self.city)['latitude']})"
         )
         print("-" * len(header))
 
@@ -276,7 +276,7 @@ class LunarAlmanac:
 
 def jde2lunar_almanac(
     jde: float,
-    city: str = "Babylon",
+    city: str | dict = "Babylon",
     ziggurat: float = 0.0,
     AoV: float = 12.0,
     uncertainty: float = 0.833,

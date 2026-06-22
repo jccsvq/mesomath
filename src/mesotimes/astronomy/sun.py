@@ -14,7 +14,7 @@ from mesotimes.astronomy.core import (
     _horner,
     delta_t,
     get_horizon_dip,
-    mesopotamian_cities,
+    resolve_city_coordinates,
 )
 from pymeeus.Epoch import Epoch
 from pymeeus.Sun import Sun
@@ -194,7 +194,7 @@ def sun_rise_transit_set(
     year: int,
     month: int,
     day: int,
-    city: str = "Babylon",
+    city: str | dict = "Babylon",
     ziggurat: float = 0.0,
 ) -> tuple[float, float, float, float, float, float]:
     """
@@ -211,8 +211,8 @@ def sun_rise_transit_set(
     :type month: int
     :param day: Calendar day
     :type day: int
-    :param city: Name of the site in mesopotamian_cities, defaults to "Babylon"
-    :type city: str, optional
+    :param city: City name, defaults to "Babylon"
+    :type city: str | dict, optional
     :param ziggurat: Observer height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: (rise_ut, transit_ut, set_ut, rise_local, transit_local, set_local)
@@ -221,9 +221,9 @@ def sun_rise_transit_set(
     """
     # 1. Geographical and horizon parameters
     # Note: Explicit casting to satisfy strict float expectations from metadata dictionary
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
     h0 = -0.833 - get_horizon_dip(alt)
 
     # 2. Solar Position at approximate midday (12h UT) using arguments
@@ -267,7 +267,7 @@ def sun_rise_transit_set(
 
 
 def bab_day_duration(
-    jd: float, city: str = "Babylon", ziggurat: float = 0.0
+    jd: float, city: str | dict = "Babylon", ziggurat: float = 0.0
 ) -> tuple[float, float, float, float, float, float, float]:
     """
     Returns the duration parameters in hours for a specific Babylonian day
@@ -276,7 +276,7 @@ def bab_day_duration(
     :param jd: Julian Date representing the target day
     :type jd: float
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: Tuple containing (duration, diurnal, nocturnal, start UT, sunrise UT, transit UT, end UT) in decimal hours

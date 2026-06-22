@@ -115,3 +115,29 @@ This bibliography provides the academic and historical foundations for the metro
 (ref-PyMeeus)=
 * **Arribas, J. L.** (2020). *PyMeeus: Astronomical Algorithms in Python*. Python Software Foundation. Available at: https://github.com/leasw/pymeeus
 > *Note: Python implementation of Meeus' algorithms used as a validation layer for specific internal ephemeris loops.*
+
+## Stellar Visibility
+
+(ref-Schoch1924)=
+* **Schoch, C.** (1924). *The Arcus Visionis of the Planets in Babylonian Astronomy*. Monthly Notices of the Royal Astronomical Society, 84(9), 731–734.
+> *Note: Traditional geometric baseline for Babylonian stellar and planetary visibility calculations.*
+
+(ref-Schaefer1993)=
+* **Schaefer, B. E.** (1993). *Astronomy and the Limiting Magnitude of the Naked Eye*. Publications of the Astronomical Society of the Pacific, 105(688), 651–661.
+> *Note: Fundamental paper for the 1D ramp model and human visual contrast threshold equations against sky brightness.*
+
+(ref-Schaefer2000)=
+* **Schaefer, B. E.** (2000). *The Heliacal Rise of Sirius and Ancient Chronology*. Journal for the History of Astronomy, 31(2), 149–155.
+> *Note: Direct application of atmospheric extinction and scattering models to the specific historical problem of the rising of Sirius.*
+
+(ref-Garstang1989)=
+* **Garstang, R. H.** (1989). *Night-sky Brightness at Observatories and Sites*. Publications of the Astronomical Society of the Pacific, 101, 306–329.
+> *Note: Mathematical foundation for the 3D visibility framework, containing Rayleigh and aerosol scattering phase functions.*
+
+(ref-Pickering2002)=
+* **Pickering, K. A.** (2002). *The Southern Limits of the Ancient Star Catalog and the Commentary of Hipparchos*. DIO, 12, 3–27.
+> *Note: Reference study for ancient star catalog boundaries and historical stellar visibility constraints.*
+
+(ref-KastenYoung1989)=
+* **Kasten, F. and Young, A. T.** (1989). *Revised optical air mass tables and approximation formula*. Applied Optics, 28(22), 4735–4738.
+> *Note: Reference formulation for atmospheric optical air mass calculations at low horizons and high zenith angles.*

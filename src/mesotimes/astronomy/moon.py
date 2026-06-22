@@ -12,7 +12,8 @@ import math
 from mesotimes.astronomy.core import (
     _historical_gmst_degrees,
     get_horizon_dip,
-    mesopotamian_cities,
+    resolve_city_coordinates,
+    resolve_city_name,
 )
 from mesotimes.astronomy.sun import (
     sun_rise_transit_set,
@@ -169,7 +170,7 @@ def calculate_moon_transit(year: int, month: int, day: int, lon: float) -> float
 
 
 def moon_rise_transit_set(
-    year: int, month: int, day: int, city: str = "Babylon", ziggurat: float = 0.0
+    year: int, month: int, day: int, city: str | dict = "Babylon", ziggurat: float = 0.0
 ) -> tuple[float, float, float, float, float, float]:
     """
     Calculates the precise Moonrise, transit, and Moonset for a Mesopotamian site.
@@ -181,16 +182,16 @@ def moon_rise_transit_set(
     :param day: Day
     :type day: int
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: ut_rise, ut_transit, ut_set, local_rise, local_transit, local_set
     :rtype: tuple[float, float, float, float, float, float]
     """
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
     lon_hours = lon / 15.0
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
     dip = get_horizon_dip(alt)
 
     ut_rise = calculate_moon_event(year, month, day, lat, lon, dip, is_setting=False)
@@ -249,7 +250,7 @@ def check_neomenia(
     year: int,
     month: int,
     day: int,
-    city: str = "Babylon",
+    city: str | dict = "Babylon",
     ziggurat: float = 0.0,
     AoV: float = 12.0,
     uncertainty: float = 0.833,
@@ -269,7 +270,7 @@ def check_neomenia(
     :param day: Day
     :type day: int
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Elevation in meters, defaults to 0.0
     :type ziggurat: float, optional
     :param AoV: Angle of Viewing in degrees, defaults to 12.0
@@ -281,9 +282,9 @@ def check_neomenia(
     :return: Tuple (na_interval_min, lunar_altitude_at_sunset)
     :rtype: tuple[float, float]
     """
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
 
     # Clear fix: avoid passing absolute adjusted altitude to a relative ziggurat parameter
     _, _, sun_set_ut, _, _, _ = sun_rise_transit_set(year, month, day, city=city, ziggurat=ziggurat)
@@ -315,7 +316,7 @@ def check_neomenia(
     limit_doubtful = limit_visible * uncertainty
 
     if verbose:
-        print(f"\n--- Neomenia Check: {city} {year}/{month}/{day} ---")
+        print(f"\n--- Neomenia Check: {resolve_city_name(city)} {year}/{month}/{day} ---")
         print(f"  Sun Set (UT):   {sun_set_ut:.4f}")
         print(f"  Moon Alt at SS: {alt_lunar:.2f}°")
         print(
@@ -333,7 +334,7 @@ def check_neomenia(
 
 
 def calculate_mi_mush(
-    year: int, month: int, day: int, city: str = "Babylon", ziggurat: float = 0.0
+    year: int, month: int, day: int, city: str | dict = "Babylon", ziggurat: float = 0.0
 ) -> tuple[float, float, float]:
     """
     Calculates the 'Mi-Mush' (ME) interval: The time between Moonset and Sunrise
@@ -346,15 +347,15 @@ def calculate_mi_mush(
     :param day: Day
     :type day: int
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: Tuple containing (mi_mush_interval_min, moon_set_ut, sun_rise_ut)
     :rtype: tuple[float, float, float]
     """
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
     dip = get_horizon_dip(alt)
 
     sun_rise_ut, _, _, _, _, _ = sun_rise_transit_set(year, month, day, city, ziggurat)
@@ -368,7 +369,7 @@ def calculate_mi_mush(
 
 
 def calculate_kur(
-    year: int, month: int, day: int, city: str = "Babylon", ziggurat: float = 0.0
+    year: int, month: int, day: int, city: str | dict = "Babylon", ziggurat: float = 0.0
 ) -> tuple[float, float, float]:
     """
     Calculates the 'KUR' interval: Time between Moonrise and Sunrise
@@ -381,15 +382,15 @@ def calculate_kur(
     :param day: Day
     :type day: int
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: Tuple containing (kur_interval_min, moon_rise_ut, sun_rise_ut)
     :rtype: tuple[float, float, float]
     """
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
     dip = get_horizon_dip(alt)
 
     sun_rise_ut, _, _, _, _, _ = sun_rise_transit_set(year, month, day, city, ziggurat)
@@ -402,7 +403,7 @@ def calculate_kur(
 
 
 def calculate_shu_interval(
-    year: int, month: int, day: int, city: str = "Babylon", ziggurat: float = 0.0
+    year: int, month: int, day: int, city: str | dict = "Babylon", ziggurat: float = 0.0
 ) -> float:
     """
     Calculate the SU (Shu) interval: Time from the Solar Sunset to the
@@ -415,15 +416,15 @@ def calculate_shu_interval(
     :param day: Day
     :type day: int
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: SU = Moonset - Sunset in minutes
     :rtype: float
     """
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
     dip = get_horizon_dip(alt)
 
     _, _, sun_set_ut, _, _, _ = sun_rise_transit_set(year, month, day, city, ziggurat)
@@ -436,7 +437,7 @@ def calculate_shu_interval(
 
 
 def calculate_full_moon_na(
-    year: int, month: int, day: int, city: str = "Babylon", ziggurat: float = 0.0
+    year: int, month: int, day: int, city: str | dict = "Babylon", ziggurat: float = 0.0
 ) -> float:
     """
     Calculate the NA interval of the full moon: Time from the Lunar Rising to the Solar Setting.
@@ -448,15 +449,15 @@ def calculate_full_moon_na(
     :param day: Day
     :type day: int
     :param city: City name, defaults to "Babylon"
-    :type city: str, optional
+    :type city: str | dict, optional
     :param ziggurat: Height above terrain in meters, defaults to 0.0
     :type ziggurat: float, optional
     :return: NA (Full Moon) = Sunset - Moonrise in minutes
     :rtype: float
     """
-    lat = float(mesopotamian_cities[city]["latitude"])
-    lon = float(mesopotamian_cities[city]["longitude"])
-    alt = float(mesopotamian_cities[city]["altitude"]) + ziggurat
+    lat = float(resolve_city_coordinates(city)["latitude"])
+    lon = float(resolve_city_coordinates(city)["longitude"])
+    alt = float(resolve_city_coordinates(city)["altitude"]) + ziggurat
     dip = get_horizon_dip(alt)
 
     _, _, sun_set_ut, _, _, _ = sun_rise_transit_set(year, month, day, city, ziggurat)
