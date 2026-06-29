@@ -5,7 +5,7 @@
 
 ## The MesoMath Ecosystem
 
-MesoMath 2.1.0 expands its unified workflow by transitioning into a comprehensive metapackage. It couples core scribal mathematics with advanced historical chronology and archaeoastronomy, tailored to the needs of researchers from quick terminal calculations to reproducible academic analysis:
+Since version 2.1.0 MesoMath expands its unified workflow by transitioning into a comprehensive metapackage. It couples core scribal mathematics with advanced historical chronology and archaeoastronomy, tailored to the needs of researchers from quick terminal calculations to reproducible academic analysis:
 
 ### 1. Command-Line Environments (CLI)
 
@@ -44,8 +44,7 @@ The MesoMath engine does not merely compute; it documents. All results can be ex
 
 * **Precise Event Ephemeris**: Calculated directly with the [`pymeeus` library](https://github.com/architest/pymeeus) (VSOP87, ELP85) up to the current limit of knowledge of the parameter `Delta T`.
 * **Internal Database of Historical Eclipses**: Solar and Lunar eclipses visible at Kish (total and partial) based on the [*Five Millennium Canon of Eclipses* by Fred Espenak and Jean Meeus](https://eclipse.gsfc.nasa.gov/SEpubs/5MCSE.html).
-* **Search of Heliacal and Acronychal Rising of Stars**: Precise dating and dissection/tomography of the twilight lights to reveal the temporal evolution of the star/twilight-background contrast.
-
+* **Heliacal and Acronychal Rising of Stars**: Precise dating and dissection/tomography of twilight lights to reveal the temporal evolution of the contrast between the star and the twilight background.
 -----
 
 ## Project Architecture

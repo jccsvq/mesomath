@@ -1,4 +1,4 @@
-## [2.2.0] - 2026-07-??
+## [2.2.0] - 2026-06-29
 
 ### Added
 * **User-defined locations**: Added support for custom archaeological sites and observation platforms by allowing user-defined coordinate overrides (latitude, longitude, and altitude) in core astronomical functions.

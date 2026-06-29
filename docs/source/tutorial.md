@@ -3320,19 +3320,20 @@ $$m_{\text{real}} = V + k \cdot X$$
 
 Mesotimes incorporates two functions for the air mass in `mesotimes.astronomy.visibility`: 
 
-* `air_mass_KY` implementing **Kasten & Young (1989)** model:
+* `air_mass_KY` implementing {ref}`Kasten & Young (1989)<ref-KastenYoung1989>` model:
 
 $$ X={\frac {1}{\cos \,z+0.50572\,(6.07995^{\circ }+90^{\circ }-z)^{-1.6364}}}$$
 
 where $z$ is the zenith distance.
 
-* `air_mass_Pickering` implementing **Pickering (2002)** model:
+* `air_mass_Pickering` implementing {ref}`Pickering (2002)<ref-Pickering2002>` model:
 
 $${\displaystyle X={\frac {1}{\sin(h+{244}/(165+47h^{1.1}))}}\,}$$
 
 where $h$ is the apparent altitude $(90^{\circ }-z)$ in degrees.
 
-
+Additionally, the user can utilize their own air mass functions as long as they are 
+compatible with the signature of {py:func}`~mesotimes.astronomy.visibility.air_mass_pickering`.
 
 For high-precision photometry involving stars with distinct color indices, researchers can manually apply a second-order correction to the monochromatic extinction coefficient ($k_0$) before running the simulation:
 
@@ -3345,7 +3346,7 @@ $$k = k_0 + k' \cdot (B-V)$$
 `mesotimes` bridges ancient empirical traditions with modern atmospheric physics by supporting three distinct visibility paradigms to determine the detection threshold ($m_{\text{lim}}$).
 
 ###### 1. Classical *Arcus Visionis* (Geometric Model)
-This is the traditional, purely geometric method utilized in Babylonian astronomy and later adopted by historical chronologists (e.g., Carl Schoch, Richard Anthony Parker). It bypasses atmospheric physics entirely.
+This is the traditional, purely geometric method utilized in Babylonian astronomy and later adopted by historical chronologists (e.g., {ref}`Carl Schoch<ref-Schoch1924>`, Richard Anthony Parker). It bypasses atmospheric physics entirely.
 
 The model evaluates the *Arcus Visionis* ($O$), defined as the difference between the altitude of the star ($h_{\star}$) and the altitude of the Sun ($h_{\odot}$) at the moment of the star's rising or setting:
 
@@ -3354,7 +3355,7 @@ $$O = h_{\star} - h_{\odot}$$
 Visibility is determined by a static lookup table where each star or magnitude class requires a specific minimum angular separation ($O_{\text{min}}$) to be visible to the naked eye. While computationally trivial, it fails to account for local atmospheric conditions ($k$) or seasonal variations in twilight duration.
 
 ###### 2. Zenith-Based Ramp Model (1D Semi-Empirical)
-The Ramp Model acts as a transition layer between geometry and physics. Instead of calculating complex light scattering, it approximates the crepuscular sky brightness as a one-dimensional function (a "ramp") dependent solely on the Sun's zenith distance or elevation below the horizon ($h_{\odot}$).
+The Ramp Model {ref}`(Schaefer 1993)<ref-Schaefer1993>` acts as a transition layer between geometry and physics. Instead of calculating complex light scattering, it approximates the crepuscular sky brightness as a one-dimensional function (a "ramp") dependent solely on the Sun's zenith distance or elevation below the horizon ($h_{\odot}$).
 
 The limiting magnitude ($m_{\text{lim}}$) of the human eye is modeled as a functional curve that drops sharply as the Sun approaches the horizon:
 
@@ -3363,7 +3364,7 @@ $$m_{\text{lim}} = f(h_{\odot})$$
 When `ramp_model=True` is passed to the execution loop, `mesotimes` disables horizontal azimuthal variations. The background sky brightness is assumed to be uniform across the entire horizon for a given solar depth, providing a stable, average-case baseline that correlates well with classical empirical observations.
 
 ###### 3. 3D Atmospheric Scattering Model (Physical)
-The default and most advanced engine in `mesotimes`. It implements a physical model of the twilight sky based on modern atmospheric optics (drawing from Schaefer's and Garstang's scattering frameworks). 
+The default and most advanced engine in `mesotimes`. It implements a physical model of the twilight sky based on modern atmospheric optics (drawing from {ref}`Schaefer<ref-Schaefer2000>`'s and {ref}`Garstang<ref-Garstang1989>`'s scattering frameworks). 
 
 Instead of an isotropic sky, it computes the background luminance at the exact patch of sky where the star resides. It evaluates three-dimensional geometry via the scattering angle ($\phi$), which measures the true angular separation between the Sun's sub-horizon position and the star's coordinate:
 

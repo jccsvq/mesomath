@@ -253,7 +253,7 @@ class BabStar(Planet):
         alpha, delta_out = Coordinates.precession_equatorial(
             JDE2000, epoch, self.ra0, self.dec0, self.pm_ra, self.pm_dec
         )
-        # Lo siguiente es por un bug de pymeeus 0.5.12
+        # The following is due to a bug in pymeeus 0.5.12
         if self.dec0() > 85.0:
             delta = Angle(90.0) - delta_out
         else:

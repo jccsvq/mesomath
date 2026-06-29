@@ -90,6 +90,7 @@ exclude = [
   "/db_data/PD71/processed/",
   "/db_data/PD71/sql/",
   "/db_data/PD71/pdchron71.csv",
+  "/.continue/",
 ]
 
 [tool.hatch.version]

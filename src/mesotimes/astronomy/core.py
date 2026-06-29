@@ -194,7 +194,7 @@ def resolve_city_coordinates(city_input: str | dict) -> dict:
             raise KeyError(f"Custom city dict must contain at least: {required}")
 
         try:
-            # Forzamos la conversión a float para capturar strings numéricos ("35.5")
+            # We force the conversion to float to capture numeric strings ("35.5")
             lat = float(city_input["latitude"])
             lon = float(city_input["longitude"])
             alt = float(city_input["altitude"])
@@ -203,7 +203,7 @@ def resolve_city_coordinates(city_input: str | dict) -> dict:
                 "Coordinates (latitude, longitude, altitude) must be numeric values."
             ) from err
 
-        # --- VALIDACIÓN DE RANGOS GEOFÍSICOS ---
+        # --- VALIDATION OF GEOPHYSICAL RANGES ---
         if not (-90.0 <= lat <= 90.0):
             raise ValueError(f"Latitude must be between -90 and 90 degrees. Got: {lat}")
 
@@ -214,7 +214,7 @@ def resolve_city_coordinates(city_input: str | dict) -> dict:
 
         if (
             alt < -430.0 or alt > 8848.0
-        ):  # Límites físicos de la Tierra (Mar Muerto - Everest)
+        ):  # Physical limits of the Earth (Dead Sea - Everest)
             raise ValueError(
                 f"Altitude out of terrestrial bounds (-430m to 8848m). Got: {alt}"
             )
@@ -428,6 +428,8 @@ def delta_t(year: int, month: int = 7) -> float:
         u = (y - 1820) / 100.0
         dt0 = -20 + 32 * (u * u)
 
+    # Correction of Moon's secular acceleration
+    # See: https://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html
     drift = 0.000012932 * (y - 1955) * (y - 1955)
     return float(round(dt0 - drift))
 

@@ -33,7 +33,8 @@ def start_ibabcalc():
         from mesomath.metrology_presets import WEIGHT_PROUST_82 as wlist
         from mesotimes import ChronDate as Date
         from mesotimes import BabStar as Star
-
+        from pymeeus.Angle import Angle
+        from pymeeus.Epoch import Epoch
 
         # Welcome message
         message = f"\n--- MesoMath Scribal Research Lab {VERSION} ---\n\n"
@@ -65,6 +66,8 @@ Metrological presets (clist, wlist, etc.) ready for analysis
             "VERSION": VERSION,
             "Date": Date,
             "Star": Star,
+            "Angle": Angle,
+            "Epoch": Epoch,
             "exit": exit,
             "quit": quit,
             "message": message,

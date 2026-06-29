@@ -31,6 +31,8 @@ from mesotimes import ChronDate as Date
 from mesotimes import BabStar as Star
 
 
+from pymeeus.Angle import Angle
+from pymeeus.Epoch import Epoch
 
 
 # Welcome message
@@ -73,6 +75,8 @@ def main():
         "llist": llist,
         "Date": Date,
         "Star": Star,
+        "Angle": Angle,
+        "Epoch": Epoch,
         "VERSION": VERSION,
         "exit": exit,
         "quit": quit,
